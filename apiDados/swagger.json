@@ -1,0 +1,455 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Api Hypatiamat",
+        "description": "Aqui encontra-se a documentação de toda a api de dados do Hypatiamat, incluindo todas as rotas e toda a informação à cerca do que é precisar passar como parâmetros, bem como os resultados que se podem esperar ao executar aquela rota."
+    },
+    "schemes": [
+        "http"
+    ],
+    "host": "localhost:3050",
+    "basePath": "/",
+    "tags": [
+        {
+          "name": "alunos",
+          "description": "Todas as operações à cerca de alunos."
+        },
+        {
+          "name": "professores",
+          "description": "Todas as operações à cerca de professores."
+        },
+        {
+          "name": "escolas",
+          "description": "Todas as operações à cerca de escolas."
+        },
+        {
+            "name": "turmas",
+            "description": "Todas as operações à cerca de turmas."
+        }
+      ],
+    "paths": {
+        "/aplicacoes/professores": {
+            "get": {
+                "tags":[
+                    "professores"
+                ],
+                "summary": "Todos os professores registados.",
+                "description": "Retorna uma lista com toda informação à cerca de todos os professores.",
+                "responses": {
+                    "200": {
+                        "description": "Lista de Professores",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "properties": {
+                                    "curso": {
+                                        "type": "string"
+                                    },
+                                    "designacao": {
+                                      "type":"string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post":{
+                "tags":[
+                    "cursos"
+                ],
+                "summary": "Inserir um novo curso.",
+                "description": "Adiciona um novo curso à base de dados.",
+                "parameters": [
+                    {
+                      "name": "id",
+                      "in": "formData",
+                      "description": "ID do curso",
+                      "required": true,
+                      "type": "string"
+                    },
+                    {
+                      "name": "nome",
+                      "in": "formData",
+                      "description": "Nome do curso",
+                      "required": true,
+                      "type": "string"
+                    }
+                  ],
+                "responses": {
+                    "200": {
+                        "description": "Retorna o id do Curso criado",
+                        "schema": {
+                            "type": "string",
+                            "items": {
+                                "properties": {
+                                    "curso": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401":{
+                      "description": "Falta-lhe o token de acesso ou o token não é válido."
+                    }
+                }
+            }
+        },
+        "/cursos/{cursoId}": {
+            "get": {
+              "tags": [
+                "cursos"
+              ],
+              "summary": "Dado um identificador de um curso, devolve toda a informação relativa a esse curso.",
+              "description": "Devolve toda a informação relativa a um curso.",
+              "operationId": "getCursoById",
+              "parameters": [
+                {
+                  "name": "cursoId",
+                  "in": "path",
+                  "description": "ID do curso a retornar.",
+                  "required": true,
+                  "type": "string"
+                }
+              ],
+              "responses": {
+                "200": {
+                    "description": "Retorna toda a informação relativa a um curso.",
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "info": {
+                                "$ref": "#/definitions/Curso"
+                            },
+                            "anos":{
+                                "type":"array",
+                                "items": {
+                                    "type":"object",
+                                    "properties": {
+                                        "id":{
+                                            "type":"string"
+                                        },
+                                        "designacao":{
+                                            "type":"string"
+                                        }
+                                    }
+                                }
+                            },
+                            "estudantes":{
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/Utilizador"
+                                }
+                            },
+                            "responsaveis":{
+                                "type": "object",
+                                "properties": {
+                                    "ano":{
+                                        "type":"string"
+                                    },
+                                    "responsaveisAno":{
+                                        "type":"array",
+                                        "items":{
+                                            "$ref": "#/definitions/Utilizador"
+                                        }
+                                    }
+                                }
+                            },
+                            "publicacoes":{
+                                "type":"array",
+                                "items": {
+                                    "$ref": "#/definitions/Publicacao"
+                                }
+                            }
+                        }
+                    }
+                },
+                "401":{
+                  "description": "Falta-lhe o token de acesso ou o token não é válido."
+                },
+                "403":{
+                  "description": "Não possuí nível de acesso suficiente."
+                }
+              }
+            },
+            "put":{
+              "tags": [
+                "cursos"
+              ],
+              "summary": "Dado um identificador de um curso, edite a informação relacionada com ele.",
+              "description": "Para editar um curso, é necessário ser Admin.",
+              "operationId": "putCursoById",
+              "parameters": [
+                {
+                  "name": "cursoId",
+                  "in": "path",
+                  "description": "ID do curso a editar.",
+                  "required": true,
+                  "type": "string"
+                },
+                {
+                  "name": "designacao",
+                  "in": "formData",
+                  "description": "Nova designação.",
+                  "required": true,
+                  "type": "string"
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "O curso foi editado."
+                },
+                "401":{
+                  "description": "Falta-lhe o token de acesso ou o token não é válido."
+                },
+                "403":{
+                  "description": "Não possuí nível de acesso suficiente."
+                }
+              }
+            },
+            "delete": {
+              "tags": [
+                "cursos"
+              ],
+              "summary": "Dado um identificador de um curso, elimine o curso da base de dados.",
+              "description": "Para apagar um curso, é necessário ser Admin.",
+              "operationId": "deleteCursoById",
+              "parameters": [
+                {
+                  "name": "cursoId",
+                  "in": "path",
+                  "description": "ID do curso a editar.",
+                  "required": true,
+                  "type": "string"
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "O curso foi eliminado."
+                },
+                "401":{
+                  "description": "Falta-lhe o token de acesso ou o token não é válido."
+                },
+                "403":{
+                  "description": "Não possuí nível de acesso suficiente."
+                }
+              }
+            }
+        },
+        "/cursos/{cursoId}/anos": {
+            "get": {
+              "tags": [
+                "cursos"
+              ],
+              "summary": "Dado um identificador de um curso, devolve todos os anos pertencentes a esse curso.",
+              "description": "Devolve todos os anos de um curso.",
+              "operationId": "getAnosCursoById",
+              "parameters": [
+                {
+                  "name": "cursoId",
+                  "in": "path",
+                  "description": "ID do curso a retornar.",
+                  "required": true,
+                  "type": "string"
+                }
+              ],
+              "responses": {
+                "200": {
+                    "description": "Retorna todos os anos relativos a um curso.",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "type":"object",
+                            "properties": {
+                                "id":{
+                                    "type":"string"
+                                },
+                                "designacao":{
+                                    "type":"string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "401":{
+                  "description": "Falta-lhe o token de acesso ou o token não é válido."
+                }
+              }
+            }
+        },
+        "/cursos/{cursoId}/estudantes": {
+            "get": {
+              "tags": [
+                "cursos"
+              ],
+              "summary": "Dado um identificador de um curso, devolve todos os estudantes pertencentes a esse curso.",
+              "description": "Devolve todos os estudantes de um curso.",
+              "operationId": "getEstudantesAnoById",
+              "parameters": [
+                {
+                  "name": "cursoId",
+                  "in": "path",
+                  "description": "ID do curso a retornar.",
+                  "required": true,
+                  "type": "string"
+                }
+              ],
+              "responses": {
+                "200": {
+                    "description": "Retorna todos os estudantes relativos a um curso.",
+                    "schema": {
+                        "type":"array",
+                        "items": {
+                           "$ref": "#/definitions/Utilizador"
+                        }
+                    }
+                },
+                "401":{
+                  "description": "Falta-lhe o token de acesso ou o token não é válido."
+                }
+              }
+            }
+        },
+        "/cursos/{cursoId}/publicacoes": {
+            "get": {
+              "tags": [
+                "cursos"
+              ],
+              "summary": "Dado um identificador de um curso, devolve todas as publicações pertencentes a esse curso.",
+              "description": "Devolve todos as publicações de um curso.",
+              "operationId": "getPublicacoesCursoById",
+              "parameters": [
+                {
+                  "name": "cursoId",
+                  "in": "path",
+                  "description": "ID do curso a retornar.",
+                  "required": true,
+                  "type": "string"
+                }
+              ],
+              "responses": {
+                "200": {
+                    "description": "Retorna todos as publicações relativos a um curso.",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/Publicacao"
+                        }
+                    }
+                },
+                "401":{
+                  "description": "Falta-lhe o token de acesso ou o token não é válido."
+                }
+              }
+            }
+        },
+        "/cursos/{cursoId}/responsaveis": {
+            "get": {
+              "tags": [
+                "cursos"
+              ],
+              "summary": "Dado um identificador de um curso, devolve todas os responsáveis pertencentes a esse curso.",
+              "description": "Devolve todos os responsáveis de um curso.",
+              "operationId": "getResponsaveisCursoById",
+              "parameters": [
+                {
+                  "name": "cursoId",
+                  "in": "path",
+                  "description": "ID do curso a retornar.",
+                  "required": true,
+                  "type": "string"
+                }
+              ],
+              "responses": {
+                "200": {
+                    "description": "Retorna todos os responsáveis relativos a um curso.",
+                    "schema": {
+                        "type":"array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "ano":{
+                                    "type":"string"
+                                },
+                                "responsaveisAno":{
+                                    "type":"array",
+                                    "items":{
+                                        "$ref": "#/definitions/Utilizador"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "401":{
+                  "description": "Falta-lhe o token de acesso ou o token não é válido."
+                }
+              }
+            }
+        }   
+    },
+    "definitions": {
+        "Utilizador": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "nomeUtilizador": {
+                "type": "string"
+              },
+              "numeroAluno": {
+                "type": "string"
+              },
+              "dataNascimento": {
+                "type": "string"
+              },
+              "numeroTelemovel": {
+                "type": "string"
+              },
+              "sexo": {
+                "type": "string"
+              }
+            }
+        },
+        "Publicacao":{
+            "type": "object",
+            "properties": {
+                "info":{
+                    "type":"object",
+                    "properties": {
+                        "id":{
+                            "type":"string"
+                        },
+                        "conteudo":{
+                            "type":"string"
+                        },
+                        "data":{
+                            "type":"string"
+                        },
+                        "likes":{
+                            "type":"integer"
+                        },
+                        "idUtilizador":{
+                            "type":"string"
+                        }
+                    }
+                },
+                "ficheiros":{
+                    "type":"array",
+                    "items": {
+                        "$ref": "#/definitions/Ficheiro"
+                    }
+                },
+                "comentarios":{
+                    "type":"array",
+                    "items": {
+                        "$ref": "#/definitions/Comentario"
+                    }
+                }
+            }
+        }
+    }   
+}
