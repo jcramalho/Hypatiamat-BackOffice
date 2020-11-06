@@ -3,16 +3,52 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var passport = require('passport')
+var JWTStrategy= require('passport-jwt').Strategy
+var ExtractJWT = require('passport-jwt').ExtractJwt
+var swaggerJSDoc = require('swagger-jsdoc');
+var swaggerUi = require("swagger-ui-express");
+
+
 
 var professoresRouter = require('./routes/aplicacoes/professores');
 var turmasRouter = require('./routes/aplicacoes/turmas')
 var escolasRouter = require('./routes/aplicacoes/escolas')
 var alunosRouter = require('./routes/aplicacoes/alunos')
 var examesRouter = require('./routes/aplicacoes/exames')
+var loginRouter = require('./routes/aplicacoes/login')
 
+
+
+var extractFromQS = function(req){
+  var token = null
+  if(req.query && req.query.token) token = req.query.token
+  return token
+}
+
+var extractFromBody = function(req){
+  var token = null
+  if(req.body && req.body.token) token = req.body.token
+  return token
+}
+
+passport.use(new JWTStrategy({
+  secretOrKey: 'tese-hypatiamat2020',
+  jwtFromRequest:ExtractJWT.fromExtractors([extractFromQS,extractFromBody]),
+  passReqToCallback: true
+}, async (req,payload,done) =>{
+  try{
+    return done(null,payload)
+  }
+  catch(error){
+    return done(error)
+  }
+}))
 
 
 var app = express();
+
+app.use(passport.initialize());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,16 +60,72 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-var swaggerUi = require('swagger-ui-express'),
-    swaggerDocument = require('./swagger.json');
+// swagger definition
+var swaggerDefinition = {
+  info: {
+    title: 'API Hypatiamat',
+    version: '1.0.0',
+    description: 'Aqui encontra-se a documentação de toda a api de dados do Hypatiamat, incluindo todas as rotas e toda a informação à cerca do que é precisar passar como parâmetros, bem como os resultados que se podem esperar ao executar aquela rota',
+  },
+  host: 'localhost:3050',
+  basePath: '/',
+  schemes: [
+    "http"
+  ],
+  tags: [
+    {
+      name: "alunos",
+      description: "Todas as operações à cerca de alunos."
+    },
+    {
+      name: "professores",
+      description: "Todas as operações à cerca de professores."
+    },
+    {
+      name: "escolas",
+      description: "Todas as operações à cerca de escolas."
+    },
+    {
+        name: "turmas",
+        description: "Todas as operações à cerca de turmas."
+    }
+  ],
+  securityDefinitions:{
+    api_key:{
+      type: "apiKey",
+      in: "query",
+      name: "token"
+    }
+  },
+  security: [{
+     api_key: []
+  }]
+};
 
+// options for the swagger docs
+var options = {
+  // import swaggerDefinitions
+  swaggerDefinition: swaggerDefinition,
+  // path to the API docs
+  apis: ['./routes/aplicacoes/*.js'],
+};
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// initialize swagger-jsdoc
+var swaggerSpec = swaggerJSDoc(options);
+
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec)
+);
+
 app.use('/aplicacoes/professores', professoresRouter);
 app.use('/aplicacoes/turmas', turmasRouter)
 app.use('/aplicacoes/escolas', escolasRouter)
 app.use('/aplicacoes/alunos', alunosRouter)
 app.use('/aplicacoes/exames', examesRouter)
+app.use('/aplicacoes/login', loginRouter)
+
 
 
 // catch 404 and forward to error handler
