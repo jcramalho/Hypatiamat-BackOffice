@@ -1,6 +1,7 @@
 var sql = require('../../models/db_aplicacoes');
 var md5 = require('md5')
 
+
 var Aluno = function(aluno){
     this.id = aluno.id;
     this.user = aluno.user;
@@ -57,7 +58,7 @@ Aluno.getPassword = function (user){
 
 Aluno.getAlunos = function(){
     return new Promise(function(resolve, reject) {
-        sql.query("Select user, numero, nome, datanascimento, escola, turma, email, confirmacao from alunos", function(err, res){
+        sql.query("Select id, user, numero, nome, datanascimento, escola, turma, email, confirmacao from alunos", function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -71,7 +72,7 @@ Aluno.getAlunos = function(){
 
 Aluno.getAluno = function(user){
     return new Promise(function(resolve, reject) {
-        sql.query("Select user, numero, nome, datanascimento, escola, turma, email, confirmacao from alunos where user=?", user, function(err, res){
+        sql.query("Select id, user, numero, nome, datanascimento, escola, turma, email, confirmacao from alunos where user=?", user, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -86,7 +87,7 @@ Aluno.getAluno = function(user){
 
 Aluno.getAlunosFromTurma = function(turma){
     return new Promise(function(resolve, reject) {
-        sql.query("Select user, numero, nome, datanascimento, escola, turma, email, confirmacao from alunos where turma=?", turma, function(err, res){
+        sql.query("Select id, user, numero, nome, datanascimento, escola, turma, email, confirmacao from alunos where turma=?", turma, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -100,7 +101,7 @@ Aluno.getAlunosFromTurma = function(turma){
 
 Aluno.getAlunosFromEscola = function(escola){
     return new Promise(function(resolve, reject) {
-        sql.query("Select user, numero, nome, datanascimento, escola, turma, email, confirmacao from alunos where escola=?", escola, function(err, res){
+        sql.query("Select id, user, numero, nome, datanascimento, escola, turma, email, confirmacao from alunos where escola=?", escola, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

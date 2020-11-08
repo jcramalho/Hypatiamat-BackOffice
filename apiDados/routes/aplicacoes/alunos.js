@@ -5,22 +5,7 @@ var passport = require('passport')
 var Alunos = require('../../controllers/db_aplicacoes/alunos');
 const TurmaOld = require('../../controllers/db_aplicacoes/turmasold');
 
-/**
- * @swagger
- * definitions:
- *   Aluno:
- *     properties:
- *       name:
- *         type: string
- *       breed:
- *         type: string
- *       age:
- *         type: integer
- *       sex:
- *         type: string
- */
 
-/* GET todos os alunos. */
 router.get('/', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     Alunos.getAlunos()
                .then(dados =>{

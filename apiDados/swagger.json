@@ -12,19 +12,19 @@
     "basePath": "/",
     "tags": [
         {
-          "name": "alunos",
+          "name": "Alunos",
           "description": "Todas as operações à cerca de alunos."
         },
         {
-          "name": "professores",
+          "name": "Professores",
           "description": "Todas as operações à cerca de professores."
         },
         {
-          "name": "escolas",
+          "name": "Escolas",
           "description": "Todas as operações à cerca de escolas."
         },
         {
-            "name": "turmas",
+            "name": "Turmas",
             "description": "Todas as operações à cerca de turmas."
         }
       ],
@@ -32,7 +32,7 @@
         "/aplicacoes/professores": {
             "get": {
                 "tags":[
-                    "professores"
+                    "Professores"
                 ],
                 "summary": "Todos os professores registados.",
                 "description": "Retorna uma lista com toda informação à cerca de todos os professores.",
@@ -40,20 +40,21 @@
                     "200": {
                         "description": "Lista de Professores",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "properties": {
-                                    "curso": {
-                                        "type": "string"
-                                    },
-                                    "designacao": {
-                                      "type":"string"
-                                    }
-                                }
-                            }
+                          "type":"array",
+                          "items":{
+                            "$ref": "#/definitions/Professor"
+                          }
                         }
+                    },
+                    "401":{
+                      "description": "Falta-lhe o token de acesso ou o token não é válido."
                     }
-                }
+                },
+                "security": [
+                  {
+                    "api_key": []
+                  }
+                ]
             },
             "post":{
                 "tags":[
@@ -390,66 +391,83 @@
             }
         }   
     },
+    "securityDefinitions":{
+      "api_key":{
+        "type": "apiKey",
+        "in": "query",
+        "name": "token"
+      }
+    },
+    "security": [{
+       "api_key": []
+    }],
     "definitions": {
-        "Utilizador": {
+        "Aluno": {
             "type": "object",
             "properties": {
               "id": {
+                "type": "integer"
+              },
+              "user": {
                 "type": "string"
               },
-              "nomeUtilizador": {
+              "numero": {
+                "type": "integer"
+              },
+              "nome": {
                 "type": "string"
               },
-              "numeroAluno": {
+              "datanascimento": {
                 "type": "string"
               },
-              "dataNascimento": {
+              "escola": {
                 "type": "string"
               },
-              "numeroTelemovel": {
+              "turma":{
                 "type": "string"
               },
-              "sexo": {
-                "type": "string"
+              "email":{
+                "type":"string"
+              },
+              "confirmacao":{
+                "type":"integer"
               }
             }
         },
-        "Publicacao":{
-            "type": "object",
-            "properties": {
-                "info":{
-                    "type":"object",
-                    "properties": {
-                        "id":{
-                            "type":"string"
-                        },
-                        "conteudo":{
-                            "type":"string"
-                        },
-                        "data":{
-                            "type":"string"
-                        },
-                        "likes":{
-                            "type":"integer"
-                        },
-                        "idUtilizador":{
-                            "type":"string"
-                        }
-                    }
-                },
-                "ficheiros":{
-                    "type":"array",
-                    "items": {
-                        "$ref": "#/definitions/Ficheiro"
-                    }
-                },
-                "comentarios":{
-                    "type":"array",
-                    "items": {
-                        "$ref": "#/definitions/Comentario"
-                    }
-                }
+        "Professor":{
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "codigo": {
+              "type": "string"
+            },
+            "nome": {
+              "type": "string"
+            },
+            "escola": {
+              "type": "string"
+            },
+            "email":{
+              "type":"string"
+            },
+            "confirmacao":{
+              "type":"integer"
+            },
+            "premium":{
+              "type":"integer"
+            },
+            "validade":{
+              "type":"string"
+            },
+            "socionum":{
+              "type":"integer"
+            },
+            "projeto":{
+              "type":"integer"
             }
+          }    
         }
     }   
 }

@@ -74,32 +74,30 @@ var swaggerDefinition = {
   ],
   tags: [
     {
-      name: "alunos",
+      name: "Alunos",
       description: "Todas as operações à cerca de alunos."
     },
     {
-      name: "professores",
+      name: "Professores",
       description: "Todas as operações à cerca de professores."
     },
     {
-      name: "escolas",
+      name: "Escolas",
       description: "Todas as operações à cerca de escolas."
     },
     {
-        name: "turmas",
+        name: "Turmas",
         description: "Todas as operações à cerca de turmas."
     }
   ],
   securityDefinitions:{
-    api_key:{
+    bearerAuth:{
       type: "apiKey",
       in: "query",
-      name: "token"
+      name: "token",
+      scheme: "bearer"
     }
-  },
-  security: [{
-     api_key: []
-  }]
+  }
 };
 
 // options for the swagger docs
@@ -113,10 +111,12 @@ var options = {
 // initialize swagger-jsdoc
 var swaggerSpec = swaggerJSDoc(options);
 
+var swaggerDocument = require('./swagger.json');
+
 app.use(
   "/api-docs",
   swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec)
+  swaggerUi.setup(swaggerDocument)
 );
 
 app.use('/aplicacoes/professores', professoresRouter);
