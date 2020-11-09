@@ -58,114 +58,112 @@
             },
             "post":{
                 "tags":[
-                    "cursos"
+                    "Professores"
                 ],
-                "summary": "Inserir um novo curso.",
+                "summary": "Inserir um novo professor.",
                 "description": "Adiciona um novo curso à base de dados.",
                 "parameters": [
                     {
-                      "name": "id",
+                      "name": "codigo",
                       "in": "formData",
-                      "description": "ID do curso",
+                      "description": "Código/Username de um professor",
                       "required": true,
                       "type": "string"
                     },
                     {
                       "name": "nome",
                       "in": "formData",
-                      "description": "Nome do curso",
+                      "description": "Nome do professor",
+                      "required": true,
+                      "type": "string"
+                    },
+                    {
+                      "name": "escola",
+                      "in": "formData",
+                      "description": "Identificador da escola do professor",
+                      "required": true,
+                      "type": "integer"
+                    },
+                    {
+                      "name": "email",
+                      "in": "formData",
+                      "description": "Email do professor",
+                      "required": true,
+                      "type": "string"
+                    },{
+                      "name": "password",
+                      "in": "formData",
+                      "description": "Password do professor",
+                      "required": true,
+                      "type": "string"
+                    },{
+                      "name": "confirmacao",
+                      "in": "formData",
+                      "description": "0 se o professor não está confirmado, 1 caso contrário",
+                      "required": true,
+                      "type": "integer"
+                    },{
+                      
+                      "name": "premium",
+                      "in": "formData",
+                      "description": "1 se o professor é premium, 0 caso contrário",
+                      "required": true,
+                      "type": "string"
+                    },{
+                      "name": "socionum",
+                      "in": "formData",
+                      "description": "Número de sócio do professor",
+                      "required": true,
+                      "type": "integer"
+                    },{
+                      "name": "validade",
+                      "in": "formData",
+                      "description": "Data em que a sua conta expira",
                       "required": true,
                       "type": "string"
                     }
+
                   ],
                 "responses": {
                     "200": {
-                        "description": "Retorna o id do Curso criado",
+                        "description": "Retorna o id do professor criado",
                         "schema": {
                             "type": "string",
                             "items": {
                                 "properties": {
-                                    "curso": {
+                                    "id": {
                                         "type": "string"
                                     }
                                 }
                             }
                         }
-                    },
-                    "401":{
-                      "description": "Falta-lhe o token de acesso ou o token não é válido."
                     }
                 }
             }
         },
-        "/cursos/{cursoId}": {
+        "/aplicacoes/professores/{codigoProf}": {
             "get": {
               "tags": [
-                "cursos"
+                "Professores"
               ],
-              "summary": "Dado um identificador de um curso, devolve toda a informação relativa a esse curso.",
-              "description": "Devolve toda a informação relativa a um curso.",
-              "operationId": "getCursoById",
+              "summary": "Dado um código de um professor, devolve toda a informação relativa a esse professor.",
+              "description": "Devolve toda a informação relativa a um professor.",
+              "operationId": "getProfessorByCodigo",
               "parameters": [
                 {
-                  "name": "cursoId",
+                  "name": "codigoProf",
                   "in": "path",
-                  "description": "ID do curso a retornar.",
+                  "description": "Código do professor a retornar.",
                   "required": true,
                   "type": "string"
                 }
               ],
               "responses": {
                 "200": {
-                    "description": "Retorna toda a informação relativa a um curso.",
+                    "description": "Retorna a informação relativa a um professor.",
                     "schema": {
-                        "type": "object",
-                        "properties": {
-                            "info": {
-                                "$ref": "#/definitions/Curso"
-                            },
-                            "anos":{
-                                "type":"array",
-                                "items": {
-                                    "type":"object",
-                                    "properties": {
-                                        "id":{
-                                            "type":"string"
-                                        },
-                                        "designacao":{
-                                            "type":"string"
-                                        }
-                                    }
-                                }
-                            },
-                            "estudantes":{
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/definitions/Utilizador"
-                                }
-                            },
-                            "responsaveis":{
-                                "type": "object",
-                                "properties": {
-                                    "ano":{
-                                        "type":"string"
-                                    },
-                                    "responsaveisAno":{
-                                        "type":"array",
-                                        "items":{
-                                            "$ref": "#/definitions/Utilizador"
-                                        }
-                                    }
-                                }
-                            },
-                            "publicacoes":{
-                                "type":"array",
-                                "items": {
-                                    "$ref": "#/definitions/Publicacao"
-                                }
-                            }
+                        "$ref": "#/definitions/Professor"   
                         }
-                    }
                 },
                 "401":{
                   "description": "Falta-lhe o token de acesso ou o token não é válido."
@@ -173,34 +171,84 @@
                 "403":{
                   "description": "Não possuí nível de acesso suficiente."
                 }
-              }
+              },
+              "security": [
+                {
+                  "api_key": []
+                }
+              ]
             },
             "put":{
               "tags": [
-                "cursos"
+                "Professores"
               ],
-              "summary": "Dado um identificador de um curso, edite a informação relacionada com ele.",
-              "description": "Para editar um curso, é necessário ser Admin.",
-              "operationId": "putCursoById",
+              "summary": "Dado um código de um professor, edite a informação relacionada com ele.",
+              "description": "Editar um professor.",
+              "operationId": "putProfessorByCodigo",
               "parameters": [
                 {
-                  "name": "cursoId",
+                  "name": "codigoProf",
                   "in": "path",
-                  "description": "ID do curso a editar.",
+                  "description": "Código/Username de um professor",
                   "required": true,
                   "type": "string"
                 },
                 {
-                  "name": "designacao",
+                  "name": "nome",
                   "in": "formData",
-                  "description": "Nova designação.",
+                  "description": "Nome do professor",
+                  "required": true,
+                  "type": "string"
+                },
+                {
+                  "name": "escola",
+                  "in": "formData",
+                  "description": "Identificador da escola do professor",
+                  "required": true,
+                  "type": "integer"
+                },
+                {
+                  "name": "email",
+                  "in": "formData",
+                  "description": "Email do professor",
+                  "required": true,
+                  "type": "string"
+                },{
+                  "name": "password",
+                  "in": "formData",
+                  "description": "Password do professor",
+                  "required": true,
+                  "type": "string"
+                },{
+                  "name": "confirmacao",
+                  "in": "formData",
+                  "description": "0 se o professor não está confirmado, 1 caso contrário",
+                  "required": true,
+                  "type": "integer"
+                },{
+                  
+                  "name": "premium",
+                  "in": "formData",
+                  "description": "1 se o professor é premium, 0 caso contrário",
+                  "required": true,
+                  "type": "string"
+                },{
+                  "name": "socionum",
+                  "in": "formData",
+                  "description": "Número de sócio do professor",
+                  "required": true,
+                  "type": "integer"
+                },{
+                  "name": "validade",
+                  "in": "formData",
+                  "description": "Data em que a sua conta expira",
                   "required": true,
                   "type": "string"
                 }
               ],
               "responses": {
                 "200": {
-                  "description": "O curso foi editado."
+                  "description": "O professor foi editado."
                 },
                 "401":{
                   "description": "Falta-lhe o token de acesso ou o token não é válido."
@@ -208,27 +256,32 @@
                 "403":{
                   "description": "Não possuí nível de acesso suficiente."
                 }
-              }
+              },
+                "security": [
+                  {
+                    "api_key": []
+                  }
+                ]
             },
             "delete": {
               "tags": [
-                "cursos"
+                "Professores"
               ],
-              "summary": "Dado um identificador de um curso, elimine o curso da base de dados.",
-              "description": "Para apagar um curso, é necessário ser Admin.",
-              "operationId": "deleteCursoById",
+              "summary": "Dado um código de professor, elimine o professor da base de dados.",
+              "description": "Apagar um professor.",
+              "operationId": "deleteProfessorByCodigo",
               "parameters": [
                 {
-                  "name": "cursoId",
+                  "name": "codigoProf",
                   "in": "path",
-                  "description": "ID do curso a editar.",
+                  "description": "Código do professor a apagar.",
                   "required": true,
                   "type": "string"
                 }
               ],
               "responses": {
                 "200": {
-                  "description": "O curso foi eliminado."
+                  "description": "O professor foi eliminado."
                 },
                 "401":{
                   "description": "Falta-lhe o token de acesso ou o token não é válido."
@@ -236,160 +289,92 @@
                 "403":{
                   "description": "Não possuí nível de acesso suficiente."
                 }
-              }
+              },
+              "security": [
+                {
+                  "api_key": []
+                }
+              ]
+              
             }
         },
-        "/cursos/{cursoId}/anos": {
+        "/aplicacoes/professores/{idProf}/turmas": {
             "get": {
               "tags": [
-                "cursos"
+                "Professores"
               ],
-              "summary": "Dado um identificador de um curso, devolve todos os anos pertencentes a esse curso.",
-              "description": "Devolve todos os anos de um curso.",
-              "operationId": "getAnosCursoById",
+              "summary": "Dado um identificador de um professor, devolve todas as suas turmas.",
+              "description": "Devolve todos as turmas de um professor.",
+              "operationId": "getTurmasProfessorByCodigo",
               "parameters": [
                 {
-                  "name": "cursoId",
+                  "name": "idProf",
                   "in": "path",
-                  "description": "ID do curso a retornar.",
+                  "description": "Id do professor a retornar.",
                   "required": true,
                   "type": "string"
                 }
               ],
               "responses": {
                 "200": {
-                    "description": "Retorna todos os anos relativos a um curso.",
-                    "schema": {
-                        "type": "array",
-                        "items": {
-                            "type":"object",
-                            "properties": {
-                                "id":{
-                                    "type":"string"
-                                },
-                                "designacao":{
-                                    "type":"string"
-                                }
-                            }
-                        }
-                    }
-                },
-                "401":{
-                  "description": "Falta-lhe o token de acesso ou o token não é válido."
-                }
-              }
-            }
-        },
-        "/cursos/{cursoId}/estudantes": {
-            "get": {
-              "tags": [
-                "cursos"
-              ],
-              "summary": "Dado um identificador de um curso, devolve todos os estudantes pertencentes a esse curso.",
-              "description": "Devolve todos os estudantes de um curso.",
-              "operationId": "getEstudantesAnoById",
-              "parameters": [
-                {
-                  "name": "cursoId",
-                  "in": "path",
-                  "description": "ID do curso a retornar.",
-                  "required": true,
-                  "type": "string"
-                }
-              ],
-              "responses": {
-                "200": {
-                    "description": "Retorna todos os estudantes relativos a um curso.",
-                    "schema": {
+                      "description": "Lista de Turmas",
+                      "schema": {
                         "type":"array",
-                        "items": {
-                           "$ref": "#/definitions/Utilizador"
+                        "items":{
+                          "$ref": "#/definitions/Turma"
                         }
-                    }
+                      }
                 },
                 "401":{
                   "description": "Falta-lhe o token de acesso ou o token não é válido."
                 }
-              }
+              },
+              "security": [
+                {
+                  "api_key": []
+                }
+              ]
             }
         },
-        "/cursos/{cursoId}/publicacoes": {
-            "get": {
+        "/aplicacoes/professores/{codigoProf}/password": {
+            "put": {
               "tags": [
-                "cursos"
+                "Professores"
               ],
-              "summary": "Dado um identificador de um curso, devolve todas as publicações pertencentes a esse curso.",
-              "description": "Devolve todos as publicações de um curso.",
-              "operationId": "getPublicacoesCursoById",
+              "summary": "Dado um código de um professor, edita-se a sua palavra passe.",
+              "description": "Editar a password de um professor.",
+              "operationId": "putPasswordProfessorByCodigo",
               "parameters": [
                 {
-                  "name": "cursoId",
+                  "name": "codigoProf",
                   "in": "path",
-                  "description": "ID do curso a retornar.",
+                  "description": "Código do professor a editar.",
+                  "required": true,
+                  "type": "string"
+                },
+                {
+                  "name": "password",
+                  "in": "formData",
+                  "description": "Nova palavra passe.",
                   "required": true,
                   "type": "string"
                 }
               ],
               "responses": {
                 "200": {
-                    "description": "Retorna todos as publicações relativos a um curso.",
-                    "schema": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/definitions/Publicacao"
-                        }
-                    }
+                    "description": "Palavra passe editada com sucesso."
                 },
                 "401":{
                   "description": "Falta-lhe o token de acesso ou o token não é válido."
                 }
-              }
-            }
-        },
-        "/cursos/{cursoId}/responsaveis": {
-            "get": {
-              "tags": [
-                "cursos"
-              ],
-              "summary": "Dado um identificador de um curso, devolve todas os responsáveis pertencentes a esse curso.",
-              "description": "Devolve todos os responsáveis de um curso.",
-              "operationId": "getResponsaveisCursoById",
-              "parameters": [
+              },
+              "security": [
                 {
-                  "name": "cursoId",
-                  "in": "path",
-                  "description": "ID do curso a retornar.",
-                  "required": true,
-                  "type": "string"
+                  "api_key": []
                 }
-              ],
-              "responses": {
-                "200": {
-                    "description": "Retorna todos os responsáveis relativos a um curso.",
-                    "schema": {
-                        "type":"array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "ano":{
-                                    "type":"string"
-                                },
-                                "responsaveisAno":{
-                                    "type":"array",
-                                    "items":{
-                                        "$ref": "#/definitions/Utilizador"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "401":{
-                  "description": "Falta-lhe o token de acesso ou o token não é válido."
-                }
-              }
+              ]
             }
-        }   
+          }
     },
     "securityDefinitions":{
       "api_key":{
@@ -468,6 +453,20 @@
               "type":"integer"
             }
           }    
+        },
+        "Turma":{
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "idprofessor": {
+              "type": "string"
+            },
+            "turma":{
+              "type":"string"
+            }
+          }
         }
     }   
 }
