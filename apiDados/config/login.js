@@ -23,7 +23,8 @@ module.exports.login = async function(user, password){
   var aluno = await Alunos.getPassword(user)
   if (aluno != undefined){
       if(md5Password == aluno.password){
-          var utilizador = await Alunos.getAluno(user)
+          var utilizador = await Alunos.getAlunoByUser(user)
+          utilizador.type = 10
           return {
               type : 10,
               authentication : true, 
@@ -38,10 +39,11 @@ module.exports.login = async function(user, password){
       else {
           if(md5Password == professor.password){
               var type = 20
-              var utilizador = await Professores.getProfessorById(user)
+              var utilizador = await Professores.getProfessorByCodigo(user)
               if(professor.premium == 1) type = 30
+              utilizador.type = type
               return {
-                  type : 30,
+                  type : type,
                   authentication : true, 
                   token : generateToken(utilizador)
               }

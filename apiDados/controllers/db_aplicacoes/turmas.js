@@ -8,8 +8,8 @@ var Turma = function(turma){
 
 Turma.insertTurma = function (turma) {    
     return new Promise(function(resolve, reject) {
-    var args = [turma.id, turma.idprofessor, turma.turma]
-    sql.query("INSERT INTO turmas (`id`, `idprofessor`, `turma`) VALUES (?, ?, ?)", 
+    var args = [turma.idprofessor, turma.turma]
+    sql.query("INSERT INTO turmas (`idprofessor`, `turma`) VALUES (?, ?, ?)", 
                 args, function (err, res) {
             
             if(err) {
@@ -81,8 +81,20 @@ Turma.getTurmaByNome = function (turma) {
     })
 }
 
-Turma.updateTurma = function(turma){
-
+Turma.updateTurma = function(id, turma){
+    return new Promise(function(resolve, reject) {
+        var args = [turma.turma, id]
+        sql.query("UPDATE turmas SET turma = ? Where id = ?", args, function (err, res) {
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    console.log(res.insertId);
+                    resolve(res);
+                }
+            });   
+    })
 }
 
 Turma.deleteTurma = function (id){

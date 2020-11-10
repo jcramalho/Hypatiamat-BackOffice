@@ -1,12 +1,13 @@
 var express = require('express');
 var router = express.Router();
+var passport = require('passport')
 
 var Alunos = require('../../controllers/db_aplicacoes/alunos')
 var Professores = require('../../controllers/db_aplicacoes/professor')
 var Escolas = require('../../controllers/db_aplicacoes/escolas')
 
 // Todas as escolas
-router.get('/', function(req, res, next) {
+router.get('/', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     Escolas.getEscolas()
                .then(dados =>{
                  res.jsonp(dados)
@@ -15,7 +16,7 @@ router.get('/', function(req, res, next) {
   });
 
 // Informação de uma escola
-router.get('/:id', function(req, res, next) {
+router.get('/:id', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     Escolas.getEscola(req.params.id)
                .then(dados =>{
                  res.jsonp(dados)
@@ -24,7 +25,7 @@ router.get('/:id', function(req, res, next) {
   });
 
 // Todas as escolas de um país
-router.get('/paises/:pais', function(req, res, next) {
+router.get('/paises/:pais', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     Escolas.getEscolasByPais(req.params.pais)
                .then(dados =>{
                  res.jsonp(dados)
@@ -33,7 +34,7 @@ router.get('/paises/:pais', function(req, res, next) {
   });
 
 // Todas as escolas de um distrito
-router.get('/distritos/:distrito', function(req, res, next) {
+router.get('/distritos/:distrito', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     Escolas.getEscolasByDistrito(req.params.distrito)
                .then(dados =>{
                  res.jsonp(dados)
@@ -42,7 +43,7 @@ router.get('/distritos/:distrito', function(req, res, next) {
   });
 
   // Todas as escolas de uma localidade
-router.get('/localidades/:localidade', function(req, res, next) {
+router.get('/localidades/:localidade', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     Escolas.getEscolasByLocalidade(req.params.localidade)
                .then(dados =>{
                  res.jsonp(dados)
@@ -51,7 +52,7 @@ router.get('/localidades/:localidade', function(req, res, next) {
   });
 
 // Devolve todos os alunos de uma determinada escola
-router.get('/:id/alunos', function(req, res){
+router.get('/:id/alunos', passport.authenticate('jwt', {session: false}), function(req, res){
     Alunos.getAlunosFromEscola(req.params.id)
                .then(alunosAtuais =>{
                 res.jsonp(alunosAtuais)
@@ -60,7 +61,7 @@ router.get('/:id/alunos', function(req, res){
 })
 
 // Devolve todos os professores de uma determinada escola
-router.get('/:id/professores', function(req, res){
+router.get('/:id/professores', passport.authenticate('jwt', {session: false}), function(req, res){
     Professores.getProfessoresByEscola(req.params.id)
                .then(alunosAtuais =>{
                 res.jsonp(alunosAtuais)
@@ -79,7 +80,7 @@ router.post('/', function(req, res){
 
 
 // Apaga uma determinado escola
-router.delete('/:id', function(req, res){
+router.delete('/:id', passport.authenticate('jwt', {session: false}), function(req, res){
     Escolas.deleteEscola(req.params.id)
                .then(dados =>{
                  res.jsonp(dados)

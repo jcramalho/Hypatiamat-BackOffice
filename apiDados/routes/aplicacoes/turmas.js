@@ -1,11 +1,12 @@
 var express = require('express');
 var router = express.Router();
+var passport = require('passport')
 
 var Alunos = require('../../controllers/db_aplicacoes/alunos')
 var Turmas = require('../../controllers/db_aplicacoes/turmas')
 
 // Todas as turmas
-router.get('/', function(req, res, next) {
+router.get('/', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     Turmas.getTurmas()
                .then(dados =>{
                  res.jsonp(dados)
@@ -14,7 +15,7 @@ router.get('/', function(req, res, next) {
   });
 
 // Informação de uma turma
-router.get('/:id', function(req, res, next) {
+router.get('/:id', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     Turmas.getTurmaById(req.params.id)
                .then(dados =>{
                  res.jsonp(dados)
@@ -23,7 +24,7 @@ router.get('/:id', function(req, res, next) {
   });
 
 // Devolve todos os alunos de uma determinada turma
-router.get('/:id/alunos', function(req, res){
+router.get('/:id/alunos', passport.authenticate('jwt', {session: false}), function(req, res){
     var turma = req.params.id
     Alunos.getAlunosFromTurma(turma)
                .then(alunosAtuais =>{
@@ -40,7 +41,7 @@ router.get('/:id/alunos', function(req, res){
 })
 
 //Insere uma nova turma
-router.post('/', function(req, res){
+router.post('/', passport.authenticate('jwt', {session: false}), function(req, res){
     Turmas.insertTurma(req.body)
                .then(dados =>{
                  res.jsonp(dados)
@@ -48,9 +49,18 @@ router.post('/', function(req, res){
                .catch(erro => res.status(500).jsonp(erro))
 })
 
+//Altera uma turma
+router.put('/:id', passport.authenticate('jwt', {session: false}), function(req, res){
+  Turmas.updateTurma(req.params.id, req.body)
+             .then(dados =>{
+               res.jsonp(dados)
+             })
+             .catch(erro => res.status(500).jsonp(erro))
+})
+
 
 // Apaga uma determinado turma
-router.delete('/:id', function(req, res){
+router.delete('/:id', passport.authenticate('jwt', {session: false}), function(req, res){
     Turmas.deleteTurma(req.params.id)
                .then(dados =>{
                  res.jsonp(dados)

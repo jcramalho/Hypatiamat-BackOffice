@@ -11,9 +11,9 @@ var Escola = function(escola){
 
 Escola.insertEscola = function (escola) {    
     return new Promise(function(resolve, reject) {
-    var args = [escola.id, escola.nome, escola.localidade, escola.distrito, escola.pais, escola.cod]
-    sql.query("INSERT INTO escolas (`id`, `nome`, `localidade`, `distrito`, `pais`, `cod`)"+ 
-                " VALUES (?, ?, ?, ?, ?, ?)", 
+    var args = [escola.nome, escola.localidade, escola.distrito, escola.pais, escola.cod]
+    sql.query("INSERT INTO escolas (nome`, `localidade`, `distrito`, `pais`, `cod`)"+ 
+                " VALUES (?, ?, ?, ?, ?)", 
                 args, function (err, res) {
             
             if(err) {

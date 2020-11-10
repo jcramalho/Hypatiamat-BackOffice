@@ -15,8 +15,8 @@ router.get('/', passport.authenticate('jwt', {session: false}), function(req, re
 });
 
 /* GET devolve a informação de um aluno. */
-router.get('/:user', passport.authenticate('jwt', {session: false}), function(req, res, next) {
-    Alunos.getAluno(req.params.user)
+router.get('/:id', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    Alunos.getAluno(req.params.id)
                .then(dados =>{
                  res.jsonp(dados)
                })
@@ -24,17 +24,28 @@ router.get('/:user', passport.authenticate('jwt', {session: false}), function(re
 });
 
 /* PUT altera a informação de um aluno. */
-router.put('/:user', passport.authenticate('jwt', {session: false}), function(req, res, next) {
-    Alunos.updateAluno(req.params.user, req.body)
+router.put('/:id', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    Alunos.updateAluno(req.params.id, req.body)
                .then(dados =>{
                  res.jsonp(dados)
                })
                .catch(erro => res.status(500).jsonp(erro))
 });
 
+
+/* PUT altera a escola de um aluno. */
+router.put('/:id/escola', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  Alunos.updateTurma(req.params.id, req.body.turma)
+             .then(dados =>{
+                  //TurmaOld.insertTurmaOld()
+                  res.jsonp(dados)
+             })
+             .catch(erro => res.status(500).jsonp(erro))
+});
+
 /* PUT altera a turma de um aluno. */
-router.put('/:user/turma', passport.authenticate('jwt', {session: false}), function(req, res, next) {
-    Alunos.updateTurma(req.params.user, req.body.turma)
+router.put('/:id/turma', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    Alunos.updateTurma(req.params.id, req.body.turma)
                .then(dados =>{
                     //TurmaOld.insertTurmaOld()
                     res.jsonp(dados)
@@ -43,8 +54,8 @@ router.put('/:user/turma', passport.authenticate('jwt', {session: false}), funct
 });
 
 /* PUT altera a password de um aluno. */
-router.put('/:user/password', passport.authenticate('jwt', {session: false}), function(req, res, next) {
-  Alunos.updateTurma(req.params.user, req.body.password)
+router.put('/:id/password', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  Alunos.updateTurma(req.params.id, req.body.password)
              .then(dados =>{
                   res.jsonp(dados)
              })
@@ -61,8 +72,8 @@ router.post('/', function(req, res, next) {
 });
 
 /* DELETE apaga um aluno. */
-router.delete('/:user', passport.authenticate('jwt', {session: false}), function(req, res, next) {
-    Alunos.deleteAluno(req.params.user)
+router.delete('/:id', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    Alunos.deleteAluno(req.params.id)
                .then(dados =>{
                  res.jsonp(dados)
                })

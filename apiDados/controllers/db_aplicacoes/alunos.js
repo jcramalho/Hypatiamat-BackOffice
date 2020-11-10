@@ -40,10 +40,10 @@ Aluno.insertAluno = function (aluno) {
 };
 
 
-Aluno.getPassword = function (user){
+Aluno.getPassword = function (id){
     return new Promise(function(resolve, reject) {
         var args = []
-        sql.query("Select password from alunos where user=?", user, function(err, res){
+        sql.query("Select password from alunos where id=?", id, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -70,7 +70,22 @@ Aluno.getAlunos = function(){
     })
 }
 
-Aluno.getAluno = function(user){
+Aluno.getAluno = function(id){
+    return new Promise(function(resolve, reject) {
+        sql.query("Select id, user, numero, nome, datanascimento, escola, turma, email, confirmacao from alunos where id=?", id, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if(res.length != 0) resolve(res[0])
+                else resolve(undefined)
+            }
+        })
+    })
+}
+
+Aluno.getAlunoByUser = function(user){
     return new Promise(function(resolve, reject) {
         sql.query("Select id, user, numero, nome, datanascimento, escola, turma, email, confirmacao from alunos where user=?", user, function(err, res){
             if(err){
@@ -115,9 +130,8 @@ Aluno.getAlunosFromEscola = function(escola){
 
 Aluno.updateAluno = function(id, aluno){
     return new Promise(function(resolve, reject) {
-        var args = [aluno.numero, aluno.nome, aluno.datanascimento, 
-            aluno.escola, aluno.turma, aluno.email, aluno.confirmacao, id]
-        sql.query("UPDATE alunos SET numero = ?, nome = ?, datanascimento = ?, escola = ?, turma = ?, email = ?, confirmacao = ? Where user = ?", args, function (err, res) {
+        var args = [aluno.numero, aluno.nome, aluno.datanascimento, aluno.email, aluno.confirmacao, id]
+        sql.query("UPDATE alunos SET numero = ?, nome = ?, datanascimento = ?, email = ?, confirmacao = ? Where id = ?", args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
                     reject(err);
@@ -130,10 +144,10 @@ Aluno.updateAluno = function(id, aluno){
     })
 }
 
-Aluno.updateTurma = function(user, turma){
+Aluno.updateTurma = function(id, turma){
     return new Promise(function(resolve, reject) {
-        var args = [turma, user]
-        sql.query("UPDATE alunos SET turma = ? Where user = ?", args, function (err, res) {
+        var args = [turma, id]
+        sql.query("UPDATE alunos SET turma = ? Where id = ?", args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
                     reject(err);
@@ -146,10 +160,10 @@ Aluno.updateTurma = function(user, turma){
     })
 }
 
-Aluno.updatePassword = function(user, password){
+Aluno.updatePassword = function(id, password){
     return new Promise(function(resolve, reject) {
-        var args = [md5(password), user]
-        sql.query("UPDATE alunos SET password = ? Where user = ?", args, function (err, res) {
+        var args = [md5(password), id]
+        sql.query("UPDATE alunos SET password = ? Where id = ?", args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
                     reject(err);
@@ -163,9 +177,9 @@ Aluno.updatePassword = function(user, password){
 }
 
 // ??
-Aluno.deleteAluno = function(user){
+Aluno.deleteAluno = function(id){
     return new Promise(function(resolve, reject) {
-        sql.query("Delete From alunos where user = ?", user, function (err, res) {
+        sql.query("Delete From alunos where id = ?", id, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
                     reject(err);
