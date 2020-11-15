@@ -43,15 +43,16 @@ Escola.getEscolas = function(){
 }
 
 
-Escola.getEscola = function (cod) {
+Escola.getEscola = function (id) {
     return new Promise(function(resolve, reject) {
-        sql.query("Select * from escolas where cod=?", cod, function(err, res){
+        sql.query("Select * from escolas where id=?", id, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
             }
             else{
-                resolve(res)
+               if(res.length != 0) resolve(res[0])
+               else resolve(undefined)
             }
         })
     })
@@ -100,8 +101,21 @@ Escola.getEscolasByPais = function (pais) {
 }
 
 
-Escola.updateEscola = function(escola){
-
+Escola.updateEscola = function(id, escola){
+    //nome`, `localidade`, `distrito`, `pais`, `cod`
+    return new Promise(function(resolve, reject) {
+        var args = [escola.nome, escola.localidade, escola.distrito, escola.pais, escola.cod, id]
+        sql.query("Update escolas Set nome = ?, localidade = ?, distrito = ?, pais = ?, cod = ? where id = ?", args, function (err, res) {
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    console.log(res.insertId);
+                    resolve(res);
+                }
+            });   
+    })
 }
 
 Escola.deleteEscola = function (cod){
