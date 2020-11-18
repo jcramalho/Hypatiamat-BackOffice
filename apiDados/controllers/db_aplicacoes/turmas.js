@@ -9,7 +9,7 @@ var Turma = function(turma){
 Turma.insertTurma = function (turma) {    
     return new Promise(function(resolve, reject) {
     var args = [turma.idprofessor, turma.turma]
-    sql.query("INSERT INTO turmas (`idprofessor`, `turma`) VALUES (?, ?, ?)", 
+    sql.query("INSERT INTO turmas (`idprofessor`, `turma`) VALUES (?, ?)", 
                 args, function (err, res) {
             
             if(err) {
@@ -41,13 +41,14 @@ Turma.getTurmas = function(){
 
 Turma.getTurmaById = function (id) {
     return new Promise(function(resolve, reject) {
-        sql.query("Select * from turmas where turma=?", id, function(err, res){
+        sql.query("Select * from turmas where id=?", id, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
             }
             else{
-                resolve(res)
+                if(res.length!=0) resolve(res[0])
+                else resolve(undefined)
             }
         })
     })
@@ -75,7 +76,8 @@ Turma.getTurmaByNome = function (turma) {
                 reject(err)
             }
             else{
-                resolve(res)
+                if(res.length!=0) resolve(res[0])
+                else resolve(undefined)
             }
         })
     })

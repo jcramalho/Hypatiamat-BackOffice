@@ -4,8 +4,9 @@
     <v-card>
         <v-container>
             <v-card-title primary-title class="justify-center green--text">
-                Lista de Alunos
+                Minhas Turmas
             </v-card-title>
+            <center><v-btn class="white--text" style="background-color: #009263;" @click="criarTurma"> <v-icon> mdi-book-plus </v-icon> Criar Turma </v-btn></center>
             <v-text-field
                 v-model="filtrar"
                 label="Filtrar"
@@ -13,21 +14,17 @@
                 ></v-text-field>
                 <v-data-table
                 class="elevation-1"
-                loading
-                loading-text="A carregar alunos..."
-                :headers="header_alunos"
-                :items="alunos"
+                :headers="header_turmas"
+                :items="turmas"
                 :footer-props="footer_props"
                 :search="filtrar"
                 >
                 <template v-slot:item="row">
                 <tr>
-                    <td>{{row.item.user}}</td>
-                    <td>{{row.item.nome}}</td>
+                    <td>{{row.item.turma}}</td>
                     <td>
-                    <v-icon @click="verAluno(row.item.id)"> mdi-eye </v-icon>
-                    <v-icon @click="editarAluno(row.item.id)"> mdi-pencil </v-icon>
-                    <v-icon @click="apagarAluno(row.item.iduser)"> mdi-delete </v-icon>
+                    <v-icon @click="editarTurma(row.item.id)"> mdi-pencil </v-icon>
+                    <v-icon @click="apagarTurma(row.item.id)"> mdi-delete </v-icon>
                     </td>
                 </tr>
                 </template>
@@ -48,10 +45,10 @@ const h = require("@/config/hosts").hostAPI
     data(){
       return {
         token: "",
-        alunos: [],
-         header_alunos: [
-            {text: "Username", sortable: true, value: 'user', class: 'subtitle-1'},
-            {text: "Nome", value: 'nome', class: 'subtitle-1'},
+        turmas: [],
+        utilizador : {},
+         header_turmas: [
+            {text: "Turma", value: 'turma', class: 'subtitle-1'},
             {text: "Operações", class: 'subtitle-1'},
         ],
         footer_props: {
@@ -64,21 +61,23 @@ const h = require("@/config/hosts").hostAPI
     },
     created: async function(){
         this.token = localStorage.getItem("token")
-        var response = await axios.get(h + "alunos?token=" + this.token)
-        this.alunos = response.data
+        this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
+        console.log(this.utilizador)
+        var response = await axios.get(h + "professores/" + this.utilizador.codigo + "/turmas?token=" + this.token)
+        this.turmas = response.data
     },
     methods: {
-      verAluno : function(id){
-          this.$router.push({name: "Ver Aluno", params: { id : id } })
+      editarTurma : function(id){
+          this.$router.push({name: "Editar Turma", params: { id : id } })
       },
-      editarAluno : function(id){
-          this.$router.push({name: "Editar Aluno", params: { id : id } })
+      criarTurma : function(id){
+          this.$router.push({name: "Criar Turma" })
       },
-      apagarAluno: async function(id){
-          if(confirm("De certeza que deseja apagar este aluno?")){
-              var a = axios.delete(h + "alunos/" + id + "?token=" + this.token)
-              var response = await axios.get(h + "alunos?token=" + this.token)
-              this.professores = response.data
+      apagarTurma: async function(id){
+          if(confirm("De certeza que deseja apagar esta turma?")){
+              var a = await axios.delete(h + "turmas/" + id + "?token=" + this.token)
+              var response = await axios.get(h + "turmas?token=" + this.token)
+              this.turmas = response.data
           }
       }
     }

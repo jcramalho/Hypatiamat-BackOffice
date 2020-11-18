@@ -9,7 +9,7 @@
           :mini-variant.sync="mini"
           permanent
           floating
-          src="https://images-na.ssl-images-amazon.com/images/I/517ZuqvFiML._AC_SY679_.jpg"
+          color="#009263"
           mobile-break-point="991"
           width="260"
           >
@@ -99,12 +99,13 @@ export default {
     else this.idUtilizador = utilizador.codigo
     this.nomeUtilizador = utilizador.nome
     this.items = [
-        { title: 'Adminstração', icon: 'mdi-view-dashboard',href:"/adminstracao" },
+        { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
         { title: 'Professores', icon: 'mdi-teach', href:"/professores" },
-        { title: 'Alunos', icon: 'mdi-calendar-clock', href:"/alunos" },
+        { title: 'Alunos', icon: 'mdi-account-group', href:"/alunos" },
         { title: 'Escolas', icon: 'mdi-school', href:"/escolas" },
         { title: 'Turmas', icon: 'mdi-book-account', href:"/turmas" },
-        { title: 'Logout', icon: 'mdi-logout'}
+        { title: 'Minhas Turmas', icon: 'mdi-book-account', href:"/minhasturmas" },
+        { title: 'Terminar sessão', icon: 'mdi-logout'}
     ]
   },
   computed: {

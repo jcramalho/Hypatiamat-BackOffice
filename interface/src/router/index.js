@@ -13,16 +13,14 @@ import EditarProfessor from '../views/EditarProfessor.vue'
 import EditarAluno from '../views/EditarAluno.vue'
 import EditarEscola from '../views/EditarEscola.vue'
 import EditarTurma from '../views/EditarTurma.vue'
+import MinhasTurmas from '../views/MinhasTurmas.vue'
+import CriarTurma from '../views/CriarTurma.vue'
+
 
 
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: '/feed',
-    name: 'Feed',
-    component: AuthApp
-  },
   {
     path: '/about',
     name: 'About',
@@ -52,7 +50,7 @@ const routes = [
     component: Turmas
   },
   {
-    path: '/adminstracao',
+    path: '/',
     name: 'Meu Perfil',
     component: MyProfile
   },
@@ -90,7 +88,18 @@ const routes = [
     path: '/alunos/:id',
     name: 'Aluno',
     component: Aluno
+  },
+  {
+    path: '/minhasturmas',
+    name: 'Minhas Turmas',
+    component: MinhasTurmas
+  },
+  {
+    path: '/criarTurma',
+    name: 'Criar Turma',
+    component: CriarTurma
   }
+
 
 ]
 
