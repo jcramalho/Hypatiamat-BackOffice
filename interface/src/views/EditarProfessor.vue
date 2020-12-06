@@ -22,13 +22,16 @@
             v-model="dialogTurmas"
             width="40%"
             >
-                <v-card>
+                <v-card class="pa-5">
                 <v-text-field
                 v-model="filtrar"
+                prepend-icon="mdi-magnify"
+                color="#009263"
                 label="Filtrar"
                 single-line
                 ></v-text-field>
                 <v-data-table
+                class="elevation-1"
                 :headers="header_turmas"
                 :items="turmas"
                 :footer-props="footer_props"
@@ -63,7 +66,6 @@ const h = require("@/config/hosts").hostAPI
         dialogTurmas: false,
         header_turmas: [
             {text: "Id", sortable: true, value: 'id', class: 'subtitle-1'},
-            {text: "Username do professor", value: 'idprofessor', class: 'subtitle-1'},
             {text: "Turma", value: 'turma', class: 'subtitle-1'}
         ],
         footer_props: {

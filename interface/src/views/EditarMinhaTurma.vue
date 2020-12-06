@@ -110,32 +110,30 @@ const h = require("@/config/hosts").hostAPI
         filtrar:"",
         filtrar2:"",
         turma2:"",
-        codprofessor2:"",
-        minhaTurma: false
+        minhaTurma: false,
+        utilizador:{}
+        
       }
     },
     created: async function(){
         this.token = localStorage.getItem("token")
-        let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+        this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
         this.id = this.$route.params.id
-        this.minhaTurma = this.$route.params.minhaTurma
         var response = await axios.get(h + "turmas/" + this.id + "?token=" + this.token)
         this.turma = response.data
         response = await axios.get(h + "turmas/" + this.turma.turma + "/alunos?codprofessor="+ this.turma.idprofessor + "&token=" + this.token)
         this.alunosTurmaAtual = response.data
-        response = await axios.get(h + "turmas?token=" + this.token)
+        response = await axios.get(h + "professores/" + this.utilizador.codigo + "/turmas?token=" + this.token)
         var i = 0
         for(i = 0; i < response.data.length; i++){
-          if(response.data[i].turma != this.turma.turma) this.turmas.push(response.data[i].turma + " - " + response.data[i].idprofessor)
+          if(response.data[i].turma != this.turma.turma) this.turmas.push(response.data[i].turma)
         }
     },
     methods: {
       onTurmaChange: async function(item){
         if(item != null){
-         var aux = item.split(" - ")
-         this.turma2 = aux[0]
-         this.codprofessor2 = aux[1]
-         let response = await axios.get(h + "turmas/" + this.turma2 + "/alunos?codprofessor="+ this.codprofessor2 + "&token=" + this.token)
+         this.turma2 = item
+         let response = await axios.get(h + "turmas/" + this.turma2 + "/alunos?codprofessor="+ this.utilizador.codigo + "&token=" + this.token)
          this.alunosOutraTurma = response.data
         }
       }, 

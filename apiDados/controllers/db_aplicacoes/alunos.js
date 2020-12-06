@@ -40,10 +40,9 @@ Aluno.insertAluno = function (aluno) {
 };
 
 
-Aluno.getPassword = function (id){
+Aluno.getPassword = function (user){
     return new Promise(function(resolve, reject) {
-        var args = []
-        sql.query("Select password from alunos where id=?", id, function(err, res){
+        sql.query("Select password from alunos where user=?", user, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -72,7 +71,7 @@ Aluno.getAlunos = function(){
 
 Aluno.getAluno = function(id){
     return new Promise(function(resolve, reject) {
-        sql.query("Select id, user, numero, nome, datanascimento, escola, turma, email, confirmacao from alunos where id=?", id, function(err, res){
+        sql.query("Select id, user, numero, nome, datanascimento, escola, turma, email, codprofessor, pais, confirmacao from alunos where id=?", id, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -83,6 +82,41 @@ Aluno.getAluno = function(id){
             }
         })
     })
+}
+
+Aluno.getJogosFromAluno  = function (dataInicio, dataFim, jogoTipo, tableJogo, user){
+    return new Promise(function(resolve, reject) {
+        sql.query("Select al.numero, jogo.idaluno, al.nome, jogo.pontuacao, jogo.data, jogo.horario " +
+        "from hypat_samd." + tableJogo + " jogo, hypat_aplicacoes.alunos al " +  
+        "where jogo.tipo = ? and jogo.idaluno = ? and al.user = jogo.idaluno and (jogo.data between ? and ?) Order by jogo.data DESC;"
+        , [jogoTipo, user, dataInicio, dataFim], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })   
+}
+
+Aluno.getJogosGlobalFromAluno  = function (dataInicio, dataFim, jogoTipo, tableJogo, user){
+    return new Promise(function(resolve, reject) {
+        sql.query("Select al.numero, jogo.idaluno, al.nome, AVG(jogo.pontuacao) as media, MAX(jogo.pontuacao) as maximo, MIN(jogo.pontuacao) as minimo, count(jogo.pontuacao) as count " +
+        "from hypat_samd." + tableJogo + " jogo, hypat_aplicacoes.alunos al " +  
+        "where jogo.tipo = ? and jogo.idaluno = ? and al.user = jogo.idaluno and (jogo.data between ? and ?) "+ 
+        "Group by idaluno", [jogoTipo, user, dataInicio, dataFim], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if(res.length > 0) resolve(res[0])
+                else resolve(undefined)
+            }
+        })
+    })   
 }
 
 Aluno.getAlunoByUser = function(user){
@@ -100,9 +134,9 @@ Aluno.getAlunoByUser = function(user){
     })
 }
 
-Aluno.getAlunosFromTurma = function(turma){
+Aluno.getAlunosFromTurma = function(turma, codprofessor){
     return new Promise(function(resolve, reject) {
-        sql.query("Select id, user, numero, nome, datanascimento, escola, turma, email, confirmacao from alunos where turma=?", turma, function(err, res){
+        sql.query("Select id, user, numero, nome, datanascimento, escola, turma, email, confirmacao from alunos where turma=? and codprofessor=?", [turma, codprofessor], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

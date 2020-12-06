@@ -153,9 +153,9 @@
                       
                       "name": "premium",
                       "in": "formData",
-                      "description": "1 se o professor é premium, 0 caso contrário",
+                      "description": "Nível de acesso",
                       "required": true,
-                      "type": "string"
+                      "type": "integer"
                     },{
                       "name": "socionum",
                       "in": "formData",
@@ -168,6 +168,13 @@
                       "description": "Data em que a sua conta expira",
                       "required": true,
                       "type": "string"
+                    },
+                    {
+                      "name": "projeto",
+                      "in": "formData",
+                      "description": "Projeto",
+                      "required": true,
+                      "type": "integer"
                     }
 
                   ],

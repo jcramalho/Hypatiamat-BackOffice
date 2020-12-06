@@ -4,7 +4,7 @@
     <v-card class="pa-5">
         <v-container>
             <v-card-title primary-title class="justify-center green--text">
-                Lista de Alunos
+                Lista de Pedidos de Inscrição
             </v-card-title>
             <v-text-field
                 v-model="filtrar"
@@ -15,20 +15,21 @@
                 ></v-text-field>
                 <v-data-table
                 class="elevation-1"
-                loading-text="A carregar alunos..."
-                :headers="header_alunos"
-                :items="alunos"
+                :headers="header_pendentes"
+                :items="pendentes"
                 :footer-props="footer_props"
                 :search="filtrar"
                 >
                 <template v-slot:item="row">
                 <tr>
-                    <td>{{row.item.user}}</td>
+                    <td>{{row.item.codigo}}</td>
                     <td>{{row.item.nome}}</td>
+                    <td>{{row.item.escola}}</td>
                     <td>
-                    <v-icon @click="verAluno(row.item.id)"> mdi-eye </v-icon>
-                    <v-icon @click="editarAluno(row.item.id)"> mdi-pencil </v-icon>
-                    <v-icon @click="apagarAluno(row.item.iduser)"> mdi-delete </v-icon>
+                    <v-icon @click="aceitarPedido(row.item.id)" color="#009263"> mdi-account-check </v-icon>
+                    </td>
+                    <td>
+                    <v-icon @click="rejeitarPedido(row.item.id)" color="red"> mdi-account-remove </v-icon>
                     </td>
                 </tr>
                 </template>
@@ -49,11 +50,13 @@ const h = require("@/config/hosts").hostAPI
     data(){
       return {
         token: "",
-        alunos: [],
-         header_alunos: [
-            {text: "Username", sortable: true, value: 'user', class: 'subtitle-1'},
+        pendentes: [],
+         header_pendentes: [
+            {text: "Username", sortable: true, value: 'codigo', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
-            {text: "Operações", class: 'subtitle-1'},
+            {text: "Escola", value: 'escola', class: 'subtitle-1'},
+            {text: "Aceitar", class: 'subtitle-1'},
+            {text: "Rejeitar", class: 'subtitle-1'}
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
@@ -65,22 +68,19 @@ const h = require("@/config/hosts").hostAPI
     },
     created: async function(){
         this.token = localStorage.getItem("token")
-        var response = await axios.get(h + "alunos?token=" + this.token)
-        this.alunos = response.data
+        var response = await axios.get(h + "quarentenas?token=" + this.token)
+        this.pendentes = response.data
     },
     methods: {
-      verAluno : function(id){
-          this.$router.push({name: "Ver Aluno", params: { id : id } })
+      aceitarPedido : async function(id){
+        await axios.post(h + "quarentenas/" + id + "?token=" + this.token)
+        var response = await axios.get(h + "quarentenas?token=" + this.token)
+        this.pendentes = response.data
       },
-      editarAluno : function(id){
-          this.$router.push({name: "Editar Aluno", params: { id : id } })
-      },
-      apagarAluno: async function(id){
-          if(confirm("De certeza que deseja apagar este aluno?")){
-              var a = axios.delete(h + "alunos/" + id + "?token=" + this.token)
-              var response = await axios.get(h + "alunos?token=" + this.token)
-              this.professores = response.data
-          }
+      rejeitarPedido: async function(id){
+        await axios.delete(h + "quarentenas/" + id + "?token=" + this.token)
+        var response = await axios.get(h + "quarentenas?token=" + this.token)
+        this.pendentes = response.data
       }
     }
   }

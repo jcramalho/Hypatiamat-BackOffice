@@ -3,7 +3,8 @@ var connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'PEI2020',
-  database: 'hypat_contadores'
+  database: 'hypat_contadores',
+  dateStrings: ['DATE','DATETIME']
 })
 
 

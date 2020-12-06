@@ -17,7 +17,8 @@ var escolasRouter = require('./routes/aplicacoes/escolas')
 var alunosRouter = require('./routes/aplicacoes/alunos')
 var examesRouter = require('./routes/aplicacoes/exames')
 var loginRouter = require('./routes/aplicacoes/login')
-
+var quarentenasRouter = require('./routes/aplicacoes/quarentena')
+var jogosRouter = require('./routes/samd/jogos')
 
 
 var extractFromQS = function(req){
@@ -134,6 +135,8 @@ app.use('/aplicacoes/escolas', escolasRouter)
 app.use('/aplicacoes/alunos', alunosRouter)
 app.use('/aplicacoes/exames', examesRouter)
 app.use('/aplicacoes/login', loginRouter)
+app.use('/aplicacoes/quarentenas', quarentenasRouter)
+app.use('/jogos', jogosRouter)
 
 
 

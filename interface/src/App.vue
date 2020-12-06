@@ -40,6 +40,13 @@ export default {
           mode : false,
         }
     },
+    watch: {
+  /* $route(to) {
+     document.title = `${to.meta.title}`;
+     const link = document.querySelector("[rel='icon']")
+     link.setAttribute('href',to.meta.icon)
+  }*/
+},
     created: function(){
       var aux = false
       var self = this

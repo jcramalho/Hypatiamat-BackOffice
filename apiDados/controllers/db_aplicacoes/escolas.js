@@ -30,7 +30,7 @@ Escola.insertEscola = function (escola) {
 
 Escola.getEscolas = function(){
     return new Promise(function(resolve, reject) {
-        sql.query("Select * from escolas", function(err, res){
+        sql.query("Select * from escolas Order by localidade", function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

@@ -1,7 +1,7 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card>
+    <v-card class="pa-5">
         <v-container>
             <v-card-title primary-title class="justify-center green--text">
                 Lista de Turmas
@@ -9,9 +9,12 @@
             <v-text-field
                 v-model="filtrar"
                 label="Filtrar"
+                prepend-icon="mdi-magnify"
+                color="#009263"
                 single-line
                 ></v-text-field>
                 <v-data-table
+                class="elevation-1"
                 :headers="header_turmas"
                 :items="turmas"
                 :footer-props="footer_props"
@@ -68,7 +71,7 @@ const h = require("@/config/hosts").hostAPI
           this.$router.push({name: "Ver Professor", params: { id : id } })
       },
       editarTurma : function(id){
-          this.$router.push({name: "Editar Turma", params: { id : id } })
+          this.$router.push({name: "Editar Turma", params: { id : id, minhaTurma: false } })
       },
       apagarProfessor: async function(id){
           if(confirm("De certeza que deseja apagar esta turma?")){

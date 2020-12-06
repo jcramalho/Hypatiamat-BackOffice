@@ -1,10 +1,10 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card>
+    <v-card class="pa-5">
         <v-container style="width:50%;">
             <v-card-title primary-title class="justify-center green--text">
-                Editar Escola ({{escola.nome}})
+                Editar Escola ({{nomeEscola}})
             </v-card-title>
                      
           <v-text-field label="Nome" placeholder="Nome" v-model="escola.nome" color="#900000" required/>
@@ -29,11 +29,14 @@
                     Professores da Escola
                 </v-card-title> 
                 <v-text-field
+                prepend-icon="mdi-magnify"
+                color="#009263"
                 v-model="filtrar"
                 label="Filtrar"
                 single-line
                 ></v-text-field>
                 <v-data-table
+                class="elevation-1"
                 :headers="header_professores"
                 :items="professores"
                 :footer-props="footer_props"
@@ -48,16 +51,19 @@
             v-model="dialogAlunos"
             width="40%"
             >
-                <v-card>
+                <v-card class="pa-5">
                 <v-card-title primary-title class="justify-center green--text">
                   Alunos da Escola
                 </v-card-title>
                 <v-text-field
+                prepend-icon="mdi-magnify"
+                color="#009263"
                 v-model="filtrar2"
                 label="Filtrar"
                 single-line
                 ></v-text-field>
                 <v-data-table
+                class="elevation-1"
                 :headers="header_alunos"
                 :items="alunos"
                 :footer-props="footer_props"
@@ -83,6 +89,7 @@ const h = require("@/config/hosts").hostAPI
   export default {
     data(){
       return {
+        nomeEscola:"",
         token: "",
         escola: {},
         id : 0,
@@ -114,6 +121,7 @@ const h = require("@/config/hosts").hostAPI
         var response = await axios.get(h + "escolas/" + this.id + "?token=" + this.token)
         this.escola = response.data
         this.cod = this.escola.cod
+        this.nomeEscola = this.escola.nome
     },
     methods: {
       verAlunos : async function(){

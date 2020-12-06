@@ -26,7 +26,8 @@ router.get('/:id', passport.authenticate('jwt', {session: false}), function(req,
 // Devolve todos os alunos de uma determinada turma
 router.get('/:id/alunos', passport.authenticate('jwt', {session: false}), function(req, res){
     var turma = req.params.id
-    Alunos.getAlunosFromTurma(turma)
+    var codprofessor = req.query.codprofessor
+    Alunos.getAlunosFromTurma(turma, codprofessor)
                .then(alunosAtuais =>{
                 /*
                  TurmasOld.getAlunosFromTurma(turma)
@@ -38,6 +39,22 @@ router.get('/:id/alunos', passport.authenticate('jwt', {session: false}), functi
                 res.jsonp(alunosAtuais)
                })
                .catch(erro => res.status(500).jsonp(erro))
+})
+
+// Devolve todos os resultados de um jogo de uma turma
+router.get('/:id/jogos/:tableJogo',  function(req, res){
+  var turma = req.params.id
+  var tableJogo = req.params.tableJogo
+  var dataInicio = req.query.dataInicio
+  var dataFim = req.query.dataFim
+  var jogoTipo = req.query.jogoTipo
+  var escola = req.query.escola
+  Turmas.getJogosFromTurma(dataInicio, dataFim, jogoTipo, tableJogo, turma, escola)
+             .then(alunosAtuais =>{
+              
+              res.jsonp(alunosAtuais)
+             })
+             .catch(erro => res.status(500).jsonp(erro))
 })
 
 //Insere uma nova turma

@@ -10,7 +10,7 @@
           permanent
           floating
           color="#009263"
-          mobile-break-point="991"
+          mobile-breakpoint="991"
           width="260"
           >
           <v-list
@@ -45,12 +45,12 @@
               :to="item.href"
             >
               <v-list-item-icon>
-                <v-icon v-if=" item.title != 'Logout' " >{{ item.icon }}</v-icon>
+                <v-icon v-if=" item.title != 'Terminar Sessão' " >{{ item.icon }}</v-icon>
                 <v-icon v-else @click="logout()" style="cursor: pointer;">{{ item.icon }}</v-icon>
               </v-list-item-icon>
   
               <v-list-item-content>
-                <v-list-item-title v-if=" item.title != 'Logout' ">{{ item.title }}</v-list-item-title>
+                <v-list-item-title v-if=" item.title != 'Terminar Sessão' ">{{ item.title }}</v-list-item-title>
                 <v-list-item-title v-else @click="logout()" style="cursor: pointer;">{{ item.title }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -98,15 +98,53 @@ export default {
     if(utilizador.user) this.idUtilizador = utilizador.user
     else this.idUtilizador = utilizador.codigo
     this.nomeUtilizador = utilizador.nome
-    this.items = [
+    if(utilizador.type == 50){
+      // Admin    
+      this.items = [
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
+        { title: 'Pendentes', icon: 'mdi-account-clock',href:"/pendentes" },
         { title: 'Professores', icon: 'mdi-teach', href:"/professores" },
         { title: 'Alunos', icon: 'mdi-account-group', href:"/alunos" },
         { title: 'Escolas', icon: 'mdi-school', href:"/escolas" },
         { title: 'Turmas', icon: 'mdi-book-account', href:"/turmas" },
         { title: 'Minhas Turmas', icon: 'mdi-book-account', href:"/minhasturmas" },
-        { title: 'Terminar sessão', icon: 'mdi-logout'}
-    ]
+        { title: 'Terminar Sessão', icon: 'mdi-logout'}
+      ]
+    }
+    else if(utilizador.type == 20) {
+      // Professor
+      this.items = [
+        { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
+        { title: 'Minhas Turmas', icon: 'mdi-book-account', href:"/minhasturmas" },
+        { title: 'Monitorização de Jogos', icon: 'mdi-school', href:"/jogos" },
+        { title: 'Terminar Sessão', icon: 'mdi-logout'}
+      ]
+    }
+    else if(utilizador.type == 10){
+      // Aluno
+      this.items = [
+        { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
+        { title: 'Desempenho nos Jogos', icon: 'mdi-school',href:"/jogosAluno" },
+        { title: 'Terminar Sessão', icon: 'mdi-logout'}
+      ]
+    }
+    else if(utilizador.type == 30){
+      // Municipio
+      this.items =[
+        { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
+        { title: 'Minhas Escolas', icon: 'mdi-school', href:"/escolas" },
+        { title: 'Minhas Turmas', icon: 'mdi-book-account', href:"/minhasturmas" },
+        { title: 'Terminar Sessão', icon: 'mdi-logout'}
+      ]
+    }
+    else if(utilizador.type == 40){
+      // Agrupamento
+      this.items =[
+        { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
+        { title: 'Minhas Turmas', icon: 'mdi-book-account', href:"/minhasturmas" },
+        { title: 'Terminar Sessão', icon: 'mdi-logout'}
+      ]
+    }
   },
   computed: {
     bg () {

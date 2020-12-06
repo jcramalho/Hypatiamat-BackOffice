@@ -1,7 +1,7 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card>
+    <v-card class="pa-5">
         <v-container>
             <v-card-title primary-title class="justify-center green--text">
                 Minhas Turmas
@@ -10,6 +10,8 @@
             <v-text-field
                 v-model="filtrar"
                 label="Filtrar"
+                prepend-icon="mdi-magnify"
+                color="#009263"
                 single-line
                 ></v-text-field>
                 <v-data-table
@@ -62,13 +64,12 @@ const h = require("@/config/hosts").hostAPI
     created: async function(){
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
-        console.log(this.utilizador)
         var response = await axios.get(h + "professores/" + this.utilizador.codigo + "/turmas?token=" + this.token)
         this.turmas = response.data
     },
     methods: {
       editarTurma : function(id){
-          this.$router.push({name: "Editar Turma", params: { id : id } })
+          this.$router.push({name: "Editar Minha Turma", params: { id : id } })
       },
       criarTurma : function(id){
           this.$router.push({name: "Criar Turma" })
@@ -76,7 +77,7 @@ const h = require("@/config/hosts").hostAPI
       apagarTurma: async function(id){
           if(confirm("De certeza que deseja apagar esta turma?")){
               var a = await axios.delete(h + "turmas/" + id + "?token=" + this.token)
-              var response = await axios.get(h + "turmas?token=" + this.token)
+              var response = await axios.get(h + "professores/" + this.utilizador.codigo + "/turmas?token=" + this.token)
               this.turmas = response.data
           }
       }

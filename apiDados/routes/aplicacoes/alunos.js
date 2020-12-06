@@ -23,6 +23,24 @@ router.get('/:id', passport.authenticate('jwt', {session: false}), function(req,
                .catch(erro => res.status(500).jsonp(erro))
 });
 
+/* GET devolve todos os registos de um jogo de um aluno. */
+router.get('/:user/jogos/:jogoTable', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  Alunos.getJogosFromAluno(req.query.dataInicio, req.query.dataFim, req.query.jogoTipo, req.params.jogoTable, req.params.user)
+             .then(dados =>{
+               res.jsonp(dados)
+             })
+             .catch(erro => res.status(500).jsonp(erro))
+});
+
+/* GET devolve as estatisticas gerais de um jogo de um aluno. */
+router.get('/:user/jogosGlobal/:jogoTable', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  Alunos.getJogosGlobalFromAluno(req.query.dataInicio, req.query.dataFim, req.query.jogoTipo, req.params.jogoTable, req.params.user)
+             .then(dados =>{
+               res.jsonp(dados)
+             })
+             .catch(erro => res.status(500).jsonp(erro))
+});
+
 /* PUT altera a informação de um aluno. */
 router.put('/:id', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     Alunos.updateAluno(req.params.id, req.body)

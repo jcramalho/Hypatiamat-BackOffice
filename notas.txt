@@ -1,0 +1,47 @@
+hypati_samd => jogosdb
+appsinfoall
+
+admin => premium = 5 
+(type = 50)
+
+username: admin
+password: 123456
+----------------------------------------------
+aluno 
+(type = 10)
+
+username: aluno1	/ mtbc191a201
+password: 123123	/ 123401
+----------------------------------------------
+professor => premium = 1
+(type = 20)
+
+username: hprof1/hprof2
+password: 123123
+----------------------------------------------
+municipio => premium = 2 (ainda não criado)
+(type = 30)
+
+username: municipio
+password: 123456
+----------------------------------------------
+agrupamento => premium = 3 (ainda não criado)
+(type = 40)
+
+username: agru01
+password: 123456
+----------------------------------------------
+Janeiro:
+levantamento de outras platformas de suporte ao ensino matemática
+apigateway com kong/kafka apache
+contexto
+o que estava feito / alternativo
+
+----
+Verificar dependências
+Alterar password de um professor no admin
+Alterar password de uma aluno no professor
+Selecionar apenas os jogos que jogou
+Agrupamento => Professores => Turmas => Monitorização de Jogos e Aplicações
+Estatisticas globais nos jogos
+chartjs

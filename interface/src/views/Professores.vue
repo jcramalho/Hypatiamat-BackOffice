@@ -1,7 +1,7 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card>
+    <v-card class="pa-5">
         <v-container>
             <v-card-title primary-title class="justify-center green--text">
                 Lista de Professores
@@ -9,9 +9,12 @@
             <v-text-field
                 v-model="filtrar"
                 label="Filtrar"
+                prepend-icon="mdi-magnify"
+                color="#009263"
                 single-line
                 ></v-text-field>
                 <v-data-table
+                class="elevation-1"
                 :headers="header_professores"
                 :items="professores"
                 :footer-props="footer_props"
