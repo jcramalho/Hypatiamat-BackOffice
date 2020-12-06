@@ -9,20 +9,20 @@
             <v-layout row class="text-xs-center pa-lg-4" justify-center align-center>
                 <v-flex xs3>
                     <v-combobox
-                        id="jogos"
-                        v-model="jogo"
-                        label="Jogo"
-                        color="green"
-                        :items="jogos"
-                        @change="onJogoChange"
-                    ></v-combobox>
-                    <v-combobox
                         id="turmas"
                         v-model="turmaSel"
                         label="Turma"
                         color="green"
                         :items="turmas"
                         @change="onTurmaChange"
+                    ></v-combobox>
+                    <v-combobox
+                        id="jogos"
+                        v-model="jogo"
+                        label="Jogo"
+                        color="green"
+                        :items="jogos"
+                        @change="onJogoChange"
                     ></v-combobox>
                     <v-combobox
                         id="anos"
@@ -106,11 +106,13 @@ const hostJogos = require("@/config/hosts").hostJogos
         for(i = 0; i < response.data.length; i++){
           this.turmas.push(response.data[i].turma)
         }
-        var response2 = await axios.get(hostJogos + "?token=" + this.token)
+        /*
+        var response2 = await axios.get(h + "turmas/"  "?token=" + this.token)
         this.jogosInfo = response2.data
         for(i = 0; i < this.jogosInfo.length; i++){
             this.jogos.push(this.jogosInfo[i].jogo)
         }
+        */
     },
     methods: {
       format(value, event) {
@@ -118,6 +120,14 @@ const hostJogos = require("@/config/hosts").hostJogos
       },
       onTurmaChange: async function(item){
           if(this.turmaSel != ""){
+            var response2 = await axios.get(h + "turmas/" + this.turmaSel + "/jogos?escola=" + this.utilizador.escola + "&token=" + this.token)
+            this.jogosInfo = response2.data
+            this.jogos = []
+            this.alunos = []
+            this.jogo = ""
+            for(var i = 0; i < this.jogosInfo.length; i++){
+                this.jogos.push(this.jogosInfo[i].jogo)
+            }
             this.atualizaConteudo()
           }
 

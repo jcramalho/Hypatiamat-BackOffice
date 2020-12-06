@@ -1,4 +1,6 @@
 var sql = require('../../models/db_aplicacoes');
+var sqlSamd = require('../../models/db_samd')
+var Jogos = require('../db_samd/jogos')
 var md5 = require('md5')
 
 
@@ -162,6 +164,21 @@ Aluno.getAlunosFromEscola = function(escola){
     })
 }
 
+Aluno.getAlunosByProfessor = function(codigo){
+    return new Promise(function(resolve, reject) {
+        sql.query("Select id, user, numero, nome, datanascimento, escola, turma, email, confirmacao from alunos where codprofessor=?", codigo, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+
 Aluno.updateAluno = function(id, aluno){
     return new Promise(function(resolve, reject) {
         var args = [aluno.numero, aluno.nome, aluno.datanascimento, aluno.email, aluno.confirmacao, id]
@@ -210,17 +227,72 @@ Aluno.updatePassword = function(id, password){
         })
 }
 
+Aluno.getApps = function(user){
+    return new Promise(function(resolve, reject) {
+        sqlSamd.query("Select * from appsinfoall where userid = ? ;", user, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+Aluno.getJogosFromJogo = function(user, tableJogo, jogoTipo){
+    return new Promise(function(resolve, reject) {
+        sqlSamd.query("Select id from hypat_samd." + tableJogo + " where tipo = ? and idaluno = ? ;"
+        , [jogoTipo, user], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+Aluno.jogou = async function(typeJogos, user){
+    for(var i = 0; i < typeJogos.length; i++){
+        var jogo = await Aluno.getJogosFromJogo(user, typeJogos[i].jogotable, typeJogos[i].tipo)
+        if(jogo.length == 0) return true
+    }
+    return false
+}
+
+Aluno.apagar = async function(user){
+    var apps = await Aluno.getApps(user)
+    if(apps.length == 0){
+        var typeJogos = await Jogos.getJogos()
+        var jogou = await Aluno.jogou(typeJogos, user)
+        if(jogou){
+            return {removed: false, message: "O aluno já jogou alguns jogos, logo não pode ser removido."}
+        }
+        else{
+            return await Aluno.deleteAluno(user)
+        }
+    }
+    else{
+        return {removed: false, message: "O aluno já fez algumas aplicações, logo não pode ser removido."}
+    }
+
+}
+
 // ??
 Aluno.deleteAluno = function(id){
     return new Promise(function(resolve, reject) {
-        sql.query("Delete From alunos where id = ?", id, function (err, res) {
+        sql.query("Delete From alunos where user = ?", id, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
                     reject(err);
                 }
                 else{
-                    console.log(res.insertId);
-                    resolve(res);
+                    if(res.affectedRows == 0){ resolve({removed: false, message:"O aluno não pode ser eliminado, visto que já realizou jogos na plataforma."})}
+                    else {resolve({message: "O aluno foi removido com sucesso.", removed: true})}
                 }
             });   
     })    

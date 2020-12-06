@@ -196,7 +196,7 @@ const routes = [
     }
   },
   {
-    path: '/editarTurma/:id/:minhaTurma',
+    path: '/editarTurma/:idprofessor/:turma',
     name: 'Editar Turma',
     component: EditarTurma,
     beforeEnter: async (to, from, next) => {

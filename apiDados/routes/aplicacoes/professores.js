@@ -62,7 +62,7 @@ router.post('/', function(req, res, next) {
 
 /* DELETE Apagar um professor. */
 router.delete('/:id', passport.authenticate('jwt', {session: false}), function(req, res, next) {
-  Professores.deleteById(req.params.id)
+  Professores.apagar(req.params.id)
              .then(dados =>{
                res.jsonp(dados)
              })

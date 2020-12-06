@@ -27,7 +27,7 @@
                     <td>
                     <v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>
                     <v-icon @click="editarProfessor(row.item.id)"> mdi-pencil </v-icon>
-                    <v-icon @click="apagarProfessor(row.item.iduser)"> mdi-delete </v-icon>
+                    <v-icon @click="apagarProfessor(row.item.codigo)"> mdi-delete </v-icon>
                     </td>
                 </tr>
                 </template>
@@ -76,9 +76,15 @@ const h = require("@/config/hosts").hostAPI
       },
       apagarProfessor: async function(id){
           if(confirm("De certeza que deseja apagar este professor?")){
-              var a = axios.delete(h + "professores/" + id + "?token=" + this.token)
-              var response = await axios.get(h + "professores?token=" + this.token)
-              this.professores = response.data
+              var a = await axios.delete(h + "professores/" + id + "?token=" + this.token)
+              var apagado = a.data
+              if(apagado.removed){
+                var response = await axios.get(h + "professores?token=" + this.token)
+                this.professores = response.data
+              }
+              else{
+                alert(apagado.message)
+              }
           }
       }
     }

@@ -41,6 +41,25 @@ router.get('/:id/alunos', passport.authenticate('jwt', {session: false}), functi
                .catch(erro => res.status(500).jsonp(erro))
 })
 
+// Devolve todos os jogos uma determinada turma jogou
+router.get('/:id/jogos', passport.authenticate('jwt', {session: false}), function(req, res){
+  var turma = req.params.id
+  var escola = req.query.escola
+  Turmas.getJogos(turma, escola)
+             .then(jogos =>{
+              /*
+               TurmasOld.getAlunosFromTurma(turma)
+                        .then(alunosOld =>{
+                          res.jsonp({alunosAtuais : alunosAtuais, alunosOld : alunosOld})
+                        })
+                        .catch(erro => res.status(500).jsonp(erro))
+              */
+              res.jsonp(jogos)
+             })
+             .catch(erro => res.status(500).jsonp(erro))
+})
+
+
 // Devolve todos os resultados de um jogo de uma turma
 router.get('/:id/jogos/:tableJogo',  function(req, res){
   var turma = req.params.id
@@ -78,7 +97,7 @@ router.put('/:id', passport.authenticate('jwt', {session: false}), function(req,
 
 // Apaga uma determinado turma
 router.delete('/:id', passport.authenticate('jwt', {session: false}), function(req, res){
-    Turmas.deleteTurma(req.params.id)
+    Turmas.apagar(req.params.id, req.query.codprofessor)
                .then(dados =>{
                  res.jsonp(dados)
                })

@@ -25,15 +25,6 @@ router.get('/:id', passport.authenticate('jwt', {session: false}), function(req,
                .catch(erro => res.status(500).jsonp(erro))
   });
 
-// Devolve todas as turmas de uma determinada escola
-router.get('/:id/turmas', passport.authenticate('jwt', {session: false}), function(req, res){
-  Turmas.getTurmasByEscola(req.params.id)
-             .then(turmas =>{
-              res.jsonp(turmas)
-             })
-             .catch(erro => res.status(500).jsonp(erro))
-})
-
 // Devolve todos os alunos de uma determinada escola
 router.get('/:id/alunos', passport.authenticate('jwt', {session: false}), function(req, res){
   Alunos.getAlunosFromEscola(req.params.id)
@@ -48,6 +39,15 @@ router.get('/:id/professores', passport.authenticate('jwt', {session: false}), f
   Professores.getProfessoresByEscola(req.params.id)
              .then(alunosAtuais =>{
               res.jsonp(alunosAtuais)
+             })
+             .catch(erro => res.status(500).jsonp(erro))
+})
+
+// Devolve todos as turmas de uma determinada escola
+router.get('/:id/turmas', passport.authenticate('jwt', {session: false}), function(req, res){
+  Professores.getTurmasFromEscola(req.params.id)
+             .then(turmas =>{
+              res.jsonp(turmas)
              })
              .catch(erro => res.status(500).jsonp(erro))
 })
@@ -93,7 +93,7 @@ router.post('/', function(req, res){
 
 // Apaga uma determinado escola
 router.delete('/:id', passport.authenticate('jwt', {session: false}), function(req, res){
-    Escolas.deleteEscola(req.params.id)
+    Escolas.apagar(req.params.id)
                .then(dados =>{
                  res.jsonp(dados)
                })

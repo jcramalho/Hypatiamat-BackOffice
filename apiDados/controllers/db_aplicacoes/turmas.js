@@ -1,5 +1,7 @@
 var sql = require('../../models/db_aplicacoes');
 var sqlSAMD = require('../../models/db_samd')
+var Alunos = require('./alunos')
+var Jogos = require('../db_samd/jogos')
 
 var Turma = function(turma){
     this.id = turma.id;
@@ -134,16 +136,51 @@ Turma.updateTurma = function(id, turma){
     })
 }
 
-Turma.deleteTurma = function (id){
+Turma.jogou = async function(jogoTable, jogoTipo, turma, escola){
     return new Promise(function(resolve, reject) {
-        sql.query("Delete From turmas where turma = ?", id, function (err, res) {
+        sqlSAMD.query("Select idaluno from hypat_samd." + jogoTable + " where tipo = ? and turma = ? and idescola = ?", [jogoTipo, turma, escola], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+Turma.getJogos = async function(turma, escola){
+    var jogos = await Jogos.getJogos()
+    var result = []
+    for(var i = 0; i < jogos.length; i++){
+        var turmaJogou = await Turma.jogou(jogos[i].jogotable, jogos[i].tipo, turma, escola)
+        if(turmaJogou.length > 0) result.push(jogos[i])
+    }
+    return result
+}
+
+
+Turma.apagar = async function(turma, codprofessor){
+    var alunos = await Alunos.getAlunosFromTurma(turma, codprofessor)
+    if(alunos.length == 0){
+        return await Turma.deleteTurma(turma, codprofessor)
+    }
+    else{
+        return {removed: false, message:"A turma não pode ser eliminada, dado que existem alunos que fazem parte da turma."}
+    }
+}
+
+Turma.deleteTurma = function (turma, codprofessor){
+    return new Promise(function(resolve, reject) {
+        sql.query("Delete From turmas where turma = ? and idprofessor = ?", [turma, codprofessor], function (err, res) {
                 if(err) {
                     console.log("error: ", err);
                     reject(err);
                 }
                 else{
-                    console.log(res.insertId);
-                    resolve(res);
+                    if(res.affectedRows == 0){ resolve({removed: false, message:"A turma não pode ser eliminada, dado que existem alunos que fazem parte da turma ou jogos que foram realizados pela turma."})}
+                    else {resolve({message: "A turma foi removida com sucesso.", removed: true})}
                 }
             });   
     })    

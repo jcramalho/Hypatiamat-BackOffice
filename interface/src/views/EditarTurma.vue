@@ -111,22 +111,23 @@ const h = require("@/config/hosts").hostAPI
         filtrar2:"",
         turma2:"",
         codprofessor2:"",
-        minhaTurma: false
+        minhaTurma: false,
+        idprofessor: ""
       }
     },
     created: async function(){
         this.token = localStorage.getItem("token")
         let utilizador = JSON.parse(localStorage.getItem("utilizador"))
         this.id = this.$route.params.id
-        this.minhaTurma = this.$route.params.minhaTurma
+        this.idprofessor = this.$route.params.idprofessor
         var response = await axios.get(h + "turmas/" + this.id + "?token=" + this.token)
         this.turma = response.data
         response = await axios.get(h + "turmas/" + this.turma.turma + "/alunos?codprofessor="+ this.turma.idprofessor + "&token=" + this.token)
         this.alunosTurmaAtual = response.data
-        response = await axios.get(h + "turmas?token=" + this.token)
+        var responseTurmas = await axios.get(h + "professores/" + this.idprofessor + "/turmas?token=" + this.token)
         var i = 0
-        for(i = 0; i < response.data.length; i++){
-          if(response.data[i].turma != this.turma.turma) this.turmas.push(response.data[i].turma + " - " + response.data[i].idprofessor)
+        for(i = 0; i < responseTurmas.data.length; i++){
+          if(responseTurmas.data[i].turma != this.turma.turma) this.turmas.push(responseTurmas.data[i].turma + " - " + responseTurmas.data[i].idprofessor)
         }
     },
     methods: {

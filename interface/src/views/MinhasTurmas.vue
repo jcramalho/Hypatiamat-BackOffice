@@ -6,7 +6,7 @@
             <v-card-title primary-title class="justify-center green--text">
                 Minhas Turmas
             </v-card-title>
-            <center><v-btn class="white--text" style="background-color: #009263;" @click="criarTurma"> <v-icon> mdi-book-plus </v-icon> Criar Turma </v-btn></center>
+            <center><v-btn class="white--text" style="background-color: #009263;" @click="criarTurma()"> <v-icon> mdi-book-plus </v-icon> Criar Turma </v-btn></center>
             <v-text-field
                 v-model="filtrar"
                 label="Filtrar"
@@ -71,7 +71,7 @@ const h = require("@/config/hosts").hostAPI
       editarTurma : function(id){
           this.$router.push({name: "Editar Minha Turma", params: { id : id } })
       },
-      criarTurma : function(id){
+      criarTurma : function(){
           this.$router.push({name: "Criar Turma" })
       },
       apagarTurma: async function(id){

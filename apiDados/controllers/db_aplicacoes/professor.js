@@ -1,5 +1,8 @@
 var sql = require('../../models/db_aplicacoes');
+var Alunos = require('./alunos')
+var Turmas = require('./turmas')
 var md5 = require('md5')
+
 
 var Professor = function(professor){
     this.id = professor.id;
@@ -124,6 +127,20 @@ Professor.getProfessoresByEscola = function (escola) {
     })
 }
 
+Professor.getTurmasFromEscola = function(escola){
+    return new Promise(function(resolve, reject) {
+        sql.query("SELECT t.* FROM hypat_aplicacoes.turmas t, hypat_aplicacoes.professores p where p.codigo = t.idprofessor and p.escola = ? ;", escola, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
 Professor.alteraProfessor = function(codigo,professor){
     return new Promise(function(resolve, reject) {
         var args = [professor.nome, professor.escola, professor.email,
@@ -160,6 +177,23 @@ Professor.updatePassword = function(codigo, password){
         })
 }
 
+Professor.apagar = async function(codigo){
+    var turmas = await Turmas.getTurmasByProfessor(codigo)
+    if(turmas.length == 0){
+        var alunos = await Alunos.getAlunosByProfessor(codigo)
+        if(alunos.length == 0){
+            await Professor.deleteById(codigo)
+            return {removed:true, message: "Professor removido com sucesso."}
+        }
+        else{
+            return {removed:false, message: "Não pode ser eliminado, visto que possuí " + alunos.length + " alunos"}
+        }
+    }
+    else{
+        return {removed:false, message: "Não pode ser eliminado, visto que possuí " + turmas.length + " turmas"}   
+    }
+}
+
 Professor.deleteById = function(codigo){
     return new Promise(function(resolve, reject) {
         sql.query("Delete From professores where codigo = ?", codigo, function (err, res) {
@@ -184,8 +218,8 @@ Professor.deleteByEmail = function(email){
                     reject(err);
                 }
                 else{
-                    console.log(res.insertId);
-                    resolve(res);
+                    if(res.affectedRows == 0){ resolve({removed: false, message:"O profoessor não pode ser eliminado, uma vez que possuí alunos ou turmas."})}
+                    else {resolve({message: "O professor foi removido com sucesso.", removed: true})}
                 }
             });   
     })

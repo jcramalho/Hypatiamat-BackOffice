@@ -1,4 +1,6 @@
 var sql = require('../../models/db_aplicacoes');
+var Professores = require('./professor')
+var Alunos = require('./alunos')
 
 var Escola = function(escola){
     this.id = escola.id;
@@ -118,6 +120,20 @@ Escola.updateEscola = function(id, escola){
     })
 }
 
+Escola.apagar = async function(cod){
+    var alunos = await Alunos.getAlunosFromEscola(cod)
+    var professores = await Professores.getProfessoresByEscola(cod)
+    console.log(alunos.length)
+    console.log(professores.length)
+    if(alunos.length == 0 && professores.length == 0){
+        return await Escola.deleteEscola(cod)
+    }
+    else{
+        return {removed: false, message:"A escola não pode ser eliminada, dado que existem alunos ou professores que fazem parte da escola."}
+    }
+}
+
+
 Escola.deleteEscola = function (cod){
     return new Promise(function(resolve, reject) {
         sql.query("Delete From escolas where cod = ?", cod, function (err, res) {
@@ -126,8 +142,8 @@ Escola.deleteEscola = function (cod){
                     reject(err);
                 }
                 else{
-                    console.log(res.insertId);
-                    resolve(res);
+                    if(res.affectedRows == 0){ resolve({removed: false, message:"A escola não pode ser eliminada, dado que existem alunos ou professores que fazem parte da escola."})}
+                    else {resolve({message: "A escola foi removida com sucesso.", removed: true})}
                 }
             });   
     })    

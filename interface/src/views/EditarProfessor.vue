@@ -16,6 +16,8 @@
           <v-text-field label="Número de Sócio" placeholder="Número de Sócio" v-model="professor.socionum" color="#900000" :rules="[number]" required/>
           <v-text-field label="Projeto" placeholder="Projeto" v-model="professor.projeto" color="#900000" :rules="[number]" required/>
           <br>
+          <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true"> Alterar password </v-btn></center>
+          <br>
           <center><v-btn class="white--text" style="background-color: #009263;" @click="verTurmas()"> Ver Turmas </v-btn></center>
           <br>
           <v-dialog
@@ -42,6 +44,19 @@
                 </v-card>
             </v-dialog>
 
+          <v-dialog
+            v-model="dialogPassword"
+            width="40%"
+            >
+                <v-card class="pa-5">
+                  <v-card-title primary-title class="justify-center green--text">
+                  Alterar Password
+                  </v-card-title>
+                  <v-text-field label="Password Nova" placeholder="Password nova" v-model="password1" color="#900000" type="password" required />
+                  <v-text-field label="Confirmação Password" placeholder="Confirmação Password" v-model="password2" color="#900000" type="password" required />
+                  <v-btn class="white--text" primary large block style="background-color: #009263;" @click="editarPassword()">Confirmar alteração</v-btn>
+                </v-card>
+          </v-dialog>
 
 
 
@@ -63,6 +78,7 @@ const h = require("@/config/hosts").hostAPI
     data(){
       return {
         turmas: [],
+        dialogPassword: false,
         dialogTurmas: false,
         header_turmas: [
             {text: "Id", sortable: true, value: 'id', class: 'subtitle-1'},
@@ -76,6 +92,8 @@ const h = require("@/config/hosts").hostAPI
         token: "",
         professor: {},
         id : 0,
+        password1: "",
+        password2: "",
         filtrar:"",
         number0or1: v  => {
           if (!v.trim()) return true;
@@ -113,7 +131,22 @@ const h = require("@/config/hosts").hostAPI
                  alert("Dados alterados com sucesso!")
                })
                .catch(error => alert("Não foi possível guardar as alterações."))
-      }
+      },
+      editarPassword : async function(){
+          if(this.password1 != "" && this.password2 != ""){
+            if(this.password1 == this.password2){
+              if(confirm("Tem a certeza que pretende alterar a sua password?")){
+                await axios.put(h + "professores/" + this.professor.id + "/password", {password: this.password1})
+                this.dialogPassword = false
+              }
+            }
+            else{
+              this.password2 = ""
+              alert("As palavra passe de confirmação não coincide com a palavra passe primeiramente definida!")
+            }
+          }
+          else alert("Tem de preencher os dois campos!")
+      },
     }
   }
 </script>

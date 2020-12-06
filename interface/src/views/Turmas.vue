@@ -6,6 +6,16 @@
             <v-card-title primary-title class="justify-center green--text">
                 Lista de Turmas
             </v-card-title>
+            <center><v-btn class="white--text" style="background-color: #009263;" @click="criarTurma()"> <v-icon> mdi-book-plus </v-icon> Criar Turma </v-btn></center>
+            <v-combobox
+                id="escola"
+                prepend-icon="mdi-school"
+                :return-object="true"
+                v-model="escola"
+                color="#009263"
+                :items="escolas"
+                @change="getTurmas()"
+            ></v-combobox>
             <v-text-field
                 v-model="filtrar"
                 label="Filtrar"
@@ -25,8 +35,8 @@
                     <td @click="verProfessor(row.item.idprofessor)" style="cursor: pointer;">{{row.item.idprofessor}}</td>
                     <td>{{row.item.turma}}</td>
                     <td>
-                    <v-icon @click="editarTurma(row.item.id)"> mdi-pencil </v-icon>
-                    <v-icon @click="apagarTurma(row.item.id)"> mdi-delete </v-icon>
+                    <v-icon @click="editarTurma(row.item.id, row.item.idprofessor)"> mdi-pencil </v-icon>
+                    <v-icon @click="apagarTurma(row.item.turma, row.item.idprofessor)"> mdi-delete </v-icon>
                     </td>
                 </tr>
                 </template>
@@ -59,25 +69,48 @@ const h = require("@/config/hosts").hostAPI
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
+        escolas: [],
+        escola: "",
+        escolasIds : [],
       }
     },
     created: async function(){
         this.token = localStorage.getItem("token")
-        var response = await axios.get(h + "turmas?token=" + this.token)
-        this.turmas = response.data
+        //var response = await axios.get(h + "turmas?token=" + this.token)
+        //this.turmas = response.data
+        var response = await axios.get(h + "escolas")
+        this.escolasIds = response.data
+        var i
+        for(i = 0; i < this.escolasIds.length; i++){
+          var string = this.escolasIds[i].localidade + " - " + this.escolasIds[i].nome 
+          this.escolas.push(string)
+        }
     },
     methods: {
-      verProfessor : function(id){
-          this.$router.push({name: "Ver Professor", params: { id : id } })
+      criarTurma : function(){
+          this.$router.push({name: "Criar Turma" })
       },
-      editarTurma : function(id){
-          this.$router.push({name: "Editar Turma", params: { id : id, minhaTurma: false } })
+      getTurmas : async function(){
+        var aux = this.escola.split(" - ")
+        var escolaEscolhida = this.escolasIds.find(element => element.nome == aux[1]).cod
+        var response = await axios.get(h + "escolas/" + escolaEscolhida + "/turmas?token=" + this.token )
+        console.log(response.data)
+        this.turmas = response.data
       },
-      apagarProfessor: async function(id){
+      editarTurma : function(idTurma, idprofessor){
+          this.$router.push({name: "Editar Turma", params: { id : idTurma, idprofessor: idprofessor } })
+      },
+      apagarTurma: async function(turma, codprofessor){
           if(confirm("De certeza que deseja apagar esta turma?")){
-              var a = await axios.delete(h + "turmas/" + id + "?token=" + this.token)
-              var response = await axios.get(h + "turmas?token=" + this.token)
-              this.turmas = response.data
+              var resDelete = await axios.delete(h + "turmas/" + turma + "?codprofessor=" + codprofessor + "&token=" + this.token)
+              var apagado = resDelete.data
+              if(apagado.removed){
+                var response = await axios.get(h + "turmas?token=" + this.token)
+                this.turmas = response.data
+              }
+              else{
+                alert(apagado.message)
+              }
           }
       }
     }

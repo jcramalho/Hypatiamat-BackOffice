@@ -42,7 +42,7 @@
                     <td>{{row.item.localidade}}</td>
                     <td>
                     <v-icon @click="editarEscola(row.item.id)"> mdi-pencil </v-icon>
-                    <v-icon @click="apagarEscola(row.item.id)"> mdi-delete </v-icon>
+                    <v-icon @click="apagarEscola(row.item.cod)"> mdi-delete </v-icon>
                     </td>
                 </tr>
                 </template>
@@ -89,9 +89,16 @@ const h = require("@/config/hosts").hostAPI
       },
       apagarEscola: async function(id){
           if(confirm("De certeza que deseja apagar esta escola?")){
-              var a = axios.delete(h + "escolas/" + id + "?token=" + this.token)
-              var response = await axios.get(h + "escolas?token=" + this.token)
-              this.escolas = response.data
+              var a = await axios.delete(h + "escolas/" + id + "?token=" + this.token)
+              var apagado = a.data
+              console.log(apagado)
+              if(apagado.removed){
+                var response = await axios.get(h + "escolas?token=" + this.token)
+                this.escolas = response.data
+              }
+              else{
+                alert(apagado.message)
+              }
           }
       },
       pesquisarLocalidade: async function(){
