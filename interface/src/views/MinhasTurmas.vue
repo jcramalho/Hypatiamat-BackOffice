@@ -25,6 +25,7 @@
                 <tr>
                     <td>{{row.item.turma}}</td>
                     <td>
+                    <v-icon @click="verTurma(row.item.id)"> mdi-eye </v-icon>
                     <v-icon @click="editarTurma(row.item.id)"> mdi-pencil </v-icon>
                     <v-icon @click="apagarTurma(row.item.id)"> mdi-delete </v-icon>
                     </td>
@@ -68,11 +69,14 @@ const h = require("@/config/hosts").hostAPI
         this.turmas = response.data
     },
     methods: {
+      verTurma : function(id){
+        this.$router.push({name:"Ver Turma", params:{ id : id }})
+      },
       editarTurma : function(id){
-          this.$router.push({name: "Editar Minha Turma", params: { id : id } })
+        this.$router.push({name: "Editar Minha Turma", params: { id : id } })
       },
       criarTurma : function(){
-          this.$router.push({name: "Criar Turma" })
+        this.$router.push({name: "Criar Turma" })
       },
       apagarTurma: async function(id){
           if(confirm("De certeza que deseja apagar esta turma?")){

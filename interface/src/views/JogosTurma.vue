@@ -4,7 +4,7 @@
     <v-card class="pa-5">
         <v-container>
             <v-card-title primary-title class="justify-center green--text">
-                Monotorização de Jogos
+                Monotorização de Jogos do professor ({{this.idprofessor}})
             </v-card-title>
             <v-layout row class="text-xs-center pa-lg-4" justify-center align-center>
                 <v-flex xs3 v-if="alunos.length>0">
@@ -322,6 +322,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         anosLetivos:["2013/2014", "2014/2015", "2015/2016", "2016/2017", "2017/2018", "2018/2019", "2019/2020", "2020/2021"],
         anoLetivo: "2019/2020",
         jogos:[],
+        idprofessor:"",
         jogosInfo:[],
         estatisticas:{
             turma:{
@@ -342,16 +343,25 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
                 media: 0,
                 number: 0
             }
-        }
+        },
+        escola:""
       }
     },
     created: async function(){
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
-        var response = await axios.get(h + "professores/" + this.utilizador.codigo + "/turmas?token=" + this.token)
+        this.idprofessor = this.$route.params.idprofessor
+        this.escola = this.$route.params.escola
+        var response = await axios.get(h + "professores/" + this.idprofessor + "/turmas?token=" + this.token)
         var i = 0
         for(i = 0; i < response.data.length; i++){
           this.turmas.push(response.data[i].turma)
+        }
+
+        if(this.$route.params.anoLetivo && this.$route.params.dataInicio && this.$route.params.dataFim){
+            this.anoLetivo = this.$route.params.anoLetivo
+            this.dataInicio = this.$route.params.dataInicio
+            this.dataFim = this.$route.params.dataFim
         }
         /*
         var response2 = await axios.get(h + "turmas/"  "?token=" + this.token)
@@ -367,7 +377,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
       },
       onTurmaChange: async function(item){
           if(this.turmaSel != ""){
-            var response2 = await axios.get(h + "turmas/" + this.turmaSel + "/jogos?escola=" + this.utilizador.escola + "&token=" + this.token)
+            var response2 = await axios.get(h + "turmas/" + this.turmaSel + "/jogos?escola=" + this.escola + "&token=" + this.token)
             this.jogosInfo = response2.data
             this.jogos = []
             this.alunos = []
@@ -407,8 +417,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
               var aux = this.jogosInfo.find(element => element.jogo == this.jogo)
               var jogoTipo = aux.tipo
               var jogoTable = aux.jogotable
-              var idescola = this.utilizador.escola
-              console.log("jogoTipo: " + jogoTipo + " ; jogoTable: " + jogoTable + "; escola: " + idescola)
+              var idescola = this.escola
 
                 var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/" + jogoTable 
                                                 + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
@@ -422,7 +431,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
           var aux = this.jogosInfo.find(element => element.jogo == this.jogo)
           var jogoTipo = aux.tipo
           var jogoTable = aux.jogotable
-          var idescola = this.utilizador.escola
+          var idescola = this.escola
           var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/" + jogoTable + "/estatisticasGlobais"
                                         + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
                                         + "&jogoTipo=" + jogoTipo + "&escola=" + idescola
@@ -435,7 +444,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
           var aux = this.jogosInfo.find(element => element.jogo == this.jogo)
           var jogoTipo = aux.tipo
           var jogoTable = aux.jogotable
-          var idescola = this.utilizador.escola
+          var idescola = this.escola
           var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/" + jogoTable + "/estatisticasGlobais"
                                         + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
                                         + "&jogoTipo=" + jogoTipo + "&escola=" + idescola

@@ -38,10 +38,34 @@ contexto
 o que estava feito / alternativo
 
 ----
-Verificar dependências
-Alterar password de um professor no admin
-Alterar password de uma aluno no professor
-Selecionar apenas os jogos que jogou
+
+					Lista de Tarefas:
+
 Agrupamento => Professores => Turmas => Monitorização de Jogos e Aplicações
-Estatisticas globais nos jogos
 chartjs
+
+
+APPS
+subtemas (código do subtema)
+potencias não
+polignos agrupar
+quadrilateros agrupar
+angulos agrupar
+teorema de pitagoras agrupar
+perimetros agrupar
+raiz quadrada agrupar
+funções primeiro grau agrupar
+equacoes 2 grau agrupar
+inequações agrupar
+multiplos e divisores agrupar
+gráficos de funções afins agrupar
+
+No admin:
+sql:
+Estatistica Hypatiamat
+(puder aparecer uma lista por munícipios (Braga, etc) nº de tarefas certas, nº total, frequencia, onPeak, offPeak)apps
+(nº de jogos que o municipio fez)
+Estatisca Municipios (feito)
+Estatistica Escolas
+Estaticas Professor
+

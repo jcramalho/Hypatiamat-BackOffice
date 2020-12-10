@@ -160,6 +160,63 @@ Turma.getJogos = async function(turma, escola){
     return result
 }
 
+Turma.getEstatisticasFromTurma = async function(dataInicio, dataFim, jogoTipo, tableJogo, turma, escola){
+    return new Promise(function(resolve, reject) {
+        sqlSAMD.query("SELECT min(pontuacao) as min, max(pontuacao) as max, avg(pontuacao) as media, count(pontuacao) as number " +
+		"FROM hypat_samd." + tableJogo + 
+        " WHERE turma!='99' AND turma = ? AND tipo=? AND idescola=? and (data BETWEEN ? and ?);", [turma, jogoTipo, escola, dataInicio, dataFim], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if (res.length > 0) resolve(res[0])
+                else resolve(undefined)
+            }
+        })
+    })
+}
+
+Turma.getEstatisticasFromEscola = async function(dataInicio, dataFim, jogoTipo, tableJogo, escola){
+    return new Promise(function(resolve, reject) {
+        sqlSAMD.query("SELECT min(pontuacao) as min, max(pontuacao) as max, avg(pontuacao) as media, count(pontuacao) as number " +
+		"FROM hypat_samd." + tableJogo + 
+        " WHERE turma!='99' AND tipo=? AND idescola=? and (data BETWEEN ? and ?);", [jogoTipo, escola, dataInicio, dataFim], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if (res.length > 0) resolve(res[0])
+                else resolve(undefined)
+            }
+        })
+    })
+}
+
+Turma.getEstatisticasFromHypatia = async function(dataInicio, dataFim, jogoTipo, tableJogo){
+    return new Promise(function(resolve, reject) {
+        sqlSAMD.query("SELECT min(pontuacao) as min, max(pontuacao) as max, avg(pontuacao) as media, count(pontuacao) as number " +
+		"FROM hypat_samd." + tableJogo + 
+        " WHERE turma!='99' AND tipo=? and (data BETWEEN ? and ?);", [jogoTipo, dataInicio, dataFim], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if (res.length > 0) resolve(res[0])
+                else resolve(undefined)
+            }
+        })
+    })
+}
+
+Turma.getEstatisticasGlobais = async function (dataInicio, dataFim, jogoTipo, tableJogo, turma, escola){
+    var turmaEst = await Turma.getEstatisticasFromTurma(dataInicio, dataFim, jogoTipo, tableJogo, turma, escola)
+    var escolaEst = await Turma.getEstatisticasFromEscola(dataInicio, dataFim, jogoTipo, tableJogo, escola)
+    var hypatiaEst = await Turma.getEstatisticasFromHypatia(dataInicio, dataFim, jogoTipo, tableJogo)
+    return {turma: turmaEst, escola: escolaEst, hypatia: hypatiaEst}
+}
 
 Turma.apagar = async function(turma, codprofessor){
     var alunos = await Alunos.getAlunosFromTurma(turma, codprofessor)

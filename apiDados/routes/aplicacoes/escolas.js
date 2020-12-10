@@ -79,7 +79,47 @@ router.get('/localidades/:localidade', passport.authenticate('jwt', {session: fa
                .catch(erro => res.status(500).jsonp(erro))
   });
 
+  // Pontuações de jogos por municipio
+  router.get('/jogos/:jogo/municipios', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var dataInicio = req.query.dataInicio
+    var dataFim = req.query.dataFim
+    var jogoTipo = req.query.jogoTipo
+    var jogoTable = req.params.jogo
+    Escolas.getJogosMunicipio(jogoTable, jogoTipo, dataInicio, dataFim)
+               .then(dados =>{
+                 res.jsonp(dados)
+               })
+               .catch(erro => res.status(500).jsonp(erro))
+  });
 
+  // Devolve estatisticas globais sobre os professores da escola
+router.get('/:id/jogos/professores', passport.authenticate('jwt', {session: false}), function(req, res){
+  var dataInicio = req.query.dataInicio
+  var dataFim = req.query.dataFim
+  var jogoTipo = req.query.jogoTipo
+  var jogoTable = req.query.jogoTable
+  var escola = req.params.id
+  Escolas.getJogosProfessores(jogoTable, jogoTipo, dataInicio, dataFim, escola)
+             .then(turmas =>{
+              res.jsonp(turmas)
+             })
+             .catch(erro => res.status(500).jsonp(erro))
+})
+
+    // Pontuações de jogos por escola de um municipio
+    router.get('/jogos/:jogo/municipios/:municipio', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+      var dataInicio = req.query.dataInicio
+      var dataFim = req.query.dataFim
+      var jogoTipo = req.query.jogoTipo
+      var jogoTable = req.params.jogo
+      var municipio = req.params.municipio
+      Escolas.getJogosEscolas(jogoTable, jogoTipo, dataInicio, dataFim, municipio)
+                 .then(dados =>{
+                   res.jsonp(dados)
+                 })
+                 .catch(erro => res.status(500).jsonp(erro))
+    });
+  
 
 //Insere uma nova escola
 router.post('/', function(req, res){

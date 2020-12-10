@@ -76,6 +76,22 @@ router.get('/:id/jogos/:tableJogo',  function(req, res){
              .catch(erro => res.status(500).jsonp(erro))
 })
 
+// Devolve todos os resultados de um jogo de uma turma
+router.get('/:id/jogos/:tableJogo/estatisticasGlobais',  function(req, res){
+  var turma = req.params.id
+  var tableJogo = req.params.tableJogo
+  var dataInicio = req.query.dataInicio
+  var dataFim = req.query.dataFim
+  var jogoTipo = req.query.jogoTipo
+  var escola = req.query.escola
+  Turmas.getEstatisticasGlobais(dataInicio, dataFim, jogoTipo, tableJogo, turma, escola)
+             .then(alunosAtuais =>{
+              
+              res.jsonp(alunosAtuais)
+             })
+             .catch(erro => res.status(500).jsonp(erro))
+})
+
 //Insere uma nova turma
 router.post('/', passport.authenticate('jwt', {session: false}), function(req, res){
     Turmas.insertTurma(req.body)

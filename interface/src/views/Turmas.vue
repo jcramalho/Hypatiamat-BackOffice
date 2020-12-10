@@ -9,6 +9,7 @@
             <center><v-btn class="white--text" style="background-color: #009263;" @click="criarTurma()"> <v-icon> mdi-book-plus </v-icon> Criar Turma </v-btn></center>
             <v-combobox
                 id="escola"
+                label="Escola"
                 prepend-icon="mdi-school"
                 :return-object="true"
                 v-model="escola"

@@ -4,10 +4,8 @@
     <v-card class="pa-5">
         <v-container>
             <v-card-title primary-title class="justify-center green--text">
-                Lista de Alunos
+                Alunos da Turma {{turma.turma}}
             </v-card-title>
-            
-            <v-container v-if="ready">
             <v-text-field
                 v-model="filtrar"
                 label="Filtrar"
@@ -28,17 +26,11 @@
                     <td>{{row.item.user}}</td>
                     <td>{{row.item.nome}}</td>
                     <td>
-                    <v-icon @click="verAluno(row.item.id)"> mdi-eye </v-icon>
                     <v-icon @click="editarAluno(row.item.id)"> mdi-pencil </v-icon>
-                    <v-icon @click="apagarAluno(row.item.user)"> mdi-delete </v-icon>
                     </td>
                 </tr>
                 </template>
                 </v-data-table>
-            </v-container>
-            <v-container v-else>
-            <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
-            </v-container>
         </v-container>
     </v-card>
     </v-main>
@@ -59,7 +51,7 @@ const h = require("@/config/hosts").hostAPI
          header_alunos: [
             {text: "Username", sortable: true, value: 'user', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
-            {text: "Operações", class: 'subtitle-1'},
+            {text: "Editar", class: 'subtitle-1'},
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
@@ -67,36 +59,27 @@ const h = require("@/config/hosts").hostAPI
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
-        ready:false
+        idTurma: "",
+        turma: {},
+        utilizador:{}
       }
     },
     created: async function(){
         this.token = localStorage.getItem("token")
-        var response = await axios.get(h + "alunos?token=" + this.token)
-        this.alunos = response.data
-        this.ready = true
+        this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
+        this.idTurma = this.$route.params.id
+        var response = await axios.get(h + "turmas/" + this.idTurma + "?token=" + this.token)
+        this.turma = response.data
+        var responseA = await axios.get(h + "turmas/" + this.turma.turma + "/alunos?codprofessor="+ this.turma.idprofessor + "&token=" + this.token)
+        this.alunos = responseA.data
     },
     methods: {
-      verAluno : function(id){
-          this.$router.push({name: "Ver Aluno", params: { id : id } })
-      },
       editarAluno : function(id){
           this.$router.push({name: "Editar Aluno", params: { id : id } })
       },
-      apagarAluno: async function(id){
-          if(confirm("De certeza que deseja apagar este aluno?")){
-              var a = await axios.delete(h + "alunos/" + id + "?token=" + this.token)
-              var apagado = a.data
-              if(apagado.removed){
-                var response = await axios.get(h + "alunos?token=" + this.token)
-                this.alunos = response.data
-              }
-              else{
-                alert(apagado.message)
-              }
-              
-          }
+      editarTurma: function(id){
+
       }
-    }
+  }
   }
 </script>

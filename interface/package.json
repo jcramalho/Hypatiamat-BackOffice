@@ -9,6 +9,9 @@
   "dependencies": {
     "axios": "^0.21.0",
     "core-js": "^3.6.5",
+    "dom-to-image": "^2.6.0",
+    "jspdf": "^2.1.1",
+    "jspdf-autotable": "^3.5.13",
     "vue": "^2.6.11",
     "vue-jwt-decode": "^0.1.0",
     "vue-router": "^3.2.0",

@@ -3,6 +3,7 @@ var md5 = require('md5');
 
 var Alunos = require('../controllers/db_aplicacoes/alunos');
 var Professores = require('../controllers/db_aplicacoes/professor');
+var Escolas = require('../controllers/db_aplicacoes/escolas')
 
 const jwtKey = "tese-hypatiamat2020"
 const jwtExpirySeconds = 60 * 60
@@ -42,9 +43,15 @@ module.exports.login = async function(user, password){
               var utilizador = await Professores.getProfessorByCodigo(user)
               utilizador.type = 20
               //municipio
-              if(utilizador.premium == 2) utilizador.type = 30
+              if(utilizador.premium == 2) {
+                  utilizador.type = 30
+                  utilizador.infoEscola = await Escolas.getEscola(utilizador.escola)
+                  utilizador.escolas = await Escolas.getEscolasByLocalidade(utilizador.infoEscola.localidade)
+              }
               // agrupamento
-              else if(utilizador.premium == 3) utilizador.type = 40
+              else if(utilizador.premium == 3) {
+                  utilizador.type = 40
+              }
               // admin
               else if(utilizador.premium == 5) utilizador.type = 50
 

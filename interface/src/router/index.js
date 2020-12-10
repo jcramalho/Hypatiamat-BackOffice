@@ -20,7 +20,21 @@ import MinhasTurmas from '../views/MinhasTurmas.vue'
 import CriarTurma from '../views/CriarTurma.vue'
 import Pendentes from '../views/Pendentes.vue'
 import Jogos from '../views/Jogos.vue'
+import JogosTurma from '../views/JogosTurma.vue'
 import JogosAluno from '../views/JogosAluno.vue'
+import JogosMunicipios from '../views/JogosMunicipios.vue'
+import JogosEscolas from '../views/JogosEscolas.vue'
+import JogosProfessores from '../views/JogosProfessores.vue'
+import AppsMunicipios from '../views/AppsMunicipios.vue'
+import AppsEscolas from '../views/AppsEscolas.vue'
+import AppsProfessores from '../views/AppsProfessores.vue'
+import AppsTurmas from '../views/AppsTurmas.vue'
+import Apps from '../views/Apps.vue'
+import AppsAluno from '../views/AppsAluno.vue'
+import AlunosTurma from '../views/AlunosTurma.vue'
+import MonotorizacaoJogos from '../views/MonotorizacaoJogos.vue'
+import Agrupamentos from '../views/Agrupamentos.vue'
+
 
 
 
@@ -61,12 +75,26 @@ const routes = [
     }
   },
   {
+    path: '/agrupamentos',
+    name: 'Agrupamentos',
+    component: Agrupamentos,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(utilizador.type == 30){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    }
+  },
+  {
     path: '/jogos',
     name: 'Jogos',
     component: Jogos,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if(utilizador.type == 20){
+      if( utilizador.type == 20 ){
         next()
       }
       else{
@@ -79,9 +107,210 @@ const routes = [
     }
   },
   {
+    path: '/jogos/municipios',
+    name: 'Jogos Municipio',
+    component: JogosMunicipios,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if((utilizador.type == 50)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/apps/municipios',
+    name: 'Apps Municipios',
+    component: AppsMunicipios,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if((utilizador.type == 50)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/jogos/:idprofessor',
+    name: 'Jogos Turma',
+    component: JogosTurma,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(utilizador.type == 30){
+        // ir buscar os professores pertencentes ao municipio
+      }
+      if( utilizador.type == 50 || (utilizador.type == 30)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/apps/:idprofessor',
+    name: 'Apps Turmas',
+    component: AppsTurmas,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if( utilizador.type == 50 && utilizador.type == 30){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Apps",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/jogos/:municipio/escolas',
+    name: 'Jogos Escolas',
+    component: JogosEscolas,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      // fazer algo para garantir que o municipio apenas entre para ver escolas do seu municipio e não de outros municipios
+      if((utilizador.type == 50) || (utilizador.type == 30 || to.params.municipio == utilizador.infoEscola.localidade)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/apps/:municipio/escolas',
+    name: 'Apps Escolas',
+    component: AppsEscolas,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      // fazer algo para garantir que o municipio apenas entre para ver escolas do seu municipio e não de outros municipios
+      if((utilizador.type == 50) || (utilizador.type == 30 && to.params.municipio == utilizador.infoEscola.localidade)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/escolas/:id/jogos',
+    name: 'Jogos Professores',
+    component: JogosProfessores,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      // fazer algo para garantir que o municipio apenas entre para ver escolas do seu municipio e não de outros municipios
+      if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.escolas.find(element => element.cod == to.params.id)) || (utilizador.type == 40)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/escolas/:escola/apps',
+    name: 'Apps Professores',
+    component: AppsProfessores,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      // fazer algo para garantir que o municipio apenas entre para ver escolas do seu municipio e não de outros municipios
+      if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.escolas.find(element=>element.cod == to.params.escola)) || (utilizador.type == 40)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Apps Escola",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/monotorizacaojogos',
+    name: 'Monotorizacao Jogos',
+    component: MonotorizacaoJogos,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(utilizador.type == 50){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Monotorização",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/apps',
+    name: 'Apps',
+    component: Apps,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(utilizador.type == 20){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Apps",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
     path: '/jogosAluno',
     name: 'Jogos Alunos',
     component: JogosAluno,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(utilizador.type == 10){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    }
+  },
+  {
+    path: '/appsAluno',
+    name: 'Apps Alunos',
+    component: AppsAluno,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 10){
@@ -173,7 +402,7 @@ const routes = [
     component: EditarAluno,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if(utilizador.type == 50 || (utilizador.type == 10 && utilizador.id == to.params.id)){
+      if(utilizador.type == 50 || (utilizador.type == 20) || (utilizador.type == 10 && utilizador.id == to.params.id)){
         next()
       }
       else{
@@ -217,6 +446,24 @@ const routes = [
     path: '/editarMinhaTurma/:id',
     name: 'Editar Minha Turma',
     component: EditarMinhaTurma,
+    beforeEnter: async (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      let token = localStorage.getItem("token")
+      // falta permitir um professor que possua turma puder alterar
+      var response = await axios.get(h + "professores/" + utilizador.codigo + "/turmas?token=" + token)
+      //console.log(response.data)
+      if(utilizador.type == 50 || (utilizador.type == 20 && (pertence(response.data, to.params.id)))){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    }
+  },
+  {
+    path: '/verTurma/:id',
+    name: 'Ver Turma',
+    component: AlunosTurma,
     beforeEnter: async (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       let token = localStorage.getItem("token")

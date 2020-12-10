@@ -107,7 +107,8 @@ export default {
         { title: 'Alunos', icon: 'mdi-account-group', href:"/alunos" },
         { title: 'Escolas', icon: 'mdi-school', href:"/escolas" },
         { title: 'Turmas', icon: 'mdi-book-account', href:"/turmas" },
-        { title: 'Minhas Turmas', icon: 'mdi-book-account', href:"/minhasturmas" },
+        { title: 'Monotorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/municipios"},
+        { title: 'Monotorização de Apps', icon: 'mdi-apps', href:"/apps/municipios"},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }
@@ -116,7 +117,7 @@ export default {
       this.items = [
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
         { title: 'Minhas Turmas', icon: 'mdi-book-account', href:"/minhasturmas" },
-        { title: 'Monitorização de Jogos', icon: 'mdi-school', href:"/jogos" },
+        { title: 'Monitorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos" },
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }
@@ -124,7 +125,7 @@ export default {
       // Aluno
       this.items = [
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
-        { title: 'Desempenho nos Jogos', icon: 'mdi-school',href:"/jogosAluno" },
+        { title: 'Desempenho nos Jogos', icon: 'mdi-gamepad-variant',href:"/jogosAluno" },
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }
@@ -132,8 +133,10 @@ export default {
       // Municipio
       this.items =[
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
-        { title: 'Minhas Escolas', icon: 'mdi-school', href:"/escolas" },
+        { title: 'Minhas Escolas', icon: 'mdi-school', href:"/agrupamentos" },
         { title: 'Minhas Turmas', icon: 'mdi-book-account', href:"/minhasturmas" },
+        { title: 'Monotorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/"+ utilizador.infoEscola.localidade +"/escolas" },
+        { title: 'Monotorização de Apps', icon: 'mdi-apps', href:"/apps/" + utilizador.infoEscola.localidade + "/escolas"},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }
