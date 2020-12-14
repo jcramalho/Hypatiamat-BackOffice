@@ -6,6 +6,7 @@
             <v-card-title primary-title class="justify-center green--text">
                 Lista de Professores
             </v-card-title>
+            <center><v-btn class="white--text" style="background-color: #009263;" @click="criarProfessor()"><v-icon> mdi-account-plus </v-icon> Criar Professor </v-btn></center>
             <v-text-field
                 v-model="filtrar"
                 label="Filtrar"
@@ -24,6 +25,8 @@
                 <tr>
                     <td>{{row.item.codigo}}</td>
                     <td>{{row.item.nome}}</td>
+                    <td>{{row.item.localidade}}</td>
+                    <td>{{row.item.escola}}</td>
                     <td>
                     <v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>
                     <v-icon @click="editarProfessor(row.item.id)"> mdi-pencil </v-icon>
@@ -52,6 +55,8 @@ const h = require("@/config/hosts").hostAPI
          header_professores: [
             {text: "Username", sortable: true, value: 'codigo', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
+            {text: "Localidade", value: 'localidade', class: 'subtitle-1'},
+            {text: "Agrupamento", value: 'escola', class: 'subtitle-1'},
             {text: "Operações", class: 'subtitle-1'},
         ],
         footer_props: {
@@ -86,6 +91,9 @@ const h = require("@/config/hosts").hostAPI
                 alert(apagado.message)
               }
           }
+      },
+      criarProfessor: async function(){
+        this.$router.push({name:"Criar Professor"})
       }
     }
   }

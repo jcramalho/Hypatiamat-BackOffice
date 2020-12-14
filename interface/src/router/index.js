@@ -18,6 +18,9 @@ import EditarTurma from '../views/EditarTurma.vue'
 import EditarMinhaTurma from '../views/EditarMinhaTurma.vue'
 import MinhasTurmas from '../views/MinhasTurmas.vue'
 import CriarTurma from '../views/CriarTurma.vue'
+import CriarAluno from '../views/CriarAluno.vue'
+import CriarEscola from '../views/CriarEscola.vue'
+import CriarProfessor from '../views/CriarProfessor.vue'
 import Pendentes from '../views/Pendentes.vue'
 import Jogos from '../views/Jogos.vue'
 import JogosTurma from '../views/JogosTurma.vue'
@@ -512,7 +515,49 @@ const routes = [
     component: CriarTurma,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if(utilizador.type == 50 || utilizador.type == 10){
+      if(utilizador.type == 50 || utilizador.type == 20){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    }
+  },
+  {
+    path: '/criarProfessor',
+    name: 'Criar Professor',
+    component: CriarProfessor,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(utilizador.type == 50){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    }
+  },
+  {
+    path: '/criarEscola',
+    name: 'Criar Escola',
+    component: CriarEscola,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(utilizador.type == 50){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    }
+  },
+  {
+    path: '/criarAluno',
+    name: 'Criar Aluno',
+    component: CriarAluno,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(utilizador.type == 50 || utilizador.type == 20){
         next()
       }
       else{

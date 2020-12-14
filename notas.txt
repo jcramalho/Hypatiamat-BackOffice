@@ -39,6 +39,17 @@ o que estava feito / alternativo
 
 ----
 
+localidade e agrupamento na lista de professores. (feito)
+alunos => professor, escola e turma (feito)
+Inserir escola no admin (feito)
+Inserir professor e aluno (feito)
+Label da escola para agrupamento de escolas (feito)
+nome do professor nas turmas (feito)
+arrendonder média às unidades (jogos)
+Estatisticas globais (turma e escola em concreto e em vez DE Hypatia -> Hypatiamat)
+Estatisticas por cada jogo por municipio
+csv para introduzir alunos
+
 					Lista de Tarefas:
 
 Agrupamento => Professores => Turmas => Monitorização de Jogos e Aplicações

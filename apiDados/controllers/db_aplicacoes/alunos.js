@@ -24,9 +24,9 @@ Aluno.insertAluno = function (aluno) {
     return new Promise(function(resolve, reject) {
     var args = [aluno.user, aluno.numero, aluno.nome, aluno.datanascimento, 
                 aluno.escola, aluno.turma, aluno.email, md5(aluno.password), 
-                aluno.codprofessor, aluno.pais, aluno.confirmacao]
+                aluno.codprofessor, aluno.pais]
     sql.query("INSERT INTO alunos (`user`, `numero`, `nome`, `datanascimento`, `escola`, `turma`, `email`, `password`," 
-                + " `codprofessor`, `pais`, `confirmacao`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+                + " `codprofessor`, `pais`, `confirmacao`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)", 
                 args, function (err, res) {
             
             if(err) {
@@ -59,7 +59,21 @@ Aluno.getPassword = function (user){
 
 Aluno.getAlunos = function(){
     return new Promise(function(resolve, reject) {
-        sql.query("Select id, user, numero, nome, datanascimento, escola, turma, email, confirmacao from alunos", function(err, res){
+        sql.query("Select id, user, numero, nome, datanascimento, escola, turma, email, confirmacao, codprofessor from alunos", function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+Aluno.getAlunosCodigo = function(){
+    return new Promise(function(resolve, reject) {
+        sql.query("Select user from alunos", function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -152,7 +166,7 @@ Aluno.getAlunosFromTurma = function(turma, codprofessor){
 
 Aluno.getAlunosFromEscola = function(escola){
     return new Promise(function(resolve, reject) {
-        sql.query("Select id, user, numero, nome, datanascimento, escola, turma, email, confirmacao from alunos where escola=?", escola, function(err, res){
+        sql.query("Select id, user, numero, nome, datanascimento, escola, turma, email, confirmacao, codprofessor from alunos where escola=?", escola, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

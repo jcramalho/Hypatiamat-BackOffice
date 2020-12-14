@@ -3,6 +3,7 @@
     <v-main class="grey lighten-3">
     <v-card class="pa-5">
         <v-container>
+            <center><v-btn class="white--text" style="background-color: #009263;" @click="criarEscola()"><v-icon> mdi-account-plus </v-icon> Criar Escola </v-btn></center>
             <center>
             <v-text-field
                 class="text--black"
@@ -122,6 +123,9 @@ const h = require("@/config/hosts").hostAPI
       reporTudo: async function(){
         var response = await axios.get(h + "escolas?token=" + this.token)
         this.escolas = response.data
+      },
+      criarEscola: function(){
+        this.$router.push({name:"Criar Escola"})
       }
     }
   }

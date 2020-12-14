@@ -3,10 +3,20 @@
     <v-main class="grey lighten-3">
     <v-card class="pa-5">
         <v-container>
-            <v-card-title primary-title class="justify-center green--text">
+            <v-card-title primary-title class="justify-center green--text" >
                 Lista de Alunos
             </v-card-title>
-            
+            <center><v-btn class="white--text" style="background-color: #009263;" @click="criarAluno()"><v-icon> mdi-account-plus </v-icon> Criar Aluno </v-btn></center>
+            <v-combobox
+                id="escola"
+                label="Agrupamento de Escolas"
+                prepend-icon="mdi-school"
+                :return-object="true"
+                v-model="escola"
+                color="#009263"
+                :items="escolas"
+                @change="getAlunos()"
+            ></v-combobox>
             <v-container v-if="ready">
             <v-text-field
                 v-model="filtrar"
@@ -27,6 +37,8 @@
                 <tr>
                     <td>{{row.item.user}}</td>
                     <td>{{row.item.nome}}</td>
+                    <td>{{row.item.codprofessor}}</td>
+                    <td>{{row.item.turma}}</td>
                     <td>
                     <v-icon @click="verAluno(row.item.id)"> mdi-eye </v-icon>
                     <v-icon @click="editarAluno(row.item.id)"> mdi-pencil </v-icon>
@@ -59,6 +71,8 @@ const h = require("@/config/hosts").hostAPI
          header_alunos: [
             {text: "Username", sortable: true, value: 'user', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
+            {text: "Professor", value: 'codprofessor', class: 'subtitle-1'},
+            {text: "Turma", value: 'turma', class: 'subtitle-1'},
             {text: "Operações", class: 'subtitle-1'},
         ],
         footer_props: {
@@ -67,13 +81,23 @@ const h = require("@/config/hosts").hostAPI
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
-        ready:false
+        ready:false,
+        escolas:[],
+        escolasIds:[]
       }
     },
     created: async function(){
         this.token = localStorage.getItem("token")
+        var responseE = await axios.get(h + "escolas")
+        this.escolasIds = responseE.data
+        var i
+        for(i = 0; i < this.escolasIds.length; i++){
+          var string = this.escolasIds[i].localidade + " - " + this.escolasIds[i].nome 
+          this.escolas.push(string)
+        }
         var response = await axios.get(h + "alunos?token=" + this.token)
         this.alunos = response.data
+
         this.ready = true
     },
     methods: {
@@ -82,6 +106,15 @@ const h = require("@/config/hosts").hostAPI
       },
       editarAluno : function(id){
           this.$router.push({name: "Editar Aluno", params: { id : id } })
+      },
+      getAlunos : async function(){
+        this.ready = false
+        var aux = this.escola.split(" - ")
+        var escolaEscolhida = this.escolasIds.find(element => element.nome == aux[1]).cod
+        var response = await axios.get(h + "escolas/" + escolaEscolhida + "/alunos?token=" + this.token )
+        console.log(response.data)
+        this.alunos = response.data
+        this.ready = true
       },
       apagarAluno: async function(id){
           if(confirm("De certeza que deseja apagar este aluno?")){
@@ -96,6 +129,9 @@ const h = require("@/config/hosts").hostAPI
               }
               
           }
+      },
+      criarAluno: async function(){
+        this.$router.push({name: "Criar Aluno"})
       }
     }
   }

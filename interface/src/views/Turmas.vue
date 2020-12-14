@@ -9,7 +9,7 @@
             <center><v-btn class="white--text" style="background-color: #009263;" @click="criarTurma()"> <v-icon> mdi-book-plus </v-icon> Criar Turma </v-btn></center>
             <v-combobox
                 id="escola"
-                label="Escola"
+                label="Agrupamento de Escolas"
                 prepend-icon="mdi-school"
                 :return-object="true"
                 v-model="escola"
@@ -34,6 +34,7 @@
                 <template v-slot:item="row">
                 <tr>
                     <td @click="verProfessor(row.item.idprofessor)" style="cursor: pointer;">{{row.item.idprofessor}}</td>
+                    <td @click="verProfessor(row.item.idprofessor)" style="cursor: pointer;">{{row.item.nome}}</td>
                     <td>{{row.item.turma}}</td>
                     <td>
                     <v-icon @click="editarTurma(row.item.id, row.item.idprofessor)"> mdi-pencil </v-icon>
@@ -61,6 +62,7 @@ const h = require("@/config/hosts").hostAPI
         turmas: [],
          header_turmas: [
             {text: "Username do Professor", sortable: true, value: 'idprofessor', class: 'subtitle-1'},
+            {text: "Nome do Professor", sortable: true, value: 'nome', class: 'subtitle-1'},
             {text: "Turma", value: 'turma', class: 'subtitle-1'},
             {text: "Operações", class: 'subtitle-1'},
         ],
@@ -89,7 +91,7 @@ const h = require("@/config/hosts").hostAPI
     },
     methods: {
       criarTurma : function(){
-          this.$router.push({name: "Criar Turma" })
+          this.$router.push({name: "Criar Turma",  params:{isAdmin:true} })
       },
       getTurmas : async function(){
         var aux = this.escola.split(" - ")

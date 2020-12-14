@@ -14,7 +14,7 @@ var Escola = function(escola){
 Escola.insertEscola = function (escola) {    
     return new Promise(function(resolve, reject) {
     var args = [escola.nome, escola.localidade, escola.distrito, escola.pais, escola.cod]
-    sql.query("INSERT INTO escolas (nome`, `localidade`, `distrito`, `pais`, `cod`)"+ 
+    sql.query("INSERT INTO escolas (`nome`, `localidade`, `distrito`, `pais`, `cod`)"+ 
                 " VALUES (?, ?, ?, ?, ?)", 
                 args, function (err, res) {
             
@@ -91,6 +91,20 @@ Escola.getEscolasByDistrito = function (distrito) {
 Escola.getEscolasByPais = function (pais) {
     return new Promise(function(resolve, reject) {
         sql.query("Select * from escolas where pais=?", pais, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+Escola.getTurmasFromEscola = function (id) {
+    return new Promise(function(resolve, reject) {
+        sql.query("Select t.* from escolas esc, turmas t, professores p where esc.cod=? and esc.cod = p.escola and t.idprofessor=p.cod", id, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

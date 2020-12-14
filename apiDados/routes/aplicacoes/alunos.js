@@ -2,6 +2,9 @@ var express = require('express');
 var router = express.Router();
 var passport = require('passport')
 
+var fs = require('fs')
+var fastcsv = require('fast-csv')
+
 var Alunos = require('../../controllers/db_aplicacoes/alunos');
 const TurmaOld = require('../../controllers/db_aplicacoes/turmasold');
 
@@ -12,6 +15,14 @@ router.get('/', passport.authenticate('jwt', {session: false}), function(req, re
                  res.jsonp(dados)
                })
                .catch(erro => res.status(500).jsonp(erro))
+});
+
+router.get('/codigos', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  Alunos.getAlunosCodigo()
+             .then(dados =>{
+               res.jsonp(dados)
+             })
+             .catch(erro => res.status(500).jsonp(erro))
 });
 
 /* GET devolve a informação de um aluno. */
@@ -87,6 +98,11 @@ router.post('/', function(req, res, next) {
                  res.jsonp(dados)
                })
                .catch(erro => res.status(500).jsonp(erro))
+});
+
+/* POST insere um csv de alunos. */
+router.post('/csv', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  
 });
 
 /* DELETE apaga um aluno. */
