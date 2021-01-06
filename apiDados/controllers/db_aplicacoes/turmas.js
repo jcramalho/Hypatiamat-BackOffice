@@ -11,8 +11,8 @@ var Turma = function(turma){
 
 Turma.insertTurma = function (turma) {    
     return new Promise(function(resolve, reject) {
-    var args = [turma.idprofessor, turma.turma]
-    sql.query("INSERT INTO turmas (`idprofessor`, `turma`) VALUES (?, ?)", 
+    var args = [turma.idprofessor, turma.turma, turma.anoletivo]
+    sql.query("INSERT INTO turmas (`idprofessor`, `turma`, `anoletivo`) VALUES (?, ?, ?)", 
                 args, function (err, res) {
             
             if(err) {
@@ -41,6 +41,21 @@ Turma.getTurmas = function(){
     })
 }
 
+Turma.getTurmasFromAnoLetivo = function(anoletivo){
+    return new Promise(function(resolve, reject) {
+        sql.query("Select * from turmas where anoletivo=?", anoletivo, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+
 
 Turma.getTurmaById = function (id) {
     return new Promise(function(resolve, reject) {
@@ -59,7 +74,21 @@ Turma.getTurmaById = function (id) {
 
 Turma.getTurmasByProfessor = function (idprofessor) {
     return new Promise(function(resolve, reject) {
-        sql.query("Select * from turmas where idprofessor=?", idprofessor, function(err, res){
+        sql.query("Select * from turmas where idprofessor=? Order by anoletivo DESC", idprofessor, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+Turma.getTurmasByProfessorAno = function (idprofessor, anoletivo) {
+    return new Promise(function(resolve, reject) {
+        sql.query("Select * from turmas where idprofessor=? and anoletivo=?", [idprofessor, anoletivo], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -105,7 +134,7 @@ Turma.getTurmasByEscola = function (escola){
 
 Turma.getJogosFromTurma  = function (dataInicio, dataFim, jogoTipo, tableJogo, turma, escola){
         return new Promise(function(resolve, reject) {
-            sql.query("Select al.numero, jogo.idaluno, al.nome, AVG(jogo.pontuacao) as media, MAX(jogo.pontuacao) as maximo, MIN(jogo.pontuacao) as minimo, count(jogo.pontuacao) as count " +
+            sql.query("Select al.numero, jogo.idaluno, al.nome, Round(AVG(jogo.pontuacao), 0) as media, MAX(jogo.pontuacao) as maximo, MIN(jogo.pontuacao) as minimo, count(jogo.pontuacao) as count " +
             "from hypat_samd." + tableJogo + " jogo, hypat_aplicacoes.alunos al " +  
             "where jogo.tipo = ? and jogo.turma = ? and jogo.idescola = ? and al.user = jogo.idaluno and (jogo.data between ? and ?) "+ 
             "Group by idaluno Order by al.numero", [jogoTipo, turma, escola, dataInicio, dataFim], function(err, res){

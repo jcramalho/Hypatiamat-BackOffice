@@ -49,6 +49,7 @@
 
 <script>
   const h = require("@/config/hosts").hostAPI
+  import Swal from 'sweetalert2'
   import axios from "axios"
   export default {
     data(){
@@ -150,18 +151,30 @@
             }
             axios.post(h + "alunos/", data)
                  .then(()=>{
-                   alert('Aluno registado com sucesso.')
+                   Swal.fire({
+                    icon: 'success',
+                    title: 'Aluno registado com sucesso.',
+                    confirmButtonColor: '#009263'
+                  })
                    this.$router.push({name: "Alunos"})
                  })
                 .catch(erro=> console.log(erro))
           }
           else {
             this.password2 = ""
-            alert("As palavra passe e a sua confirmação não são iguais!")
+            Swal.fire({
+                  icon: 'error',
+                  title: "As palavra passe e a sua confirmação não são iguais!",
+                  confirmButtonColor: '#009263'
+            })
           }
         }
         else {
-            alert('Ainda possuí campos por preencher!')
+          Swal.fire({
+                  icon: 'error',
+                  title: 'Ainda possuí campos por preencher!',
+                  confirmButtonColor: '#009263'
+                })
         }
       }
 

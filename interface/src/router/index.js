@@ -37,6 +37,8 @@ import AppsAluno from '../views/AppsAluno.vue'
 import AlunosTurma from '../views/AlunosTurma.vue'
 import MonotorizacaoJogos from '../views/MonotorizacaoJogos.vue'
 import Agrupamentos from '../views/Agrupamentos.vue'
+import AgrupamentoProfessores from '../views/AgrupamentoProfessores.vue'
+
 
 
 
@@ -154,7 +156,7 @@ const routes = [
       if(utilizador.type == 30){
         // ir buscar os professores pertencentes ao municipio
       }
-      if( utilizador.type == 50 || (utilizador.type == 30)){
+      if( utilizador.type == 50 || (utilizador.type == 30) || (utilizador.type == 20 && utilizador.codigo == to.params.idprofessor)){
         next()
       }
       else{
@@ -172,7 +174,7 @@ const routes = [
     component: AppsTurmas,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if( utilizador.type == 50 && utilizador.type == 30){
+      if( utilizador.type == 50 || utilizador.type == 30 || (utilizador.type == 20 && utilizador.codigo == to.params.idprofessor)){
         next()
       }
       else{
@@ -257,6 +259,25 @@ const routes = [
     },
     meta: {
       title: "Apps Escola",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/escolas/:escola/professores',
+    name: 'Professores Agrupamento',
+    component: AgrupamentoProfessores,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      // fazer algo para garantir que o municipio apenas entre para ver escolas do seu municipio e não de outros municipios
+      if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.escolas.find(element=>element.cod == to.params.escola)) || (utilizador.type == 40)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Professores Agrupamento",
       icon:"../assets/logo.png" 
     }
   },

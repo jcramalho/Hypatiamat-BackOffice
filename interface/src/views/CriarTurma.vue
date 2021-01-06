@@ -40,6 +40,7 @@
 
 <script>
   const h = require("@/config/hosts").hostAPI
+  import Swal from 'sweetalert2'
   import axios from "axios"
 import TurmasVue from './Turmas.vue'
   export default {
@@ -112,7 +113,11 @@ import TurmasVue from './Turmas.vue'
         var response = await axios.get(h + "professores/" + this.codigo + "/turmas/?token=" + this.token)
         var turmas = response.data
         if(turmas.length >= 5){
-          alert("Escolha outro professor. Este já possuí, pelo menos, 5 turmas.")
+          Swal.fire({
+                  icon: 'error',
+                  text: "Escolha outro professor. Este já possuí, pelo menos, 5 turmas.",
+                  confirmButtonColor: '#009263'
+                })
           this.codigo = ""
         }
       },
@@ -135,7 +140,11 @@ import TurmasVue from './Turmas.vue'
             this.$router.push({name: "Editar Turma", params: { id : response.data.insertedId } })   
         }
         else {
-            alert('Ainda possuí campos por preencher!')
+            Swal.fire({
+                  icon: 'error',
+                  text: 'Ainda possuí campos por preencher!',
+                  confirmButtonColor: '#009263'
+                })
         }
       }
     }

@@ -7,6 +7,18 @@
                 Lista de Alunos
             </v-card-title>
             <center><v-btn class="white--text" style="background-color: #009263;" @click="criarAluno()"><v-icon> mdi-account-plus </v-icon> Criar Aluno </v-btn></center>
+            <br>
+            <v-dialog v-model="csvDialog" width="60%">
+              <v-card class="pa-5">
+                <center>
+                <v-file-input show-size v-model="file" placeholder="Anexar ficheiro csv"  label="Anexar ficheiro csv"
+                 prepend-icon="mdi-paperclip" style="width:30%;" color="#009263" @change="checkFile()"/> 
+
+                <v-btn color="#009263" type='submit' @click="postFile()"> Inserir Alunos </v-btn>
+                </center>
+              </v-card>
+            </v-dialog>
+            <center><v-btn class="white--text" style="background-color: #009263;" @click="csvDialog = true"><v-icon> mdi-file-delimited </v-icon> Inserir CSV </v-btn></center>
             <v-combobox
                 id="escola"
                 label="Agrupamento de Escolas"
@@ -61,6 +73,9 @@
 
 <script>
 import axios from "axios"
+import Swal from 'sweetalert2'
+var fs = require('fs')
+var fastcsv = require('fast-csv')
 const h = require("@/config/hosts").hostAPI
 
   export default {
@@ -68,6 +83,7 @@ const h = require("@/config/hosts").hostAPI
       return {
         token: "",
         alunos: [],
+        csvDialog:false,
          header_alunos: [
             {text: "Username", sortable: true, value: 'user', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
@@ -83,7 +99,9 @@ const h = require("@/config/hosts").hostAPI
         filtrar : "",
         ready:false,
         escolas:[],
-        escolasIds:[]
+        escolasIds:[],
+        escola:"",
+        file:{}
       }
     },
     created: async function(){
@@ -101,6 +119,49 @@ const h = require("@/config/hosts").hostAPI
         this.ready = true
     },
     methods: {
+      checkFile: async function(){
+        console.log(this.file)
+        if(this.file != undefined){
+          if(this.file.type != "application/vnd.ms-excel"){
+            Swal.fire({
+                  icon: 'error',
+                  text: "O ficheiro tem que ser do tipo csv!",
+                  confirmButtonColor: '#009263'
+                })
+            this.file = {}
+          }
+        }
+      },
+      postFile: function(){
+        if  (!this.file.type) {
+          Swal.fire({
+                  icon: 'error',
+                  text: "Tem que introduzir um ficheiro csv!",
+                  confirmButtonColor: '#009263'
+                })
+          return;
+        }
+
+        let formData = new FormData();
+        
+        formData.append("ficheiro", this.file)
+ 
+        axios.post(h + 'alunos/csv/?token=' + this.token,
+          formData,
+          {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+          }
+        ).then((response) => {
+           this.csvDialog = false
+           Swal.fire({
+                  icon: 'info',
+                  text: response.data,
+                  confirmButtonColor: '#009263'
+                })
+        })
+      },
       verAluno : function(id){
           this.$router.push({name: "Ver Aluno", params: { id : id } })
       },
@@ -117,7 +178,14 @@ const h = require("@/config/hosts").hostAPI
         this.ready = true
       },
       apagarAluno: async function(id){
-          if(confirm("De certeza que deseja apagar este aluno?")){
+        Swal.fire({
+          title: 'De certeza que deseja apagar este aluno?',
+          showDenyButton: true,
+          confirmButtonColor: '#009263',
+          confirmButtonText: `Sim`,
+          denyButtonText: `Não`,
+        }).then(async (result) => {
+          if (result.isConfirmed) {
               var a = await axios.delete(h + "alunos/" + id + "?token=" + this.token)
               var apagado = a.data
               if(apagado.removed){
@@ -125,10 +193,15 @@ const h = require("@/config/hosts").hostAPI
                 this.alunos = response.data
               }
               else{
-                alert(apagado.message)
+                Swal.fire({
+                  icon: 'error',
+                  text: apagado.message,
+                  confirmButtonColor: '#009263'
+                })
               }
-              
           }
+        })    
+              
       },
       criarAluno: async function(){
         this.$router.push({name: "Criar Aluno"})

@@ -32,13 +32,24 @@ router.get('/:id', passport.authenticate('jwt', {session: false}), function(req,
              .catch(erro => res.status(500).jsonp(erro))
 });
 
-/* GET Devolve as turmas de um professor através do seu id. */
+/* GET Devolve as turmas de um professor através do seu id (eventualmente pode se passar o ano letivo das turmas). */
 router.get('/:id/turmas', passport.authenticate('jwt', {session: false}), function(req, res, next) {
-  Turmas.getTurmasByProfessor(req.params.id)
+  var ano = req.query.ano
+  if(ano){
+    var anoletivo = ano + "/" + (parseInt(ano) + 1)
+    Turmas.getTurmasByProfessorAno(req.params.id, anoletivo)
              .then(dados =>{
                res.jsonp(dados)
              })
              .catch(erro => res.status(500).jsonp(erro))
+  }
+  else{
+    Turmas.getTurmasByProfessor(req.params.id)
+              .then(dados =>{
+                res.jsonp(dados)
+              })
+              .catch(erro => res.status(500).jsonp(erro))
+  }
 });
 
 /* PUT Alterar um professor. */

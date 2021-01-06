@@ -84,6 +84,7 @@
 
 <script>
 import axios from "axios"
+import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
 
   export default {
@@ -143,9 +144,17 @@ const h = require("@/config/hosts").hostAPI
       editarEscola : function(){
           axios.put(h + "escolas/" + this.id + "?token=" + this.token, this.escola)
                .then(dados => {
-                 alert("Dados alterados com sucesso!")
+                 Swal.fire({
+                  icon: 'success',
+                  text: "Dados alterados com sucesso!",
+                  confirmButtonColor: '#009263'
+                })
                })
-               .catch(error => alert("Não foi possível guardar as alterações."))
+               .catch(error => Swal.fire({
+                  icon: 'error',
+                  text: "Não foi possível guardar as alterações.",
+                  confirmButtonColor: '#009263'
+                }))
       }
     }
   }

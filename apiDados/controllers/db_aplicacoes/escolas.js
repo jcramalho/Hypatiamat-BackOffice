@@ -137,7 +137,7 @@ Escola.updateEscola = function(id, escola){
 Escola.getJogosMunicipio = async function(jogoTable, jogoTipo, dataInicio, dataFim){
     return new Promise(function(resolve, reject) {
         var args = [jogoTipo, dataInicio, dataFim]
-        sql.query("SELECT esc.localidade, min(jogo.pontuacao) as min, max(jogo.pontuacao) as max, avg(jogo.pontuacao) as media, count(jogo.pontuacao) as number " +
+        sql.query("SELECT esc.localidade, min(jogo.pontuacao) as min, max(jogo.pontuacao) as max, Round(AVG(jogo.pontuacao), 0) as media, count(jogo.pontuacao) as number " +
 		"FROM hypat_samd." + jogoTable + " jogo, hypat_aplicacoes.escolas esc " +
         "WHERE jogo.turma!='99' AND jogo.tipo=? AND jogo.idescola=esc.cod and (jogo.data BETWEEN ? and ?) Group by esc.localidade Order by esc.localidade;", args, function (err, res) {
                 if(err) {
@@ -155,7 +155,7 @@ Escola.getJogosMunicipio = async function(jogoTable, jogoTipo, dataInicio, dataF
 Escola.getJogosEscolas = async function(jogoTable, jogoTipo, dataInicio, dataFim, municipio){
     return new Promise(function(resolve, reject) {
         var args = [jogoTipo, municipio, dataInicio, dataFim]
-        sql.query("SELECT esc.cod, esc.nome, min(jogo.pontuacao) as min, max(jogo.pontuacao) as max, avg(jogo.pontuacao) as media, count(jogo.pontuacao) as number " +
+        sql.query("SELECT esc.cod, esc.nome, min(jogo.pontuacao) as min, max(jogo.pontuacao) as max, Round(AVG(jogo.pontuacao), 0) as media, count(jogo.pontuacao) as number " +
 		"FROM hypat_samd." + jogoTable + " jogo, hypat_aplicacoes.escolas esc " +
         "WHERE jogo.turma!='99' AND jogo.tipo=? AND jogo.idescola=esc.cod and esc.localidade = ? and (jogo.data BETWEEN ? and ?) Group by jogo.idescola Order by esc.nome;", args, function (err, res) {
                 if(err) {
@@ -174,7 +174,7 @@ Escola.getJogosEscolas = async function(jogoTable, jogoTipo, dataInicio, dataFim
 Escola.getJogosProfessores = async function(jogoTable, jogoTipo, dataInicio, dataFim, escola){
     return new Promise(function(resolve, reject) {
         var args = [jogoTipo, escola, dataInicio, dataFim]
-        sql.query("SELECT al.codprofessor, min(jogo.pontuacao) as min, max(jogo.pontuacao) as max, avg(jogo.pontuacao) as media, count(jogo.pontuacao) as number " +
+        sql.query("SELECT al.codprofessor, min(jogo.pontuacao) as min, max(jogo.pontuacao) as max, Round(AVG(jogo.pontuacao), 0) as media, count(jogo.pontuacao) as number " +
 		"FROM hypat_samd." + jogoTable + " jogo, hypat_aplicacoes.alunos al " +
         "WHERE jogo.turma!='99' AND jogo.tipo=? AND jogo.idescola = ? and al.user = jogo.idaluno and(jogo.data BETWEEN ? and ?) Group by al.codprofessor Order by al.codprofessor;", args, function (err, res) {
                 if(err) {

@@ -44,6 +44,7 @@
 
 <script>
 import axios from "axios"
+import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
 
 import VueJwtDecode from "vue-jwt-decode";
@@ -64,7 +65,12 @@ import VueJwtDecode from "vue-jwt-decode";
           let response = await axios.post(h + "login", {user: this.user, password: this.password});
           if(!response.data.authentication){
             this.password = ""
-            alert("Crendenciais erradas, tente novamente.")
+            Swal.fire({
+              icon: 'error',
+              confirmButtonColor: '#009263',
+              title: 'Credenciais erradas',
+              width:450,
+            })
             return;
           } 
           let token = response.data.token;
@@ -74,11 +80,21 @@ import VueJwtDecode from "vue-jwt-decode";
             localStorage.setItem("utilizador", JSON.stringify(aux.user))
             //let utilizador = JSON.parse(localStorage.getItem("utilizador"))
             localStorage.setItem("token", token);
-            alert("Login efetuado com sucesso.");
+            Swal.fire({
+              icon: 'success',
+              confirmButtonColor: '#009263',
+              title: 'Login efetuado com sucesso.',
+              width:450,
+            })
             this.$emit("refreshLogout")
           }
         }
-        else alert("Os campos não estão preenchidos!")
+        else Swal.fire({
+              icon: 'error',
+              confirmButtonColor: '#009263',
+              title: 'Não preencheu os dois campos!',
+              width:450,
+            })
     
        } 
        catch (err) {

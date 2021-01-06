@@ -45,6 +45,7 @@
 
 <script>
 import axios from "axios"
+import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
 
   export default {
@@ -80,17 +81,29 @@ const h = require("@/config/hosts").hostAPI
           this.$router.push({name: "Editar Professor", params: { id : id } })
       },
       apagarProfessor: async function(id){
-          if(confirm("De certeza que deseja apagar este professor?")){
-              var a = await axios.delete(h + "professores/" + id + "?token=" + this.token)
+        Swal.fire({
+          title: "De certeza que deseja apagar este professor?",
+          showDenyButton: true,
+          confirmButtonColor: '#009263',
+          confirmButtonText: `Sim`,
+          denyButtonText: `Não`,
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            var a = await axios.delete(h + "professores/" + id + "?token=" + this.token)
               var apagado = a.data
               if(apagado.removed){
                 var response = await axios.get(h + "professores?token=" + this.token)
                 this.professores = response.data
               }
               else{
-                alert(apagado.message)
+                Swal.fire({
+                  icon: 'error',
+                  text: apagado.message,
+                  confirmButtonColor: '#009263'
+                })
               }
           }
+        })
       },
       criarProfessor: async function(){
         this.$router.push({name:"Criar Professor"})

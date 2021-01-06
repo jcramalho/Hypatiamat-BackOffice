@@ -26,6 +26,7 @@ module.exports.login = async function(user, password){
   if (aluno != undefined){
       if(md5Password == aluno.password){
           var utilizador = await Alunos.getAlunoByUser(user)
+          utilizador.agrupamento = await Escolas.getEscola(utilizador.escola).nome
           utilizador.type = 10
           return {
               type : 10,
@@ -51,9 +52,13 @@ module.exports.login = async function(user, password){
               // agrupamento
               else if(utilizador.premium == 3) {
                   utilizador.type = 40
+                  utilizador.agrupamento = (await Escolas.getEscola(utilizador.escola)).nome
               }
               // admin
-              else if(utilizador.premium == 5) utilizador.type = 50
+              else if(utilizador.premium == 5) {
+                  utilizador.type = 50
+                  utilizador.agrupamento = (await Escolas.getEscola(utilizador.escola)).nome
+              }
 
               return {
                   type : utilizador.type,

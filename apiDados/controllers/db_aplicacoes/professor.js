@@ -143,7 +143,21 @@ Professor.getProfessoresByEscola = function (escola) {
 
 Professor.getTurmasFromEscola = function(escola){
     return new Promise(function(resolve, reject) {
-        sql.query("SELECT t.turma, t.idprofessor, t.id, p.nome FROM hypat_aplicacoes.turmas t, hypat_aplicacoes.professores p where p.codigo = t.idprofessor and p.escola = ? ;", escola, function(err, res){
+        sql.query("SELECT t.turma, t.idprofessor, t.id, p.nome, t.anoletivo FROM hypat_aplicacoes.turmas t, hypat_aplicacoes.professores p where p.codigo = t.idprofessor and p.escola = ? Order by t.anoletivo DESC;", escola, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+Professor.getTurmasFromEscolaAno = function(escola, anoletivo){
+    return new Promise(function(resolve, reject) {
+        sql.query("SELECT t.turma, t.idprofessor, t.id, p.nome, t.anoletivo FROM hypat_aplicacoes.turmas t, hypat_aplicacoes.professores p where p.codigo = t.idprofessor and p.escola = ? and t.anoletivo=?;", [escola, anoletivo], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

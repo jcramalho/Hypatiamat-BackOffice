@@ -3,6 +3,9 @@
     <v-main class="grey lighten-3">
     <v-card class="pa-5">
         <v-container>
+          <v-card-title primary-title class="justify-center green--text">
+                Lista de Agrupamentos
+            </v-card-title>
             <center><v-btn class="white--text" style="background-color: #009263;" @click="criarEscola()"><v-icon> mdi-account-plus </v-icon> Criar Escola </v-btn></center>
             <center>
             <v-text-field
@@ -58,6 +61,7 @@
 
 <script>
 import axios from "axios"
+import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
 
   export default {
@@ -89,18 +93,29 @@ const h = require("@/config/hosts").hostAPI
           this.$router.push({name: "Editar Escola", params: { id : id } })
       },
       apagarEscola: async function(id){
-          if(confirm("De certeza que deseja apagar esta escola?")){
+        Swal.fire({
+          title: "De certeza que deseja apagar esta escola?",
+          showDenyButton: true,
+          confirmButtonColor: '#009263',
+          confirmButtonText: `Sim`,
+          denyButtonText: `Não`,
+        }).then(async (result) => {
+          if (result.isConfirmed) {
               var a = await axios.delete(h + "escolas/" + id + "?token=" + this.token)
               var apagado = a.data
-              console.log(apagado)
               if(apagado.removed){
                 var response = await axios.get(h + "escolas?token=" + this.token)
                 this.escolas = response.data
               }
               else{
-                alert(apagado.message)
+                Swal.fire({
+                  icon: 'error',
+                  text: apagado.message,
+                  confirmButtonColor: '#009263'
+                })
               }
           }
+        })
       },
       pesquisarLocalidade: async function(){
         if(this.searchInput != ""){

@@ -98,6 +98,7 @@
 
 <script>
 import axios from "axios"
+import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
 
   export default {
@@ -169,10 +170,18 @@ const h = require("@/config/hosts").hostAPI
             }
             else{
               this.password2 = ""
-              alert("As palavra passe de confirmação não coincide com a palavra passe primeiramente definida!")
+              Swal.fire({
+                  icon: 'error',
+                  text: "As palavra passe de confirmação não coincide com a palavra passe primeiramente definida!",
+                  confirmButtonColor: '#009263'
+                })
             }
           }
-          else alert("Tem de preencher os dois campos!")
+          else Swal.fire({
+                  icon: 'error',
+                  text: "Tem de preencher os dois campos!",
+                  confirmButtonColor: '#009263'
+                })
       },
 
     }

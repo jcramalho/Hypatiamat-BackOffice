@@ -17,6 +17,7 @@
 
 <script>
 
+import Swal from 'sweetalert2'
 import Auth from '@/views/AuthApp.vue'
 import Login from '@/views/Login.vue'
 import Registar from '@/views/Registar.vue'
@@ -58,7 +59,11 @@ export default {
           localStorage.removeItem("token")
           localStorage.removeItem("type")
           localStorage.removeItem("utilizador")
-          alert("A sua sessão expirou.") 
+          Swal.fire({
+                  icon: 'info',
+                  text: "A sua sessão expirou.",
+                  confirmButtonColor: '#009263'
+                }) 
           self.refreshLogout()
           window.location.href = './';
         }

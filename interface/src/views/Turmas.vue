@@ -17,6 +17,15 @@
                 :items="escolas"
                 @change="getTurmas()"
             ></v-combobox>
+            <v-combobox
+                id="anoletivo"
+                label="Ano Letivo"
+                prepend-icon="mdi-counter"
+                v-model="anoletivo"
+                color="#009263"
+                :items="anosletivos"
+                @change="getTurmas()"
+            ></v-combobox>
             <v-text-field
                 v-model="filtrar"
                 label="Filtrar"
@@ -36,6 +45,7 @@
                     <td @click="verProfessor(row.item.idprofessor)" style="cursor: pointer;">{{row.item.idprofessor}}</td>
                     <td @click="verProfessor(row.item.idprofessor)" style="cursor: pointer;">{{row.item.nome}}</td>
                     <td>{{row.item.turma}}</td>
+                    <td>{{row.item.anoletivo}}</td>
                     <td>
                     <v-icon @click="editarTurma(row.item.id, row.item.idprofessor)"> mdi-pencil </v-icon>
                     <v-icon @click="apagarTurma(row.item.turma, row.item.idprofessor)"> mdi-delete </v-icon>
@@ -53,17 +63,21 @@
 
 <script>
 import axios from "axios"
+import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
 
   export default {
     data(){
       return {
         token: "",
+        anosletivos:["Todos", "20/21", "19/20", "18/19", "17/18", "16/17", "15/16", "14/15", "13/14"],
+        anoletivo:"Todos",
         turmas: [],
          header_turmas: [
             {text: "Username do Professor", sortable: true, value: 'idprofessor', class: 'subtitle-1'},
             {text: "Nome do Professor", sortable: true, value: 'nome', class: 'subtitle-1'},
             {text: "Turma", value: 'turma', class: 'subtitle-1'},
+            {text: "Ano Letivo", value: 'anoletivo', class: 'subtitle-1'},
             {text: "Operações", class: 'subtitle-1'},
         ],
         footer_props: {
@@ -94,11 +108,20 @@ const h = require("@/config/hosts").hostAPI
           this.$router.push({name: "Criar Turma",  params:{isAdmin:true} })
       },
       getTurmas : async function(){
-        var aux = this.escola.split(" - ")
-        var escolaEscolhida = this.escolasIds.find(element => element.nome == aux[1]).cod
-        var response = await axios.get(h + "escolas/" + escolaEscolhida + "/turmas?token=" + this.token )
-        console.log(response.data)
-        this.turmas = response.data
+        if(this.escola!=""){
+          var aux = this.escola.split(" - ")
+          var escolaEscolhida = this.escolasIds.find(element => element.nome == aux[1]).cod
+          if(this.anoletivo == "Todos"){
+            var response = await axios.get(h + "escolas/" + escolaEscolhida + "/turmas?token=" + this.token )
+            this.turmas = response.data
+          }
+          else{
+             var anoAux = this.anoletivo.split("/")
+             var ano = anoAux[0]
+             var response = await axios.get(h + "escolas/" + escolaEscolhida + "/turmas?token=" + this.token + "&ano=" + ano)
+             this.turmas = response.data
+          }
+        }
       },
       editarTurma : function(idTurma, idprofessor){
           this.$router.push({name: "Editar Turma", params: { id : idTurma, idprofessor: idprofessor } })
@@ -112,7 +135,11 @@ const h = require("@/config/hosts").hostAPI
                 this.turmas = response.data
               }
               else{
-                alert(apagado.message)
+                Swal.fire({
+                  icon: 'error',
+                  text: apagado.message,
+                  confirmButtonColor: '#009263'
+                })
               }
           }
       }

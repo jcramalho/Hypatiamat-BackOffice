@@ -24,6 +24,7 @@
 
 <script>
   const h = require("@/config/hosts").hostAPI
+  import Swal from 'sweetalert2'
   import axios from "axios"
   export default {
     data(){
@@ -80,13 +81,21 @@
             }
             axios.post(h + "escolas/", data)
                  .then(()=>{
-                   alert('Escola registada com sucesso.')
+                   Swal.fire({
+                      icon: 'success',
+                      title: 'Escola registada com sucesso.',
+                      confirmButtonColor: '#009263'
+                    })
                    this.$router.push({name: "Escolas"})
                  })
                 .catch(erro=> console.log(erro))
         }
         else {
-            alert('Ainda possuí campos por preencher!')
+            Swal.fire({
+                  icon: 'error',
+                  title: 'Ainda possuí campos por preencher!',
+                  confirmButtonColor: '#009263'
+                })
         }
       }
 

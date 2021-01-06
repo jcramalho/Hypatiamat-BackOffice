@@ -7,7 +7,7 @@ module.exports.getTemas = function(){
 
 module.exports.getAllAppsFromMunicipios = function(dataInicio, dataFim){
     return new Promise(function(resolve, reject) {
-        sql.query("SELECT esc.localidade, SUM(apps.ncertas) as ncertas, SUM(apps.ntotal) as ntotal, ((SUM(apps.ncertas)/SUM(apps.ntotal)) *100) as acerto, "
+        sql.query("SELECT esc.localidade, SUM(apps.ncertas) as ncertas, SUM(apps.ntotal) as ntotal, round( sum(apps.ncertas)/sum(apps.ntotal) *100, 2) as acerto, "
         +"SUM(apps.onpeak) as onpeak, SUM(apps.offpeak) as offpeak, (SUM(apps.onpeak) + SUM(apps.offpeak)) as frequencia " +
         "FROM (select * from hypat_testeconhecimentos.appsinfoall where (lastdate between ? and ?)) as apps, hypat_aplicacoes.professores prof, "  +
                "hypat_aplicacoes.escolas esc WHERE  esc.cod = prof.escola and apps.codProf=prof.codigo " +
@@ -26,7 +26,7 @@ module.exports.getAllAppsFromMunicipios = function(dataInicio, dataFim){
 
 module.exports.getAllAppsFromMunicipio = function(municipio, dataInicio, dataFim){
     return new Promise(function(resolve, reject) {
-        sql.query("SELECT esc.cod, esc.nome, SUM(apps.ncertas) as ncertas, SUM(apps.ntotal) as ntotal, ((SUM(apps.ncertas)/SUM(apps.ntotal)) *100) as acerto,"
+        sql.query("SELECT esc.cod, esc.nome, SUM(apps.ncertas) as ncertas, SUM(apps.ntotal) as ntotal, round( sum(apps.ncertas)/sum(apps.ntotal) *100, 2) as acerto,"
         +"SUM(apps.onpeak) as onpeak, SUM(apps.offpeak) as offpeak, (SUM(apps.onpeak) + SUM(apps.offpeak)) as frequencia " +
         "FROM (select * from hypat_testeconhecimentos.appsinfoall where (lastdate between ? and ?)) as apps, hypat_aplicacoes.professores prof, "  +
         "(select * from hypat_aplicacoes.escolas where localidade = ? ) as esc WHERE  esc.cod = prof.escola and apps.codProf=prof.codigo " +
@@ -44,7 +44,7 @@ module.exports.getAllAppsFromMunicipio = function(municipio, dataInicio, dataFim
 
 module.exports.getAllAppsFromEscola = function(escola, dataInicio, dataFim){
     return new Promise(function(resolve, reject) {
-        sql.query("SELECT apps.codprof, SUM(apps.ncertas) as ncertas, SUM(apps.ntotal) as ntotal, ((SUM(apps.ncertas)/SUM(apps.ntotal)) *100) as acerto, "
+        sql.query("SELECT apps.codprof, SUM(apps.ncertas) as ncertas, SUM(apps.ntotal) as ntotal, round( sum(apps.ncertas)/sum(apps.ntotal) *100, 2) as acerto, "
         +"SUM(apps.onpeak) as onpeak, SUM(apps.offpeak) as offpeak, (SUM(apps.onpeak) + SUM(apps.offpeak)) as frequencia " +
         "FROM (select * from hypat_testeconhecimentos.appsinfoall where (lastdate between ? and ?)) as apps, "  +
         "(select * from hypat_aplicacoes.professores where escola = ? ) as prof WHERE apps.codProf=prof.codigo " +
@@ -62,7 +62,7 @@ module.exports.getAllAppsFromEscola = function(escola, dataInicio, dataFim){
 
 module.exports.getAllAppsFromTurma = function(turma, codprofessor, dataInicio, dataFim){
     return new Promise(function(resolve, reject) {
-        sql.query("SELECT al.numero, apps.userid, al.nome, SUM(apps.ncertas) as ncertas, SUM(apps.ntotal) as ntotal, (sum(apps.ncertas)/sum(apps.ntotal))*100 as acerto, "+
+        sql.query("SELECT al.numero, apps.userid, al.nome, SUM(apps.ncertas) as ncertas, SUM(apps.ntotal) as ntotal, round( sum(apps.ncertas)/sum(apps.ntotal) *100, 2) as acerto, "+
         "SUM(apps.onpeak) as onpeak, SUM(apps.offpeak) as offpeak, (SUM(apps.onpeak) + SUM(apps.offpeak)) as frequencia FROM " + 
         "(select * from hypat_testeconhecimentos.appsinfoall WHERE  turma = ? AND codProf = ? AND (lastdate between ? and ?)) as apps, hypat_aplicacoes.alunos al " +
         "WHERE al.user = apps.userid " +

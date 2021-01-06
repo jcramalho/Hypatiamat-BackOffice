@@ -84,7 +84,7 @@
                         <v-card outlined style="background-color:#f58733">
                             <center>
                             <v-card-text>
-                                TURMA
+                                {{this.turmaSel}}
                             </v-card-text>
                             </center>
                         </v-card>
@@ -93,7 +93,7 @@
                         <v-card outlined style="background-color:#f58733">
                             <center>
                             <v-card-text>
-                                ESCOLA
+                                ESCOLA ({{this.utilizador.escola}})
                             </v-card-text>
                             </center>
                         </v-card>
@@ -102,7 +102,7 @@
                         <v-card outlined style="background-color:#f58733">
                             <center>
                             <v-card-text>
-                                HYPATIA
+                                HYPATIAMAT
                             </v-card-text>
                             </center>
                         </v-card>

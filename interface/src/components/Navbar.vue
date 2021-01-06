@@ -63,6 +63,7 @@
 
 <script>
 import VueJwtDecode from "vue-jwt-decode";
+import Swal from 'sweetalert2'
 const host = require("@/config/hosts").host
 export default {
   props:[
@@ -118,6 +119,7 @@ export default {
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
         { title: 'Minhas Turmas', icon: 'mdi-book-account', href:"/minhasturmas" },
         { title: 'Monitorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos" },
+        { title: 'Monotorização de Apps', icon: 'mdi-apps', href:"/apps/" + utilizador.codigo},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }
@@ -133,8 +135,7 @@ export default {
       // Municipio
       this.items =[
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
-        { title: 'Minhas Escolas', icon: 'mdi-school', href:"/agrupamentos" },
-        { title: 'Minhas Turmas', icon: 'mdi-book-account', href:"/minhasturmas" },
+        { title: 'Meus Agrupamentos', icon: 'mdi-school', href:"/agrupamentos" },
         { title: 'Monotorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/"+ utilizador.infoEscola.localidade +"/escolas" },
         { title: 'Monotorização de Apps', icon: 'mdi-apps', href:"/apps/" + utilizador.infoEscola.localidade + "/escolas"},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
@@ -157,13 +158,21 @@ export default {
   methods:{
 
     logout: function(){
-      if(confirm("De certeza que pretende terminar sessão?")){
-        localStorage.removeItem("utilizador");
-        localStorage.removeItem("type");
-        localStorage.removeItem("token");
-        this.$emit('refreshLogout')
-        this.color = "#900001"
-      }
+      Swal.fire({
+          title: "De certeza que pretende terminar sessão?",
+          showDenyButton: true,
+          confirmButtonColor: '#009263',
+          confirmButtonText: `Sim`,
+          denyButtonText: `Não`,
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            localStorage.removeItem("utilizador");
+            localStorage.removeItem("type");
+            localStorage.removeItem("token");
+            this.$emit('refreshLogout')
+            this.color = "#900001"
+          }
+        })
     },
     isLogged: function(){
       if (localStorage.getItem("token") == null) {

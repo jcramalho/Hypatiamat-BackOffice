@@ -43,13 +43,24 @@ router.get('/:id/professores', passport.authenticate('jwt', {session: false}), f
              .catch(erro => res.status(500).jsonp(erro))
 })
 
-// Devolve todos as turmas de uma determinada escola
+// Devolve todos as turmas de uma determinada escola (pode eventualmente escolher o ano das turmas a pesquisar)
 router.get('/:id/turmas', passport.authenticate('jwt', {session: false}), function(req, res){
-  Professores.getTurmasFromEscola(req.params.id)
-             .then(turmas =>{
-              res.jsonp(turmas)
-             })
-             .catch(erro => res.status(500).jsonp(erro))
+  var ano = req.query.ano
+  if(ano){
+    var anoletivo = ano + "/" + (parseInt(ano) + 1)
+    Professores.getTurmasFromEscolaAno(req.params.id, anoletivo)
+              .then(turmas =>{
+                res.jsonp(turmas)
+              })
+              .catch(erro => res.status(500).jsonp(erro))
+  }
+  else{
+    Professores.getTurmasFromEscola(req.params.id)
+              .then(turmas =>{
+                res.jsonp(turmas)
+              })
+              .catch(erro => res.status(500).jsonp(erro))
+  }
 })
 
 // Todas as escolas de um país

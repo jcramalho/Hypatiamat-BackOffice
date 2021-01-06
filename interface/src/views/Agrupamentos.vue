@@ -3,6 +3,9 @@
     <v-main class="grey lighten-3">
     <v-card class="pa-5">
         <v-container>
+          <v-card-title primary-title class="justify-center green--text">
+                Meus Agrupamentos
+            </v-card-title>
             <v-text-field
                 v-model="filtrar"
                 label="Filtrar"
@@ -21,6 +24,7 @@
                 <tr>
                     <td>{{row.item.nome}}</td>
                     <td>{{row.item.localidade}}</td>
+                    <td><v-icon @click="verProfessores(row.item.cod)"> mdi-eye </v-icon></td>
                     <td>
                     <v-icon @click="editarEscola(row.item.id)"> mdi-pencil </v-icon>
                     <v-icon @click="apagarEscola(row.item.cod)"> mdi-delete </v-icon>
@@ -39,6 +43,7 @@
 <script>
 import axios from "axios"
 const h = require("@/config/hosts").hostAPI
+import Swal from 'sweetalert2'
 
   export default {
     data(){
@@ -48,6 +53,7 @@ const h = require("@/config/hosts").hostAPI
          header_escolas: [
             {text: "Nome", sortable: true, value: 'nome', class: 'subtitle-1'},
             {text: "Localidade", value: 'localidade', class: 'subtitle-1'},
+            {text: "Ver Professores", value: 'localidade', class: 'subtitle-1'},
             {text: "Operações", class: 'subtitle-1'},
         ],
         footer_props: {
@@ -70,19 +76,33 @@ const h = require("@/config/hosts").hostAPI
           this.$router.push({name: "Editar Escola", params: { id : id } })
       },
       apagarEscola: async function(id){
-          if(confirm("De certeza que deseja apagar esta escola?")){
+        Swal.fire({
+          title: "De certeza que deseja apagar esta escola?",
+          showDenyButton: true,
+          confirmButtonColor: '#009263',
+          confirmButtonText: `Sim`,
+          denyButtonText: `Não`,
+        }).then(async (result) => {
+          if (result.isConfirmed) {
               var a = await axios.delete(h + "escolas/" + id + "?token=" + this.token)
               var apagado = a.data
-              console.log(apagado)
               if(apagado.removed){
                 var response = await axios.get(h + "escolas/localidades/" + this.municipio.infoEscola.localidade +"?token=" + this.token)
                 this.escolas = response.data
               }
               else{
-                alert(apagado.message)
+                Swal.fire({
+                  icon: 'error',
+                  title: apagado.message,
+                  confirmButtonColor: '#009263'
+                })
               }
           }
+        })
       },
+      verProfessores: function(codEscola){
+        this.$router.push({name: "Professores Agrupamento", params: { escola : codEscola } })
+      }
     }
   }
 </script>

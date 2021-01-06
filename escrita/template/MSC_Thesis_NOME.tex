@@ -1,0 +1,175 @@
+\documentclass[
+  oneside,
+  11pt, a4paper,
+  footinclude=true,
+  headinclude=true,
+  cleardoublepage=empty
+]{scrbook}
+\makeatletter
+\DeclareOldFontCommand{\rm}{\normalfont\rmfamily}{\mathrm}
+\DeclareOldFontCommand{\sf}{\normalfont\sffamily}{\mathsf}
+\DeclareOldFontCommand{\tt}{\normalfont\ttfamily}{\mathtt}
+\DeclareOldFontCommand{\bf}{\normalfont\bfseries}{\mathbf}
+\DeclareOldFontCommand{\it}{\normalfont\itshape}{\mathit}
+\DeclareOldFontCommand{\sl}{\normalfont\slshape}{\@nomath\sl}
+\DeclareOldFontCommand{\sc}{\normalfont\scshape}{\@nomath\sc}
+\makeatother
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{dissertation}
+\usepackage[utf8]{inputenc}
+\usepackage{url}
+\usepackage{xspace}
+\usepackage{apalike}
+\usepackage{float}
+\usepackage{import}
+\usepackage{natbib}
+
+\usepackage{multicol}
+\usepackage{lscape}
+\usepackage{enumerate}
+\usepackage{parcolumns}
+\usepackage{enumitem}
+\usepackage{pdfpages}
+\usepackage{tabularx}
+\usepackage{array}
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+\newcolumntype{L}{>{\centering\arraybackslash}X}
+\renewcommand\tabularxcolumn[1]{m{#1}}
+
+\usepackage{color}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\usepackage{listings}
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+% ACRONYMS ----------------------------------------------------
+
+\usepackage[acronym,nonumberlist,nomain]{glossaries}
+\defglsdisplayfirst[\acronymtype]{\emph{#1#4}}
+\glossarystyle{listgroup}
+% set the name for the acronym entries page
+\renewcommand{\glossaryname}{Acronyms}
+\makeglossaries
+
+% TITLE -------------------------------------------------------
+\titleA{Dissertation title} %if title is to extensive, use titleB
+%\titleB{Second part of title} % (if any)
+%\subtitleA{}
+%\subtitleB{Second part of Subtitle} % (if any)
+
+% Author
+\author{Full name}
+
+% Supervisor(s)
+\supervisor{Supervisor name}
+\cosupervisor{Co-supervisor name} %comment in case of none
+
+% University (uncomment if you need to change default values)
+% \def\school{Escola de Engenharia}
+% \def\department{Departamento de Inform\'{a}tica}
+% \def\university{Universidade do Minho}
+% \def\masterdegree{Informatics Engineering}
+
+% Date
+\date{\myear} % change to text if date is not today
+
+% Keywords
+%\keywords{master thesis}
+
+% Glossaries & Acronyms
+%\makeglossaries  %  either use this ...
+%\makeindex        % ... or this
+
+% Define Acronyms
+\input{sections/Acronyms}
+\glsaddall[types={\acronymtype}]
+
+\ummetadata % add metadata to the document (author, publisher, ...)
+
+\begin{document}
+        % Cover page ---------------------------------------
+        \umfrontcover
+        \umtitlepage
+
+        % Add acknowledgements ----------------------------
+\import{sections/}{Statements.tex}
+\import{sections/}{Agradecimentos.tex}
+\import{sections/}{Abstract.tex}
+
+
+        % Summary Lists ------------------------------------
+        \tableofcontents
+        \listoffigures
+        \listoftables
+        %\lstlistoflistings
+        %\listofabbreviations
+        \printglossary[type=\acronymtype]
+        \clearpage
+        \thispagestyle{empty}
+        \pagenumbering{arabic}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%---- IMPORTS ----%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\import{sections/}{Chapt_Intro.tex}
+\import{sections/}{Chapt_stateofart.tex}
+\import{sections/}{Chapt_proposal.tex}
+\import{sections/}{Chapt_development.tex}
+\import{sections/}{Chapt_conclusion.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+        \bookmarksetup{startatroot}
+        \addtocontents{toc}{\bigskip}
+        \bibliography{MSc_Thesis_NOME}
+
+        \umappendix{Appendix}
+
+        \chapter{Support material; Listings}
+        Auxiliary results Details of results which are not main-stream (like Specifications, Listings, Application Screenshots,
+        Forms, Surveys (Questionnaires), complementary tables or graphics)
+        whose length would compromise readability of main text,
+        shall be included in the Appendix part divided into 1 or more chapters.
+
+        %Anyone using \Latex\ should consider having a look at \TUG,
+        %the \tug{\TeX\ Users Group}
+
+
+        % Back Cover -------------------------------------------
+        %\umbackcover{
+        %NB: place here information about funding, FCT project, etc in which the work is framed. Leave empty otherwise.
+        %}
+  
+
+\end{document}

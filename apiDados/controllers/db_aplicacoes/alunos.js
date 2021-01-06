@@ -287,7 +287,8 @@ Aluno.apagar = async function(user){
             return {removed: false, message: "O aluno já jogou alguns jogos, logo não pode ser removido."}
         }
         else{
-            return await Aluno.deleteAluno(user)
+            await Aluno.deleteAluno(user)
+            return {removed:true}
         }
     }
     else{

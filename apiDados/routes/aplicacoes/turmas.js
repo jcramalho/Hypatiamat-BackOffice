@@ -14,6 +14,18 @@ router.get('/', passport.authenticate('jwt', {session: false}), function(req, re
                .catch(erro => res.status(500).jsonp(erro))
   });
 
+
+// Todas as turmas de um determinado ano letivo (ano = 20) => (anoletivo = 20/21)
+router.get('/anos/:ano', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  var anoletivo = req.params.ano + "/" + (parseInt(req.params.ano) + 1)
+  
+  Turmas.getTurmasFromAnoLetivo(anoletivo)
+             .then(dados =>{
+               res.jsonp(dados)
+             })
+             .catch(erro => res.status(500).jsonp(erro))
+});
+
 // Informação de uma turma
 router.get('/:id', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     Turmas.getTurmaById(req.params.id)

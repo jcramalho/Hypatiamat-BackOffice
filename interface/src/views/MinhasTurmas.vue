@@ -7,6 +7,15 @@
                 Minhas Turmas
             </v-card-title>
             <center><v-btn class="white--text" style="background-color: #009263;" @click="criarTurma()"> <v-icon> mdi-book-plus </v-icon> Criar Turma </v-btn></center>
+            <v-combobox
+                id="anoletivo"
+                label="Ano Letivo"
+                prepend-icon="mdi-counter"
+                v-model="anoletivo"
+                color="#009263"
+                :items="anosletivos"
+                @change="getTurmas()"
+            ></v-combobox>
             <v-text-field
                 v-model="filtrar"
                 label="Filtrar"
@@ -23,6 +32,7 @@
                 >
                 <template v-slot:item="row">
                 <tr>
+                    <td>{{row.item.anoletivo}}</td>
                     <td>{{row.item.turma}}</td>
                     <td>
                     <v-icon @click="verTurma(row.item.id)"> mdi-eye </v-icon>
@@ -49,8 +59,11 @@ const h = require("@/config/hosts").hostAPI
       return {
         token: "",
         turmas: [],
+        anosletivos:["Todos", "20/21", "19/20", "18/19", "17/18", "16/17", "15/16", "14/15", "13/14"],
+        anoletivo:"Todos",
         utilizador : {},
          header_turmas: [
+            {text: "Ano Letivo", value: 'anoletivo', class: 'subtitle-1'},
             {text: "Turma", value: 'turma', class: 'subtitle-1'},
             {text: "Operações", class: 'subtitle-1'},
         ],
@@ -69,6 +82,14 @@ const h = require("@/config/hosts").hostAPI
         this.turmas = response.data
     },
     methods: {
+      getTurmas: async function(){
+        if(this.anoletivo != "Todos"){
+          var anoAux = this.anoletivo.split("/")
+          var ano = anoAux[0]
+          var response = await axios.get(h + "professores/" + this.utilizador.codigo + "/turmas?token=" + this.token + "&ano=" + ano)
+          this.turmas = response.data
+        }
+      },
       verTurma : function(id){
         this.$router.push({name:"Ver Turma", params:{ id : id }})
       },

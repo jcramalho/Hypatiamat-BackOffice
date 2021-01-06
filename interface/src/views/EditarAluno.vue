@@ -41,6 +41,7 @@
 
 <script>
 import axios from "axios"
+import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
 
   export default {
@@ -86,9 +87,17 @@ const h = require("@/config/hosts").hostAPI
       editarAluno : function(){
           axios.put(h + "alunos/" + this.id + "?token=" + this.token, this.aluno)
                .then(dados => {
-                 alert("Dados alterados com sucesso!")
+                 Swal.fire({
+                  icon: 'success',
+                  text: "Dados alterados com sucesso!",
+                  confirmButtonColor: '#009263'
+                })
                })
-               .catch(error => alert("Não foi possível guardar as alterações."))
+               .catch(error => Swal.fire({
+                  icon: 'error',
+                  text: "Não foi possível guardar as alterações.",
+                  confirmButtonColor: '#009263'
+                })) 
       },
       editarPassword : async function(){
           if(this.password1 != "" && this.password2 != ""){
@@ -101,9 +110,18 @@ const h = require("@/config/hosts").hostAPI
             else{
               this.password2 = ""
               alert("As palavra passe de confirmação não coincide com a palavra passe primeiramente definida!")
+              Swal.fire({
+                  icon: 'error',
+                  text: "As palavra passe de confirmação não coincide com a palavra passe primeiramente definida!",
+                  confirmButtonColor: '#009263'
+                })
             }
           }
-          else alert("Tem de preencher os dois campos!")
+          else Swal.fire({
+                  icon: 'error',
+                  text: "Tem de preencher os dois campos!",
+                  confirmButtonColor: '#009263'
+                })
       },
     }
   }

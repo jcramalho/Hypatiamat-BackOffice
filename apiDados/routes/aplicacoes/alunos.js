@@ -4,6 +4,9 @@ var passport = require('passport')
 
 var fs = require('fs')
 var fastcsv = require('fast-csv')
+var CSV = require('csv-string');
+var multer = require('multer')
+var upload = multer({dest: 'uploads/'})
 
 var Alunos = require('../../controllers/db_aplicacoes/alunos');
 const TurmaOld = require('../../controllers/db_aplicacoes/turmasold');
@@ -101,7 +104,37 @@ router.post('/', function(req, res, next) {
 });
 
 /* POST insere um csv de alunos. */
-router.post('/csv', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.post('/csv', passport.authenticate('jwt', {session: false}), upload.single('ficheiro'), function(req, res, next) {
+    let path = __dirname + '/../../'+req.file.path    
+    let alunos = []
+    let erros = []
+    let i = 1;
+    var stringfile = fs.readFileSync(path).toString()
+    var delimiter = CSV.detect(stringfile)
+
+    fs.createReadStream(path)
+      .pipe(fastcsv.parse({ headers: ['user', 'numero', 'nome', 'datanascimento', 'escola', 'turma', 'email', 'password', 'codprofessor', 'pais'], delimiter:delimiter }))
+      .on('error', error => console.error(error))
+      .on('data', row => {
+        if(row.datanascimento!= 'datanascimento'){
+          if(row.user && row.numero && row.nome && row.datanascimento && row.escola && row.turma && row.email && row.password && row.codprofessor && row.pais){
+            let aluno = row
+            aluno.confirmacao = 1
+            alunos.push(aluno)
+          }
+          else{
+            erros.push(i++)
+          }
+        }
+      })
+      .on('end', rowCount => {
+        for(var i = 0; i < alunos.length; i++){
+          var aluno = alunos[i]
+          Alunos.insertAluno(aluno)
+        }
+        res.jsonp('Foram inseridos ' + alunos.length + ' alunos.\nHouve ' + erros.length + ' erros por faltarem colunas por preencher.')
+        
+      });
   
 });
 
