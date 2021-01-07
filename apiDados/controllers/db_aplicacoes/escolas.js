@@ -2,6 +2,7 @@ var sql = require('../../models/db_aplicacoes');
 var Professores = require('./professor')
 var Alunos = require('./alunos')
 
+
 var Escola = function(escola){
     this.id = escola.id;
     this.nome = escola.nome
@@ -133,6 +134,7 @@ Escola.updateEscola = function(id, escola){
             });   
     })
 }
+
 
 Escola.getJogosMunicipio = async function(jogoTable, jogoTipo, dataInicio, dataFim){
     return new Promise(function(resolve, reject) {

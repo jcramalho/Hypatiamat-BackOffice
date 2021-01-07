@@ -33,10 +33,8 @@ password: 123456
 ----------------------------------------------
 Janeiro:
 levantamento de outras platformas de suporte ao ensino matemática
-apigateway com kong/kafka apache
 contexto
 o que estava feito / alternativo
-docker/docker compose/ cubernets
 
 ----
 
@@ -44,29 +42,25 @@ Estatisticas por cada jogo por municipio
 
 
 ----------------------------------------
+
+--------------------------
+nº de ciclos bcrypt: 5;  |
+algoritmo: XA-256        |
+-------------------------- 
+
 mudar todas as labels de escola para agrupamento
 colocar label de localidade no criar turma
 ADMIN => pode criar mais que 4 turmas
 colocar ano letivo na tabela turma (20/21)
 colocar agrupamento na escolha de turma a transferir alunos
 
---------------------------
-nº de ciclos bcrypt: 5;  |
-algoritmo: XA-256        |
--------------------------- 
+
 Municipio/Agrupamento => Estatisticas (por ano letivo):
 nº de turmas no ano letivo;
 nº de professores;
 nº de alunos;
-Municipio: 
-select count(t.turma) as nturmas, count(p.codigo) as nprofessores, (select count(a.user) from alunos a where a.turma) as nalunos, (select count(apps.) from appsinfoall apps where a.codprofessor = p.codigo)
-			 from turmas t, escolas e, professores p 
-			 where e.localidade = "Braga" and e.cod = p.escola and t.anoletivo = "20/21" and t.idprofessor = p.codigo;
 
 Agrupamento: 
-select count(t.turma) as nturmas, count(p.codigo) as nprofessores, (select count(a.user) from alunos a where a.escola = "hypati01") as nalunos 
-			 from turmas t, professores p 
-			 where p.escola = "hypati01" and t.anoletivo = "20/21" and t.idprofessor = p.codigo;
 
 
 nº de tarefas;
@@ -114,3 +108,21 @@ Estatisca Municipios (feito)
 Estatistica Escolas
 Estaticas Professor
 
+_____________________________
+
+nº de jogos => jogos jogados
+jogos do aluno => posição na turma, posição na escola
+apps => apenas a partir de 20/21 (colocar uma nota 
+apps estatisticas municipio => nº de tarefas e nº de tarefas resolvida
+Apps de conteúdos das turmas registadas em 20/21
+Apps de conteúdos de todas as turmas 
+
+colocar lista em vez do quadro em estatisticas globais no municipio
+colocar o nº em maior evidência
+
+criar turma (professor)
+ano de escolaridade 
+turma => escolher letra
+
+colocar legendas nas tabelas apps
+exportação pdf nas apps.

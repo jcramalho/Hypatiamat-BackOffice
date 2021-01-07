@@ -1,11 +1,16 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('passport')
+var anoletivoAtual = "20/21"
 
 var Alunos = require('../../controllers/db_aplicacoes/alunos')
 var Professores = require('../../controllers/db_aplicacoes/professor')
 var Turmas = require('../../controllers/db_aplicacoes/turmas')
 var Escolas = require('../../controllers/db_aplicacoes/escolas')
+var Estatisticas = require('../../controllers/db_aplicacoes/estatisticas');
+const Escola = require('../../controllers/db_aplicacoes/escolas');
+const Estatistica = require('../../controllers/db_aplicacoes/estatisticas');
+
 
 // Todas as escolas
 router.get('/', function(req, res, next) {
@@ -63,6 +68,21 @@ router.get('/:id/turmas', passport.authenticate('jwt', {session: false}), functi
   }
 })
 
+// Devolve estatisticas globais sobre a escola
+router.get('/:id/estatisticas', function(req, res){
+  var escola = req.params.id
+  var ano = req.query.ano
+
+  if(ano) var anoletivo = ano + "/" + ((parseInt(ano) + 1))
+  else var anoletivo = anoletivoAtual
+
+  Estatisticas.getEstatisticasAgrupamentoAno(escola, anoletivo)
+             .then(estatisticas =>{
+              res.jsonp(estatisticas)
+             })
+             .catch(erro => res.status(500).jsonp(erro))
+})
+
 // Todas as escolas de um país
 router.get('/paises/:pais', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     Escolas.getEscolasByPais(req.params.pais)
@@ -90,12 +110,29 @@ router.get('/localidades/:localidade', passport.authenticate('jwt', {session: fa
                .catch(erro => res.status(500).jsonp(erro))
   });
 
+    // Todas as escolas de uma localidade
+router.get('/localidades/:localidade/estatisticas', function(req, res, next) {
+  var ano = req.query.ano
+  if(ano){
+    var anoletivo = ano + "/" + ((parseInt(ano) + 1))
+  }
+  else{
+    var anoletivo = anoletivoAtual
+  }
+  Estatisticas.getEstatisticasMunicipioAno(req.params.localidade, anoletivo)
+             .then(dados =>{
+               res.jsonp(dados)
+             })
+             .catch(erro => res.status(500).jsonp(erro))
+});
+
   // Pontuações de jogos por municipio
   router.get('/jogos/:jogo/municipios', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     var dataInicio = req.query.dataInicio
     var dataFim = req.query.dataFim
     var jogoTipo = req.query.jogoTipo
     var jogoTable = req.params.jogo
+
     Escolas.getJogosMunicipio(jogoTable, jogoTipo, dataInicio, dataFim)
                .then(dados =>{
                  res.jsonp(dados)
@@ -117,19 +154,20 @@ router.get('/:id/jogos/professores', passport.authenticate('jwt', {session: fals
              .catch(erro => res.status(500).jsonp(erro))
 })
 
-    // Pontuações de jogos por escola de um municipio
-    router.get('/jogos/:jogo/municipios/:municipio', passport.authenticate('jwt', {session: false}), function(req, res, next) {
-      var dataInicio = req.query.dataInicio
-      var dataFim = req.query.dataFim
-      var jogoTipo = req.query.jogoTipo
-      var jogoTable = req.params.jogo
-      var municipio = req.params.municipio
-      Escolas.getJogosEscolas(jogoTable, jogoTipo, dataInicio, dataFim, municipio)
-                 .then(dados =>{
-                   res.jsonp(dados)
-                 })
-                 .catch(erro => res.status(500).jsonp(erro))
-    });
+
+// Pontuações de jogos por escola de um municipio
+router.get('/jogos/:jogo/municipios/:municipio', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  var dataInicio = req.query.dataInicio
+  var dataFim = req.query.dataFim
+  var jogoTipo = req.query.jogoTipo
+  var jogoTable = req.params.jogo
+  var municipio = req.params.municipio
+  Escolas.getJogosEscolas(jogoTable, jogoTipo, dataInicio, dataFim, municipio)
+              .then(dados =>{
+                res.jsonp(dados)
+              })
+              .catch(erro => res.status(500).jsonp(erro))
+});
   
 
 //Insere uma nova escola

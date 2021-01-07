@@ -1,1 +1,2 @@
-module.exports.limiteTurmas = 5
+module.exports.limiteTurmas = 4
+module.exports.anoletivo = "20/21"
