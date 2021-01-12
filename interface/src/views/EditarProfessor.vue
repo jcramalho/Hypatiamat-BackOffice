@@ -8,7 +8,7 @@
             </v-card-title>
                      
           <v-text-field label="Nome" placeholder="Nome" v-model="professor.nome" color="#900000" required/>
-          <v-text-field label="Identificador da Escola" placeholder="Identifcador da Escola" v-model="professor.escola" color="#900000" required/>
+          <v-text-field label="Identificador do Agrupamento" placeholder="Identifcador do Agrupamento" v-model="professor.escola" color="#900000" required/>
           <v-text-field label="Email" placeholder="Email" v-model="professor.email" color="#900000" required/>
           <v-text-field label="Confirmação (0 ou 1)" placeholder="Confirmação (0 ou 1) " v-model="professor.confirmacao" :rules="[number0or1]" color="#900000" required/>
           <v-text-field label="Premium (0 ou 1)" placeholder="Premium (0 ou 1)" v-model="professor.premium" :rules="[number0or1]" color="#900000" required/>
@@ -136,7 +136,7 @@ const h = require("@/config/hosts").hostAPI
           if(this.password1 != "" && this.password2 != ""){
             if(this.password1 == this.password2){
               if(confirm("Tem a certeza que pretende alterar a sua password?")){
-                await axios.put(h + "professores/" + this.professor.id + "/password", {password: this.password1})
+                await axios.put(h + "professores/" + this.professor.codigo + "/password?token=" + this.token, {password: this.password1})
                 this.dialogPassword = false
               }
             }

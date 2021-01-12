@@ -93,7 +93,7 @@
                         <v-card outlined style="background-color:#f58733">
                             <center>
                             <v-card-text>
-                                ESCOLA ({{this.utilizador.escola}})
+                                AGRUPAMENTO ({{this.utilizador.escola}})
                             </v-card-text>
                             </center>
                         </v-card>
@@ -473,6 +473,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         doc.autoTable({
             head: [['Nº', 'Nome', 'Max', "Min", "Média", "#"]],
             body: listaRes,
+            headStyles: { fillColor: [0, 146, 99] },
             margin:{top: 65}
         })
         
@@ -484,9 +485,10 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         var total = ["Nº de jogos", this.estatisticas.turma.number, this.estatisticas.escola.number, this.estatisticas.hypatia.number]
         
         doc.autoTable({
-            head: [['Tipo', 'Turma', 'Escola', "Hypatia"]],
+            head: [['Tipo', 'Turma', 'Agrupamento', "Hypatia"]],
             body: [min, max, media, total],
-            margin:{bottom: 65}
+            margin:{bottom: 65},
+            headStyles: { fillColor: [0, 146, 99] }
         })
 
         doc.save(pdfName)

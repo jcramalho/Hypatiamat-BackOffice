@@ -224,7 +224,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
               // selecionou um municipio
               this.municipioAtual = item.localidade
               this.antiga = this.atual
-              this.atual = "escolas de " + this.municipioAtual
+              this.atual = "Agrupamentos de " + this.municipioAtual
               this.state++;
               this.atualizaConteudo()
           }

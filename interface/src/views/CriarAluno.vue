@@ -7,13 +7,13 @@
             <v-form>
             <v-text-field prepend-icon="mdi-card-account-details" v-model="codigo" name="Username (Código)" label="Username (Código)" :rules="[string15, existeCodigo]" required></v-text-field>
             <v-text-field prepend-icon="mdi-account" v-model="nome" name="Nome" label="Nome" required></v-text-field>
-            <v-text-field prepend-icon="mdi-email" v-model="email" name="Email" label="Email" required></v-text-field>
+            <v-text-field prepend-icon="mdi-email" v-model="email" name="Email" label="Email" :rules="[emailCheck, existeEmail]" required></v-text-field>
             <v-text-field prepend-icon="mdi-calendar" v-model="datanasc" name="Data de Nascimento" label="Data de Nascimento" type="date" :format="format" required></v-text-field>
             <v-text-field prepend-icon="mdi-bank" v-model="pais" name="País" label="País" required></v-text-field>
             <v-combobox
                 id="escola"
                 prepend-icon="mdi-school"
-                label="Escola"
+                label="Agrupamento de Escolas"
                 v-model="escola"
                 :items="escolas"
                 @change="onEscolaChange"
@@ -80,6 +80,13 @@
         },
         existeCodigo: v =>{
           if(this.codigos.find(element => element.user == v)) return 'Esse username já existe. Escolha outro por favor.'
+          else return true
+        },
+        emailCheck: v =>{
+          return true
+        },
+        existeEmail: v =>{
+          if(this.codigos.find(element => element.email == v)) return 'Esse email já existe. Escolha outro por favor.'
           else return true
         }
       }

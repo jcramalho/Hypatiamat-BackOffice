@@ -172,9 +172,16 @@ const routes = [
     path: '/apps/:idprofessor',
     name: 'Apps Turmas',
     component: AppsTurmas,
-    beforeEnter: (to, from, next) => {
+    beforeEnter: async (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if( utilizador.type == 50 || utilizador.type == 30 || (utilizador.type == 20 && utilizador.codigo == to.params.idprofessor)){
+      let token = localStorage.getItem("token")
+      var professores = []
+      if(utilizador.type == 40){
+        var response = await axios.get(h + "escolas/" + utilizador.escola + "/professores?token=" + token)
+        professores = response.data
+      }
+      if( utilizador.type == 50 || utilizador.type == 30 || (utilizador.type == 20 && utilizador.codigo == to.params.idprofessor)
+              || (utilizador.type == 40 && professores.find(element=> element.codigo == to.params.idprofessor))){
         next()
       }
       else{
@@ -231,7 +238,8 @@ const routes = [
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       // fazer algo para garantir que o municipio apenas entre para ver escolas do seu municipio e não de outros municipios
-      if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.escolas.find(element => element.cod == to.params.id)) || (utilizador.type == 40)){
+      if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.escolas.find(element => element.cod == to.params.id)) 
+                    || (utilizador.type == 40 && utilizador.escola == to.params.id)){
         next()
       }
       else{
@@ -250,7 +258,8 @@ const routes = [
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       // fazer algo para garantir que o municipio apenas entre para ver escolas do seu municipio e não de outros municipios
-      if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.escolas.find(element=>element.cod == to.params.escola)) || (utilizador.type == 40)){
+      if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.escolas.find(element=>element.cod == to.params.escola)) 
+          || (utilizador.type == 40 && utilizador.escola == to.params.escola)){
         next()
       }
       else{
@@ -522,7 +531,7 @@ const routes = [
     component: MinhasTurmas,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if(utilizador.type == 50 || utilizador.type == 20){
+      if(utilizador.type == 50 || utilizador.type == 20 || utilizador.type == 40){
         next()
       }
       else{

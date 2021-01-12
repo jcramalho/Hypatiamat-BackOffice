@@ -97,7 +97,7 @@ Estatistica.getNumAlunosOld = function(professores, turmas){
 Estatistica.getFreqAppsAnoMun = function(municipio, dataInicio, dataFim){
     return new Promise(function(resolve, reject) {
         var args = [dataInicio, dataFim, municipio]
-        sql.query(`SELECT sum(apps.offpeak) + sum(apps.onpeak) as freqapps
+        sql.query(`SELECT sum(apps.offpeak) + sum(apps.onpeak) as freqapps, sum(apps.ncertas) as ncertas, sum(apps.ntotal) as ntotal
                     FROM (select * from hypat_testeconhecimentos.appsinfoall where (lastdate between ? and ?)) as apps, 
                         hypat_aplicacoes.professores prof,
                         (select * from hypat_aplicacoes.escolas where localidade=?) as esc
@@ -117,7 +117,7 @@ Estatistica.getFreqAppsAnoMun = function(municipio, dataInicio, dataFim){
 Estatistica.getFreqAppsTurmasAnoMun = function(professores, turmas){
     return new Promise(function(resolve, reject) {
         var args = [professores, turmas]
-        sql.query(`select sum(offpeak) + sum(onpeak) as numapps 
+        sql.query(`select sum(offpeak) + sum(onpeak) as freqapps, sum(ncertas) as ncertas, sum(ntotal) as ntotal
                     from hypat_testeconhecimentos.appsinfoall where codProf in (?) and turma in (?);`, args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
@@ -146,7 +146,7 @@ Estatistica.getTarefasAnoMun = function(){
 
 Estatistica.jogou = function(jogoTable, jogoTipo, turmas, agrupamentos){
     return new Promise(function(resolve, reject) {
-        sql.query("Select count(idaluno) as freq from hypat_samd." + jogoTable + " where tipo = ? and turma in (?) and idescola in (?)", [jogoTipo, turmas, agrupamentos], function(err, res){
+        sql.query("Select count(*) as freq from hypat_samd." + jogoTable + " where tipo = ? and turma in (?) and idescola in (?)", [jogoTipo, turmas, agrupamentos], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -165,12 +165,16 @@ Estatistica.quantosJogosTurmasAnoMun = async function(turmas, agrupamentos){
     var jogos = await Jogos.getJogos()
     var quantas = 0
     var freq = 0
+    //console.log(turmas)
+    //console.log(jogos.length)
     for(var i = 0; i < jogos.length; i++){
+        //console.log(jogos[i])
         var jogo = await Estatistica.jogou(jogos[i].jogotable, jogos[i].tipo, turmas, agrupamentos)
-        if(jogo.freq == 0){
+        //console.log(jogo)
+        if(jogo.freq > 0){
             quantas++
+            freq += jogo.freq;
         }
-        freq += jogo.freq; 
     }
 
     return {freq:freq, njogos: quantas}
@@ -208,7 +212,7 @@ Estatistica.getEstatisticasMunicipioAno = async function(municipio, anoletivo){
 
     return {nturmas: turmas.length, nprofessores: professores.length, 
             nalunos: nalunos.numalunos + nalunosTurmasOld.numalunos,
-            freqappsTurma: nappsTurmas.numapps, freqappsTotal: nappsAno.freqapps,
+            appsTurma: nappsTurmas, appsTotal: nappsAno,
             njogos: jogos.njogos, freqjogos: jogos.freq}
 
 }
@@ -252,7 +256,7 @@ Estatistica.getProfessoresAnoAgru = function(escola, anoletivo){
 Estatistica.getFreqAppsAnoAgru = function(escola, dataInicio, dataFim){
     return new Promise(function(resolve, reject) {
         var args = [dataInicio, dataFim, escola]
-        sql.query(`SELECT sum(apps.offpeak) + sum(apps.onpeak) as freqapps
+        sql.query(`SELECT sum(apps.offpeak) + sum(apps.onpeak) as freqapps, sum(apps.ncertas) as ncertas, sum(apps.ntotal) as ntotal
                     FROM (select * from hypat_testeconhecimentos.appsinfoall where (lastdate between ? and ?)) as apps, 
                         hypat_aplicacoes.professores prof
                         WHERE  prof.escola = ? and apps.codProf=prof.codigo;`, args, function (err, res) {
@@ -287,10 +291,11 @@ Estatistica.quantosJogosTurmasAnoAgru = async function(turmas, escola){
     var freq = 0
     for(var i = 0; i < jogos.length; i++){
         var jogo = await Estatistica.jogouAgru(jogos[i].jogotable, jogos[i].tipo, turmas, escola)
-        if(jogo.freq == 0){
+        if(jogo.freq > 0){
             quantas++
+            freq += jogo.freq; 
         }
-        freq += jogo.freq; 
+        
     }
 
     return {freq:freq, njogos: quantas}
@@ -311,21 +316,35 @@ Estatistica.getEstatisticasAgrupamentoAno = async function(escola, anoletivo){
     for(var i = 0; i < professores.length; i++){
         professoresAux.push(professores[i].codigo)
     }
-    var nalunos = await Estatistica.getNumAlunos(professoresAux, turmasAux)
-    var nalunosTurmasOld = {numalunos: 0}
+    //console.log(anoletivo)
+    if(turmasAux.length > 0 && professoresAux > 0){
+        var nalunos = await Estatistica.getNumAlunos(professoresAux, turmasAux)
+        var nalunosTurmasOld = {numalunos: 0}
 
-    if(anoletivo != "20/21"){
-        nalunosTurmasOld = await Estatistica.getNumAlunosOld(professoresAux, turmasAux)
+        
+
+        if(anoletivo != "20/21"){
+            nalunosTurmasOld = await Estatistica.getNumAlunosOld(professoresAux, turmasAux)
+        }
+
+        var nappsTurmas = await Estatistica.getFreqAppsTurmasAnoMun(professoresAux, turmasAux)
+
+        var jogos = await Estatistica.quantosJogosTurmasAnoAgru(turmasAux, escola)
+    }
+    else{
+        var nalunos = {numalunos:0}
+        var nalunosTurmasOld = {numalunos: 0}
+        var nappsTurmas = {ncertas: 0, ntotal:0, freqapps: 0}
+        var jogos = {njogos: 0, freq: 0}
     }
 
-    var nappsTurmas = await Estatistica.getFreqAppsTurmasAnoMun(professoresAux, turmasAux)
     var nappsAno = await Estatistica.getFreqAppsAnoAgru(escola, dataInicio, dataFim)
 
-    var jogos = await Estatistica.quantosJogosTurmasAnoAgru(turmasAux, escola)
+    
 
     return {nturmas: turmas.length, nprofessores: professores.length, 
             nalunos: nalunos.numalunos + nalunosTurmasOld.numalunos,
-            freqappsTurma: nappsTurmas.numapps, freqappsTotal: nappsAno.freqapps,
+            appsTurma: nappsTurmas, appsTotal: nappsAno,
             njogos: jogos.njogos, freqjogos: jogos.freq}
 
 }

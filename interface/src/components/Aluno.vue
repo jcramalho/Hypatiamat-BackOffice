@@ -18,7 +18,7 @@
           <v-flex xs2>
           </v-flex>
           <v-flex xs5>
-          <v-text-field label="Identificador da Escola" v-model="aluno.escola" color="#009263" outlined disabled/>
+          <v-text-field label="Identificador do Agrupamento" v-model="aluno.escola" color="#009263" outlined disabled/>
           </v-flex>
           <v-flex xs5>
               <v-text-field label="Tipo de Utilizador" v-model="aluno.nomeType" color="#009263" outlined disabled/>

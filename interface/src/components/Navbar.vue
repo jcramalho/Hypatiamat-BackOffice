@@ -106,7 +106,7 @@ export default {
         { title: 'Pendentes', icon: 'mdi-account-clock',href:"/pendentes" },
         { title: 'Professores', icon: 'mdi-teach', href:"/professores" },
         { title: 'Alunos', icon: 'mdi-account-group', href:"/alunos" },
-        { title: 'Escolas', icon: 'mdi-school', href:"/escolas" },
+        { title: 'Agrupamentos', icon: 'mdi-school', href:"/escolas" },
         { title: 'Turmas', icon: 'mdi-book-account', href:"/turmas" },
         { title: 'Monotorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/municipios"},
         { title: 'Monotorização de Apps', icon: 'mdi-apps', href:"/apps/municipios"},
@@ -146,6 +146,8 @@ export default {
       this.items =[
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
         { title: 'Minhas Turmas', icon: 'mdi-book-account', href:"/minhasturmas" },
+        { title: 'Monotorização de Jogos', icon: 'mdi-gamepad-variant', href:"/escolas/"+ utilizador.escola + "/jogos" },        
+        { title: 'Monotorização de Apps', icon: 'mdi-apps', href:"/escolas/"+ utilizador.escola + "/apps" },
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }

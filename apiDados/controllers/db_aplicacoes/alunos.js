@@ -73,7 +73,7 @@ Aluno.getAlunos = function(){
 
 Aluno.getAlunosCodigo = function(){
     return new Promise(function(resolve, reject) {
-        sql.query("Select user from alunos", function(err, res){
+        sql.query("Select user, email from alunos", function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

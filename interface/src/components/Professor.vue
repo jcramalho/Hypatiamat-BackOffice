@@ -17,7 +17,7 @@
           <v-flex xs2>
           </v-flex>
           <v-flex xs5>
-          <v-text-field label="Identificador da Escola" v-model="professor.agrupamento" color="#009263" outlined disabled/>
+          <v-text-field label="Identificador do Agrupamento" v-model="professor.agrupamento" color="#009263" outlined disabled/>
           </v-flex>
           <v-flex xs5>
               <v-text-field label="Tipo de Utilizador" v-model="professor.nomeType" color="#009263" outlined disabled/>
@@ -157,7 +157,7 @@ const h = require("@/config/hosts").hostAPI
                 denyButtonText: `Não`,
               }).then(async (result) => {
                 if (result.isConfirmed) {
-                  await axios.put(h + "professores/" + this.professor.id + "/password", {password: this.password1})
+                  await axios.put(h + "professores/" + this.professor.codigo + "/password?token=" +this.token, {password: this.password1})
                   this.dialogPassword = false
                 }
               })

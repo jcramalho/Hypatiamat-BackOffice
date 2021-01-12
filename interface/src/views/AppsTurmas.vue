@@ -6,6 +6,8 @@
             <v-card-title primary-title class="justify-center green--text">
                 Monotorização de Apps por turmas do professor ({{this.codProf}})
             </v-card-title>
+                <center><v-btn v-if="items.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn></center>
+                <br v-if="items.length>0">
                 <center>
                 <v-card class="pa-5" width="60%">
                     <v-combobox
@@ -60,7 +62,6 @@
             :items="items"
             :footer-props="footer_props"
             :search="filtrar"
-            @click:row="goToProfessores"
         >
             
         </v-data-table>
@@ -118,7 +119,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         items:[],
         codProf:"",
         turmas:[],
-        turmaSel:""
+        turmaSel:"",
       }
     },
     created: async function(){
@@ -189,6 +190,50 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
 
           } 
       },
-    }
+      exportPDF: async function(){
+        var doc = new jsPDF({
+        })
+
+        var xImage = doc.internal.pageSize.getWidth() / 4
+        var y
+        var pdfName = "Apps-" + this.app + "-"+ this.turmaSel +".pdf"
+        
+        doc.addImage(hypatiaImg, 'PNG', xImage, 4);
+        //doc.text("Jogo:")
+        //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
+        doc.setFontSize(11)
+        doc.text("App de Conteúdos: " + this.app, 130, 50)
+        doc.text("Professor: " + this.codProf, 15, 50)
+        doc.text("Turma: " + this.turmaSel, 15, 60)
+        doc.text("Período: " + this.dataInicio + " a " + this.dataFim, 130, 60)
+        var listaRes = []
+        
+        for(var i = 0; i<this.items.length; i++){
+            var aux = [];
+            aux.push(this.items[i].numero)
+            aux.push(this.items[i].nome)
+            aux.push(this.items[i].ncertas)
+            aux.push(this.items[i].ntotal)
+            aux.push(this.items[i].acerto)
+            aux.push(this.items[i].onpeak)
+            aux.push(this.items[i].offpeak)
+            aux.push(this.items[i].frequencia)
+
+            listaRes.push(aux)
+        }
+        doc.autoTable({
+            head: [['Nº', "Nome", 'NTRC', "NTR", "Acerto(%)", "DP", "FP", "#"]],
+            body: listaRes,
+            headStyles: { fillColor: [0, 146, 99] },
+            margin:{top: 75}
+        })
+        
+        
+
+        doc.save(pdfName)
+       
+      },
+    },
+      
   }
 </script>

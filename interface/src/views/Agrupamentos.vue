@@ -25,108 +25,59 @@
                 <v-container v-if="loading || estatisticasMun.nturmas == undefined">
                   <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
                 </v-container>
-                <v-container v-else>
-                  <v-layout class="text-xs-center" row justify-center align-center>
-                                <v-flex xs3>
-                                    <v-card  style="background-color:#009263">
-                                        <v-card-title  primary-title class="justify-center white--text">
-                                            Nº de turmas
-                                        </v-card-title>
-                                        <center>
-                                        <v-card-text class="justify-center white--text">
-                                            {{estatisticasMun.nturmas}}
-                                        </v-card-text>
-                                        </center>
-                                    </v-card>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-card  style="background-color:#04d693">
-                                        <v-card-title  primary-title class="justify-center white--text">
-                                            Nº de professores
-                                        </v-card-title>
-                                        <center>
-                                        <v-card-text class="justify-center white--text">
-                                            {{estatisticasMun.nprofessores}}
-                                        </v-card-text>
-                                        </center>
-                                    </v-card>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-card  style="background-color:#009263">
-                                        <v-card-title  primary-title class="justify-center white--text">
-                                            Nº de alunos
-                                        </v-card-title>
-                                        <center>
-                                        <v-card-text class="justify-center white--text">
-                                            {{estatisticasMun.nalunos}}
-                                        </v-card-text>
-                                        </center>
-                                    </v-card>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-card  style="background-color:#04d693">
-                                        <v-card-title  primary-title class="justify-center white--text">
-                                            Nº de tarefas
-                                        </v-card-title>
-                                        <center>
-                                        <v-card-text class="justify-center white--text">
-                                            {{0}}
-                                        </v-card-text>
-                                        </center>
-                                    </v-card>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-card  style="background-color:#04d693">
-                                        <v-card-title  primary-title class="justify-center white--text">
-                                            # Apps (Turmas)
-                                        </v-card-title>
-                                        <center>
-                                        <v-card-text class="justify-center white--text">
-                                            {{estatisticasMun.freqappsTurma}}
-                                        </v-card-text>
-                                        </center>
-                                    </v-card>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-card  style="background-color:#009263">
-                                        <v-card-title  primary-title class="justify-center white--text">
-                                            # Apps (Agrupamentos)
-                                        </v-card-title>
-                                        <center>
-                                        <v-card-text class="justify-center white--text">
-                                            {{estatisticasMun.freqappsTotal}}
-                                        </v-card-text>
-                                        </center>
-                                    </v-card>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-card  style="background-color:#04d693">
-                                        <v-card-title  primary-title class="justify-center white--text">
-                                            Jogos jogados
-                                        </v-card-title>
-                                        <center>
-                                        <v-card-text class="justify-center white--text">
-                                            {{estatisticasMun.njogos}}
-                                        </v-card-text>
-                                        </center>
-                                    </v-card>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-card  style="background-color:#009263">
-                                        <v-card-title  primary-title class="justify-center white--text">
-                                            # Jogos
-                                        </v-card-title>
-                                        <center>
-                                        <v-card-text class="justify-center white--text">
-                                            {{estatisticasMun.freqjogos}}
-                                        </v-card-text>
-                                        </center>
-                                    </v-card>
-                                </v-flex>
-                            </v-layout>
+                <v-container  v-else>
+                    <center>
+                    <ul style="list-style: none;">
+                        <li>
+                            Nº de turmas:  {{estatisticasMun.nturmas}}
+                        </li>
+                        <br>
+                        <li>
+                            Nº de professores:  {{estatisticasMun.nprofessores}}
+                        </li>
+                        <br>
+                        <li>
+                            Nº de alunos:  {{estatisticasMun.nalunos}}
+                        </li>
+                        <br>
+                        <li>
+                            Apps de conteúdos das turmas registadas em 20/21 (#):  {{estatisticasMun.appsTurma.freqapps}}
+                        </li>
+                        <br>
+                        <li>
+                            Apps de conteúdos das turmas registadas em 20/21 (NTRC):  {{estatisticasMun.appsTurma.ncertas}}
+                        </li>
+                        <br>
+                        <li>
+                            Apps de conteúdos das turmas registadas em 20/21 (NTotal):  {{estatisticasMun.appsTurma.ntotal}}
+                        </li>
+                        <br>
+                        <li>
+                            Apps de conteúdos de todas as turmas (#):  {{estatisticasMun.appsTotal.freqapps}}
+                        </li>
+                        <br>
+                        <li>
+                            Apps de conteúdos de todas as turmas (NTRC):  {{estatisticasMun.appsTotal.ncertas}}
+                        </li>
+                        <br>
+                        <li>
+                            Apps de conteúdos de todas as turmas (NTR):  {{estatisticasMun.appsTotal.ntotal}}
+                        </li>
+                        <br>
+                        <li>
+                            Nº de jogos jogados:  {{estatisticasMun.njogos}} 
+                        </li>
+                        <br>
+                        <li>
+                            Frequência nos Jogos:  {{estatisticasMun.freqjogos}} 
+                        </li>
+                    </ul>
+                    </center>
                             <br>
                             <v-card outlined>
                             <center><span># - Frequência</span></center>
+                            <center><span>NTRC - Nº de tarefas resolvidas corretamente</span></center>
+                            <center><span>NTR - Nº de tarefas resolvidas</span></center>
                             </v-card>
                 </v-container>
               </v-card>
@@ -173,107 +124,48 @@
                       <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
                     </v-container>
                     <v-container v-else>
-                  <v-layout class="text-xs-center" row justify-center align-center>
-                                <v-flex xs3>
-                                    <v-card  style="background-color:#009263">
-                                        <v-card-title  primary-title class="justify-center white--text">
-                                            Nº de turmas
-                                        </v-card-title>
-                                        <center>
-                                        <v-card-text class="justify-center white--text">
-                                            {{estatisticasAgru.nturmas}}
-                                        </v-card-text>
-                                        </center>
-                                    </v-card>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-card  style="background-color:#04d693">
-                                        <v-card-title  primary-title class="justify-center white--text">
-                                            Nº de professores
-                                        </v-card-title>
-                                        <center>
-                                        <v-card-text class="justify-center white--text">
-                                            {{estatisticasAgru.nprofessores}}
-                                        </v-card-text>
-                                        </center>
-                                    </v-card>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-card  style="background-color:#009263">
-                                        <v-card-title  primary-title class="justify-center white--text">
-                                            Nº de alunos
-                                        </v-card-title>
-                                        <center>
-                                        <v-card-text class="justify-center white--text">
-                                            {{estatisticasAgru.nalunos}}
-                                        </v-card-text>
-                                        </center>
-                                    </v-card>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-card  style="background-color:#04d693">
-                                        <v-card-title  primary-title class="justify-center white--text">
-                                            Nº de tarefas
-                                        </v-card-title>
-                                        <center>
-                                        <v-card-text class="justify-center white--text">
-                                            {{0}}
-                                        </v-card-text>
-                                        </center>
-                                    </v-card>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-card  style="background-color:#04d693">
-                                        <v-card-title  primary-title class="justify-center white--text">
-                                            # Apps (Turmas)
-                                        </v-card-title>
-                                        <center>
-                                        <v-card-text class="justify-center white--text">
-                                            {{estatisticasAgru.freqappsTurma}}
-                                        </v-card-text>
-                                        </center>
-                                    </v-card>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-card  style="background-color:#009263">
-                                        <v-card-title  primary-title class="justify-center white--text">
-                                            # Apps (Agrupamentos)
-                                        </v-card-title>
-                                        <center>
-                                        <v-card-text class="justify-center white--text">
-                                            {{estatisticasAgru.freqappsTotal}}
-                                        </v-card-text>
-                                        </center>
-                                    </v-card>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-card  style="background-color:#04d693">
-                                        <v-card-title  primary-title class="justify-center white--text">
-                                            Jogos jogados
-                                        </v-card-title>
-                                        <center>
-                                        <v-card-text class="justify-center white--text">
-                                            {{estatisticasAgru.njogos}}
-                                        </v-card-text>
-                                        </center>
-                                    </v-card>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-card  style="background-color:#009263">
-                                        <v-card-title  primary-title class="justify-center white--text">
-                                            # Jogos
-                                        </v-card-title>
-                                        <center>
-                                        <v-card-text class="justify-center white--text">
-                                            {{estatisticasAgru.freqjogos}}
-                                        </v-card-text>
-                                        </center>
-                                    </v-card>
-                                </v-flex>
-                            </v-layout>
+                  <center>
+                    <ul style="list-style: none;">
+                        <li>
+                            Nº de turmas:  {{estatisticasAgru.nturmas}}
+                        </li>
+                        <li>
+                            Nº de professores:  {{estatisticasAgru.nprofessores}}
+                        </li>
+                        <li>
+                            Nº de alunos:  {{estatisticasAgru.nalunos}}
+                        </li>
+                        <li>
+                            Apps de conteúdos das turmas registadas em 20/21 (#):  {{estatisticasAgru.appsTurma.freqapps}}
+                        </li>
+                        <li>
+                            Apps de conteúdos das turmas registadas em 20/21 (NTRC):  {{estatisticasAgru.appsTurma.ncertas}}
+                        </li>
+                        <li>
+                            Apps de conteúdos das turmas registadas em 20/21 (NTotal):  {{estatisticasAgru.appsTurma.ntotal}}
+                        </li>
+                        <li>
+                            Apps de conteúdos de todas as turmas (#):  {{estatisticasAgru.appsTotal.freqapps}}
+                        </li>
+                        <li>
+                            Apps de conteúdos de todas as turmas (NTRC):  {{estatisticasAgru.appsTotal.ncertas}}
+                        </li>
+                        <li>
+                            Apps de conteúdos de todas as turmas (NTR):  {{estatisticasAgru.appsTotal.ntotal}}
+                        </li>
+                        <li>
+                            Nº de jogos jogados:  {{estatisticasAgru.njogos}} 
+                        </li>
+                        <li>
+                            Frequência nos Jogos:  {{estatisticasAgru.freqjogos}} 
+                        </li>
+                    </ul>
+                    </center>
                             <br>
                             <v-card outlined>
                             <center><span># - Frequência</span></center>
+                            <center><span>NTRC - Nº de tarefas resolvidas corretamente</span></center>
+                            <center><span>NTR - Nº de tarefas resolvidas</span></center>
                             </v-card>
                 </v-container>
                   </v-card>
@@ -332,7 +224,7 @@ import Swal from 'sweetalert2'
       },
       apagarEscola: async function(id){
         Swal.fire({
-          title: "De certeza que deseja apagar esta escola?",
+          title: "De certeza que deseja apagar este agrupamento?",
           showDenyButton: true,
           confirmButtonColor: '#009263',
           confirmButtonText: `Sim`,

@@ -31,7 +31,7 @@ console.log(turmas)
 for(var i = 0; i < turmas.length; i++){
     var id = turmas[i].id
     var ano = turmas[i].ano
-    var anoLetivo = ano + "/" + (parseInt(ano) + 1)
+    var anoLetivo = (parseInt(ano) - 1) + "/" + ano
     connection.query("Update hypat_aplicacoes.turmasold Set anoletivo = ? where id = ?", [anoLetivo, id])
 }
 }

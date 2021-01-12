@@ -12,7 +12,7 @@
             <v-combobox
                 id="escola"
                 prepend-icon="mdi-school"
-                label="Agrupamento"
+                label="Agrupamento de Escolas"
                 v-model="escola"
                 color="#009263"
                 :items="escolas"

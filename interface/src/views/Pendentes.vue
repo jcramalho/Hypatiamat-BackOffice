@@ -54,7 +54,7 @@ const h = require("@/config/hosts").hostAPI
          header_pendentes: [
             {text: "Username", sortable: true, value: 'codigo', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
-            {text: "Escola", value: 'escola', class: 'subtitle-1'},
+            {text: "Agrupamento", value: 'escola', class: 'subtitle-1'},
             {text: "Aceitar", class: 'subtitle-1'},
             {text: "Rejeitar", class: 'subtitle-1'}
         ],

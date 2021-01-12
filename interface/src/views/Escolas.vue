@@ -4,9 +4,9 @@
     <v-card class="pa-5">
         <v-container>
           <v-card-title primary-title class="justify-center green--text">
-                Lista de Agrupamentos
+                Lista de Agrupamentos de Escolas
             </v-card-title>
-            <center><v-btn class="white--text" style="background-color: #009263;" @click="criarEscola()"><v-icon> mdi-account-plus </v-icon> Criar Escola </v-btn></center>
+            <center><v-btn class="white--text" style="background-color: #009263;" @click="criarEscola()"><v-icon> mdi-account-plus </v-icon> Criar Agrupamento </v-btn></center>
             <center>
             <v-text-field
                 class="text--black"
@@ -94,7 +94,7 @@ const h = require("@/config/hosts").hostAPI
       },
       apagarEscola: async function(id){
         Swal.fire({
-          title: "De certeza que deseja apagar esta escola?",
+          title: "De certeza que deseja apagar este agrupamento?",
           showDenyButton: true,
           confirmButtonColor: '#009263',
           confirmButtonText: `Sim`,

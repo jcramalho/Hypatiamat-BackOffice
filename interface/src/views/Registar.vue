@@ -22,6 +22,7 @@
             <v-combobox
                 id="escola"
                 prepend-icon="mdi-school"
+                label="Agrupamento de Escolas"
                 :return-object="true"
                 v-model="escola"
                 color="#009263"
@@ -41,6 +42,7 @@
             <v-combobox
                 id="escola"
                 prepend-icon="mdi-school"
+                label="Agrupamento de Escolas"
                 :return-object="true"
                 v-model="escola"
                 :items="escolas"

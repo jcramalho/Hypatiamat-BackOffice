@@ -63,7 +63,7 @@ router.put('/:id', passport.authenticate('jwt', {session: false}), function(req,
 
 /* PUT Alterar a passwrod de um professor. */
 router.put('/:id/password', passport.authenticate('jwt', {session: false}), function(req, res, next) {
-  Professores.updatePassword(req.params.id, req.body)
+  Professores.updatePassword(req.params.id, req.body.password)
              .then(dados =>{
                res.jsonp(dados)
              })

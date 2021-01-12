@@ -4,7 +4,7 @@
     <v-card class="pa-5">
         <v-container style="width:50%;">
             <v-card-title primary-title class="justify-center green--text">
-                Editar Escola ({{nomeEscola}})
+                Editar Agrupamento de Escolas ({{nomeEscola}})
             </v-card-title>
                      
           <v-text-field label="Nome" placeholder="Nome" v-model="escola.nome" color="#900000" required/>
@@ -26,7 +26,7 @@
             >
                 <v-card class="pa-5">
                 <v-card-title primary-title class="justify-center green--text">
-                    Professores da Escola
+                    Professores do Agrupamento
                 </v-card-title> 
                 <v-text-field
                 prepend-icon="mdi-magnify"
@@ -53,7 +53,7 @@
             >
                 <v-card class="pa-5">
                 <v-card-title primary-title class="justify-center green--text">
-                  Alunos da Escola
+                  Alunos do Agrupamento
                 </v-card-title>
                 <v-text-field
                 prepend-icon="mdi-magnify"

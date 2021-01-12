@@ -51,7 +51,6 @@ algoritmo: XA-256        |
 mudar todas as labels de escola para agrupamento
 colocar label de localidade no criar turma
 ADMIN => pode criar mais que 4 turmas
-colocar ano letivo na tabela turma (20/21)
 colocar agrupamento na escolha de turma a transferir alunos
 
 
@@ -59,13 +58,8 @@ Municipio/Agrupamento => Estatisticas (por ano letivo):
 nº de turmas no ano letivo;
 nº de professores;
 nº de alunos;
-
-Agrupamento: 
-
-
 nº de tarefas;
 frequência nas apps;
-
 nº de jogos;
 frequência nos jogos;
 
@@ -120,9 +114,6 @@ Apps de conteúdos de todas as turmas
 colocar lista em vez do quadro em estatisticas globais no municipio
 colocar o nº em maior evidência
 
-criar turma (professor)
-ano de escolaridade 
-turma => escolher letra
 
 colocar legendas nas tabelas apps
 exportação pdf nas apps.
