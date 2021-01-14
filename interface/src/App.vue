@@ -5,8 +5,8 @@
     <Auth  @refreshLogout="refreshLogout" />
     </div>
     <div v-else>
-      <div v-if="!mode">
-      <Login  @refreshLogout="refreshLogout" @registar="registar" />
+      <div v-if="!mode" v-responsive="{ small: el => el.width <= 500 }">
+      <Login  @refreshLogout="refreshLogout" @registar="registar"  />
       </div>
       <div v-else>
       <Registar @login="login"/>
@@ -22,6 +22,7 @@ import Auth from '@/views/AuthApp.vue'
 import Login from '@/views/Login.vue'
 import Registar from '@/views/Registar.vue'
 import axios from 'axios'
+import { ResponsiveDirective } from "vue-responsive-components"
 
 
 
@@ -31,6 +32,9 @@ export default {
     Auth,
     Login,
     Registar,
+  },
+  directives: {
+    responsive: ResponsiveDirective
   },
      data() {
 

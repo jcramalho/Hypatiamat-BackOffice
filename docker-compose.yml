@@ -1,0 +1,30 @@
+version: '3.0'
+
+services:
+
+  api-dados:
+    build: 
+      network: host
+      context: ./apiDados 
+    container_name: api-dados
+    image: api:latest
+    ports:
+      - "3050:3050"
+    networks:
+      - backend
+  
+  interface-app:
+    build:
+      context: ./interface
+    container_name: interface-app
+    image: interface:latest
+    depends_on: 
+      - "api-dados"
+    ports:
+      - "8080:8080"
+    networks:
+      - frontend
+    
+networks: 
+  backend:
+  frontend:

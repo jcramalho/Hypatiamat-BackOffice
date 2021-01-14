@@ -16,6 +16,7 @@
     "sweetalert2": "^10.12.5",
     "vue": "^2.6.11",
     "vue-jwt-decode": "^0.1.0",
+    "vue-responsive-components": "^0.2.3",
     "vue-router": "^3.2.0",
     "vue-simple-alert": "^1.1.1",
     "vuetify": "^2.2.11",

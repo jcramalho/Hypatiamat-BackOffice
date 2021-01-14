@@ -1,18 +1,13 @@
 var mysql = require('mysql') 
-var connection = mysql.createConnection({
-  host: 'localhost',
+var db_config = {
+  //host: "host.docker.internal",
+  host: "localhost",
   user: 'root',
   password: 'PEI2020',
   database: 'hypat_samd',
   dateStrings: ['DATE','DATETIME']
-})
+}
 
-
-connection.connect(function(err) {
-    if (err) throw err;
-    console.log("Database hypat_samd Connected!");
-  });
-
-
+var connection = mysql.createPool(db_config)
 
 module.exports = connection;
