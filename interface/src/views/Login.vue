@@ -1,6 +1,6 @@
 <template>
   
-    <v-layout row class="text-xs-center pa-lg-16" justify-center align-center >
+    <v-layout row class="text-xs-center pa-lg-16" justify-center align-center  >
       <v-flex xs3>
         <v-img src="https://www.hypatiamat.com/imagens/images/backofficeAPP.png" width="350px">
         </v-img>
@@ -48,6 +48,8 @@ import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
 
 import VueJwtDecode from "vue-jwt-decode";
+import { ResponsiveDirective } from "vue-responsive-components"
+
 
   export default {
     data(){
@@ -57,6 +59,10 @@ import VueJwtDecode from "vue-jwt-decode";
         showPassword: false
       }
     },
+
+  directives: {
+    responsive: ResponsiveDirective
+  },
     methods: {
       login: async function () {
         try {

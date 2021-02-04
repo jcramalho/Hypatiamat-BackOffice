@@ -2,7 +2,7 @@
   <v-app id="inspire">
     <v-main class="grey lighten-3">
     <v-card class="pa-5">
-        <v-container>
+        <v-container style="width:80%">
             <v-card-title primary-title class="justify-center green--text">
                 Lista de Pedidos de Inscrição
             </v-card-title>

@@ -20,7 +20,7 @@ router.get('/', passport.authenticate('jwt', {session: false}), function(req, re
                .catch(erro => res.status(500).jsonp(erro))
 });
 
-router.get('/codigos', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/codigos', function(req, res, next) {
   Alunos.getAlunosCodigo()
              .then(dados =>{
                res.jsonp(dados)
@@ -116,7 +116,6 @@ router.post('/csv', passport.authenticate('jwt', {session: false}), upload.singl
       .pipe(fastcsv.parse({ headers: ['user', 'numero', 'nome', 'datanascimento', 'escola', 'turma', 'email', 'password', 'codprofessor', 'pais'], delimiter:delimiter }))
       .on('error', error => console.error(error))
       .on('data', row => {
-        if(row.datanascimento!= 'datanascimento'){
           if(row.user && row.numero && row.nome && row.datanascimento && row.escola && row.turma && row.email && row.password && row.codprofessor && row.pais){
             let aluno = row
             aluno.confirmacao = 1
@@ -125,7 +124,6 @@ router.post('/csv', passport.authenticate('jwt', {session: false}), upload.singl
           else{
             erros.push(i++)
           }
-        }
       })
       .on('end', rowCount => {
         for(var i = 0; i < alunos.length; i++){
@@ -139,8 +137,8 @@ router.post('/csv', passport.authenticate('jwt', {session: false}), upload.singl
 });
 
 /* DELETE apaga um aluno. */
-router.delete('/:id', passport.authenticate('jwt', {session: false}), function(req, res, next) {
-    Alunos.apagar(req.params.id)
+router.delete('/:codigo', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    Alunos.apagar(req.params.codigo)
                .then(dados =>{
                  res.jsonp(dados)
                })

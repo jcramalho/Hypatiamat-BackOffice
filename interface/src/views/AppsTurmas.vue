@@ -102,8 +102,8 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
-        anosLetivos:["2013/2014", "2014/2015", "2015/2016", "2016/2017", "2017/2018", "2018/2019", "2019/2020", "2020/2021"],
-        anoLetivo: "2019/2020",
+        anosLetivos:["2020/2021","2019/2020", "2018/2019","2017/2018" ],
+        anoLetivo: "2020/2021",
         apps:["Todas"],
         appsInfo:["Todas"],
         headers:[
@@ -195,7 +195,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         })
 
         var xImage = doc.internal.pageSize.getWidth() / 4
-        var y
+        var ytotal = 0
         var pdfName = "Apps-" + this.app + "-"+ this.turmaSel +".pdf"
         
         doc.addImage(hypatiaImg, 'PNG', xImage, 4);
@@ -207,27 +207,54 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         doc.text("Turma: " + this.turmaSel, 15, 60)
         doc.text("Período: " + this.dataInicio + " a " + this.dataFim, 130, 60)
         var listaRes = []
-        
+        var total =["Todos", "Todos", 0, 0, 0, 0, 0, 0]
         for(var i = 0; i<this.items.length; i++){
             var aux = [];
             aux.push(this.items[i].numero)
             aux.push(this.items[i].nome)
             aux.push(this.items[i].ncertas)
+            total[2] += this.items[i].ncertas
             aux.push(this.items[i].ntotal)
+            total[3] += this.items[i].ntotal
             aux.push(this.items[i].acerto)
             aux.push(this.items[i].onpeak)
+            total[5] += this.items[i].onpeak
             aux.push(this.items[i].offpeak)
+            total[6] += this.items[i].offpeak
             aux.push(this.items[i].frequencia)
+            total[7] += this.items[i].frequencia
 
             listaRes.push(aux)
         }
+        total[4] = ((total[2]/total[3]) * 100).toFixed(2)
+        listaRes.push(total)
         doc.autoTable({
             head: [['Nº', "Nome", 'NTRC', "NTR", "Acerto(%)", "DP", "FP", "#"]],
             body: listaRes,
             headStyles: { fillColor: [0, 146, 99] },
-            margin:{top: 75}
+            margin:{top: 75, bottom: 30},
+            didDrawPage: function (data) {
+                    // Reseting top margin. The change will be reflected only after print the first page.
+                    data.settings.margin.top = 10;
+                    ytotal = doc.internal.pageSize.getHeight()
+                    doc.setFontSize(8)
+                    //doc.setFontType('bold'
+                    doc.text("Legenda:" , 10, ytotal -30)
+                    doc.text("NTRC - N.º de tarefas realizadas corretamente", 10, ytotal -26)
+                    doc.text("NTR- N.º de tarefas realizadas", 10, ytotal -22)
+                    doc.text("Acerto (%) - (NTRC/NTR)*100", 10, ytotal - 18)
+                    doc.text("DP - Dentro do período escolar", 10, ytotal -14)
+                    doc.text("FP - Fora do período escolar", 10, ytotal-10)
+                    doc.text("# - Frequência", 10, ytotal-6)
+            },
+            willDrawCell: function (data) {
+                    var rows = data.table.body;
+                    if (data.row.index === rows.length - 1) {
+                        doc.setFillColor(5, 179, 123);
+                        doc.setTextColor(255, 255, 255)
+                    }
+                },
         })
-        
         
 
         doc.save(pdfName)

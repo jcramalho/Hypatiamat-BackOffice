@@ -300,11 +300,24 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         dialogEstatisticas: false,
         dialogGrafico: false,
         jogo:"",
-        dataInicio: "2019-09-01",
-        dataFim: "2020-09-01",
+        dataInicio: "2020-09-01",
+        dataFim: "2021-09-01",
         turmaSel: "",
         utilizador : {},
         alunos:[],
+        headersTodos:[
+            {text: "Nº", value: 'numero', class: 'subtitle-1'},
+            {text: "Nome", value: 'nome', class: 'subtitle-1'},
+            {text: "#", value: 'count', class: 'subtitle-1'},
+        ], 
+        headersJogo:[
+            {text: "Nº", value: 'numero', class: 'subtitle-1'},
+            {text: "Nome", value: 'nome', class: 'subtitle-1'},
+            {text: "Max", value: 'max', class: 'subtitle-1'},
+            {text: "Min", value: 'min', class: 'subtitle-1'},
+            {text: "Média", value: 'media', class: 'subtitle-1'},
+            {text: "#", value: 'count', class: 'subtitle-1'},
+        ],
          header_alunos: [
             {text: "Nº", value: 'numero', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
@@ -319,9 +332,9 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
-        anosLetivos:["2013/2014", "2014/2015", "2015/2016", "2016/2017", "2017/2018", "2018/2019", "2019/2020", "2020/2021"],
-        anoLetivo: "2019/2020",
-        jogos:[],
+        anosLetivos:["2020/2021", "2019/2020", "2018/2019", "2017/2018", "2016/2017", "2015/2016", "2014/2015", "2013/2014"],
+        anoLetivo: "2020/2021",
+        jogos:["Todos"],
         idprofessor:"",
         jogosInfo:[],
         estatisticas:{
@@ -379,7 +392,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
           if(this.turmaSel != ""){
             var response2 = await axios.get(h + "turmas/" + this.turmaSel + "/jogos?escola=" + this.escola + "&token=" + this.token)
             this.jogosInfo = response2.data
-            this.jogos = []
+            this.jogos = ["Todos"]
             this.alunos = []
             this.jogo = ""
             for(var i = 0; i < this.jogosInfo.length; i++){
@@ -414,16 +427,28 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
       },
       atualizaConteudo: async function(){
           if(this.jogo != "" && this.dataFim != "" && this.dataInicio != "" && this.turmaSel != "" ){
-              var aux = this.jogosInfo.find(element => element.jogo == this.jogo)
-              var jogoTipo = aux.tipo
-              var jogoTable = aux.jogotable
-              var idescola = this.escola
+              if(this.jogo != "Todos"){
+                this.header_alunos = this.headersJogo
+                var aux = this.jogosInfo.find(element => element.jogo == this.jogo)
+                var jogoTipo = aux.tipo
+                var jogoTable = aux.jogotable
+                var idescola = this.escola
 
                 var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/" + jogoTable 
-                                                + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                + "&jogoTipo=" + jogoTipo + "&escola=" + idescola
-                                                + "&token=" + this.token)
-              this.alunos = response.data
+                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                    + "&jogoTipo=" + jogoTipo + "&escola=" + idescola
+                                                    + "&token=" + this.token)
+                this.alunos = response.data
+              }
+              else{
+                  this.header_alunos = this.headersTodos
+                  var idescola = this.escola
+
+                  var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/Todos" 
+                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                    + "&escola=" + idescola + "&token=" + this.token)
+                  this.alunos = response.data
+              }
           } 
       },
       estatisticasGlobais: async function(){
@@ -441,62 +466,104 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
           this.dialogEstatisticas = true
       },
       getEstatisticas: async function(){
-          var aux = this.jogosInfo.find(element => element.jogo == this.jogo)
-          var jogoTipo = aux.tipo
-          var jogoTable = aux.jogotable
-          var idescola = this.escola
-          var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/" + jogoTable + "/estatisticasGlobais"
-                                        + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                        + "&jogoTipo=" + jogoTipo + "&escola=" + idescola
-                                        + "&token=" + this.token)
-          return response.data
+          if(this.jogo != "" && this.jogo != "Todos"){
+            var aux = this.jogosInfo.find(element => element.jogo == this.jogo)
+            var jogoTipo = aux.tipo
+            var jogoTable = aux.jogotable
+            var idescola = this.escola
+            var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/" + jogoTable + "/estatisticasGlobais"
+                                            + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                            + "&jogoTipo=" + jogoTipo + "&escola=" + idescola
+                                            + "&token=" + this.token)
+            return response.data
+          }
+          else return []
       },
       exportPDF: async function(){
         var doc = new jsPDF({
         })
 
         var xImage = doc.internal.pageSize.getWidth() / 4
-        var y
+        var ytotal = 0
         var pdfName = this.jogo + "-" + this.turmaSel + ".pdf"
         doc.addImage(hypatiaImg, 'PNG', xImage, 4);
         //doc.text("Jogo:")
         //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
         doc.setFontSize(11)
-        doc.text("Professor: " + this.utilizador.codigo, 15, 50)
+        doc.text("Professor: " + this.idprofessor, 15, 50)
         doc.text("Turma: " + this.turmaSel, 15, 60)
         doc.text("Jogo: " + this.jogo, 130, 50)
         doc.text("Período: " + this.dataInicio + " a " + this.dataFim, 130, 60)
         var listaRes = []
-        
-        for(var i = 0; i<this.alunos.length; i++){
-            var aux = [];
-            aux.push(this.alunos[i].numero)
-            aux.push(this.alunos[i].nome)
-            aux.push(this.alunos[i].maximo)
-            aux.push(this.alunos[i].minimo)
-            aux.push(this.alunos[i].media)
-            aux.push(this.alunos[i].count)
+        var headers = [['Nº', 'Nome', 'Max', "Min", "Média", "#"]]
+        var jogo = this.jogo
+        ytotal += 70
+        if(this.jogo != "Todos"){
+            for(var i = 0; i<this.alunos.length; i++){
+                var aux = [];
+                aux.push(this.alunos[i].numero)
+                aux.push(this.alunos[i].nome)
+                aux.push(this.alunos[i].maximo)
+                aux.push(this.alunos[i].minimo)
+                aux.push(this.alunos[i].media)
+                aux.push(this.alunos[i].count)
 
-            listaRes.push(aux)
+                listaRes.push(aux)
+            }
+        }
+        else {
+            headers = [['Nº', 'Nome', "#"]]
+            var total = ["Todos", "Todos", 0]
+            for(var i = 0; i<this.alunos.length; i++){
+                var aux = [];
+                aux.push(this.alunos[i].numero)
+                aux.push(this.alunos[i].nome)
+                aux.push(this.alunos[i].count)
+                total[2] += this.alunos[i].count
+                listaRes.push(aux)
+            }
+            listaRes.push(total)
         }
         doc.autoTable({
-            head: [['Nº', 'Nome', 'Max', "Min", "Média", "#"]],
+            head: headers,
             body: listaRes,
-            margin:{top: 65}
-        })
-        
-        this.estatisticas = await this.getEstatisticas()
+            headStyles: { fillColor: [0, 146, 99] },
+            margin:{top: ytotal, bottom: 30},
+            didDrawPage: function (data) {
+                    data.settings.margin.top = 10;
+                    ytotal = doc.internal.pageSize.getHeight()
+                    doc.setFontSize(8)
+                    //doc.setFontType('bold'
+                    if(jogo == "Todos"){
+                        doc.text("Legenda:" , 10, ytotal -10)
+                        doc.text("# - Frequência", 10, ytotal-6)
+                    }
 
-        var min = ["Min", this.estatisticas.turma.min, this.estatisticas.escola.min, this.estatisticas.hypatia.min]
-        var max = ["Max", this.estatisticas.turma.max, this.estatisticas.escola.max, this.estatisticas.hypatia.max]
-        var media = ["Média", this.estatisticas.turma.media, this.estatisticas.escola.media, this.estatisticas.hypatia.media]
-        var total = ["Nº de jogos", this.estatisticas.turma.number, this.estatisticas.escola.number, this.estatisticas.hypatia.number]
-        
-        doc.autoTable({
-            head: [['Tipo', 'Turma', 'Agrupamento', "Hypatia"]],
-            body: [min, max, media, total],
-            margin:{bottom: 65}
+                },
+            willDrawCell: function (data) {
+                if(jogo == "Todos"){
+                    var rows = data.table.body;
+                    if (data.row.index === rows.length - 1) {
+                        doc.setFillColor(5, 179, 123);
+                        doc.setTextColor(255, 255, 255)
+                    }
+                }
+            },
         })
+        if(this.jogo != "Todos"){
+            this.estatisticas = await this.getEstatisticas()
+
+            var min = ["Min", this.estatisticas.turma.min, this.estatisticas.escola.min, this.estatisticas.hypatia.min]
+            var max = ["Max", this.estatisticas.turma.max, this.estatisticas.escola.max, this.estatisticas.hypatia.max]
+            var media = ["Média", this.estatisticas.turma.media, this.estatisticas.escola.media, this.estatisticas.hypatia.media]
+            var total = ["Nº de jogos", this.estatisticas.turma.number, this.estatisticas.escola.number, this.estatisticas.hypatia.number]
+            
+            doc.autoTable({
+                head: [['Tipo', 'Turma', 'Agrupamento', "Hypatia"]],
+                body: [min, max, media, total],
+                margin:{ bottom: 60}
+            })
+        }
 
         doc.save(pdfName)
        

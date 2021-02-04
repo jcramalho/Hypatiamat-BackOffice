@@ -1,6 +1,7 @@
 var sql = require('../../models/db_aplicacoes');
 var Professores = require('./professor')
 var Alunos = require('./alunos')
+var Jogos = require('./../db_samd/jogos')
 
 
 var Escola = function(escola){
@@ -46,9 +47,9 @@ Escola.getEscolas = function(){
 }
 
 
-Escola.getEscola = function (id) {
+Escola.getEscola = function (cod) {
     return new Promise(function(resolve, reject) {
-        sql.query("Select * from escolas where cod=?", id, function(err, res){
+        sql.query("Select * from escolas where cod=?", cod, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -154,43 +155,118 @@ Escola.getJogosMunicipio = async function(jogoTable, jogoTipo, dataInicio, dataF
     })
 }
 
+Escola.getAllJogosMunicipios = async function(dataInicio, dataFim){
+    var jogos = await Jogos.getJogos()
+    console.log("deu")
+    var res = await Escola.getJogosMunicipio(jogos[0].jogotable, jogos[0].tipo, dataInicio, dataFim)
+    console.log("deu")
+    for(var i = 1; i < jogos.length; i++){
+        var jogo = await Escola.getJogosMunicipio(jogos[i].jogotable, jogos[i].tipo, dataInicio, dataFim)
+        for(var j = 0; j < jogo.length; j++){
+            var aux = res.find(element => element.localidade == jogo[j].localidade)
+            
+            if(aux){
+                aux.number +=jogo[j].number
+            }
+            else{
+                res.push(jogo[j])
+            }
+            
+        }
+    }
+    
+    await res.sort(function (a, b) {
+        return (a.number > b.number) ? -1 : 1;
+      });
+
+    return res;
+}
+
 Escola.getJogosEscolas = async function(jogoTable, jogoTipo, dataInicio, dataFim, municipio){
     return new Promise(function(resolve, reject) {
         var args = [jogoTipo, municipio, dataInicio, dataFim]
-        sql.query("SELECT esc.cod, esc.nome, min(jogo.pontuacao) as min, max(jogo.pontuacao) as max, Round(AVG(jogo.pontuacao), 0) as media, count(jogo.pontuacao) as number " +
+        sql.query("SELECT esc.cod, esc.nome, ROUND(min(jogo.pontuacao),0) as min, Round(max(jogo.pontuacao), 0) as max, Round(AVG(jogo.pontuacao), 0) as media, count(jogo.pontuacao) as number " +
 		"FROM hypat_samd." + jogoTable + " jogo, hypat_aplicacoes.escolas esc " +
-        "WHERE jogo.turma!='99' AND jogo.tipo=? AND jogo.idescola=esc.cod and esc.localidade = ? and (jogo.data BETWEEN ? and ?) Group by jogo.idescola Order by esc.nome;", args, function (err, res) {
+        "WHERE jogo.turma!='99' AND jogo.tipo=? AND jogo.idescola=esc.cod and esc.localidade = ? and (jogo.data BETWEEN ? and ?) Group by jogo.idescola Order by number DESC;", args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
                     reject(err);
                 }
                 else{
-                    console.log(res.insertId);
                     resolve(res);
                 }
             });   
     })
 }
 
+Escola.getAllJogosEscolas = async function(dataInicio, dataFim, municipio){
+    var jogos = await Jogos.getJogos()
+    var res = await Escola.getJogosEscolas(jogos[0].jogotable, jogos[0].tipo, dataInicio, dataFim, municipio)
+    for(var i = 1; i < jogos.length; i++){
+        var jogo = await Escola.getJogosEscolas(jogos[i].jogotable, jogos[i].tipo, dataInicio, dataFim, municipio)
+        for(var j = 0; j < jogo.length; j++){
+            var aux = res.find(element => element.cod == jogo[j].cod)
+            
+            if(aux){
+                aux.number +=jogo[j].number
+            }
+            else{
+                res.push(jogo[j])
+            }
+            
+        }
+    }
+    
+    await res.sort(function (a, b) {
+        return (a.number > b.number) ? -1 : 1;
+      });
+
+    return res;
+}
+
  
 Escola.getJogosProfessores = async function(jogoTable, jogoTipo, dataInicio, dataFim, escola){
     return new Promise(function(resolve, reject) {
         var args = [jogoTipo, escola, dataInicio, dataFim]
-        sql.query("SELECT al.codprofessor, min(jogo.pontuacao) as min, max(jogo.pontuacao) as max, Round(AVG(jogo.pontuacao), 0) as media, count(jogo.pontuacao) as number " +
+        sql.query("SELECT al.codprofessor, (select nome from professores where codigo = al.codprofessor) as nome, min(jogo.pontuacao) as min, max(jogo.pontuacao) as max, Round(AVG(jogo.pontuacao), 0) as media, count(jogo.pontuacao) as number " +
 		"FROM hypat_samd." + jogoTable + " jogo, hypat_aplicacoes.alunos al " +
-        "WHERE jogo.turma!='99' AND jogo.tipo=? AND jogo.idescola = ? and al.user = jogo.idaluno and(jogo.data BETWEEN ? and ?) Group by al.codprofessor Order by al.codprofessor;", args, function (err, res) {
+        "WHERE jogo.turma!='99' AND jogo.tipo=? AND jogo.idescola = ? and al.user = jogo.idaluno and(jogo.data BETWEEN ? and ?) " +
+        "Group by al.codprofessor Order by al.codprofessor;", args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
                     reject(err);
                 }
                 else{
-                    console.log(res.insertId);
                     resolve(res);
                 }
             });   
     })
+}
 
+Escola.getAllJogosProfessores = async function(dataInicio, dataFim, escola){
+    var jogos = await Jogos.getJogos()
+    var res = []
+    for(var i = 0; i < jogos.length; i++){
+        console.log(i)
+        var jogo = await Escola.getJogosProfessores(jogos[i].jogotable, jogos[i].tipo, dataInicio, dataFim, escola)
+        for(var j = 0; j < jogo.length; j++){
+            var aux = res.find(element => element.codprofessor == jogo[j].codprofessor)
+            
+            if(aux){
+                aux.number +=jogo[j].number
+            }
+            else{
+                res.push(jogo[j])
+            }
+            
+        }
+    }
+    
+    await res.sort(function (a, b) {
+        return (a.number > b.number) ? -1 : 1;
+      });
 
+    return res;
 }
 
 

@@ -84,8 +84,8 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         loading: false,
         app:"",
         filtrar:"",
-        dataInicio: "2019-09-01",
-        dataFim: "2020-09-01",
+        dataInicio: "2020-09-01",
+        dataFim: "2021-01-22",
         turmaSel: "",
         utilizador : {},
         alunos:[],
@@ -95,12 +95,12 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
-        anosLetivos:["2013/2014", "2014/2015", "2015/2016", "2016/2017", "2017/2018", "2018/2019", "2019/2020", "2020/2021"],
-        anoLetivo: "2019/2020",
+        anosLetivos:["2020/2021","2019/2020", "2018/2019","2017/2018" ],
+        anoLetivo: "2020/2021",
         apps:["Todas"],
         appsInfo:["Todas"],
         headers:[
-            {text: "Professor", value: 'codProf', class: 'subtitle-1'},
+            {text: "Professor", value: 'nome', class: 'subtitle-1'},
             {text: "NCertas", value: 'ncertas', class: 'subtitle-1'},
             {text: "NTotal", value: 'ntotal', class: 'subtitle-1'},
             {text: "Acerto(%)", value: 'acerto', class: 'subtitle-1'},
@@ -185,7 +185,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         })
 
         var xImage = doc.internal.pageSize.getWidth() / 4
-        var y
+        var ytotal = 0
         var pdfName = "Apps-" + this.app + "-"+ this.escolaAtual +".pdf"
         
         doc.addImage(hypatiaImg, 'PNG', xImage, 4);
@@ -194,30 +194,67 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         doc.setFontSize(11)
         doc.text("App de Conteúdos: " + this.app, 15, 50)
         doc.text("Período: " + this.dataInicio + " a " + this.dataFim, 130, 50)
-        doc.text("Escola: " + this.nomeEscola, doc.internal.pageSize.getWidth() / 4, 60)
+        doc.text(this.nomeEscola, doc.internal.pageSize.getWidth() / 2, 60, null, null, 'center')
         var listaRes = []
-        
+        var totalNtotal = 0
+        var totalNcertas = 0
+        var totalOnPeak = 0
+        var totalOffPeak = 0
+        var frequencia = 0
+        ytotal += 70
         for(var i = 0; i<this.items.length; i++){
             var aux = [];
-            aux.push(this.items[i].codProf)
+            aux.push(this.items[i].nome)
             aux.push(this.items[i].ncertas)
             aux.push(this.items[i].ntotal)
             aux.push(this.items[i].acerto)
             aux.push(this.items[i].onpeak)
             aux.push(this.items[i].offpeak)
             aux.push(this.items[i].frequencia)
+            totalNtotal +=this.items[i].ntotal
+            totalNcertas += this.items[i].ncertas
+            totalOnPeak += this.items[i].onpeak
+            totalOffPeak += this.items[i].offpeak
+            frequencia += this.items[i].frequencia
 
             listaRes.push(aux)
         }
+        var aux = []
+        aux.push("Total"); aux.push(totalNcertas); aux.push(totalNtotal); aux.push(((totalNcertas/totalNtotal)*100).toFixed(0)); aux.push(totalOnPeak); aux.push(totalOffPeak); aux.push(frequencia)
+        listaRes.push(aux)
         doc.autoTable({
             head: [['Professor', 'NTRC', "NTR", "Acerto(%)", "DP", "FP", "#"]],
             body: listaRes,
             headStyles: { fillColor: [0, 146, 99] },
-            margin:{top: 65}
+            margin: {top: ytotal, bottom:30}, // Seting top margin for First Page.
+                didDrawPage: function (data) {
+                    // Reseting top margin. The change will be reflected only after print the first page.
+                    data.settings.margin.top = 10;
+                    ytotal = doc.internal.pageSize.getHeight()
+                    doc.setFontSize(8)
+                    //doc.setFontType('bold'
+                    doc.text("Legenda:" , 10, ytotal -30)
+                    doc.text("NTRC - N.º de tarefas realizadas corretamente", 10, ytotal -26)
+                    doc.text("NTR- N.º de tarefas realizadas", 10, ytotal -22)
+                    doc.text("Acerto (%) - (NTRC/NTR)*100", 10, ytotal - 18)
+                    doc.text("DP - Dentro do período escolar", 10, ytotal -14)
+                    doc.text("FP - Fora do período escolar", 10, ytotal-10)
+                    doc.text("# - Frequência", 10, ytotal-6)
+                },
+                willDrawCell: function (data) {
+                    var rows = data.table.body;
+                    if (data.row.index === rows.length - 1) {
+                        doc.setFillColor(5, 179, 123);
+                        doc.setTextColor(255, 255, 255)
+                    }
+                },
         })
-        
-        
-
+        /*
+        for(var i = 1; i < doc.getNumberOfPages; i++){
+            //doc.text(150,285); //print number bottom right
+            console.log(i)
+            doc.text(i, doc.internal.pageSize.getWidth()-20, doc.internal.pageSize.getHeight()-20)
+        }*/
         doc.save(pdfName)
        
       },

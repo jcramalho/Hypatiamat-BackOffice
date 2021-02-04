@@ -4,7 +4,7 @@
     <v-card class="pa-5">
         <v-container>
             <v-card-title primary-title class="justify-center green--text">
-                Monotorização de Jogos por Professores de {{this.escola}}
+                Monotorização de Jogos por Professores de {{this.nomeEscola}}
             </v-card-title>
                 <center><v-btn v-if="items.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn></center>
                 <br v-if="items.length>0">
@@ -79,8 +79,8 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         turmas: [],
         jogo:"",
         filtrar:"",
-        dataInicio: "2019-09-01",
-        dataFim: "2020-09-01",
+        dataInicio: "2020-09-01",
+        dataFim: "2021-01-22",
         turmaSel: "",
         utilizador : {},
         alunos:[],
@@ -90,12 +90,23 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
-        anosLetivos:["2013/2014", "2014/2015", "2015/2016", "2016/2017", "2017/2018", "2018/2019", "2019/2020", "2020/2021"],
-        anoLetivo: "2019/2020",
-        jogos:[],
+        anosLetivos:["2020/2021","2019/2020", "2018/2019","2017/2018" ],
+        anoLetivo: "2020/2021",
+        jogos:["Todos"],
         jogosInfo:[],
+        headersTodos:[
+            {text: "Professor", value: 'nome', class: 'subtitle-1'},
+            {text: "#", value: 'number', class: 'subtitle-1'},
+        ], 
+        headersJogo:[
+            {text: "Professor", value: 'nome', class: 'subtitle-1'},
+            {text: "Max", value: 'max', class: 'subtitle-1'},
+            {text: "Min", value: 'min', class: 'subtitle-1'},
+            {text: "Média", value: 'media', class: 'subtitle-1'},
+            {text: "#", value: 'number', class: 'subtitle-1'},
+        ],
         headers:[
-            {text: "Código Professor", value: 'codprofessor', class: 'subtitle-1'},
+            {text: "Professor", value: 'nome', class: 'subtitle-1'},
             {text: "Max", value: 'max', class: 'subtitle-1'},
             {text: "Min", value: 'min', class: 'subtitle-1'},
             {text: "Média", value: 'media', class: 'subtitle-1'},
@@ -103,13 +114,15 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         ],
         items:[],
         escola: "",
+        nomeEscola:""
       }
     },
     created: async function(){
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
         this.escola = this.$route.params.id        
-
+        var response = await axios.get(h + "escolas/" + this.escola +"/?token=" + this.token)
+        this.nomeEscola = response.data.nome
         var response2 = await axios.get(hostJogos +"?token=" + this.token)
         this.jogosInfo = response2.data
         for(var i = 0; i < this.jogosInfo.length; i++){
@@ -152,15 +165,26 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
       },
       atualizaConteudo: async function(){
           if(this.jogo != "" && this.dataFim != "" && this.dataInicio != ""){
-              var aux = this.jogosInfo.find(element => element.jogo == this.jogo)
-              var jogoTipo = aux.tipo
-              var jogoTable = aux.jogotable
-                  // escolas do municipio
-                  var response = await axios.get(h + "escolas/" + this.escola + "/jogos/professores/" + "?jogoTable=" + jogoTable
-                                                + "&dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                + "&jogoTipo=" + jogoTipo + "&token=" + this.token)
+              if(this.jogo == "Todos"){
+                  this.headers = this.headersTodos
+                  var response = await axios.get(h + "escolas/" + this.escola + "/jogos/professores/" 
+                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                    + "&token=" + this.token)
 
                   this.items = response.data
+              }
+              else{
+                this.headers = this.headers
+                var aux = this.jogosInfo.find(element => element.jogo == this.jogo)
+                var jogoTipo = aux.tipo
+                var jogoTable = aux.jogotable
+                    // escolas do municipio
+                    var response = await axios.get(h + "escolas/" + this.escola + "/jogos/professores/" + "?jogoTable=" + jogoTable
+                                                    + "&dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                    + "&jogoTipo=" + jogoTipo + "&token=" + this.token)
+
+                    this.items = response.data
+              }
 
           } 
       },
@@ -173,32 +197,65 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         })
 
         var xImage = doc.internal.pageSize.getWidth() / 4
-        var y
+        var ytotal = 0
         var pdfName = this.jogo + "-" + this.escola + ".pdf"
         doc.addImage(hypatiaImg, 'PNG', xImage, 4);
         //doc.text("Jogo:")
         //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
         doc.setFontSize(11)
-        doc.text("Escola: " + this.escola,  65, 60)
+        doc.text(this.nomeEscola, doc.internal.pageSize.getWidth() / 2, 60, null, null, 'center')
         doc.text("Jogo: " + this.jogo, 15, 50)
         doc.text("Período: " + this.dataInicio + " a " + this.dataFim, 130, 50)
         var listaRes = []
-        
-        for(var i = 0; i<this.items.length; i++){
-            var aux = [];
-            aux.push(this.items[i].codprofessor)
-            aux.push(this.items[i].max)
-            aux.push(this.items[i].min)
-            aux.push(this.items[i].media)
-            aux.push(this.items[i].number)
-
+        var headers = [['Professor', 'Max', "Min", "Média", "#"]]
+        var ntotal = 0
+        if(this.jogo == "Todos"){
+            headers = [['Professor', "#"]]
+            for(var i = 0; i < this.items.length; i++){
+                var aux = [];
+                aux.push(this.items[i].nome)
+                aux.push(this.items[i].number)
+                ntotal += this.items[i].number
+                listaRes.push(aux)
+            }
+            var aux = ["Todos"]
+            aux.push(ntotal)
             listaRes.push(aux)
         }
+        else{ 
+            for(var i = 0; i<this.items.length; i++){
+                var aux = [];
+                aux.push(this.items[i].nome)
+                aux.push(this.items[i].max)
+                aux.push(this.items[i].min)
+                aux.push(this.items[i].media)
+                aux.push(this.items[i].number)
+
+                listaRes.push(aux)
+            }
+        }
         doc.autoTable({
-            head: [['Código do Professor', 'Max', "Min", "Média", "#"]],
+            head: headers,
             body: listaRes,
             headStyles: { fillColor: [0, 146, 99] },
-            margin:{top: 65}
+            margin:{top: 65},
+            didDrawPage: function (data) {
+                    data.settings.margin.top = 10;
+                    ytotal = doc.internal.pageSize.getHeight()
+                    doc.setFontSize(8)
+                    //doc.setFontType('bold'
+                    doc.text("Legenda:" , 10, ytotal -10)
+                    doc.text("# - Frequência", 10, ytotal-6)
+                },
+            willDrawCell: function (data) {
+                if(this.jogo == "Todos"){
+                    var rows = data.table.body;
+                    if (data.row.index === rows.length - 1) {
+                        doc.setFillColor(5, 179, 123);
+                        doc.setTextColor(255, 255, 255)
+                    }
+                }
+            },
         })
         
 

@@ -126,12 +126,12 @@ const h = require("@/config/hosts").hostAPI
       }
     },
     created: async function(){
-        console.log("ola")
         this.token = localStorage.getItem("token")
         this.type = localStorage.getItem("type")
-        this.professor = JSON.parse(localStorage.getItem("utilizador"))
+        var professorAux = JSON.parse(localStorage.getItem("utilizador"))
+        var response = await axios.get(h + "professores/" + professorAux.id + "/?token=" + this.token)
+        this.professor = response.data
         this.professor.nomeType = "Agrupamento"
-        console.log(this.professor)
     },
     methods: {
       verTurmas : async function(id){

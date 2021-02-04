@@ -47,20 +47,21 @@ for(var index = 1; index < professores.length; index++){
 
 sqlProf += ";"
 
+var sqlInsert = "INSERT INTO `hypat_aplicacoes`.`alunos` (`id`, `user`, `numero`, `nome`, `datanascimento`, `escola`, `turma`, `email`, `password`, `codprofessor`, `pais`, `confirmacao`) VALUES"
 sqlAlunos = "INSERT INTO `hypat_aplicacoes`.`alunos` (`id`, `user`, `numero`, `nome`, `datanascimento`, `escola`, `turma`, `email`, `password`, `codprofessor`, `pais`, `confirmacao`) VALUES"
 
 sqlAlunos += "(" + alunos[0].id + ",'" + alunos[0].user + "'," + alunos[0].numero +
              ",'" + alunos[0].nome + "','" + alunos[0].datanascimento + "','" + alunos[0].escola +
              "','" + alunos[0].turma + "','" + alunos[0].email + "','" + alunos[0].password + "','" +
-             alunos[0].codprofessor + "','" + alunos[0].pais + "'," + alunos[0].confirmacao + ")"
+             alunos[0].codprofessor + "','" + alunos[0].pais + "'," + alunos[0].confirmacao + ");"
 
 for(var a = 1; a < alunos.length; a++){
-    sqlAlunos += " , (" + alunos[a].id + ",'" + alunos[a].user + "'," + alunos[a].numero +
+    sqlAlunos += "\n" + sqlInsert + "(" + alunos[a].id + ",'" + alunos[a].user + "'," + alunos[a].numero +
     ",'" + alunos[a].nome + "','" + alunos[a].datanascimento + "','" + alunos[a].escola +
     "','" + alunos[a].turma + "','" + alunos[a].email + "','" + alunos[a].password + "','" +
-    alunos[a].codprofessor + "','" + alunos[a].pais + "'," + alunos[a].confirmacao + ")" 
+    alunos[a].codprofessor + "','" + alunos[a].pais + "'," + alunos[a].confirmacao + ");" 
 }
 
-fs.writeFileSync("utilizadores.sql", sqlProf + "\n" + sqlAlunos + ";\n", "utf8")
+fs.writeFileSync("alunos.sql", sqlAlunos + "\n", "utf8")
 
 console.log("Byeeee")

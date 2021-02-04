@@ -1,0 +1,15 @@
+Calcrapid (tabela: calcRapidHypatia)
+
+Tipo: 1 – adição ; 2 – subtração ; 3 – multiplicação ; 4 – divisão 
+n: número de operações realizadas
+f: número de vezes que jogou
+pontcerta: pontuação certa
+ponterrada: pontuação errada
+
+Calculus (tabela: minutenew)
+
+numcertas: número de operações certas
+numerradas: número de operações erradas
+nível: de 1 a 5
+tipo: : 1 – só adição ; 2 – só subtração ; 3 – só multiplicação ; 4 – só divisão
+            12 – adição e subtração;

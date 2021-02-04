@@ -33,18 +33,18 @@ router.get('/:id', passport.authenticate('jwt', {session: false}), function(req,
 });
 
 /* GET Devolve as turmas de um professor através do seu id (eventualmente pode se passar o ano letivo das turmas). */
-router.get('/:id/turmas', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/:codigo/turmas', passport.authenticate('jwt', {session: false}), function(req, res, next) {
   var ano = req.query.ano
   if(ano){
     var anoletivo = ano + "/" + (parseInt(ano) + 1)
-    Turmas.getTurmasByProfessorAno(req.params.id, anoletivo)
+    Turmas.getTurmasByProfessorAno(req.params.codigo, anoletivo)
              .then(dados =>{
                res.jsonp(dados)
              })
              .catch(erro => res.status(500).jsonp(erro))
   }
   else{
-    Turmas.getTurmasByProfessor(req.params.id)
+    Turmas.getTurmasByProfessor(req.params.codigo)
               .then(dados =>{
                 res.jsonp(dados)
               })
@@ -53,8 +53,8 @@ router.get('/:id/turmas', passport.authenticate('jwt', {session: false}), functi
 });
 
 /* PUT Alterar um professor. */
-router.put('/:id', passport.authenticate('jwt', {session: false}), function(req, res, next) {
-  Professores.alteraProfessor(req.params.id, req.body)
+router.put('/:codigo', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  Professores.alteraProfessor(req.params.codigo, req.body)
              .then(dados =>{
                res.jsonp(dados)
              })
@@ -62,8 +62,8 @@ router.put('/:id', passport.authenticate('jwt', {session: false}), function(req,
 });
 
 /* PUT Alterar a passwrod de um professor. */
-router.put('/:id/password', passport.authenticate('jwt', {session: false}), function(req, res, next) {
-  Professores.updatePassword(req.params.id, req.body.password)
+router.put('/:codigo/password', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  Professores.updatePassword(req.params.codigo, req.body.password)
              .then(dados =>{
                res.jsonp(dados)
              })
@@ -81,8 +81,8 @@ router.post('/', function(req, res, next) {
 
 
 /* DELETE Apagar um professor. */
-router.delete('/:id', passport.authenticate('jwt', {session: false}), function(req, res, next) {
-  Professores.apagar(req.params.id)
+router.delete('/:codigo', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  Professores.apagar(req.params.codigo)
              .then(dados =>{
                res.jsonp(dados)
              })

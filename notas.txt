@@ -117,3 +117,10 @@ colocar o nº em maior evidência
 
 colocar legendas nas tabelas apps
 exportação pdf nas apps.
+
+criar uma tabela de parametros. (nº de turmas)
+logo pdf mais pequeno.
+queries estatisticas apps => order by frequencia
+exportar csv => apps e jogos
+
+Estatisticas:

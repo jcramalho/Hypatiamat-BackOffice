@@ -10,13 +10,13 @@ select count(distinct t.turma) as nturmas, count(distinct t.idprofessor) as npro
 
 -- turmas
 select t.turma
-		from (select * from turmas where anoletivo="19/20") t, (select * from escolas where localidade = "Braga") e, professores p
+		from (select * from turmas where anoletivo="20/21") t, (select * from escolas where localidade = "Braga") e, professores p
         where t.idprofessor = p.codigo and e.cod = p.escola
         Group by t.id;
 
 -- professores
 select p.codigo
-		from (select * from turmas where anoletivo="19/20") t, (select * from escolas where localidade = "Braga") e, professores p
+		from (select * from turmas where anoletivo="20/21") t, (select * from escolas where localidade = "Braga") e, professores p
         where t.idprofessor = p.codigo and e.cod = p.escola
         Group by p.codigo;
         
@@ -24,11 +24,11 @@ select p.codigo
 select count(a.user) 
 		from alunos a 
         where a.codprofessor in (select p.codigo
-		from (select * from turmas where anoletivo="19/20") t, (select * from escolas where localidade = "Braga") e, professores p
+		from (select * from turmas where anoletivo="20/21") t, (select * from escolas where localidade = "Braga") e, professores p
         where t.idprofessor = p.codigo and e.cod = p.escola
         Group by p.codigo)
 		And a.turma in (select t.turma
-		from (select * from turmas where anoletivo="19/20") t, (select * from escolas where localidade = "Braga") e, professores p
+		from (select * from turmas where anoletivo="20/21") t, (select * from escolas where localidade = "Braga") e, professores p
         where t.idprofessor = p.codigo and e.cod = p.escola
         Group by t.turma
         );
@@ -70,7 +70,7 @@ select t.turma
 
 -- professores
 select p.codigo
-		from (select * from turmas where anoletivo="19/20") t, professores p
+		from (select * from turmas where anoletivo="20/21") t, professores p
         where t.idprofessor = p.codigo and p.escola = "hypatia01"
         Group by p.codigo;
 	

@@ -1,14 +1,14 @@
 <template>
+
   <v-app id="app" :key="viewKey">
-    
-    <div v-if="loggedIn">
+    <div v-if="loggedIn"  >
     <Auth  @refreshLogout="refreshLogout" />
     </div>
-    <div v-else>
-      <div v-if="!mode" v-responsive="{ small: el => el.width <= 500 }">
+    <div  v-else>
+      <div v-if="!mode" >
       <Login  @refreshLogout="refreshLogout" @registar="registar"  />
       </div>
-      <div v-else>
+      <div  v-else >
       <Registar @login="login"/>
       </div>
     </div>
@@ -31,9 +31,9 @@ export default {
     components: {
     Auth,
     Login,
-    Registar,
-  },
-  directives: {
+    Registar
+    },
+    directives: {
     responsive: ResponsiveDirective
   },
      data() {
@@ -95,3 +95,12 @@ export default {
     }
 }
 </script>
+
+<style lang="scss">
+.item {
+  display: flex;
+}
+.item.small {
+  flex-direction: column;
+}
+</style>

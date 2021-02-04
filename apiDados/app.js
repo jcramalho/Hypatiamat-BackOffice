@@ -6,8 +6,10 @@ var logger = require('morgan');
 var passport = require('passport')
 var JWTStrategy= require('passport-jwt').Strategy
 var ExtractJWT = require('passport-jwt').ExtractJwt
-var swaggerJSDoc = require('swagger-jsdoc');
+var swaggerJsdoc = require("swagger-jsdoc")
 var swaggerUi = require("swagger-ui-express");
+
+var secret = 'tese-hypatiamat2020'
 
 
 
@@ -20,6 +22,8 @@ var loginRouter = require('./routes/aplicacoes/login')
 var quarentenasRouter = require('./routes/aplicacoes/quarentena')
 var jogosRouter = require('./routes/samd/jogos')
 var appsRouter = require('./routes/testeconhecimentos/apps')
+
+
 
 
 
@@ -36,7 +40,7 @@ var extractFromBody = function(req){
 }
 
 passport.use(new JWTStrategy({
-  secretOrKey: 'tese-hypatiamat2020',
+  secretOrKey: secret,
   jwtFromRequest:ExtractJWT.fromExtractors([extractFromQS,extractFromBody]),
   passReqToCallback: true
 }, async (req,payload,done) =>{
@@ -50,6 +54,45 @@ passport.use(new JWTStrategy({
 
 
 var app = express();
+
+/*
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Hypatiamat - API de Dados",
+      version: "0.1.0",
+      description:
+        "This is a simple CRUD API application made with Express and documented with Swagger",
+      license: {
+        name: "MIT",
+        url: "https://spdx.org/licenses/MIT.html",
+      },
+      contact: {
+        name: "LogRocket",
+        url: "https://logrocket.com",
+        email: "info@email.com",
+      },
+    },
+    servers: [
+      {
+        url: "http://localhost:3050",
+      },
+    ],
+  },
+  apis: ["./routes/aplicacoes/alunos.js"],
+};
+
+//const opts = { ...options, swaggerDefinition: options };
+
+
+var specs = swaggerJsdoc(options);
+
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(specs, {explorer: true})
+);*/
 
 app.use(passport.initialize());
 
@@ -73,63 +116,28 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // swagger definition
-var swaggerDefinition = {
-  info: {
-    title: 'API Hypatiamat',
-    version: '1.0.0',
-    description: 'Aqui encontra-se a documentação de toda a api de dados do Hypatiamat, incluindo todas as rotas e toda a informação à cerca do que é precisar passar como parâmetros, bem como os resultados que se podem esperar ao executar aquela rota',
-  },
-  host: 'localhost:3050',
-  basePath: '/',
-  schemes: [
-    "http"
-  ],
-  tags: [
-    {
-      name: "Alunos",
-      description: "Todas as operações à cerca de alunos."
-    },
-    {
-      name: "Professores",
-      description: "Todas as operações à cerca de professores."
-    },
-    {
-      name: "Escolas",
-      description: "Todas as operações à cerca de escolas."
-    },
-    {
-        name: "Turmas",
-        description: "Todas as operações à cerca de turmas."
-    }
-  ],
-  securityDefinitions:{
-    bearerAuth:{
-      type: "apiKey",
-      in: "query",
-      name: "token",
-      scheme: "bearer"
-    }
-  }
-};
 
+
+/*
 // options for the swagger docs
 var options = {
   // import swaggerDefinitions
   swaggerDefinition: swaggerDefinition,
   // path to the API docs
   apis: ['./routes/aplicacoes/*.js'],
-};
+};*/
 
 // initialize swagger-jsdoc
-var swaggerSpec = swaggerJSDoc(options);
+//var swaggerSpec = swaggerJSDoc(options);
 
-var swaggerDocument = require('./swagger.json');
+//var swaggerDocument = require('./swagger.json');
 
+/*
 app.use(
   "/api-docs",
   swaggerUi.serve,
   swaggerUi.setup(swaggerDocument)
-);
+);*/
 
 app.use('/aplicacoes/professores', professoresRouter);
 app.use('/aplicacoes/turmas', turmasRouter)

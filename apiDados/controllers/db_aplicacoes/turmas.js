@@ -123,8 +123,7 @@ Turma.getTurmasByEscola = function (escola){
                 reject(err)
             }
             else{
-                if(res.length!=0) resolve(res[0])
-                else resolve(undefined)
+                resolve(res)
             }
         })
     })
@@ -147,6 +146,35 @@ Turma.getJogosFromTurma  = function (dataInicio, dataFim, jogoTipo, tableJogo, t
                 }
             })
         })   
+}
+
+Turma.getAllJogosTurma = async function(dataInicio, dataFim, turma, escola){
+    var jogos = await Jogos.getJogos()
+    console.log("deu")
+    var res = await Turma.getJogosFromTurma(dataInicio, dataFim, jogos[0].tipo, jogos[0].jogotable, turma, escola)
+    console.log("deu")
+    for(var i = 1; i < jogos.length; i++){
+        var jogo = await Turma.getJogosFromTurma(dataInicio, dataFim, jogos[i].tipo, jogos[i].jogotable, turma, escola)
+        for(var j = 0; j < jogo.length; j++){
+            var aux = res.find(element => element.idaluno == jogo[j].idaluno)
+            
+            if(aux){
+                aux.count +=jogo[j].count
+            }
+            else{
+                res.push(jogo[j])
+            }
+            
+        }
+    }
+    
+    await res.sort(function (a, b) {
+        return (a.count > b.count) ? -1 : 1;
+      });
+
+    return res;
+
+
 }
 
 Turma.updateTurma = function(id, turma){

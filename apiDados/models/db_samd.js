@@ -1,10 +1,11 @@
 var mysql = require('mysql') 
+var configs = require('./conf')
 var db_config = {
   //host: "host.docker.internal",
-  host: "localhost",
-  user: 'root',
-  password: 'PEI2020',
-  database: 'hypat_samd',
+  host: configs.host,
+  user: configs.username,
+  password: configs.password,
+  database: configs.bdSAMD,
   dateStrings: ['DATE','DATETIME']
 }
 

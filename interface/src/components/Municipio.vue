@@ -18,11 +18,11 @@
           <v-flex xs2>
           </v-flex>
           <v-flex xs5>
-          <v-text-field label="Identificador do Agrupamento" v-model="professor.escola" color="#009263" outlined disabled/>
+              <v-text-field label="Tipo de Utilizador" v-model="professor.nomeType" color="#009263" outlined disabled/>
           </v-flex>
 
           <v-flex xs5>
-              <v-text-field label="Tipo de Utilizador" v-model="professor.nomeType" color="#009263" outlined disabled/>
+              <v-text-field label="Município"  v-model="professor.infoEscola.localidade" color="#009263" outlined disabled/>
           </v-flex>
           <v-flex xs2>
           </v-flex>
@@ -36,24 +36,13 @@
           <v-flex xs2>
           </v-flex>
           <v-flex xs5>
-              <v-text-field label="Município"  v-model="professor.infoEscola.localidade" color="#009263" outlined disabled/>
-          </v-flex>
-
-          <v-flex xs3>
-          </v-flex>
-          
-         
-          <v-flex xs5>
           <v-text-field label="Validade (YYYY-MM-DD)" v-model="professor.validade" color="#009263" outlined disabled/>
           </v-flex>
-          <v-flex xs3>
-          </v-flex>
+
         </v-layout>
           <center><v-btn class="white--text" style="background-color: #009263;" @click="editarProfessor()"> Editar dados pessoais </v-btn></center>
           <br>
           <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true"> Alterar password </v-btn></center>
-          <br>
-          <center><v-btn class="white--text" style="background-color: #009263;" @click="verTurmas()"> Ver Minhas Turmas </v-btn></center>
           <br>
         </v-card>
           <v-dialog
@@ -143,8 +132,13 @@ const h = require("@/config/hosts").hostAPI
         console.log("ola")
         this.token = localStorage.getItem("token")
         this.type = localStorage.getItem("type")
-        this.professor = JSON.parse(localStorage.getItem("utilizador"))
+        var professorAux = JSON.parse(localStorage.getItem("utilizador"))
+        var response = await axios.get(h + "professores/" + professorAux.id + "/?token=" + this.token)
+        this.professor = response.data
         this.professor.nomeType = "Munícipio"
+        this.professor.escolas = professorAux.escolas
+        this.professor.infoEscola= {} 
+        this.professor.infoEscola.localidade = professorAux.infoEscola.localidade
         console.log(this.professor)
     },
     methods: {

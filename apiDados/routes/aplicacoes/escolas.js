@@ -22,8 +22,8 @@ router.get('/', function(req, res, next) {
   });
 
 // Informação de uma escola
-router.get('/:id', passport.authenticate('jwt', {session: false}), function(req, res, next) {
-    Escolas.getEscola(req.params.id)
+router.get('/:codigo', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    Escolas.getEscola(req.params.codigo)
                .then(dados =>{
                  res.jsonp(dados)
                })
@@ -31,8 +31,8 @@ router.get('/:id', passport.authenticate('jwt', {session: false}), function(req,
   });
 
 // Devolve todos os alunos de uma determinada escola
-router.get('/:id/alunos', passport.authenticate('jwt', {session: false}), function(req, res){
-  Alunos.getAlunosFromEscola(req.params.id)
+router.get('/:codigo/alunos', passport.authenticate('jwt', {session: false}), function(req, res){
+  Alunos.getAlunosFromEscola(req.params.codigo)
              .then(alunosAtuais =>{
               res.jsonp(alunosAtuais)
              })
@@ -40,8 +40,8 @@ router.get('/:id/alunos', passport.authenticate('jwt', {session: false}), functi
 })
 
 // Devolve todos os professores de uma determinada escola
-router.get('/:id/professores', passport.authenticate('jwt', {session: false}), function(req, res){
-  Professores.getProfessoresByEscola(req.params.id)
+router.get('/:codigo/professores', passport.authenticate('jwt', {session: false}), function(req, res){
+  Professores.getProfessoresByEscola(req.params.codigo)
              .then(alunosAtuais =>{
               res.jsonp(alunosAtuais)
              })
@@ -49,18 +49,18 @@ router.get('/:id/professores', passport.authenticate('jwt', {session: false}), f
 })
 
 // Devolve todos as turmas de uma determinada escola (pode eventualmente escolher o ano das turmas a pesquisar)
-router.get('/:id/turmas', passport.authenticate('jwt', {session: false}), function(req, res){
+router.get('/:codigo/turmas', passport.authenticate('jwt', {session: false}), function(req, res){
   var ano = req.query.ano
   if(ano){
     var anoletivo = ano + "/" + (parseInt(ano) + 1)
-    Professores.getTurmasFromEscolaAno(req.params.id, anoletivo)
+    Professores.getTurmasFromEscolaAno(req.params.codigo, anoletivo)
               .then(turmas =>{
                 res.jsonp(turmas)
               })
               .catch(erro => res.status(500).jsonp(erro))
   }
   else{
-    Professores.getTurmasFromEscola(req.params.id)
+    Professores.getTurmasFromEscola(req.params.codigo)
               .then(turmas =>{
                 res.jsonp(turmas)
               })
@@ -69,13 +69,12 @@ router.get('/:id/turmas', passport.authenticate('jwt', {session: false}), functi
 })
 
 // Devolve estatisticas globais sobre a escola
-router.get('/:id/estatisticas', function(req, res){
-  var escola = req.params.id
+router.get('/:codigo/estatisticas', function(req, res){
+  var escola = req.params.codigo
   var ano = req.query.ano
 
   if(ano) var anoletivo = ano + "/" + ((parseInt(ano) + 1))
   else var anoletivo = anoletivoAtual
-
   Estatisticas.getEstatisticasAgrupamentoAno(escola, anoletivo)
              .then(estatisticas =>{
               res.jsonp(estatisticas)
@@ -110,7 +109,7 @@ router.get('/localidades/:localidade', passport.authenticate('jwt', {session: fa
                .catch(erro => res.status(500).jsonp(erro))
   });
 
-    // Todas as escolas de uma localidade
+  // Estatisticas globais de uma localidade (por agrupamento ou totalidade)
 router.get('/localidades/:localidade/estatisticas', function(req, res, next) {
   var ano = req.query.ano
   if(ano){
@@ -119,11 +118,21 @@ router.get('/localidades/:localidade/estatisticas', function(req, res, next) {
   else{
     var anoletivo = anoletivoAtual
   }
-  Estatisticas.getEstatisticasMunicipioAno(req.params.localidade, anoletivo)
-             .then(dados =>{
-               res.jsonp(dados)
-             })
-             .catch(erro => res.status(500).jsonp(erro))
+  var agrupamentos = req.query.agrupamentos
+  if(!agrupamentos){
+    Estatisticas.getEstatisticasMunicipioAno(req.params.localidade, anoletivo)
+              .then(dados =>{
+                res.jsonp(dados)
+              })
+              .catch(erro => res.status(500).jsonp(erro))
+  }
+  else{
+    Estatisticas.getEstatisticaAgruMun(req.params.localidade, anoletivo)
+                .then(dados =>{
+                  res.jsonp(dados)
+                })
+                .catch(erro => res.status(500).jsonp(erro))
+  }
 });
 
   // Pontuações de jogos por municipio
@@ -132,26 +141,43 @@ router.get('/localidades/:localidade/estatisticas', function(req, res, next) {
     var dataFim = req.query.dataFim
     var jogoTipo = req.query.jogoTipo
     var jogoTable = req.params.jogo
-
-    Escolas.getJogosMunicipio(jogoTable, jogoTipo, dataInicio, dataFim)
-               .then(dados =>{
-                 res.jsonp(dados)
-               })
-               .catch(erro => res.status(500).jsonp(erro))
+    if(jogoTable == "Todos"){
+      Escolas.getAllJogosMunicipios(dataInicio, dataFim)
+                .then(dados =>{
+                  res.jsonp(dados)
+                })
+                .catch(erro => res.status(500).jsonp(erro))
+    }
+    else{
+      Escolas.getJogosMunicipio(jogoTable, jogoTipo, dataInicio, dataFim)
+                .then(dados =>{
+                  res.jsonp(dados)
+                })
+                .catch(erro => res.status(500).jsonp(erro))
+    }
   });
 
   // Devolve estatisticas globais sobre os professores da escola
-router.get('/:id/jogos/professores', passport.authenticate('jwt', {session: false}), function(req, res){
+router.get('/:cod/jogos/professores', passport.authenticate('jwt', {session: false}), function(req, res){
   var dataInicio = req.query.dataInicio
   var dataFim = req.query.dataFim
   var jogoTipo = req.query.jogoTipo
   var jogoTable = req.query.jogoTable
-  var escola = req.params.id
-  Escolas.getJogosProfessores(jogoTable, jogoTipo, dataInicio, dataFim, escola)
-             .then(turmas =>{
-              res.jsonp(turmas)
-             })
-             .catch(erro => res.status(500).jsonp(erro))
+  var escola = req.params.cod
+  if(jogoTable){
+    Escolas.getJogosProfessores(jogoTable, jogoTipo, dataInicio, dataFim, escola)
+        .then(turmas =>{
+          res.jsonp(turmas)
+        })
+        .catch(erro => res.status(500).jsonp(erro))
+  }
+  else{
+    Escolas.getAllJogosProfessores(dataInicio, dataFim, escola)
+          .then(turmas =>{
+            res.jsonp(turmas)
+          })
+          .catch(erro => res.status(500).jsonp(erro))
+  }
 })
 
 
@@ -162,16 +188,25 @@ router.get('/jogos/:jogo/municipios/:municipio', passport.authenticate('jwt', {s
   var jogoTipo = req.query.jogoTipo
   var jogoTable = req.params.jogo
   var municipio = req.params.municipio
-  Escolas.getJogosEscolas(jogoTable, jogoTipo, dataInicio, dataFim, municipio)
-              .then(dados =>{
-                res.jsonp(dados)
-              })
-              .catch(erro => res.status(500).jsonp(erro))
+  if(jogoTable == 'Todos'){
+    Escolas.getAllJogosEscolas(dataInicio, dataFim, municipio)
+            .then(dados =>{
+              res.jsonp(dados)
+            })
+            .catch(erro => res.status(500).jsonp(erro))
+  }
+  else{
+    Escolas.getJogosEscolas(jogoTable, jogoTipo, dataInicio, dataFim, municipio)
+                .then(dados =>{
+                  res.jsonp(dados)
+                })
+                .catch(erro => res.status(500).jsonp(erro))
+  }
 });
   
 
 //Insere uma nova escola
-router.post('/', function(req, res){
+router.post('/', passport.authenticate('jwt', {session: false}), function(req, res){
     Escolas.insertEscola(req.body)
                .then(dados =>{
                  res.jsonp(dados)
@@ -181,8 +216,8 @@ router.post('/', function(req, res){
 
 
 // Apaga uma determinado escola
-router.delete('/:id', passport.authenticate('jwt', {session: false}), function(req, res){
-    Escolas.apagar(req.params.id)
+router.delete('/:codigo', passport.authenticate('jwt', {session: false}), function(req, res){
+    Escolas.apagar(req.params.codigo)
                .then(dados =>{
                  res.jsonp(dados)
                })

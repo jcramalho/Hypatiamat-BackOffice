@@ -25,9 +25,15 @@ module.exports.login = async function(user, password){
   console.log(aluno)
   if (aluno != undefined){
       if(md5Password == aluno.password){
-          var utilizador = await Alunos.getAlunoByUser(user)
-          utilizador.agrupamento = await Escolas.getEscola(utilizador.escola).nome
-          utilizador.type = 10
+          var utilizadorAux = await Alunos.getAlunoByUser(user)
+          var utilizador = {
+              agrupamento: await Escolas.getEscola(utilizadorAux.escola).nome,
+              id : utilizadorAux.id,
+              user : utilizadorAux.user,
+              email: utilizadorAux.email,
+              escola: utilizadorAux.escola,
+              type: 10
+          }
           return {
               type : 10,
               authentication : true, 
@@ -41,23 +47,29 @@ module.exports.login = async function(user, password){
       if (professor == undefined) return {authentication:false}
       else {
           if(md5Password == professor.password){
-              var utilizador = await Professores.getProfessorByCodigo(user)
-              utilizador.type = 20
+              var utilizadorAux = await Professores.getProfessorByCodigo(user)
+              var utilizador = {
+                id : utilizadorAux.id,
+                codigo : utilizadorAux.codigo,
+                email : utilizadorAux.email,
+                escola: utilizadorAux.escola,
+                type: 20
+              }
               //municipio
-              if(utilizador.premium == 2) {
+              if(utilizadorAux.premium == 2) {
                   utilizador.type = 30
-                  utilizador.infoEscola = await Escolas.getEscola(utilizador.escola)
+                  utilizador.infoEscola = await Escolas.getEscola(utilizadorAux.escola)
                   utilizador.escolas = await Escolas.getEscolasByLocalidade(utilizador.infoEscola.localidade)
               }
               // agrupamento
-              else if(utilizador.premium == 3) {
+              else if(utilizadorAux.premium == 3) {
                   utilizador.type = 40
-                  utilizador.agrupamento = (await Escolas.getEscola(utilizador.escola)).nome
+                  utilizador.agrupamento = (await Escolas.getEscola(utilizadorAux.escola)).nome
               }
               // admin
-              else if(utilizador.premium == 5) {
+              else if(utilizadorAux.premium == 5) {
                   utilizador.type = 50
-                  utilizador.agrupamento = (await Escolas.getEscola(utilizador.escola)).nome
+                  utilizador.agrupamento = (await Escolas.getEscola(utilizadorAux.escola)).nome
               }
 
               return {

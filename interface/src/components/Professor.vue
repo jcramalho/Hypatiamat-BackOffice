@@ -17,7 +17,7 @@
           <v-flex xs2>
           </v-flex>
           <v-flex xs5>
-          <v-text-field label="Identificador do Agrupamento" v-model="professor.agrupamento" color="#009263" outlined disabled/>
+          <v-text-field label="Identificador do Agrupamento" v-model="professor.escola" color="#009263" outlined disabled/>
           </v-flex>
           <v-flex xs5>
               <v-text-field label="Tipo de Utilizador" v-model="professor.nomeType" color="#009263" outlined disabled/>
@@ -39,7 +39,7 @@
           <br>
           <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true"> Alterar password </v-btn></center>
           <br>
-          <center><v-btn class="white--text" style="background-color: #009263;" @click="verTurmas()"> Ver Minhas Turmas </v-btn></center>
+          <center><v-btn v-if="type!=50" class="white--text" style="background-color: #009263;" @click="verTurmas()"> Ver Minhas Turmas </v-btn></center>
           <br>
         </v-card>
           <v-dialog
@@ -128,8 +128,10 @@ const h = require("@/config/hosts").hostAPI
     created: async function(){
         this.token = localStorage.getItem("token")
         this.type = localStorage.getItem("type")
-        this.professor = JSON.parse(localStorage.getItem("utilizador"))
-        if(this.professor.type == 50) this.professor.nomeType = "Adminstrador"
+        var professorAux = JSON.parse(localStorage.getItem("utilizador"))
+        var response = await axios.get(h + "professores/" + professorAux.id + "/?token=" + this.token)
+        this.professor = response.data
+        if(this.type == 50) this.professor.nomeType = "Administrador"
         else this.professor.nomeType = "Professor"
     },
     methods: {

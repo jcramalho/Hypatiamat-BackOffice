@@ -27,8 +27,8 @@ Estatistica.getTurmasAnoMun = function(municipio, anoletivo){
 Estatistica.getProfessoresAnoMun = function(municipio, anoletivo){
     return new Promise(function(resolve, reject) {
         var args = [anoletivo, municipio]
-        sql.query(`select p.codigo from (select * from turmas where anoletivo="19/20") t, 
-        (select * from escolas where localidade = "Braga") e, professores p
+        sql.query(`select p.codigo from (select * from turmas where anoletivo=?) t, 
+        (select * from escolas where localidade = ?) e, professores p
         where t.idprofessor = p.codigo and e.cod = p.escola
         Group by p.codigo;`, args, function (err, res) {
                 if(err) {
@@ -45,7 +45,7 @@ Estatistica.getProfessoresAnoMun = function(municipio, anoletivo){
 Estatistica.getAgrupamentosAnoMun = function(municipio, anoletivo){
     return new Promise(function(resolve, reject) {
         var args = [anoletivo, municipio]
-        sql.query(`select distinct e.cod from (select * from turmas where anoletivo=?) t, 
+        sql.query(`select distinct e.cod, e.nome from (select * from turmas where anoletivo=?) t, 
         (select * from escolas where localidade = ?) e, professores p
         where t.idprofessor = p.codigo and e.cod = p.escola;`, args, function (err, res) {
                 if(err) {
@@ -53,11 +53,12 @@ Estatistica.getAgrupamentosAnoMun = function(municipio, anoletivo){
                     reject(err);
                 }
                 else{
+                    /*
                     var resultado = []
                     for(var i = 0; i < res.length; i++){
                         resultado.push(res[i].cod)
-                    }
-                    resolve(resultado);
+                    }*/
+                    resolve(res);
                 }
             });   
     })
@@ -184,7 +185,7 @@ Estatistica.quantosJogosTurmasAnoMun = async function(turmas, agrupamentos){
 Estatistica.getEstatisticasMunicipioAno = async function(municipio, anoletivo){
     var turmas = await Estatistica.getTurmasAnoMun(municipio, anoletivo)
     var professores = await Estatistica.getProfessoresAnoMun(municipio, anoletivo)
-    var agrupamentos = await Estatistica.getAgrupamentosAnoMun(municipio, anoletivo)
+    //var agrupamentos = await Estatistica.getAgrupamentosAnoMun(municipio, anoletivo)
     var professoresAux = []
     var turmasAux = []
     var anoAux = anoletivo.split("/")
@@ -205,15 +206,15 @@ Estatistica.getEstatisticasMunicipioAno = async function(municipio, anoletivo){
         nalunosTurmasOld = await Estatistica.getNumAlunosOld(professoresAux, turmasAux)
     }
 
-    var nappsTurmas = await Estatistica.getFreqAppsTurmasAnoMun(professoresAux, turmasAux)
-    var nappsAno = await Estatistica.getFreqAppsAnoMun(municipio, dataInicio, dataFim)
+    //var nappsTurmas = await Estatistica.getFreqAppsTurmasAnoMun(professoresAux, turmasAux)
+    //var nappsAno = await Estatistica.getFreqAppsAnoMun(municipio, dataInicio, dataFim)
 
-    var jogos = await Estatistica.quantosJogosTurmasAnoMun(turmasAux, agrupamentos)
+    //var jogos = await Estatistica.quantosJogosTurmasAnoMun(turmasAux, agrupamentos)
 
     return {nturmas: turmas.length, nprofessores: professores.length, 
-            nalunos: nalunos.numalunos + nalunosTurmasOld.numalunos,
-            appsTurma: nappsTurmas, appsTotal: nappsAno,
-            njogos: jogos.njogos, freqjogos: jogos.freq}
+            nalunos: nalunos.numalunos + nalunosTurmasOld.numalunos}
+            //appsTurma: nappsTurmas, appsTotal: nappsAno,
+            //njogos: jogos.njogos, freqjogos: jogos.freq}
 
 }
 
@@ -316,20 +317,19 @@ Estatistica.getEstatisticasAgrupamentoAno = async function(escola, anoletivo){
     for(var i = 0; i < professores.length; i++){
         professoresAux.push(professores[i].codigo)
     }
-    //console.log(anoletivo)
-    if(turmasAux.length > 0 && professoresAux > 0){
-        var nalunos = await Estatistica.getNumAlunos(professoresAux, turmasAux)
-        var nalunosTurmasOld = {numalunos: 0}
 
-        
+    //console.log(anoletivo)
+    if(turmasAux.length > 0 && professoresAux.length > 0){
+        var nalunos = await Estatistica.getNumAlunos(professoresAux, turmasAux)
+        var nalunosTurmasOld = {numalunos: 0}        
 
         if(anoletivo != "20/21"){
             nalunosTurmasOld = await Estatistica.getNumAlunosOld(professoresAux, turmasAux)
         }
 
-        var nappsTurmas = await Estatistica.getFreqAppsTurmasAnoMun(professoresAux, turmasAux)
+        //var nappsTurmas = await Estatistica.getFreqAppsTurmasAnoMun(professoresAux, turmasAux)
 
-        var jogos = await Estatistica.quantosJogosTurmasAnoAgru(turmasAux, escola)
+        //var jogos = await Estatistica.quantosJogosTurmasAnoAgru(turmasAux, escola)
     }
     else{
         var nalunos = {numalunos:0}
@@ -338,15 +338,35 @@ Estatistica.getEstatisticasAgrupamentoAno = async function(escola, anoletivo){
         var jogos = {njogos: 0, freq: 0}
     }
 
-    var nappsAno = await Estatistica.getFreqAppsAnoAgru(escola, dataInicio, dataFim)
+    //var nappsAno = await Estatistica.getFreqAppsAnoAgru(escola, dataInicio, dataFim)
 
     
 
     return {nturmas: turmas.length, nprofessores: professores.length, 
-            nalunos: nalunos.numalunos + nalunosTurmasOld.numalunos,
-            appsTurma: nappsTurmas, appsTotal: nappsAno,
-            njogos: jogos.njogos, freqjogos: jogos.freq}
+            nalunos: nalunos.numalunos + nalunosTurmasOld.numalunos}
+            //appsTurma: nappsTurmas, appsTotal: nappsAno,
+            //njogos: jogos.njogos, freqjogos: jogos.freq}
 
+}
+
+Estatistica.getEstatisticaAgruMun = async function(municipio, anoletivo){
+
+    var agrupamentos = await Estatistica.getAgrupamentosAnoMun(municipio, anoletivo)
+    var resultado = []
+    
+    for(var i = 0; i < agrupamentos.length; i++){
+        var agrupamento = await Estatistica.getEstatisticasAgrupamentoAno(agrupamentos[i].cod, anoletivo)
+        agrupamento.cod = agrupamentos[i].cod
+        agrupamento.nome = agrupamentos[i].nome
+        resultado.push(agrupamento)
+    }
+    
+    await resultado.sort(function (a, b) {
+        return (a.nalunos > b.nalunos) ? -1 : 1;
+      });
+    
+    return resultado
+            
 }
 
 module.exports = Estatistica

@@ -2,7 +2,7 @@ var mysql = require('mysql')
 var connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'admin',
+  password: 'PEI2020',
   database: 'hypat_aplicacoes'
 })
 
@@ -35,6 +35,7 @@ getProfessores = function () {
                 reject(err);
             }
             else{
+                console.log("Nº de professores: " + res.length)
                 resolve(res);
             }
         });   
@@ -49,6 +50,7 @@ getAlunos = function () {
                 reject(err);
             }
             else{
+                console.log("Nº de alunos: " + res.length)
                 resolve(res);
             }
         });   
