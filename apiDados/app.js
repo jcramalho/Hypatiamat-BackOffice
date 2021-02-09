@@ -8,6 +8,9 @@ var JWTStrategy= require('passport-jwt').Strategy
 var ExtractJWT = require('passport-jwt').ExtractJwt
 var swaggerJsdoc = require("swagger-jsdoc")
 var swaggerUi = require("swagger-ui-express");
+var yaml = require('js-yaml')
+var fs = require('fs')
+var yamlinc = require('yaml-include');
 
 var secret = 'tese-hypatiamat2020'
 
@@ -86,13 +89,18 @@ const options = {
 //const opts = { ...options, swaggerDefinition: options };
 
 
-var specs = swaggerJsdoc(options);
+var specs = swaggerJsdoc(options);*/
+yamlinc.setBaseFile(path.join(__dirname, 'swagger', 'index.yaml'));
+
+var src = fs.readFileSync(yamlinc.basefile, 'utf8');
+
+var swaggerDocument = yaml.load(src, { schema: yamlinc.YAML_INCLUDE_SCHEMA, filename: yamlinc.basefile })
 
 app.use(
   "/api-docs",
   swaggerUi.serve,
-  swaggerUi.setup(specs, {explorer: true})
-);*/
+  swaggerUi.setup(swaggerDocument)
+);
 
 app.use(passport.initialize());
 

@@ -1,0 +1,39 @@
+openapi: 3.0.0
+info: 
+  description: |
+    Esta é a API de dados do Hypatiamat.
+  version: 1.0.0
+  title: API de Dados do Hypatiamat
+servers:
+  - url : http://localhost:3050/
+    description : Servidor em desenvolvimento
+tags:
+  - name: Login
+    description: Responsável pela autenticação no sistema.
+  - name: Escolas
+    description: Rotas disponibilizadas sobre as escolas.
+  - name: Professores
+    description: Rotas disponibilizadas sobre os professores.
+  - name: Alunos
+    description: Rotas disponibilizadas sobre os alunos.
+  - name: Turmas
+    description: Rotas disponibilizadas sobre as turmas.
+  - name: Jogos
+    description: Rotas disponibilizadas sobre os jogos.
+  - name: Aplicações de Conteúdo
+    description: Rotas disponibilizadas sobre as aplicações de conteúdo.
+  - name: Quarentena
+    description: Rotas disponibilizadas sobre os pedidos de inscrição.
+paths: !!inc/dir [ 'paths' ] 
+components:
+  schemas: !!inc/dir [ 'schemas', { excludeTopLevelDirSeparator: true, recursive: false }]
+  securitySchemes:
+    tokenQuery:
+      type: apiKey
+      in: query
+      name: token
+      description: 'Introduza o seu token.'
+  responses:
+    UnauthorizedToken:
+      description: Para realizar este pedido, necessita de estar autenticado ou possuir um token. O seu token expirou?
+  examples: !!inc/dir [ 'examples', { excludeTopLevelDirSeparator: true, recursive: false }]

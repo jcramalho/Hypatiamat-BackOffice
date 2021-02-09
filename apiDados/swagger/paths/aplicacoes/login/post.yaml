@@ -1,0 +1,20 @@
+summary: Executa a tentativa de autenticação no sistema.
+description: |
+  Dadas as credênciais de um utilizador (código + password), é devolvido um token, caso estas estejam corretas.
+tags:
+  - Login
+requestBody:
+  description: 'Utilizador a autenticar-se.'
+  required: true
+  content:
+    application/x-www-form-urlencoded:
+      schema:
+        $ref: '#/components/schemas/Login'
+    application/json:
+      schema:
+        $ref: '#/components/schemas/Login'
+responses:
+  200:
+    description: Caso a autenticação seja realizada com sucesso, é devolvido um token. Caso contrário, apenas será devolvido o campo 'authentication' com valor falso.
+  500:
+    description: Erro.

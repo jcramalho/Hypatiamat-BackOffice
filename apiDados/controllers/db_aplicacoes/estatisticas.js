@@ -9,7 +9,7 @@ const Estatistica = function(estatistica){
 Estatistica.getTurmasAnoMun = function(municipio, anoletivo){
     return new Promise(function(resolve, reject) {
         var args = [anoletivo, municipio]
-        sql.query(`select t.turma, p.escola from (select * from turmas where anoletivo = ?) t, 
+        sql.query(`select t.id, t.turma, p.escola from (select * from turmas where anoletivo = ?) t, 
             (select * from escolas where localidade = ?) e, professores p
             where t.idprofessor = p.codigo and e.cod = p.escola
             Group by t.id;`, args, function (err, res) {
@@ -367,6 +367,28 @@ Estatistica.getEstatisticaAgruMun = async function(municipio, anoletivo){
     
     return resultado
             
+}
+
+
+
+Estatistica.getEstatisticasMunicipios = async function (anoletivo){
+    return new Promise(function(resolve, reject) {
+        var args = [anoletivo]
+        sql.query(`select e.localidade, count(distinct p.codigo) as nprofessores, 
+		count(distinct a.id) as nalunos, count(distinct t.id) as nturmas  
+		from (select * from turmas where anoletivo=?) t, 
+        escolas e, professores p, alunos a
+        where t.idprofessor = p.codigo and e.cod = p.escola and a.codprofessor = p.codigo and a.turma = t.turma
+        Group by e.localidade Order by nalunos DESC;`, args, function (err, res) {
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    })
 }
 
 module.exports = Estatistica

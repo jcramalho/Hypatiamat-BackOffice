@@ -1,0 +1,24 @@
+summary: Insere um novo Agrupamento de Escolas.
+description: |
+  Insere um novo Agrupamento de Escolas (Apenas os utilizadores autenticados).
+tags:
+  - Escolas
+security:
+  - tokenQuery: []
+requestBody:
+  description: 'Agrupamento de Escolas a ser criado.'
+  required: true
+  content:
+    application/x-www-form-urlencoded:
+      schema:
+        $ref: '#/components/schemas/EscolaPOST'
+    application/json:
+      schema:
+        $ref: '#/components/schemas/EscolaPOST'
+responses:
+  200:
+    description: Agrupamento inserido com suecesso.
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  500:
+    description: Erro.

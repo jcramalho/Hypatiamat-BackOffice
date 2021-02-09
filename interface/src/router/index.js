@@ -38,6 +38,8 @@ import AlunosTurma from '../views/AlunosTurma.vue'
 import MonotorizacaoJogos from '../views/MonotorizacaoJogos.vue'
 import Agrupamentos from '../views/Agrupamentos.vue'
 import AgrupamentoProfessores from '../views/AgrupamentoProfessores.vue'
+import EstatisticasMunicipios from '../views/EstatisticasMunicipios.vue'
+import EstatisticasAgrupamentos from '../views/EstatisticasAgrupamentos.vue'
 
 
 
@@ -126,6 +128,42 @@ const routes = [
     },
     meta: {
       title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/estatisticas/municipios',
+    name: 'Estatisticas Municipio',
+    component: EstatisticasMunicipios,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if((utilizador.type == 50)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Esatísticas",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/estatisticas/municipios/:municipio',
+    name: 'Estatisticas Agrupamentos',
+    component: EstatisticasAgrupamentos,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if((utilizador.type == 50)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Esatísticas",
       icon:"../assets/logo.png" 
     }
   },

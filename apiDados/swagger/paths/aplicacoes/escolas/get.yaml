@@ -1,0 +1,16 @@
+summary: Lista todos os Agrupamentos de Escolas
+description: |
+  Lista todos os Agrupamentos de Escolas (Autorizada a todos).
+tags:
+  - Escolas
+responses:
+  200:
+    description: Lista todas as escolas.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/EscolaGET'
+  500:
+    description: Erro.

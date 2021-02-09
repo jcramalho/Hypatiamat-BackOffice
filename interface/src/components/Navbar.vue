@@ -24,7 +24,7 @@
               </v-list-item-avatar>
                 
               <v-list-item-content>
-                <v-list-item-title >{{this.nomeUtilizador}}</v-list-item-title>
+                <v-list-item-title >{{this.idUtilizador}}</v-list-item-title>
                 <v-list-item-subtitle>Autenticado</v-list-item-subtitle>
               </v-list-item-content>
 
@@ -110,6 +110,7 @@ export default {
         { title: 'Turmas', icon: 'mdi-book-account', href:"/turmas" },
         { title: 'Monotorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/municipios"},
         { title: 'Monotorização de Apps', icon: 'mdi-apps', href:"/apps/municipios"},
+        { title: 'Outras Estatísticas', icon: 'mdi-home-analytics', href:"/estatisticas/municipios"},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }

@@ -68,6 +68,22 @@ router.get('/:codigo/turmas', passport.authenticate('jwt', {session: false}), fu
   }
 })
 
+// As estatisticas gerais por cada municipio disponível
+router.get('/localidades/estatisticas', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  var ano = req.query.ano
+  if(ano){
+    var anoletivo = ano + "/" + ((parseInt(ano) + 1))
+  }
+  else{
+    var anoletivo = anoletivoAtual
+  }
+  Estatisticas.getEstatisticasMunicipios(anoletivo)
+              .then(dados =>{
+                res.jsonp(dados)
+              })
+              .catch(erro => res.status(500).jsonp(erro))
+});
+
 // Devolve estatisticas globais sobre a escola
 router.get('/:codigo/estatisticas', function(req, res){
   var escola = req.params.codigo
@@ -99,6 +115,9 @@ router.get('/distritos/:distrito', passport.authenticate('jwt', {session: false}
                })
                .catch(erro => res.status(500).jsonp(erro))
   });
+
+
+
 
   // Todas as escolas de uma localidade
 router.get('/localidades/:localidade', passport.authenticate('jwt', {session: false}), function(req, res, next) {

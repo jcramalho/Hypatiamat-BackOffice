@@ -1,0 +1,14 @@
+type: object
+properties:
+  id:
+    type: integer
+  nome:
+    type: string
+  localidade:
+    type: string
+  distrito:
+    type: string
+  pais:
+    type: string
+  cod:
+    type: string

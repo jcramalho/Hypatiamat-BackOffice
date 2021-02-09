@@ -1,0 +1,25 @@
+summary: Devolve a informação à cerca de um Agrupamento de Escolas
+description: |
+  Devolve a informação à cerca de um Agrupamento com um determinado código (Autorizada a utilizadores autenticados).
+tags:
+  - Escolas
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: codigo
+    schema:
+      type: string
+    description: "Código do Agrupamento a ser consultado."
+    required: true
+responses:
+  200:
+    description: Informação do Agrupamento a ser devolvido.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/EscolaGET'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  500:
+    description: Erro.
