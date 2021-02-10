@@ -209,16 +209,15 @@ Aluno.updateAluno = function(id, aluno){
     })
 }
 
-Aluno.updateTurma = function(id, turma){
+Aluno.updateTurma = function(codAluno, turma, codprof){
     return new Promise(function(resolve, reject) {
-        var args = [turma, id]
-        sql.query("UPDATE alunos SET turma = ? Where id = ?", args, function (err, res) {
+        var args = [turma, codprof, codAluno]
+        sql.query("UPDATE alunos SET turma = ? , codprofessor=? Where user = ?", args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
                     reject(err);
                 }
                 else{
-                    console.log(res.insertId);
                     resolve(res);
                 }
             });   

@@ -96,39 +96,34 @@ import TurmasVue from './Turmas.vue'
       }
     },
     created : async function() {
-        try {
-            this.token = localStorage.getItem("token")
-            this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
-            if(this.utilizador.type == 50){
-              this.escolher = true
-              var response = await axios.get(h + "escolas")
-              this.escolasIds = response.data
-              var i
-              for(i = 0; i < this.escolasIds.length; i++){
-                var string = this.escolasIds[i].localidade + " - " + this.escolasIds[i].nome 
-                this.escolas.push(string)
-              }
-            }
-            else{
-              this.escola = this.utilziador.escola
-              var response = await axios.get(h + "escolas/" + this.escola + "/turmas/?token=" + this.token)
-              this.turmas = response.data
-            }
-
-            var date = new Date()
-            var ano = date.getFullYear()
-            var mes = date.getMonth()
-            if(mes < 9){
-              ano = ano.toString()
-            }
-            else{
-              ano = (ano+1).toString() 
-            }
-            this.anoAtual = ano.charAt(2) + ano.charAt(3)
-
-        } catch (e) {
-        return e
+      this.token = localStorage.getItem("token")
+      this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(this.utilizador.type == 50){
+        this.escolher = true
+        var response = await axios.get(h + "escolas")
+        this.escolasIds = response.data
+        var i
+        for(i = 0; i < this.escolasIds.length; i++){
+          var string = this.escolasIds[i].localidade + " - " + this.escolasIds[i].nome 
+          this.escolas.push(string)
         }
+      }
+      else{
+        this.escola = this.utilizador.escola
+        var response = await axios.get(h + "escolas/" + this.escola + "/turmas/?token=" + this.token)
+        this.turmas = response.data
+      }
+
+      var date = new Date()
+      var ano = date.getFullYear()
+      var mes = date.getMonth()
+      if(mes < 9){
+        ano = ano.toString()
+      }
+      else{
+        ano = (ano+1).toString() 
+      }
+      this.anoAtual = ano.charAt(2) + ano.charAt(3)
     },
      methods: {
       onEscolaChange: async function(){
@@ -194,6 +189,7 @@ import TurmasVue from './Turmas.vue'
       },
       changeNomeTurma: async function(){
         if(this.letra_turma != "" && this.anosEscolaridade.find(element => element == this.ano_escolaridade)){
+          console.log(this.anoAtual)
           var nome = this.ano_escolaridade_number + this.letra_turma
           nome += "-" + this.anoAtual + "-"
           var i = 1 

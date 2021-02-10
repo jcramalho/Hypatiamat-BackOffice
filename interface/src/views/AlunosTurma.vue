@@ -23,8 +23,9 @@
                 >
                 <template v-slot:item="row">
                 <tr>
-                    <td>{{row.item.user}}</td>
+                    <td>{{row.item.numero}}</td>
                     <td>{{row.item.nome}}</td>
+                    <td>{{row.item.user}}</td>
                     <td>
                     <v-icon @click="editarAluno(row.item.id)"> mdi-pencil </v-icon>
                     </td>
@@ -49,9 +50,10 @@ const h = require("@/config/hosts").hostAPI
         token: "",
         alunos: [],
          header_alunos: [
-            {text: "Username", sortable: true, value: 'user', class: 'subtitle-1'},
+            {text: "Número", value: 'numero', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
-            {text: "Editar", class: 'subtitle-1'},
+            {text: "Username", value: 'user', class: 'subtitle-1'},
+            {text: "Editar", sortable:false, class: 'subtitle-1'},
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",

@@ -35,9 +35,35 @@
       </v-flex>
       <v-flex xs1>
         <v-container v-if="turmaSel.length != 0">
-          <center><v-icon large color="#009263" @click="alteraTurma" > mdi-arrow-right-box </v-icon></center>
+          <center>
+            <v-tooltip v-if="this.selected.length>0" top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  icon
+                  v-bind="attrs" 
+                  v-on="on"
+                >
+                <v-icon large color="#009263" @click="alteraTurma"> mdi-arrow-right-box </v-icon>
+                </v-btn>
+              </template>
+              <span>Irá transferir os alunos selecionados da turma {{turma.turma}} para a {{turma2}}</span>
+            </v-tooltip>
+            </center>
           <br>
-          <center><v-icon large color="#009263" @click="alteraTurma2"> mdi-arrow-left-box </v-icon></center>
+          <center>
+            <v-tooltip v-if="this.selected2.length>0" bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  icon
+                  v-bind="attrs" 
+                  v-on="on"
+                >
+                <v-icon  large color="#009263" @click="alteraTurma2"> mdi-arrow-left-box </v-icon>
+                </v-btn>
+              </template>
+              <span>Irá transferir os alunos selecionados da turma {{turma2}} para a {{turma.turma}}</span>
+            </v-tooltip>
+          </center>
         </v-container>
       </v-flex>
       <v-flex xs5>
@@ -138,18 +164,28 @@ const h = require("@/config/hosts").hostAPI
         }
       }, 
       alteraTurma: async function(){
-        var i = 0
-        for(i = 0; i < this.selected.length; i++){
-          //var response = await axios.put(h + "alunos/" + this.selected[i].id + "/turma?token=" + this.token, {turma: this.turma2})
-        }
-        this.selected = []
+          var body = {
+                codprofessor: this.utilizador.codigo, 
+                turmaOld: this.turma.turma,
+                alunos: this.selected
+          }
+          await axios.put(h + "alunos/turmas/" + this.turma2 + "?token=" + this.token, body)
+          this.atualizaAlunos()
       },
       alteraTurma2: async function(){
-        var i = 0
-        for(i = 0; i < this.selected2.length; i++){
-          // var response = await axios.put(h + "alunos/" + this.selected2[i].id + "/turma?token=" + this.token, {turma: this.turma.turma})
+        var body = {
+              codprofessor: this.utilizador.codigo, 
+              turmaOld: this.turma2,
+              alunos: this.selected2
         }
-        this.selected2 = []
+        var res = await axios.put(h + "alunos/turmas/" + this.turma.turma + "?token=" + this.token, body)
+        this.atualizaAlunos()
+      },
+      atualizaAlunos: async function(){
+        var response = await axios.get(h + "turmas/" + this.turma.turma + "/alunos?codprofessor="+ this.turma.idprofessor + "&token=" + this.token)
+        this.alunosTurmaAtual = response.data
+        response = await axios.get(h + "turmas/" + this.turma2 + "/alunos?codprofessor="+ this.utilizador.codigo + "&token=" + this.token)
+        this.alunosOutraTurma = response.data
       }
     }
   }

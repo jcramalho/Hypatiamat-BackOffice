@@ -1,12 +1,12 @@
 <template>
 
-<div>
+<div class="grey lighten-3"> 
 
     <Navbar @refreshLogout="refreshLogout"/>
 
-    <container>
+    <v-container>
       <router-view/>
-    </container>
+    </v-container>
 </div>
 </template>
 

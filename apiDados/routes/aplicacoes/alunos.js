@@ -9,7 +9,8 @@ var multer = require('multer')
 var upload = multer({dest: 'uploads/'})
 
 var Alunos = require('../../controllers/db_aplicacoes/alunos');
-const TurmaOld = require('../../controllers/db_aplicacoes/turmasold');
+const TurmasOld = require('../../controllers/db_aplicacoes/turmasold');
+const Turmas = require('../../controllers/db_aplicacoes/turmas');
 
 
 router.get('/', passport.authenticate('jwt', {session: false}), function(req, res, next) {
@@ -75,14 +76,58 @@ router.put('/:id/escola', passport.authenticate('jwt', {session: false}), functi
              .catch(erro => res.status(500).jsonp(erro))
 });
 
-/* PUT altera a turma de um aluno. */
-router.put('/:id/turma', passport.authenticate('jwt', {session: false}), function(req, res, next) {
-    Alunos.updateTurma(req.params.id, req.body.turma)
-               .then(dados =>{
-                    //TurmaOld.insertTurmaOld()
-                    res.jsonp(dados)
-               })
-               .catch(erro => res.status(500).jsonp(erro))
+/* PUT altera a turma de uma lista de alunos. */
+router.put('/turmas/:turma', /*passport.authenticate('jwt', {session: false}),*/ async function(req, res, next) {
+    var alunos = req.body.alunos;
+    
+    var codTurmaOld = req.body.turmaOld;
+    var codTurmaNova = req.params.turma;
+    var codprofessor = req.body.codprofessor;
+    var codprofessorNovo
+    // caso exista uma mudança de professor
+    if(req.body.codprofessorNovo) codprofessorNovo = req.body.codprofessorNovo;
+    else codprofessorNovo = codprofessor
+
+    if(alunos && codTurmaOld && codTurmaNova && codprofessor){ 
+      // validacao das turmas
+      var turmaAntiga = await Turmas.getTurmaByNomeProfessor(codTurmaOld, codprofessor)
+      var turmaNova = await Turmas.getTurmaByNomeProfessor(codTurmaNova, codprofessorNovo)
+      if(!turmaAntiga.anoletivo) {res.status(400).jsonp({response: "Turma Antiga Inválida."}) ; return;}
+      if(!turmaNova.anoletivo) {res.status(400).jsonp({response: "Turma Nova Inválida."}); return; } 
+
+      var erros = []
+
+      for(var i = 0; i < alunos.length; i++){
+        var username
+        if(alunos[i].user) username = alunos[i].user
+        else username = alunos[i]
+        var aluno = await Alunos.getAlunoByUser(username)
+
+        if(aluno.id){
+          // caso o aluno exista
+          var alunoTurmaOld = {
+            codAluno : username,
+            turma : codTurmaOld,
+            codProfessor : codprofessor,
+            anoletivo : turmaAntiga.anoletivo
+          }
+          TurmasOld.insertTurmaOld(alunoTurmaOld)
+
+          await Alunos.updateTurma(username, codTurmaNova, codprofessorNovo)
+                      .catch(erro => console.log(erro))
+        }
+        else {
+          erros.push(username)
+        }
+      }
+
+      var response = "Turma dos alunos alteradas com sucesso (" + (alunos.length - erros.length) + " alunos)."
+      if(erros.length > 0) {
+        response += "\n" + "No entanto, os seguintes códigos de alunos existem e, portanto, não foram alterados: " + JSON.stringify(erros)
+      }
+      res.jsonp({response: response})
+  }
+  else res.status(400).jsonp({response: 'Existem campos que devem ser fornecidos em falta.'})
 });
 
 /* PUT altera a password de um aluno. */

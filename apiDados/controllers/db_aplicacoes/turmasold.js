@@ -9,16 +9,14 @@ var TurmaOld = function(turmaOld){
 
 TurmaOld.insertTurmaOld = function (turma) {    
     return new Promise(function(resolve, reject) {
-    var args = [turma.id, turma.codAluno, turma.turma, turma.codProfessor]
-    sql.query("INSERT INTO turmas (`id`, `idprofessor`, `turma`) VALUES (?, ?, ?)", 
+    var args = [turma.codAluno, turma.turma, turma.codProfessor, turma.anoletivo]
+    sql.query("INSERT INTO turmasold (`codAluno`,  `turma`, `codProfessor`, `anoletivo`) VALUES (?, ?, ?, ?)", 
                 args, function (err, res) {
-            
             if(err) {
                 console.log("error: ", err);
                 reject(err);
             }
             else{
-                console.log(res.insertId);
                 resolve(res);
             }
         });   

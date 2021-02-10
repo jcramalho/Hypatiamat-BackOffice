@@ -115,6 +115,21 @@ Turma.getTurmaByNome = function (turma) {
     })
 }
 
+Turma.getTurmaByNomeProfessor = function (turma, codprofessor) {
+    return new Promise(function(resolve, reject) {
+        sql.query("Select * from turmas where turma=? and idprofessor=?", [turma, codprofessor], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if(res.length!=0) resolve(res[0])
+                else resolve(undefined)
+            }
+        })
+    })
+}
+
 Turma.getTurmasByEscola = function (escola){
     return new Promise(function(resolve, reject) {
         sql.query("SELECT t.* FROM hypat_aplicacoes.turmas t, hypat_aplicacoes.professores p where p.codigo=t.idprofessor and p.escola = ? ;", escola, function(err, res){
