@@ -391,4 +391,12 @@ Estatistica.getEstatisticasMunicipios = async function (anoletivo){
     })
 }
 
+
+
+/*
+Estatistica.getEstatisticasMunicipios = async function (anoletivo){
+    
+}*/
+
+
 module.exports = Estatistica

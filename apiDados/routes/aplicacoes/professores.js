@@ -32,6 +32,15 @@ router.get('/:id', passport.authenticate('jwt', {session: false}), function(req,
              .catch(erro => res.status(500).jsonp(erro))
 });
 
+/* GET Informação de um professor através do seu id. */
+router.get('/codigos/:codigo', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  Professores.getProfessorByCodigo(req.params.codigo)
+             .then(dados =>{
+               res.jsonp(dados)
+             })
+             .catch(erro => res.status(500).jsonp(erro))
+});
+
 /* GET Devolve as turmas de um professor através do seu id (eventualmente pode se passar o ano letivo das turmas). */
 router.get('/:codigo/turmas', passport.authenticate('jwt', {session: false}), function(req, res, next) {
   var ano = req.query.ano
