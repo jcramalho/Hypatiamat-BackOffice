@@ -16,7 +16,7 @@ var Escola = function(escola){
 Escola.insertEscola = function (escola) {    
     return new Promise(function(resolve, reject) {
     var args = [escola.nome, escola.localidade, escola.distrito, escola.pais, escola.cod]
-    sql.query("INSERT INTO escolas (`nome`, `localidade`, `distrito`, `pais`, `cod`)"+ 
+    sql.query("INSERT INTO Escolas (`nome`, `localidade`, `distrito`, `pais`, `cod`)"+ 
                 " VALUES (?, ?, ?, ?, ?)", 
                 args, function (err, res) {
             
@@ -34,7 +34,7 @@ Escola.insertEscola = function (escola) {
 
 Escola.getEscolas = function(){
     return new Promise(function(resolve, reject) {
-        sql.query("Select * from escolas Order by localidade", function(err, res){
+        sql.query("Select * from Escolas Order by localidade", function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -49,7 +49,7 @@ Escola.getEscolas = function(){
 
 Escola.getEscola = function (cod) {
     return new Promise(function(resolve, reject) {
-        sql.query("Select * from escolas where cod=?", cod, function(err, res){
+        sql.query("Select * from Escolas where cod=?", cod, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -64,7 +64,7 @@ Escola.getEscola = function (cod) {
 
 Escola.getEscolasByLocalidade = function (localidade) {
     return new Promise(function(resolve, reject) {
-        sql.query("Select * from escolas where localidade=?", localidade, function(err, res){
+        sql.query("Select * from Escolas where localidade=?", localidade, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -78,7 +78,7 @@ Escola.getEscolasByLocalidade = function (localidade) {
 
 Escola.getEscolasByDistrito = function (distrito) {
     return new Promise(function(resolve, reject) {
-        sql.query("Select * from escolas where distrito=?", distrito, function(err, res){
+        sql.query("Select * from Escolas where distrito=?", distrito, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -92,7 +92,7 @@ Escola.getEscolasByDistrito = function (distrito) {
 
 Escola.getEscolasByPais = function (pais) {
     return new Promise(function(resolve, reject) {
-        sql.query("Select * from escolas where pais=?", pais, function(err, res){
+        sql.query("Select * from Escolas where pais=?", pais, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -106,7 +106,7 @@ Escola.getEscolasByPais = function (pais) {
 
 Escola.getTurmasFromEscola = function (id) {
     return new Promise(function(resolve, reject) {
-        sql.query("Select t.* from escolas esc, turmas t, professores p where esc.cod=? and esc.cod = p.escola and t.idprofessor=p.cod", id, function(err, res){
+        sql.query("Select t.* from Escolas esc, turmas t, professores p where esc.cod=? and esc.cod = p.escola and t.idprofessor=p.cod", id, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -123,7 +123,7 @@ Escola.updateEscola = function(id, escola){
     //nome`, `localidade`, `distrito`, `pais`, `cod`
     return new Promise(function(resolve, reject) {
         var args = [escola.nome, escola.localidade, escola.distrito, escola.pais, id]
-        sql.query("Update escolas Set nome = ?, localidade = ?, distrito = ?, pais = ? where id = ?", args, function (err, res) {
+        sql.query("Update Escolas Set nome = ?, localidade = ?, distrito = ?, pais = ? where id = ?", args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
                     reject(err);
@@ -141,7 +141,7 @@ Escola.getJogosMunicipio = async function(jogoTable, jogoTipo, dataInicio, dataF
     return new Promise(function(resolve, reject) {
         var args = [jogoTipo, dataInicio, dataFim]
         sql.query("SELECT esc.localidade, min(jogo.pontuacao) as min, max(jogo.pontuacao) as max, Round(AVG(jogo.pontuacao), 0) as media, count(jogo.pontuacao) as number " +
-		"FROM hypat_samd." + jogoTable + " jogo, hypat_aplicacoes.escolas esc " +
+		"FROM hypat_samd." + jogoTable + " jogo, hypati67_aplicacoes.Escolas esc " +
         "WHERE jogo.turma!='99' AND jogo.tipo=? AND jogo.idescola=esc.cod and (jogo.data BETWEEN ? and ?) Group by esc.localidade Order by esc.localidade;", args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
@@ -186,7 +186,7 @@ Escola.getJogosEscolas = async function(jogoTable, jogoTipo, dataInicio, dataFim
     return new Promise(function(resolve, reject) {
         var args = [jogoTipo, municipio, dataInicio, dataFim]
         sql.query("SELECT esc.cod, esc.nome, ROUND(min(jogo.pontuacao),0) as min, Round(max(jogo.pontuacao), 0) as max, Round(AVG(jogo.pontuacao), 0) as media, count(jogo.pontuacao) as number " +
-		"FROM hypat_samd." + jogoTable + " jogo, hypat_aplicacoes.escolas esc " +
+		"FROM hypat_samd." + jogoTable + " jogo, hypati67_aplicacoes.Escolas esc " +
         "WHERE jogo.turma!='99' AND jogo.tipo=? AND jogo.idescola=esc.cod and esc.localidade = ? and (jogo.data BETWEEN ? and ?) Group by jogo.idescola Order by number DESC;", args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
@@ -286,7 +286,7 @@ Escola.apagar = async function(cod){
 
 Escola.deleteEscola = function (cod){
     return new Promise(function(resolve, reject) {
-        sql.query("Delete From escolas where cod = ?", cod, function (err, res) {
+        sql.query("Delete From Escolas where cod = ?", cod, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
                     reject(err);
