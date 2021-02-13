@@ -54,7 +54,11 @@
                 </v-flex>
                 <v-flex xs1>
                 </v-flex>
-                <v-flex xs8>     
+                <v-flex xs8>
+                    <v-container v-if="loading">
+                        <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
+                    </v-container>
+                    <v-container v-else>     
                     <div id="tableResultados">          
                     <v-data-table
                     class="elevation-4"
@@ -65,6 +69,7 @@
                     >
                     </v-data-table>
                     </div>
+                    </v-container>
                 </v-flex>
             </v-layout>
             <v-dialog
@@ -291,6 +296,8 @@ import html2canvas from "html2canvas";
 const h = require("@/config/hosts").hostAPI
 const hostJogos = require("@/config/hosts").hostJogos
 const hypatiaImg = require("@/assets/hypatiamat.png")
+const anosletivos2 = require("@/config/confs").anosletivos2
+const anoletivoAtual = require("@/config/confs").anoletivo2
 
   export default {
     data(){
@@ -319,8 +326,8 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
-        anosLetivos:["2013/2014", "2014/2015", "2015/2016", "2016/2017", "2017/2018", "2018/2019", "2019/2020", "2020/2021"],
-        anoLetivo: "2019/2020",
+        anosLetivos:anosletivos2,
+        anoLetivo: anoletivoAtual,
         jogos:[],
         jogosInfo:[],
         estatisticas:{
@@ -342,7 +349,8 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
                 media: 0,
                 number: 0
             }
-        }
+        },
+        loading: false
       }
     },
     created: async function(){
@@ -353,6 +361,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         for(i = 0; i < response.data.length; i++){
           this.turmas.push(response.data[i].turma)
         }
+        this.onAnoChange()
         /*
         var response2 = await axios.get(h + "turmas/"  "?token=" + this.token)
         this.jogosInfo = response2.data
@@ -404,6 +413,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
       },
       atualizaConteudo: async function(){
           if(this.jogo != "" && this.dataFim != "" && this.dataInicio != "" && this.turmaSel != "" ){
+              this.loading = true
               var aux = this.jogosInfo.find(element => element.jogo == this.jogo)
               var jogoTipo = aux.tipo
               var jogoTable = aux.jogotable
@@ -415,6 +425,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
                                                 + "&jogoTipo=" + jogoTipo + "&escola=" + idescola
                                                 + "&token=" + this.token)
               this.alunos = response.data
+              this.loading = false
           } 
       },
       estatisticasGlobais: async function(){

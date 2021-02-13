@@ -44,6 +44,10 @@
             color="#009263"
             single-line
             ></v-text-field>
+        <v-container v-if="loading">
+            <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
+        </v-container>
+        <v-container v-else>
         <v-data-table
             class="elevation-4"
             :headers="headers"
@@ -51,9 +55,9 @@
             :footer-props="footer_props"
             :search="filtrar"
             @click:row="goToProfessores"
-        >
-            
+        >   
         </v-data-table>
+        </v-container>
         </v-container>
     </v-card>
     </v-main>
@@ -71,6 +75,8 @@ import html2canvas from "html2canvas";
 const h = require("@/config/hosts").hostAPI
 const hostJogos = require("@/config/hosts").hostJogos
 const hypatiaImg = require("@/assets/hypatiamat.png")
+const anosletivos2 = require("@/config/confs").anosletivos2
+const anoletivoAtual = require("@/config/confs").anoletivo2
 
   export default {
     data(){
@@ -90,8 +96,8 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
-        anosLetivos:["2020/2021","2019/2020", "2018/2019","2017/2018" ],
-        anoLetivo: "2020/2021",
+        anosLetivos: anosletivos2,
+        anoLetivo: anoletivoAtual,
         jogos:["Todos"],
         jogosInfo:[],
         headersTodos:[
@@ -114,6 +120,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         ],
         items:[],
         municipioAtual: "",
+        loading: false
       }
     },
     created: async function(){
@@ -135,6 +142,9 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
                 this.dataFim = this.$route.params.dataFim
                 this.atualizaConteudo()
             }
+            else{
+                this.onAnoChange()
+            }
         }
     },
     methods: {
@@ -143,7 +153,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
              var aux = this.anoLetivo.split("/")
              this.dataInicio = aux[0] + "-09-01"
              this.dataFim = aux[1] + "-09-01"
-             this.atualizaConteudo
+             this.atualizaConteudo()
           }
       },
       onJogoChange: async function(item){
@@ -163,6 +173,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
       },
       atualizaConteudo: async function(){
           if(this.jogo != "" && this.dataFim != "" && this.dataInicio != ""){
+              this.loading = true
               if(this.jogo == "Todos"){
                   this.headers = this.headersTodos
                   var response = await axios.get(h + "escolas/jogos/" + this.jogo + "/municipios/" + this.municipioAtual
@@ -182,6 +193,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
 
                   this.items = response.data
               }
+              this.loading = false
           } 
       },
       goToProfessores: function(item){
@@ -204,17 +216,25 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         var listaRes = []
         var freqtotal = 0;
         var header = [['Agrupamento de Escolas', 'Max', "Min", "Média", "#"]]
-        if(this.jogo != "Todos"){
+        var jogo = this.jogo
+        if(jogo != "Todos"){
+            var auxTotal = ['Todos', -1, this.items[0].min, 0, 0]
             for(var i = 0; i<this.items.length; i++){
                 var aux = [];
                 aux.push(this.items[i].nome)
                 aux.push(this.items[i].max)
+                if(auxTotal[1] < this.items[i].max) auxTotal[1] = this.items[i].max
                 aux.push(this.items[i].min)
+                if(auxTotal[2] > this.items[i].min) auxTotal[2] = this.items[i].min
                 aux.push(this.items[i].media)
+                auxTotal[3] += this.items[i].media
                 aux.push(this.items[i].number)
+                auxTotal[4] += this.items[i].number
 
                 listaRes.push(aux)
             }
+            auxTotal[3] = (auxTotal[3]/(this.items.length)).toFixed(0)
+            listaRes.push(auxTotal)
         }
         else{
             header = [['Agrupamento de Escolas', "#"]] 
@@ -234,15 +254,25 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
             head: header,
             body: listaRes,
             headStyles: { fillColor: [0, 146, 99] },
-            margin:{top: 65},
+            margin:{top: 65, bottom:30},
             didDrawPage: function (data) {
                     // Reseting top margin. The change will be reflected only after print the first page.
                     data.settings.margin.top = 10;
                     ytotal = doc.internal.pageSize.getHeight()
                     doc.setFontSize(8)
                     //doc.setFontType('bold'
-                    doc.text("Legenda:" , 10, ytotal -10)
-                    doc.text("# - Frequência", 10, ytotal-6)
+
+                    if(jogo == "Todos"){
+                        doc.text("Legenda:" , 10, ytotal -10)
+                        doc.text("# - Frequência", 10, ytotal-6)
+                    }
+                    else{
+                        doc.text("Legenda:" , 10, ytotal -22)
+                        doc.text("Min - Mínimo de pontuação obtida", 10, ytotal-18)
+                        doc.text("Max - Máximo de pontuação obtida", 10, ytotal-14)
+                        doc.text("Média - Média de pontuação obtida", 10, ytotal-10)
+                        doc.text("# - Frequência", 10, ytotal-6)
+                    }
                 },
             willDrawCell: function (data) {
                 var rows = data.table.body;

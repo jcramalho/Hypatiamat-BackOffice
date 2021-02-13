@@ -81,6 +81,7 @@ router.get('/:turma/jogos/:tableJogo',  function(req, res){
   var jogoTipo = req.query.jogoTipo
   var escola = req.query.escola
   if(tableJogo != "Todos"){
+    console.log("Todoos")
     Turmas.getJogosFromTurma(dataInicio, dataFim, jogoTipo, tableJogo, turma, escola)
               .then(alunosAtuais =>{
                 
@@ -89,6 +90,7 @@ router.get('/:turma/jogos/:tableJogo',  function(req, res){
               .catch(erro => res.status(500).jsonp(erro))
   }
   else{
+    console.log(escola)
     Turmas.getAllJogosTurma(dataInicio, dataFim, turma, escola)
           .then(alunosAtuais =>{
                       

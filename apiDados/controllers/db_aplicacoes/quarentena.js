@@ -31,7 +31,7 @@ Quarentena.insertPedido = function (quarentena) {
 
 Quarentena.getPedidos = function () {
     return new Promise(function(resolve, reject) {
-        sql.query("Select id, codigo, nome, (select nome from escolas where cod=escola) as escola, email from quarentena", function(err, res){
+        sql.query("Select id, codigo, nome, (select nome from Escolas where cod=escola) as escola, email from quarentena", function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

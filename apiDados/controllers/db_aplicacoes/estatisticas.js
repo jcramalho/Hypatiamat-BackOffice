@@ -1,6 +1,7 @@
 var sql = require('../../models/db_aplicacoes');
 var Jogos = require('../db_samd/jogos')
-let mysql = require('mysql')
+let mysql = require('mysql');
+const { bdTesteConhecimentos, bdAplicacoes, bdSAMD } = require('../../models/conf');
 
 const Estatistica = function(estatistica){
     this.id = estatistica.id
@@ -10,7 +11,7 @@ Estatistica.getTurmasAnoMun = function(municipio, anoletivo){
     return new Promise(function(resolve, reject) {
         var args = [anoletivo, municipio]
         sql.query(`select t.id, t.turma, p.escola from (select * from turmas where anoletivo = ?) t, 
-            (select * from escolas where localidade = ?) e, professores p
+            (select * from Escolas where localidade = ?) e, professores p
             where t.idprofessor = p.codigo and e.cod = p.escola
             Group by t.id;`, args, function (err, res) {
                 if(err) {
@@ -28,7 +29,7 @@ Estatistica.getProfessoresAnoMun = function(municipio, anoletivo){
     return new Promise(function(resolve, reject) {
         var args = [anoletivo, municipio]
         sql.query(`select p.codigo from (select * from turmas where anoletivo=?) t, 
-        (select * from escolas where localidade = ?) e, professores p
+        (select * from Escolas where localidade = ?) e, professores p
         where t.idprofessor = p.codigo and e.cod = p.escola
         Group by p.codigo;`, args, function (err, res) {
                 if(err) {
@@ -46,7 +47,7 @@ Estatistica.getAgrupamentosAnoMun = function(municipio, anoletivo){
     return new Promise(function(resolve, reject) {
         var args = [anoletivo, municipio]
         sql.query(`select distinct e.cod, e.nome from (select * from turmas where anoletivo=?) t, 
-        (select * from escolas where localidade = ?) e, professores p
+        (select * from Escolas where localidade = ?) e, professores p
         where t.idprofessor = p.codigo and e.cod = p.escola;`, args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
@@ -99,9 +100,9 @@ Estatistica.getFreqAppsAnoMun = function(municipio, dataInicio, dataFim){
     return new Promise(function(resolve, reject) {
         var args = [dataInicio, dataFim, municipio]
         sql.query(`SELECT sum(apps.offpeak) + sum(apps.onpeak) as freqapps, sum(apps.ncertas) as ncertas, sum(apps.ntotal) as ntotal
-                    FROM (select * from hypat_testeconhecimentos.appsinfoall where (lastdate between ? and ?)) as apps, 
-                        hypat_aplicacoes.professores prof,
-                        (select * from hypat_aplicacoes.escolas where localidade=?) as esc
+                    FROM (select * from ${bdTesteConhecimentos}.appsinfoall where (lastdate between ? and ?)) as apps, 
+                        ${bdAplicacoes}.professores prof,
+                        (select * from ${bdAplicacoes}.Escolas where localidade=?) as esc
                         WHERE  esc.cod = prof.escola and apps.codProf=prof.codigo;`, args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
@@ -119,7 +120,7 @@ Estatistica.getFreqAppsTurmasAnoMun = function(professores, turmas){
     return new Promise(function(resolve, reject) {
         var args = [professores, turmas]
         sql.query(`select sum(offpeak) + sum(onpeak) as freqapps, sum(ncertas) as ncertas, sum(ntotal) as ntotal
-                    from hypat_testeconhecimentos.appsinfoall where codProf in (?) and turma in (?);`, args, function (err, res) {
+                    from ${bdTesteConhecimentos}.appsinfoall where codProf in (?) and turma in (?);`, args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
                     reject(err);
@@ -147,7 +148,7 @@ Estatistica.getTarefasAnoMun = function(){
 
 Estatistica.jogou = function(jogoTable, jogoTipo, turmas, agrupamentos){
     return new Promise(function(resolve, reject) {
-        sql.query("Select count(*) as freq from hypat_samd." + jogoTable + " where tipo = ? and turma in (?) and idescola in (?)", [jogoTipo, turmas, agrupamentos], function(err, res){
+        sql.query(`Select count(*) as freq from ${bdSAMD}.${jogoTable} where tipo = ? and turma in (?) and idescola in (?)`, [jogoTipo, turmas, agrupamentos], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -166,12 +167,8 @@ Estatistica.quantosJogosTurmasAnoMun = async function(turmas, agrupamentos){
     var jogos = await Jogos.getJogos()
     var quantas = 0
     var freq = 0
-    //console.log(turmas)
-    //console.log(jogos.length)
     for(var i = 0; i < jogos.length; i++){
-        //console.log(jogos[i])
         var jogo = await Estatistica.jogou(jogos[i].jogotable, jogos[i].tipo, turmas, agrupamentos)
-        //console.log(jogo)
         if(jogo.freq > 0){
             quantas++
             freq += jogo.freq;
@@ -258,8 +255,8 @@ Estatistica.getFreqAppsAnoAgru = function(escola, dataInicio, dataFim){
     return new Promise(function(resolve, reject) {
         var args = [dataInicio, dataFim, escola]
         sql.query(`SELECT sum(apps.offpeak) + sum(apps.onpeak) as freqapps, sum(apps.ncertas) as ncertas, sum(apps.ntotal) as ntotal
-                    FROM (select * from hypat_testeconhecimentos.appsinfoall where (lastdate between ? and ?)) as apps, 
-                        hypat_aplicacoes.professores prof
+                    FROM (select * from ${bdTesteConhecimentos}.appsinfoall where (lastdate between ? and ?)) as apps, 
+                        ${bdAplicacoes}.professores prof
                         WHERE  prof.escola = ? and apps.codProf=prof.codigo;`, args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
@@ -274,7 +271,7 @@ Estatistica.getFreqAppsAnoAgru = function(escola, dataInicio, dataFim){
 
 Estatistica.jogouAgru = function(jogoTable, jogoTipo, turmas, escola){
     return new Promise(function(resolve, reject) {
-        sql.query("Select count(idaluno) as freq from hypat_samd." + jogoTable + " where tipo = ? and turma in (?) and idescola=?", [jogoTipo, turmas, escola], function(err, res){
+        sql.query(`Select count(idaluno) as freq from ${bdSAMD}.${jogoTable} where tipo = ? and turma in (?) and idescola=?`, [jogoTipo, turmas, escola], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -377,7 +374,7 @@ Estatistica.getEstatisticasMunicipios = async function (anoletivo){
         sql.query(`select e.localidade, count(distinct p.codigo) as nprofessores, 
 		count(distinct a.id) as nalunos, count(distinct t.id) as nturmas  
 		from (select * from turmas where anoletivo=?) t, 
-        escolas e, professores p, alunos a
+        Escolas e, professores p, alunos a
         where t.idprofessor = p.codigo and e.cod = p.escola and a.codprofessor = p.codigo and a.turma = t.turma
         Group by e.localidade Order by nalunos DESC;`, args, function (err, res) {
                 if(err) {

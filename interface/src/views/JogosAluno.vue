@@ -119,6 +119,8 @@
 import axios from "axios"
 const h = require("@/config/hosts").hostAPI
 const hostJogos = require("@/config/hosts").hostJogos
+const anosletivos2 = require("@/config/confs").anosletivos2
+const anoletivoAtual = require("@/config/confs").anoletivo2
 
   export default {
     data(){
@@ -143,8 +145,8 @@ const hostJogos = require("@/config/hosts").hostJogos
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
-        anosLetivos:["2013/2014", "2014/2015", "2015/2016", "2016/2017", "2017/2018", "2018/2019", "2019/2020", "2020/2021"],
-        anoLetivo: "2019/2020",
+        anosLetivos: anosletivos2,
+        anoLetivo: anoletivoAtual,
         jogos:[],
         jogosInfo:[], 
         resultadosGlobais:{},
@@ -160,6 +162,7 @@ const hostJogos = require("@/config/hosts").hostJogos
         for(i = 0; i < this.jogosInfo.length; i++){
             this.jogos.push(this.jogosInfo[i].jogo)
         }
+        this.onAnoChange()
     },
     methods: {
       format(value, event) {

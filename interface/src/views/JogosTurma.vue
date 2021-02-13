@@ -8,7 +8,7 @@
             </v-card-title>
             <v-layout row class="text-xs-center pa-lg-4" justify-center align-center>
                 <v-flex xs3 v-if="alunos.length>0">
-                    <center><v-btn class="white--text" style="background-color: #009263;" @click="estatisticasGlobais()"> <v-icon> mdi-book-plus </v-icon> Estatísticas Globais </v-btn></center>
+                    <center><v-btn class="white--text" style="background-color: #009263;" @click="estatisticasGlobais()"> <v-icon> mdi-home-analytics </v-icon> Estatísticas Globais </v-btn></center>
                 </v-flex>
                 <v-flex xs3 v-if="alunos.length>0">
                     <center><v-btn class="white--text" style="background-color: #009263;" @click="verGrafico()"> <v-icon> mdi-chart-bar-stacked </v-icon> Visualizar Gráfico </v-btn></center>
@@ -28,6 +28,7 @@
                         @change="onTurmaChange"
                     ></v-combobox>
                     <v-combobox
+                        v-if="!loadingJogos"
                         id="jogos"
                         v-model="jogo"
                         label="Jogo"
@@ -45,16 +46,20 @@
                     ></v-combobox>
                     <v-layout row class="text-xs-center" justify-center align-center>
                         <v-flex xs6>
-                        <v-text-field @change="onDataInChange" prepend-icon="mdi-calendar" v-model="dataInicio" label="Data Inicio" type="date" :format="format" required></v-text-field>
+                        <v-text-field @change="onDataInChange" v-model="dataInicio" label="Data Inicio" type="date" :format="format" required></v-text-field>
                         </v-flex>
                         <v-flex xs6>
-                            <v-text-field @change="onDataFimChange" prepend-icon="mdi-calendar" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
+                            <v-text-field @change="onDataFimChange" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
                         </v-flex>
                     </v-layout>
                 </v-flex>
                 <v-flex xs1>
                 </v-flex>
-                <v-flex xs8>     
+                <v-flex xs8>
+                    <v-container v-if="loading">
+                        <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
+                    </v-container>
+                    <v-container v-else>     
                     <div id="tableResultados">          
                     <v-data-table
                     class="elevation-4"
@@ -65,6 +70,7 @@
                     >
                     </v-data-table>
                     </div>
+                    </v-container>
                 </v-flex>
             </v-layout>
             <v-dialog
@@ -291,6 +297,8 @@ import html2canvas from "html2canvas";
 const h = require("@/config/hosts").hostAPI
 const hostJogos = require("@/config/hosts").hostJogos
 const hypatiaImg = require("@/assets/hypatiamat.png")
+const anosletivos2 = require("@/config/confs").anosletivos2
+const anoletivoAtual = require("@/config/confs").anoletivo2
 
   export default {
     data(){
@@ -332,9 +340,10 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
-        anosLetivos:["2020/2021", "2019/2020", "2018/2019", "2017/2018", "2016/2017", "2015/2016", "2014/2015", "2013/2014"],
-        anoLetivo: "2020/2021",
+        anosLetivos: anosletivos2,
+        anoLetivo: anoletivoAtual,
         jogos:["Todos"],
+        loadingJogos: false,
         idprofessor:"",
         jogosInfo:[],
         estatisticas:{
@@ -357,14 +366,20 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
                 number: 0
             }
         },
-        escola:""
+        escola:"", 
+        loading: false
       }
     },
     created: async function(){
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
         this.idprofessor = this.$route.params.idprofessor
-        this.escola = this.$route.params.escola
+        if(this.$route.params.escola) this.escola = this.$route.params.escola
+        else{ 
+           var response2 = await axios.get(h + "professores/codigos/" + this.idprofessor + "/?token=" + this.token )
+            this.escola = response2.data.escola
+        }
+        
         var response = await axios.get(h + "professores/" + this.idprofessor + "/turmas?token=" + this.token)
         var i = 0
         for(i = 0; i < response.data.length; i++){
@@ -375,6 +390,9 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
             this.anoLetivo = this.$route.params.anoLetivo
             this.dataInicio = this.$route.params.dataInicio
             this.dataFim = this.$route.params.dataFim
+        }
+        else{
+            this.onAnoChange()
         }
         /*
         var response2 = await axios.get(h + "turmas/"  "?token=" + this.token)
@@ -390,6 +408,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
       },
       onTurmaChange: async function(item){
           if(this.turmaSel != ""){
+            this.loadingJogos = true
             var response2 = await axios.get(h + "turmas/" + this.turmaSel + "/jogos?escola=" + this.escola + "&token=" + this.token)
             this.jogosInfo = response2.data
             this.jogos = ["Todos"]
@@ -398,6 +417,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
             for(var i = 0; i < this.jogosInfo.length; i++){
                 this.jogos.push(this.jogosInfo[i].jogo)
             }
+            this.loadingJogos = false
             this.atualizaConteudo()
           }
 
@@ -407,11 +427,11 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
              var aux = this.anoLetivo.split("/")
              this.dataInicio = aux[0] + "-09-01"
              this.dataFim = aux[1] + "-09-01"
-             this.atualizaConteudo
+             this.atualizaConteudo()
           }
       },
       onJogoChange: async function(item){
-          if(this.jogo != ""){
+          if(this.jogos.find(element => element.jogo == this.jogo)){
               this.atualizaConteudo()
           }
       },
@@ -427,18 +447,23 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
       },
       atualizaConteudo: async function(){
           if(this.jogo != "" && this.dataFim != "" && this.dataInicio != "" && this.turmaSel != "" ){
+              this.loading = true
               if(this.jogo != "Todos"){
-                this.header_alunos = this.headersJogo
                 var aux = this.jogosInfo.find(element => element.jogo == this.jogo)
-                var jogoTipo = aux.tipo
-                var jogoTable = aux.jogotable
-                var idescola = this.escola
+                if(aux){
+                    this.header_alunos = this.headersJogo
+                    
+                    var jogoTipo = aux.tipo
+                    var jogoTable = aux.jogotable
+                    var idescola = this.escola
 
-                var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/" + jogoTable 
-                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                    + "&jogoTipo=" + jogoTipo + "&escola=" + idescola
-                                                    + "&token=" + this.token)
-                this.alunos = response.data
+                    var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/" + jogoTable 
+                                                        + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                        + "&jogoTipo=" + jogoTipo + "&escola=" + idescola
+                                                        + "&token=" + this.token)
+                    this.alunos = response.data
+                }
+                else this.loading=false
               }
               else{
                   this.header_alunos = this.headersTodos
@@ -449,6 +474,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
                                                     + "&escola=" + idescola + "&token=" + this.token)
                   this.alunos = response.data
               }
+              this.loading = false
           } 
       },
       estatisticasGlobais: async function(){
@@ -498,18 +524,24 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         var headers = [['Nº', 'Nome', 'Max', "Min", "Média", "#"]]
         var jogo = this.jogo
         ytotal += 70
-        if(this.jogo != "Todos"){
+        if(jogo != "Todos"){
+            var auxTotal = ['Todos', "Todos", -1, this.alunos[0].minimo, 0, 0]
             for(var i = 0; i<this.alunos.length; i++){
                 var aux = [];
                 aux.push(this.alunos[i].numero)
                 aux.push(this.alunos[i].nome)
                 aux.push(this.alunos[i].maximo)
+                if(auxTotal[2] < this.alunos[i].maximo) auxTotal[2] = this.alunos[i].maximo
                 aux.push(this.alunos[i].minimo)
+                if(auxTotal[3] > this.alunos[i].minimo) auxTotal[3] = this.alunos[i].minimo
                 aux.push(this.alunos[i].media)
+                auxTotal[4] += this.alunos[i].media*this.alunos[i].count
                 aux.push(this.alunos[i].count)
-
+                auxTotal[5] += this.alunos[i].count
                 listaRes.push(aux)
             }
+            auxTotal[4] = (auxTotal[4]/auxTotal[5]).toFixed(0)
+            listaRes.push(auxTotal)
         }
         else {
             headers = [['Nº', 'Nome', "#"]]
@@ -538,18 +570,25 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
                         doc.text("Legenda:" , 10, ytotal -10)
                         doc.text("# - Frequência", 10, ytotal-6)
                     }
+                    else{
+                        doc.text("Legenda:" , 10, ytotal -22)
+                        doc.text("Min - Mínimo de pontuação obtida", 10, ytotal-18)
+                        doc.text("Max - Máximo de pontuação obtida", 10, ytotal-14)
+                        doc.text("Média - Média de pontuação obtida", 10, ytotal-10)
+                        doc.text("# - Frequência", 10, ytotal-6)
+                    }
 
                 },
             willDrawCell: function (data) {
-                if(jogo == "Todos"){
                     var rows = data.table.body;
                     if (data.row.index === rows.length - 1) {
                         doc.setFillColor(5, 179, 123);
                         doc.setTextColor(255, 255, 255)
                     }
-                }
+                
             },
         })
+        /*
         if(this.jogo != "Todos"){
             this.estatisticas = await this.getEstatisticas()
 
@@ -563,7 +602,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
                 body: [min, max, media, total],
                 margin:{ bottom: 60}
             })
-        }
+        }*/
 
         doc.save(pdfName)
        

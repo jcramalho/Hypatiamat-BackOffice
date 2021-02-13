@@ -2,7 +2,8 @@ var sql = require('../../models/db_aplicacoes');
 var sqlSamd = require('../../models/db_samd')
 var Jogos = require('../db_samd/jogos')
 var md5 = require('md5')
-
+var bdSAMD = require('../../models/conf').bdSAMD
+var bdAplicacoes = require('../../models/conf').bdAplicacoes
 
 var Aluno = function(aluno){
     this.id = aluno.id;
@@ -34,7 +35,6 @@ Aluno.insertAluno = function (aluno) {
                 reject(err);
             }
             else{
-                console.log(res.insertId);
                 resolve(res);
             }
         });   
@@ -102,9 +102,9 @@ Aluno.getAluno = function(id){
 
 Aluno.getJogosFromAluno  = function (dataInicio, dataFim, jogoTipo, tableJogo, user){
     return new Promise(function(resolve, reject) {
-        sql.query("Select al.numero, jogo.idaluno, al.nome, jogo.pontuacao, jogo.data, jogo.horario " +
-        "from hypat_samd." + tableJogo + " jogo, hypat_aplicacoes.alunos al " +  
-        "where jogo.tipo = ? and jogo.idaluno = ? and al.user = jogo.idaluno and (jogo.data between ? and ?) Order by jogo.data DESC;"
+        sql.query(`Select al.numero, jogo.idaluno, al.nome, jogo.pontuacao, jogo.data, jogo.horario  +
+        from ${bdSAMD}.${tableJogo} + " jogo, ${bdAplicacoes}.alunos al  
+        where jogo.tipo = ? and jogo.idaluno = ? and al.user = jogo.idaluno and (jogo.data between ? and ?) Order by jogo.data DESC;`
         , [jogoTipo, user, dataInicio, dataFim], function(err, res){
             if(err){
                 console.log("erro: " + err)
@@ -119,10 +119,10 @@ Aluno.getJogosFromAluno  = function (dataInicio, dataFim, jogoTipo, tableJogo, u
 
 Aluno.getJogosGlobalFromAluno  = function (dataInicio, dataFim, jogoTipo, tableJogo, user){
     return new Promise(function(resolve, reject) {
-        sql.query("Select al.numero, jogo.idaluno, al.nome, AVG(jogo.pontuacao) as media, MAX(jogo.pontuacao) as maximo, MIN(jogo.pontuacao) as minimo, count(jogo.pontuacao) as count " +
-        "from hypat_samd." + tableJogo + " jogo, hypat_aplicacoes.alunos al " +  
-        "where jogo.tipo = ? and jogo.idaluno = ? and al.user = jogo.idaluno and (jogo.data between ? and ?) "+ 
-        "Group by idaluno", [jogoTipo, user, dataInicio, dataFim], function(err, res){
+        sql.query(`Select al.numero, jogo.idaluno, al.nome, AVG(jogo.pontuacao) as media, MAX(jogo.pontuacao) as maximo, MIN(jogo.pontuacao) as minimo, count(jogo.pontuacao) as count 
+        from ${bdSAMD}.${tableJogo} jogo, ${bdAplicacoes}.alunos al 
+        where jogo.tipo = ? and jogo.idaluno = ? and al.user = jogo.idaluno and (jogo.data between ? and ?) 
+        Group by idaluno`, [jogoTipo, user, dataInicio, dataFim], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -202,7 +202,6 @@ Aluno.updateAluno = function(id, aluno){
                     reject(err);
                 }
                 else{
-                    console.log(res.insertId);
                     resolve(res);
                 }
             });   
@@ -233,7 +232,6 @@ Aluno.updatePassword = function(id, password){
                     reject(err);
                 }
                 else{
-                    console.log(res.insertId);
                     resolve(res);
                 }
             });   
@@ -256,7 +254,7 @@ Aluno.getApps = function(user){
 
 Aluno.getJogosFromJogo = function(user, tableJogo, jogoTipo){
     return new Promise(function(resolve, reject) {
-        sqlSamd.query("Select id from hypat_samd." + tableJogo + " where tipo = ? and idaluno = ? ;"
+        sqlSamd.query(`Select id from ${bdSAMD}.${tableJogo} where tipo = ? and idaluno = ? ;`
         , [jogoTipo, user], function(err, res){
             if(err){
                 console.log("erro: " + err)

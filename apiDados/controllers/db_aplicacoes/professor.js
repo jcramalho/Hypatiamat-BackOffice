@@ -1,7 +1,8 @@
 var sql = require('../../models/db_aplicacoes');
 var Alunos = require('./alunos')
 var Turmas = require('./turmas')
-var md5 = require('md5')
+var md5 = require('md5');
+const { bdAplicacoes } = require('../../models/conf');
 
 
 var Professor = function(professor){
@@ -41,7 +42,7 @@ Professor.insertProfessor = function (professor) {
 
 Professor.getProfessores = function () {
     return new Promise(function(resolve, reject) {
-        sql.query("Select p.id, p.codigo, p.nome, esc.localidade, esc.nome as escola from professores p, escolas esc where esc.cod = p.escola and confirmacao=1 and now()<validade", function(err, res){
+        sql.query("Select p.id, p.codigo, p.nome, esc.localidade, esc.nome as escola from professores p, Escolas esc where esc.cod = p.escola and confirmacao=1 and now()<validade", function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -143,7 +144,8 @@ Professor.getProfessoresByEscola = function (escola) {
 
 Professor.getTurmasFromEscola = function(escola){
     return new Promise(function(resolve, reject) {
-        sql.query("SELECT t.turma, t.idprofessor, t.id, p.nome, t.anoletivo FROM hypat_aplicacoes.turmas t, hypat_aplicacoes.professores p where p.codigo = t.idprofessor and p.escola = ? Order by t.anoletivo DESC;", escola, function(err, res){
+        sql.query(`SELECT t.turma, t.idprofessor, t.id, p.nome, t.anoletivo FROM ${bdAplicacoes}.turmas t, 
+        ${bdAplicacoes}.professores p where p.codigo = t.idprofessor and p.escola = ? Order by t.anoletivo DESC;`, escola, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -157,7 +159,9 @@ Professor.getTurmasFromEscola = function(escola){
 
 Professor.getTurmasFromEscolaAno = function(escola, anoletivo){
     return new Promise(function(resolve, reject) {
-        sql.query("SELECT t.turma, t.idprofessor, t.id, p.nome, t.anoletivo FROM hypat_aplicacoes.turmas t, hypat_aplicacoes.professores p where p.codigo = t.idprofessor and p.escola = ? and t.anoletivo=?;", [escola, anoletivo], function(err, res){
+        sql.query(`SELECT t.turma, t.idprofessor, t.id, p.nome, t.anoletivo 
+        FROM ${bdAplicacoes}.turmas t, ${bdAplicacoes}.professores p 
+        where p.codigo = t.idprofessor and p.escola = ? and t.anoletivo=?;`, [escola, anoletivo], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -182,7 +186,6 @@ Professor.alteraProfessor = function(codigo,professor){
                     reject(err);
                 }
                 else{
-                    console.log(res.insertId);
                     resolve(res);
                 }
             });   
@@ -198,7 +201,6 @@ Professor.updatePassword = function(codigo, password){
                     reject(err);
                 }
                 else{
-                    console.log(res.insertId);
                     resolve(res);
                 }
             });   
@@ -230,7 +232,6 @@ Professor.deleteById = function(codigo){
                     reject(err);
                 }
                 else{
-                    console.log(res.insertId);
                     resolve(res);
                 }
             });   

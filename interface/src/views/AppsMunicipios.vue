@@ -76,6 +76,8 @@ import html2canvas from "html2canvas";
 const h = require("@/config/hosts").hostAPI
 const hostApps = require("@/config/hosts").hostApps
 const hypatiaImg = require("@/assets/hypatiamat.png")
+const anosletivos2 = require("@/config/confs").anosletivos2
+const anoletivoAtual = require("@/config/confs").anoletivo2
 
   export default {
     data(){
@@ -85,7 +87,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         app:"",
         filtrar:"",
         dataInicio: "2020-09-01",
-        dataFim: "2021-01-22",
+        dataFim: "2021-09-01",
         turmaSel: "",
         utilizador : {},
         alunos:[],
@@ -95,14 +97,14 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
-        anosLetivos:["2020/2021","2019/2020", "2018/2019","2017/2018" ],
-        anoLetivo: "2020/2021",
-        apps:["Todas"],
-        appsInfo:["Todas"],
+        anosLetivos: anosletivos2,
+        anoLetivo: anoletivoAtual,
+        apps:[],
+        appsInfo:[],
         headers:[
             {text: "Municipio", value: 'localidade', class: 'subtitle-1'},
-            {text: "NCertas", value: 'ncertas', class: 'subtitle-1'},
-            {text: "NTotal", value: 'ntotal', class: 'subtitle-1'},
+            {text: "NTRC", value: 'ncertas', class: 'subtitle-1'},
+            {text: "NTR", value: 'ntotal', class: 'subtitle-1'},
             {text: "Acerto(%)", value: 'acerto', class: 'subtitle-1'},
             {text: "DP", value: 'onpeak', class: 'subtitle-1'},
             {text: "FP", value: 'offpeak', class: 'subtitle-1'},
@@ -114,11 +116,23 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
     created: async function(){
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
-        
+        var response = await axios.get(hostApps + "temas/?token=" + this.token)
+        this.appsInfo = response.data
+        this.parseApps()
+        this.onAnoChange()
         // ir buscar as apps disponíveis
         
     },
     methods: {
+      parseApps: async function(){
+          var aux = []
+          for(var i = 0; i < this.appsInfo.length; i++){
+              if(i == 0) aux.push(this.appsInfo[i])
+              else if(this.appsInfo[i].codsubtema) aux.push(this.appsInfo[i].subtema)
+              else aux.push(this.appsInfo[i].tema)
+          }
+          this.apps = aux
+      },
       onAnoChange: async function(item){
           if(this.anoLetivo != ""){
              var aux = this.anoLetivo.split("/")
@@ -144,22 +158,42 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
       },
       atualizaConteudo: async function(){
             if(this.app != "" && this.dataFim != "" && this.dataInicio != ""){
-
+                this.loading = true
                 if(this.app == "Todas"){
 
-                    this.loading = true
+                    
                     var response = await axios.get(hostApps + "municipios/"
                                             + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
                                             + "&token=" + this.token)
             
                     this.items = response.data
-                    this.loading = false
+                    
               
                 }
                 else{
                     // Fazer para uma app em particular
+                    var appInfo = this.appsInfo.find(element => element.tema == this.app)
+                    if(appInfo){
+                        // é um dos temas
+                        var response = await axios.get(hostApps + "municipios/"
+                                            + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim + "&codtema=" + appInfo.codtema
+                                            + "&token=" + this.token)
+                        
+                        this.items = response.data
+                    }
+                    else{
+                        // é um subtema
+                        appInfo = this.appsInfo.find(element => element.subtema == this.app)
+                        if(appInfo){
+                            var response = await axios.get(hostApps + "municipios/"
+                                            + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim + "&codtema=" + appInfo.codtema
+                                            + "&codsubtema=" + appInfo.codsubtema + "&token=" + this.token)
+                        
+                            this.items = response.data
+                        }
+                    }
                 }
-
+                this.loading = false
           } 
       },
       goToEscolas: function(item){

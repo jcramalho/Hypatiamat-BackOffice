@@ -119,7 +119,7 @@ export default {
       this.items = [
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
         { title: 'Minhas Turmas', icon: 'mdi-book-account', href:"/minhasturmas" },
-        { title: 'Monitorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos" },
+        { title: 'Monitorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/" + utilizador.codigo },
         { title: 'Monotorização de Apps', icon: 'mdi-apps', href:"/apps/" + utilizador.codigo},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]

@@ -1,3 +1,4 @@
+const { bdSAMD } = require('../../models/conf');
 var sql = require('../../models/db_samd');
 
 var Jogos = function(jogos){
@@ -10,7 +11,7 @@ var Jogos = function(jogos){
 
 Jogos.getJogos = function(){
 return new Promise(function(resolve, reject) {
-    sql.query("SELECT * FROM hypat_samd.jogosdb order by jogoid", function (err, res) {
+    sql.query(`SELECT * FROM ${bdSAMD}.jogosdb order by jogoid`, function (err, res) {
             
             if(err) {
                 console.log("error: ", err);

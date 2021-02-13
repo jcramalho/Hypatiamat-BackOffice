@@ -1,7 +1,8 @@
 var sql = require('../../models/db_aplicacoes');
 var sqlSAMD = require('../../models/db_samd')
 var Alunos = require('./alunos')
-var Jogos = require('../db_samd/jogos')
+var Jogos = require('../db_samd/jogos');
+const { bdSAMD, bdAplicacoes } = require('../../models/conf');
 
 var Turma = function(turma){
     this.id = turma.id;
@@ -132,7 +133,7 @@ Turma.getTurmaByNomeProfessor = function (turma, codprofessor) {
 
 Turma.getTurmasByEscola = function (escola){
     return new Promise(function(resolve, reject) {
-        sql.query("SELECT t.* FROM hypat_aplicacoes.turmas t, hypat_aplicacoes.professores p where p.codigo=t.idprofessor and p.escola = ? ;", escola, function(err, res){
+        sql.query(`SELECT t.* FROM ${bdAplicacoes}.turmas t, ${bdAplicacoes}.professores p where p.codigo=t.idprofessor and p.escola = ? ;`, escola, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -147,20 +148,20 @@ Turma.getTurmasByEscola = function (escola){
 }
 
 Turma.getJogosFromTurma  = function (dataInicio, dataFim, jogoTipo, tableJogo, turma, escola){
-        return new Promise(function(resolve, reject) {
-            sql.query("Select al.numero, jogo.idaluno, al.nome, Round(AVG(jogo.pontuacao), 0) as media, MAX(jogo.pontuacao) as maximo, MIN(jogo.pontuacao) as minimo, count(jogo.pontuacao) as count " +
-            "from hypat_samd." + tableJogo + " jogo, hypat_aplicacoes.alunos al " +  
-            "where jogo.tipo = ? and jogo.turma = ? and jogo.idescola = ? and al.user = jogo.idaluno and (jogo.data between ? and ?) "+ 
-            "Group by idaluno Order by al.numero", [jogoTipo, turma, escola, dataInicio, dataFim], function(err, res){
-                if(err){
-                    console.log("erro: " + err)
-                    reject(err)
-                }
-                else{
-                    resolve(res)
-                }
-            })
-        })   
+    return new Promise(function(resolve, reject) {
+        sql.query(`Select al.numero, jogo.idaluno, al.nome, Round(AVG(jogo.pontuacao), 0) as media, MAX(jogo.pontuacao) as maximo, MIN(jogo.pontuacao) as minimo, count(jogo.pontuacao) as count 
+        from ${bdSAMD}.${tableJogo} jogo, ${bdAplicacoes}.alunos al  
+        where jogo.tipo = ? and jogo.turma = ? and jogo.idescola = ? and al.user = jogo.idaluno and (jogo.data between ? and ?) 
+        Group by idaluno Order by al.numero`, [jogoTipo, turma, escola, dataInicio, dataFim], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })   
 }
 
 Turma.getAllJogosTurma = async function(dataInicio, dataFim, turma, escola){
@@ -210,7 +211,7 @@ Turma.updateTurma = function(id, turma){
 
 Turma.jogou = async function(jogoTable, jogoTipo, turma, escola){
     return new Promise(function(resolve, reject) {
-        sqlSAMD.query("Select idaluno from hypat_samd." + jogoTable + " where tipo = ? and turma = ? and idescola = ?", [jogoTipo, turma, escola], function(err, res){
+        sqlSAMD.query(`Select idaluno from ${bdSAMD}.${jogoTable} where tipo = ? and turma = ? and idescola = ?`, [jogoTipo, turma, escola], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -234,9 +235,10 @@ Turma.getJogos = async function(turma, escola){
 
 Turma.getEstatisticasFromTurma = async function(dataInicio, dataFim, jogoTipo, tableJogo, turma, escola){
     return new Promise(function(resolve, reject) {
-        sqlSAMD.query("SELECT min(pontuacao) as min, max(pontuacao) as max, avg(pontuacao) as media, count(pontuacao) as number " +
-		"FROM hypat_samd." + tableJogo + 
-        " WHERE turma!='99' AND turma = ? AND tipo=? AND idescola=? and (data BETWEEN ? and ?);", [turma, jogoTipo, escola, dataInicio, dataFim], function(err, res){
+        console.log("ola")
+        sqlSAMD.query(`SELECT min(pontuacao) as min, max(pontuacao) as max, avg(pontuacao) as media, count(pontuacao) as number 
+		FROM ${bdSAMD}.${tableJogo} 
+         WHERE turma!='99' AND turma = ? AND tipo=? AND idescola=? and (data BETWEEN ? and ?);`, [turma, jogoTipo, escola, dataInicio, dataFim], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -251,9 +253,9 @@ Turma.getEstatisticasFromTurma = async function(dataInicio, dataFim, jogoTipo, t
 
 Turma.getEstatisticasFromEscola = async function(dataInicio, dataFim, jogoTipo, tableJogo, escola){
     return new Promise(function(resolve, reject) {
-        sqlSAMD.query("SELECT min(pontuacao) as min, max(pontuacao) as max, avg(pontuacao) as media, count(pontuacao) as number " +
-		"FROM hypat_samd." + tableJogo + 
-        " WHERE turma!='99' AND tipo=? AND idescola=? and (data BETWEEN ? and ?);", [jogoTipo, escola, dataInicio, dataFim], function(err, res){
+        sqlSAMD.query(`SELECT min(pontuacao) as min, max(pontuacao) as max, avg(pontuacao) as media, count(pontuacao) as number 
+		FROM ${bdSAMD}.${tableJogo} 
+         WHERE turma!='99' AND tipo=? AND idescola=? and (data BETWEEN ? and ?);`, [jogoTipo, escola, dataInicio, dataFim], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -268,9 +270,9 @@ Turma.getEstatisticasFromEscola = async function(dataInicio, dataFim, jogoTipo, 
 
 Turma.getEstatisticasFromHypatia = async function(dataInicio, dataFim, jogoTipo, tableJogo){
     return new Promise(function(resolve, reject) {
-        sqlSAMD.query("SELECT min(pontuacao) as min, max(pontuacao) as max, avg(pontuacao) as media, count(pontuacao) as number " +
-		"FROM hypat_samd." + tableJogo + 
-        " WHERE turma!='99' AND tipo=? and (data BETWEEN ? and ?);", [jogoTipo, dataInicio, dataFim], function(err, res){
+        sqlSAMD.query(`SELECT min(pontuacao) as min, max(pontuacao) as max, avg(pontuacao) as media, count(pontuacao) as number 
+		FROM ${bdSAMD}.${tableJogo} 
+         WHERE turma!='99' AND tipo=? and (data BETWEEN ? and ?);`, [jogoTipo, dataInicio, dataFim], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
