@@ -45,7 +45,7 @@
                     <td>{{row.item.nome}}</td>
                     <td>{{row.item.localidade}}</td>
                     <td>
-                    <v-icon @click="editarEscola(row.item.id)"> mdi-pencil </v-icon>
+                    <v-icon @click="editarEscola(row.item.cod)"> mdi-pencil </v-icon>
                     <v-icon @click="apagarEscola(row.item.cod)"> mdi-delete </v-icon>
                     </td>
                 </tr>
@@ -89,8 +89,8 @@ const h = require("@/config/hosts").hostAPI
         this.escolas = response.data
     },
     methods: {
-      editarEscola : function(id){
-          this.$router.push({name: "Editar Escola", params: { id : id } })
+      editarEscola : function(cod){
+          this.$router.push({name: "Editar Escola", params: { id : cod } })
       },
       apagarEscola: async function(id){
         Swal.fire({

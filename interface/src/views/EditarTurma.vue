@@ -4,7 +4,7 @@
     <v-card class="pa-5">
         <v-container>
             <v-card-title primary-title class="justify-center green--text">
-                Editar Turma ({{turma.turma}})
+                Transferência de Alunos ({{turma.turma}})
             </v-card-title>
                      
            <v-layout row class="text-xs-center pa-lg-16" justify-center align-center >
@@ -34,7 +34,7 @@
         </v-card>
       </v-flex>
       <v-flex xs1>
-        <v-container v-if="turmaSel.length != 0">
+        <v-container v-if="turma2.length != 0">
           <center>
             <v-tooltip v-if="this.selected.length>0" top>
               <template v-slot:activator="{ on, attrs }">
@@ -77,6 +77,7 @@
                 @change="onAgrupamentoChange"
             ></v-combobox>
             <v-combobox
+                v-if="professores.length > 0"
                 id="professor"
                 label="Professor"
                 v-model="idprofessor2"
@@ -84,9 +85,10 @@
                 @change="onProfessorChange"
             ></v-combobox>
             <v-combobox
+                v-if="turmas.length>0 && professores.length > 0"
                 id="turma"
                 label="Turma"
-                v-model="turmaSel"
+                v-model="turma2"
                 :items="turmas"
                 @change="onTurmaChange"
             ></v-combobox>
@@ -160,13 +162,14 @@ const h = require("@/config/hosts").hostAPI
         professores: [],
         escola: "",
         escolaId: "",
+        escolaIdOriginal:"",
         idprofessor2:""
       }
     },
     created: async function(){
         this.token = localStorage.getItem("token")
         let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-        this.id = this.$route.params.id
+        this.id = this.$route.params.turma
         this.idprofessor = this.$route.params.idprofessor
         this.idprofessor2 = this.idprofessor
         var response = await axios.get(h + "turmas/" + this.id + "?token=" + this.token)
@@ -175,6 +178,7 @@ const h = require("@/config/hosts").hostAPI
         this.alunosTurmaAtual = response.data
         var responseProf = await axios.get(h + "professores/codigos/" + this.idprofessor + "/?token=" + this.token)
         this.escolaId = responseProf.data.escola
+        this.escolaIdOriginal = this.escolaId
         //alert(this.escolaId)
         //alert(responseProf.data.escola)
         this.agrupamentos = await this.getAgrupamentos()
@@ -192,7 +196,6 @@ const h = require("@/config/hosts").hostAPI
         this.agrupamentosIds = response.data
         var aux = []
         for(var i = 0; i < this.agrupamentosIds.length; i++){
-          console.log(this.agrupamentosIds[i].cod)
           aux.push(this.agrupamentosIds[i].nome)
         }
         return aux
@@ -208,14 +211,16 @@ const h = require("@/config/hosts").hostAPI
         }
       },
       onTurmaChange: async function(item){
-        if(item != null && this.idprofessor2 != ""){
+        if(item != null && this.idprofessor2 != "" && item != ""){
+         console.log("ENTREI")
          var aux = item.split(" - ")
          this.turma2 = aux[0]
          let response = await axios.get(h + "turmas/" + this.turma2 + "/alunos?codprofessor="+ this.idprofessor2 + "&token=" + this.token)
          this.alunosOutraTurma = response.data
         }
       }, 
-      getTurmas: async function(item){
+      getTurmas: async function(){
+          this.turma2 = ""
           var responseTurmas = await axios.get(h + "professores/" + this.idprofessor2 + "/turmas?token=" + this.token)
           var i = 0
           var aux = []
@@ -227,22 +232,47 @@ const h = require("@/config/hosts").hostAPI
       onProfessorChange: async function(item){
         if(item != null){
           this.turma2 = ""
-          let response = await axios.get(h + "turmas/" + this.turma.turma + "/alunos?codprofessor="+ this.idprofessor2 + "&token=" + this.token)
+          this.alunosOutraTurma = []
+          this.getTurmas()
+        }
+      },
+      onAgrupamentoChange: async function(item){
+        if(item != null && item != ""){
+          this.idprofessor2 = ""
+          this.turma2 = ""
+          this.escolaId = this.agrupamentosIds.find(e => e.nome == this.escola).cod
+          this.getProfessores()
         }
       },
       alteraTurma: async function(){
-        var i = 0
-        for(i = 0; i < this.selected.length; i++){
-          //var response = await axios.put(h + "alunos/" + this.selected[i].id + "/turma?token=" + this.token, {turma: this.turma2})
-        }
-        this.selected = []
+        var body = {
+                codprofessor: this.turma.idprofessor, 
+                turmaOld: this.turma.turma,
+                alunos: this.selected, 
+                codprofessorNovo: this.idprofessor2,
+                codescola: this.escolaId
+          }
+          await axios.put(h + "alunos/turmas/" + this.turma2 + "?token=" + this.token, body)
+          this.selected = []
+          this.atualizaAlunos()
       },
       alteraTurma2: async function(){
-        var i = 0
-        for(i = 0; i < this.selected2.length; i++){
-          // var response = await axios.put(h + "alunos/" + this.selected2[i].id + "/turma?token=" + this.token, {turma: this.turma.turma})
-        }
-        this.selected2 = []
+        var body = {
+                codprofessor: this.idprofessor2, 
+                turmaOld: this.turma2,
+                codprofessorNovo: this.turma.idprofessor,
+                alunos: this.selected2, 
+                codescola: this.escolaIdOriginal
+          }
+          await axios.put(h + "alunos/turmas/" + this.turma.turma + "?token=" + this.token, body)
+          this.selected2 = []
+          this.atualizaAlunos()
+      },
+      atualizaAlunos: async function(){
+        var response = await axios.get(h + "turmas/" + this.turma.turma + "/alunos?codprofessor="+ this.turma.idprofessor + "&token=" + this.token)
+        this.alunosTurmaAtual = response.data
+        response = await axios.get(h + "turmas/" + this.turma2 + "/alunos?codprofessor="+ this.idprofessor2 + "&token=" + this.token)
+        this.alunosOutraTurma = response.data
       }
     }
   }

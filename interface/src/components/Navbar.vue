@@ -45,12 +45,12 @@
               :to="item.href"
             >
               <v-list-item-icon>
-                <v-icon v-if=" item.title != 'Terminar Sessão' " >{{ item.icon }}</v-icon>
+                <v-icon v-if=" item.title != 'Terminar Sessão' " >{{ item.icon }} </v-icon>
                 <v-icon v-else @click="logout()" style="cursor: pointer;">{{ item.icon }}</v-icon>
               </v-list-item-icon>
   
               <v-list-item-content>
-                <v-list-item-title v-if=" item.title != 'Terminar Sessão' ">{{ item.title }}</v-list-item-title>
+                <v-list-item-title v-if=" item.title != 'Terminar Sessão' " >{{ item.title }}</v-list-item-title>
                 <v-list-item-title v-else @click="logout()" style="cursor: pointer;">{{ item.title }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -105,6 +105,7 @@ export default {
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
         { title: 'Pendentes', icon: 'mdi-account-clock',href:"/pendentes" },
         { title: 'Professores', icon: 'mdi-teach', href:"/professores" },
+        { title: 'Códigos Professores', icon: 'mdi-barcode', href:"/codigosprof" },
         { title: 'Alunos', icon: 'mdi-account-group', href:"/alunos" },
         { title: 'Agrupamentos', icon: 'mdi-school', href:"/escolas" },
         { title: 'Turmas', icon: 'mdi-book-account', href:"/turmas" },

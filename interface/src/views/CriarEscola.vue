@@ -1,25 +1,27 @@
 <template>
- <div id="app">
-  <v-container>
-    <v-layout row class="text-xs-center">
-        <v-container style="position: relative;top: 15%; width: 60%;" class="text-xs-center">
-          <v-card class="pa-5">
-            <v-form>
-            <v-text-field prepend-icon="mdi-account" v-model="nome" name="Nome do Agrupamento" label="Nome do Agrupamento" :rules="[existeNome]" required></v-text-field>
-            <v-text-field prepend-icon="mdi-card-account-details" v-model="codigo" name="Código do Agrupamento" :rules="[existeCodigo]" label="Código do Agrupamento" required></v-text-field>
-            <v-text-field prepend-icon="mdi-city" v-model="localidade" name="Localidade" label="Localidade" required></v-text-field>
-            <v-text-field prepend-icon="mdi-calendar" v-model="distrito" name="Distrito" label="Distrito" required></v-text-field>
-            <v-text-field prepend-icon="mdi-bank" v-model="pais" name="País" label="País" required></v-text-field>
-            
-            <v-card-actions>
-              <v-btn class="white--text" primary large block style="background-color: #009263;" @click="registarEscola">Confirmar</v-btn>
-            </v-card-actions>
-            </v-form>
-          </v-card>
-        </v-container>
-    </v-layout>
-  </v-container>
-</div>
+ <v-app id="inspire">
+  <v-main class="grey lighten-3">
+    <v-container>
+      <v-layout row class="text-xs-center">
+          <v-container style="position: relative;top: 15%;" class="text-xs-center">
+            <v-card class="pa-5">
+              <v-form>
+              <v-text-field prepend-icon="mdi-account" v-model="nome" name="Nome do Agrupamento" label="Nome do Agrupamento" :rules="[existeNome, string120]" required></v-text-field>
+              <v-text-field prepend-icon="mdi-card-account-details" v-model="codigo" name="Código do Agrupamento" :rules="[existeCodigo, string10]" label="Código do Agrupamento" required></v-text-field>
+              <v-text-field prepend-icon="mdi-city" v-model="localidade" name="Localidade" label="Localidade" :rules="[string30]" required></v-text-field>
+              <v-text-field prepend-icon="mdi-calendar" v-model="distrito" name="Distrito" label="Distrito" :rules="[string30]" required></v-text-field>
+              <v-text-field prepend-icon="mdi-bank" v-model="pais" name="País" label="País" :rules="[string20]" required></v-text-field>
+              
+              <v-card-actions>
+                <v-btn class="white--text" primary large block style="background-color: #009263;" @click="registarEscola">Criar Agrupamento</v-btn>
+              </v-card-actions>
+              </v-form>
+            </v-card>
+          </v-container>
+      </v-layout>
+    </v-container>
+  </v-main>
+</v-app>
 </template>
 
 <script>
@@ -39,9 +41,21 @@
         distrito:"",
         codigo : "",
         token: "",
-        string15: v  => {
-          if(v.length <= 15) return true
-          else return "Apenas pode conter 15 caractéres"
+        string10: v  => {
+          if(v.length <= 10) return true
+          else return "Apenas pode conter 10 caractéres"
+        },
+        string120: v  => {
+          if(v.length <= 120) return true
+          else return "Apenas pode conter 120 caractéres"
+        },
+        string30: v  => {
+          if(v.length <= 30) return true
+          else return "Apenas pode conter 30 caractéres"
+        },
+        string20: v  => {
+          if(v.length <= 20) return true
+          else return "Apenas pode conter 20 caractéres"
         },
         isNumber: v=>{
 
@@ -79,7 +93,7 @@
                 nome : this.nome,
                 cod : this.codigo
             }
-            axios.post(h + "escolas/", data)
+            axios.post(h + "escolas/?token=" + this.token, data)
                  .then(()=>{
                    Swal.fire({
                       icon: 'success',
@@ -97,7 +111,11 @@
                   confirmButtonColor: '#009263'
                 })
         }
-      }
+      },
+      /*
+      disabledConfirmar: async function(){
+        if((this.localidade.length > 1 && this.localidade.length < 30) && (this.nome.length > 1 && this.nome.length < 30))
+      }*/
 
     }
   }

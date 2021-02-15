@@ -61,7 +61,7 @@ router.post('/:id', passport.authenticate('jwt', {session: false}), function(req
 
 /* DELETE Remoção de um pedido de inscrição. */
 router.delete('/:id', passport.authenticate('jwt', {session: false}), function(req, res, next) {
-    Quarentena.deletePedido(req.body)
+    Quarentena.deletePedido(req.params.id)
          .then(response =>{
              res.jsonp(response)
          }) 

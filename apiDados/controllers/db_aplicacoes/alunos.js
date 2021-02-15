@@ -23,11 +23,13 @@ var Aluno = function(aluno){
 
 Aluno.insertAluno = function (aluno) {    
     return new Promise(function(resolve, reject) {
+    var confirmacao = 1
+    if(aluno.confirmacao) confirmacao = aluno.confirmacao
     var args = [aluno.user, aluno.numero, aluno.nome, aluno.datanascimento, 
                 aluno.escola, aluno.turma, aluno.email, md5(aluno.password), 
-                aluno.codprofessor, aluno.pais]
+                aluno.codprofessor, aluno.pais, confirmacao]
     sql.query("INSERT INTO alunos (`user`, `numero`, `nome`, `datanascimento`, `escola`, `turma`, `email`, `password`," 
-                + " `codprofessor`, `pais`, `confirmacao`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)", 
+                + " `codprofessor`, `pais`, `confirmacao`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
                 args, function (err, res) {
             
             if(err) {
@@ -44,7 +46,7 @@ Aluno.insertAluno = function (aluno) {
 
 Aluno.getPassword = function (user){
     return new Promise(function(resolve, reject) {
-        sql.query("Select password from alunos where user=?", user, function(err, res){
+        sql.query("Select password from alunos where user=? and confirmacao=1", user, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -102,8 +104,8 @@ Aluno.getAluno = function(id){
 
 Aluno.getJogosFromAluno  = function (dataInicio, dataFim, jogoTipo, tableJogo, user){
     return new Promise(function(resolve, reject) {
-        sql.query(`Select al.numero, jogo.idaluno, al.nome, jogo.pontuacao, jogo.data, jogo.horario  +
-        from ${bdSAMD}.${tableJogo} + " jogo, ${bdAplicacoes}.alunos al  
+        sql.query(`Select al.numero, jogo.idaluno, al.nome, jogo.pontuacao, jogo.data, jogo.horario 
+        from ${bdSAMD}.${tableJogo} jogo, ${bdAplicacoes}.alunos al  
         where jogo.tipo = ? and jogo.idaluno = ? and al.user = jogo.idaluno and (jogo.data between ? and ?) Order by jogo.data DESC;`
         , [jogoTipo, user, dataInicio, dataFim], function(err, res){
             if(err){
@@ -212,6 +214,21 @@ Aluno.updateTurma = function(codAluno, turma, codprof){
     return new Promise(function(resolve, reject) {
         var args = [turma, codprof, codAluno]
         sql.query("UPDATE alunos SET turma = ? , codprofessor=? Where user = ?", args, function (err, res) {
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    })
+}
+
+Aluno.updateTurmaEscola = function(codAluno, turma, codprof, codescola){
+    return new Promise(function(resolve, reject) {
+        var args = [turma, codprof, codescola, codAluno]
+        sql.query("UPDATE alunos SET turma = ? , codprofessor=?, escola=? Where user = ?", args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
                     reject(err);

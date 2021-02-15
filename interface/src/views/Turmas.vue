@@ -124,7 +124,7 @@ const h = require("@/config/hosts").hostAPI
         }
       },
       editarTurma : function(idTurma, idprofessor){
-          this.$router.push({name: "Editar Turma", params: { id : idTurma, idprofessor: idprofessor } })
+          this.$router.push({name: "Editar Turma", params: { turma : idTurma, idprofessor: idprofessor } })
       },
       apagarTurma: async function(turma, codprofessor){
           if(confirm("De certeza que deseja apagar esta turma?")){

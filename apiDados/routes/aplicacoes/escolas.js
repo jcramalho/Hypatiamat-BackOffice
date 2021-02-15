@@ -223,6 +223,16 @@ router.get('/jogos/:jogo/municipios/:municipio', passport.authenticate('jwt', {s
   }
 });
   
+// Altera uma escola
+router.put('/:codigo', passport.authenticate('jwt', {session: false}), function(req, res){
+  Escolas.updateEscola(req.params.codigo, req.body)
+             .then(dados =>{
+               res.jsonp(dados)
+             })
+             .catch(erro => res.status(500).jsonp(erro))
+})
+
+
 
 //Insere uma nova escola
 router.post('/', passport.authenticate('jwt', {session: false}), function(req, res){

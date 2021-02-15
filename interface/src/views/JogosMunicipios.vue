@@ -137,6 +137,9 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         this.onAnoChange()
     },
     methods: {
+      format(value, event) {
+        return moment(value).format('YYYY-MM-DD')
+      },
       onAnoChange: async function(item){
           if(this.anoLetivo != ""){
              var aux = this.anoLetivo.split("/")

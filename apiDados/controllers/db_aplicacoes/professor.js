@@ -21,9 +21,16 @@ var Professor = function(professor){
 
 Professor.insertProfessor = function (professor) {    
     return new Promise(function(resolve, reject) {
-    var args = [professor.codigo, professor.nome, professor.escola, professor.email,
+    if(professor.quarentena){
+        var args = [professor.codigo, professor.nome, professor.escola, professor.email,
+                professor.password, professor.premium,
+                professor.socionum, professor.projeto]
+    }
+    else{
+        var args = [professor.codigo, professor.nome, professor.escola, professor.email,
             md5(professor.password), professor.premium,
             professor.socionum, professor.projeto]
+    }
     sql.query("INSERT INTO professores (`codigo`, `nome`, `escola`, `email`, `password`," + 
                 "`confirmacao`, `premium`, `validade`, `socionum`, `projeto`) VALUES (?, ?, ?, ?, ?, 1, ?, now() + INTERVAL 1 YEAR, ?, ?)", 
                 args, function (err, res) {
@@ -42,7 +49,7 @@ Professor.insertProfessor = function (professor) {
 
 Professor.getProfessores = function () {
     return new Promise(function(resolve, reject) {
-        sql.query("Select p.id, p.codigo, p.nome, esc.localidade, esc.nome as escola from professores p, Escolas esc where esc.cod = p.escola and confirmacao=1 and now()<validade", function(err, res){
+        sql.query("Select p.id, p.codigo, p.nome, esc.localidade, esc.nome as escola, p.validade, p.confirmacao, p.socionum, p.projeto from professores p, Escolas esc where esc.cod = p.escola", function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -56,7 +63,7 @@ Professor.getProfessores = function () {
 
 Professor.getProfessoresCodigo = function () {
     return new Promise(function(resolve, reject) {
-        sql.query("Select codigo from professores;", function(err, res){
+        sql.query("Select codigo, email from professores;", function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -70,7 +77,7 @@ Professor.getProfessoresCodigo = function () {
 
 Professor.getProfessorById = function (id) {
     return new Promise(function(resolve, reject) {
-        sql.query("Select id, codigo, nome, escola, email, confirmacao, premium, validade, socionum, projeto from professores where id=? and confirmacao=1 and now()<validade", id, function(err, res){
+        sql.query("Select id, codigo, nome, escola, email, confirmacao, premium, validade, socionum, projeto from professores where id=?", id, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -85,7 +92,7 @@ Professor.getProfessorById = function (id) {
 
 Professor.getProfessorByCodigo = function (codigo) {
     return new Promise(function(resolve, reject) {
-        sql.query("Select id, codigo, nome, escola, email, confirmacao, premium, validade, socionum, projeto from professores where codigo=? and confirmacao=1 and now()<validade", codigo, function(err, res){
+        sql.query("Select id, codigo, nome, escola, email, confirmacao, premium, validade, socionum, projeto from professores where codigo=?", codigo, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -100,7 +107,7 @@ Professor.getProfessorByCodigo = function (codigo) {
 
 Professor.getProfessorByEmail = function (email) {
     return new Promise(function(resolve, reject) {
-        sql.query("Select id, codigo, nome, escola, email, confirmacao, premium, validade, socionum, projeto from professores where email=? and confirmacao=1 and now()<validade", email, function(err, res){
+        sql.query("Select id, codigo, nome, escola, email, confirmacao, premium, validade, socionum, projeto from professores where email=?", email, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -130,7 +137,7 @@ Professor.getPassword = function (id) {
 
 Professor.getProfessoresByEscola = function (escola) {
     return new Promise(function(resolve, reject) {
-        sql.query("Select id, codigo, nome, escola, email, confirmacao, premium, validade, socionum, projeto from professores where escola=? and confirmacao=1 and now()<validade", escola, function(err, res){
+        sql.query("Select id, codigo, nome, escola, email, confirmacao, premium, validade, socionum, projeto from professores where escola=?", escola, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

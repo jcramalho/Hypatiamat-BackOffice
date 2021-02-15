@@ -1,40 +1,47 @@
 <template>
+
     <v-container>
+      
             <!-- PROFESSOR !-->
+      <v-row>
+        <v-card class="elevation-5" background-color="gray">
+        <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
             <v-card-title primary-title class="justify-center green--text">
                 Dados da minha conta ({{professor.codigo}})
             </v-card-title>
-        <v-card background-color="gray">
+        </v-col>
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
             <center>
            <v-list-item-avatar class="elevation-6" color="#009263" size="120">
                 <v-icon size="80" color="white">mdi-account</v-icon>             
            </v-list-item-avatar>
             </center>
-        <v-layout row class="text-xs-center pa-lg-16" justify-center align-center >
-          <v-flex xs5>
-          <v-text-field label="Nome" v-model="professor.nome" color="#009263" outlined disabled/>
-          </v-flex>
-          <v-flex xs2>
-          </v-flex>
-          <v-flex xs5>
-          <v-text-field label="Identificador do Agrupamento" v-model="professor.escola" color="#009263" outlined disabled/>
-          </v-flex>
-          <v-flex xs5>
+          </v-col>
+        <v-row class="mx-auto">
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
+            <v-text-field label="Nome" v-model="professor.nome" color="#009263" outlined disabled/>
+          </v-col>
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="2">
+          </v-col>
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
+            <v-text-field label="Identificador do Agrupamento" v-model="professor.escola" color="#009263" outlined disabled/>
+          </v-col>
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
               <v-text-field label="Tipo de Utilizador" v-model="professor.nomeType" color="#009263" outlined disabled/>
-          </v-flex>
-          <v-flex xs2>
-          </v-flex>
-          <v-flex xs5>
+          </v-col>
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="2">
+          </v-col>
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
               <v-text-field label="Email"  v-model="professor.email" color="#009263" outlined disabled/>
-          </v-flex>
-          <v-flex xs3>
-          </v-flex>
-          <v-flex xs5>
-          <v-text-field label="Validade (YYYY-MM-DD)" v-model="professor.validade" color="#009263" outlined disabled/>
-          </v-flex>
-          <v-flex xs3>
-          </v-flex>
-        </v-layout>
+          </v-col>
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="3">
+          </v-col>
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
+            <v-text-field label="Validade (YYYY-MM-DD)" v-model="professor.validade" color="#009263" outlined disabled/>
+          </v-col>
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="3">
+          </v-col>
+        </v-row>
           <center><v-btn class="white--text" style="background-color: #009263;" @click="editarProfessor()"> Editar dados pessoais </v-btn></center>
           <br>
           <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true"> Alterar password </v-btn></center>
@@ -79,7 +86,9 @@
                   <v-btn class="white--text" primary large block style="background-color: #009263;" @click="editarPassword()">Confirmar alteração</v-btn>
                 </v-card>
           </v-dialog>
+      </v-row>
     </v-container>
+
 </template>
 
 <script>

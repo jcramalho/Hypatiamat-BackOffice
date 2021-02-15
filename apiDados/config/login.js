@@ -22,7 +22,6 @@ module.exports.login = async function(user, password){
   var md5Password = md5(password)
 
   var aluno = await Alunos.getPassword(user)
-  console.log(aluno)
   if (aluno != undefined){
       if(md5Password == aluno.password){
           var utilizadorAux = await Alunos.getAlunoByUser(user)

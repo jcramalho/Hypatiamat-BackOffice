@@ -1,42 +1,54 @@
 <template>
-  
-    <v-layout row class="text-xs-center pa-lg-16" justify-center align-center  >
-      <v-flex xs3>
-        <v-img src="https://www.hypatiamat.com/imagens/images/backofficeAPP.png" width="350px">
+  <v-container>  
+    <v-row class="text-xs-center pa-lg-16" justify-center align-center  >
+      <v-col class="justify-center" cols="12" xs="12" sm="12" md="12" lg="12" xl="3">
+      </v-col>
+      <v-col class="justify-center" cols="12" xs="12" sm="12" md="12" lg="6" xl="3">
+        <center>
+        <v-img 
+          src="https://www.hypatiamat.com/imagens/images/backofficeAPP.png"
+          lazy-src="https://www.hypatiamat.com/imagens/images/backofficeAPP.png"
+          max-height="30%"
+          width="75%"
+          >
         </v-img>
-      </v-flex>
-      <v-flex xs3>
-        
+        </center>
+      </v-col>
+      <v-col cols="12" xs="12" sm="12" md="12" lg="6" xl="3">
+        <v-row>
+          <v-col cols="12">
           <v-card class="pa-5" style="background-color: #d8dbd7;">
               <v-card-title class="justify-center" style="text-color: #d8dbd7;">
                 Autenticação
               </v-card-title>
+              
               <v-form>
-              <v-layout row>
-                <v-flex xs11>
+              <v-row>
+                <v-col cols="12">
               <v-text-field prepend-icon="mdi-account" color="#009263" v-model="user" name="Username" label="Username" type="text" ></v-text-field>
-                </v-flex>
-              </v-layout>
-              <v-layout row>
-              <v-flex xs11>
+                </v-col>
+              </v-row>
+              <v-row>
+              <v-col class="d-flex" xs="12" sm="12" md="12" lg="12" xl="12">
               <v-text-field v-if="showPassword" color="#009263" prepend-icon="mdi-key" v-model="password" name="Password" label="Password" type="text"></v-text-field>
               <v-text-field v-else color="#009263" prepend-icon="mdi-key" v-model="password" name="Password" label="Password" type="password"></v-text-field>
-              </v-flex>
-              <v-flex xs1 class="pa-4">
-              <v-icon v-if="showPassword" color="#009263" @click="showPassword=!showPassword">mdi-eye-off</v-icon>
-              <v-icon v-else color="#009263" @click="showPassword=!showPassword">mdi-eye</v-icon>
-              </v-flex>
-              </v-layout>
+              <v-icon class="pl-2" v-if="showPassword" color="#009263" @click="showPassword=!showPassword">mdi-eye-off</v-icon>
+              <v-icon class="pl-2" v-else color="#009263" @click="showPassword=!showPassword">mdi-eye</v-icon>
+              </v-col>
+              </v-row>
               <v-card-actions>
                 <v-btn class="white--text" primary large block style="background-color: #009263;" @click="login">Login</v-btn>
               </v-card-actions>
               </v-form>
               <center><v-text> Ainda não possuí conta? </v-text> <span class="font-weight-bold black--text" @click="registar()" style="cursor: pointer;" > Registe-se aqui! </span></center>
           </v-card>
-          
-        
-      </v-flex>
-    </v-layout>
+          </v-col>     
+        </v-row>   
+      </v-col>
+      <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="3">
+      </v-col>
+    </v-row>
+    </v-container>
   
 </template>
 
@@ -93,6 +105,7 @@ import { ResponsiveDirective } from "vue-responsive-components"
               width:450,
             })
             this.$emit("refreshLogout")
+            this.$router.push({name: "Meu Perfil"})
           }
         }
         else Swal.fire({

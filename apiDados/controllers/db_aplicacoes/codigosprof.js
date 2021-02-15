@@ -7,8 +7,8 @@ var CodigoProf = function(codigoProf){
 
 CodigoProf.insertCodigo = function (codigoProf) {    
     return new Promise(function(resolve, reject) {
-        var args = [codigoProf.id, codigoProf.codigo]
-        sql.query("INSERT INTO codigosprof (`id`, `codigo`) VALUES (?, ?)", args, function (err, res) {
+        var args = [codigoProf.codigo]
+        sql.query("INSERT INTO codigosprof (`codigo`) VALUES (?)", args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
                     reject(err);

@@ -4,7 +4,7 @@
     <v-card class="pa-5">
         <v-container>
             <v-card-title primary-title class="justify-center green--text">
-                Editar Turma ({{turma.turma}})
+                Transferência de Alunos ({{turma.turma}})
             </v-card-title>
                      
            <v-layout row class="text-xs-center pa-lg-16" justify-center align-center >
@@ -170,6 +170,7 @@ const h = require("@/config/hosts").hostAPI
                 alunos: this.selected
           }
           await axios.put(h + "alunos/turmas/" + this.turma2 + "?token=" + this.token, body)
+          this.selected = []
           this.atualizaAlunos()
       },
       alteraTurma2: async function(){
@@ -178,7 +179,8 @@ const h = require("@/config/hosts").hostAPI
               turmaOld: this.turma2,
               alunos: this.selected2
         }
-        var res = await axios.put(h + "alunos/turmas/" + this.turma.turma + "?token=" + this.token, body)
+        await axios.put(h + "alunos/turmas/" + this.turma.turma + "?token=" + this.token, body)
+        this.selected2 = []
         this.atualizaAlunos()
       },
       atualizaAlunos: async function(){

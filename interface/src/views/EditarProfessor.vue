@@ -2,19 +2,33 @@
   <v-app id="inspire">
     <v-main class="grey lighten-3">
     <v-card>
-        <v-container style="width:50%;">
+        <v-container style="width:80%;">
             <v-card-title primary-title class="justify-center green--text">
                 Editar Professor ({{professor.codigo}})
             </v-card-title>
                      
-          <v-text-field label="Nome" placeholder="Nome" v-model="professor.nome" color="#900000" required/>
-          <v-text-field label="Identificador do Agrupamento" placeholder="Identifcador do Agrupamento" v-model="professor.escola" color="#900000" required/>
-          <v-text-field label="Email" placeholder="Email" v-model="professor.email" color="#900000" required/>
-          <v-text-field label="Confirmação (0 ou 1)" placeholder="Confirmação (0 ou 1) " v-model="professor.confirmacao" :rules="[number0or1]" color="#900000" required/>
-          <v-text-field label="Premium (0 ou 1)" placeholder="Premium (0 ou 1)" v-model="professor.premium" :rules="[number0or1]" color="#900000" required/>
-          <v-text-field label="Validade (YYYY-MM-DD)" placeholder="Validade (YYYY-MM-DD)" v-model="professor.validade" color="#900000" required/>
-          <v-text-field label="Número de Sócio" placeholder="Número de Sócio" v-model="professor.socionum" color="#900000" :rules="[number]" required/>
-          <v-text-field label="Projeto" placeholder="Projeto" v-model="professor.projeto" color="#900000" :rules="[number]" required/>
+          <v-text-field prepend-icon="mdi-account" label="Nome" placeholder="Nome" v-model="professor.nome" color="#009263" required/>
+          <v-combobox
+                id="escola"
+                prepend-icon="mdi-school"
+                label="Agrupamento de Escolas"
+                v-model="escolaAtual"
+                color="#009263"
+                :items="escolas"
+          ></v-combobox>
+          <v-text-field prepend-icon="mdi-email" label="Email" placeholder="Email" v-model="professor.email" color="#009263" required/>
+          <v-text-field prepend-icon="mdi-ticket-confirmation-outline" label="Confirmação (0 ou 1)" placeholder="Confirmação (0 ou 1) " v-model="professor.confirmacao" :rules="[number0or1]" color="#009263" required/>
+          <v-combobox
+                id="premium"
+                prepend-icon="mdi-vpn"
+                label="Premium"
+                v-model="premiumAtual"
+                color="#009263"
+                :items="typePremium"
+            ></v-combobox>
+          <v-text-field prepend-icon="mdi-calendar" label="Validade (YYYY-MM-DD)" placeholder="Validade (YYYY-MM-DD)" v-model="professor.validade" type="date" :format="format" color="#009263" required/>
+          <v-text-field prepend-icon="mdi-handshake" label="Número de Sócio" placeholder="Número de Sócio" v-model="professor.socionum" type="number" color="#009263" :rules="[number]" required/>
+          <v-text-field prepend-icon="mdi-projector-screen-outline" label="Projeto" placeholder="Projeto" v-model="professor.projeto" type="number" color="#009263" :rules="[number]" required/>
           <br>
           <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true"> Alterar password </v-btn></center>
           <br>
@@ -72,6 +86,7 @@
 
 <script>
 import axios from "axios"
+import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
 
   export default {
@@ -80,6 +95,7 @@ const h = require("@/config/hosts").hostAPI
         turmas: [],
         dialogPassword: false,
         dialogTurmas: false,
+        filtrar: "",
         header_turmas: [
             {text: "Id", sortable: true, value: 'id', class: 'subtitle-1'},
             {text: "Turma", value: 'turma', class: 'subtitle-1'}
@@ -94,14 +110,24 @@ const h = require("@/config/hosts").hostAPI
         id : 0,
         password1: "",
         password2: "",
-        filtrar:"",
+        escolasIds:[],
+        typePremium:[
+            "0 - Não confirmado",
+            "1 - Professor",
+            "2 - Município",
+            "3 - Agrupamento",
+            "5 - Admin"
+        ],
+        escolas: [],
+        escolaAtual:"",
+        premiumAtual: "",
         number0or1: v  => {
-          if (!v.trim()) return true;
+          //if (!v.trim()) return true;
           if (!isNaN(parseInt(v)) && (v == 0 || v == 1)) return true;
           return 'Tem que ser 0 ou 1';
         },
         number: v  => {
-          if (!v.trim()) return true;
+          //if (!v.trim()) return true;
           if (!isNaN(parseInt(v))) return true;
           return 'Tem que ser um inteiro';
         } 
@@ -113,9 +139,23 @@ const h = require("@/config/hosts").hostAPI
         this.id = this.$route.params.id
         var response = await axios.get(h + "professores/" + this.id + "?token=" + this.token)
         this.professor = response.data
-        console.log(this.professor)
+        var responseEscolas = await axios.get(h + "escolas")
+        this.escolasIds = responseEscolas.data
+        this.escolaAtual = this.escolasIds.find(e => e.cod == this.professor.escola).nome
+        this.premiumAtual = this.typePremium.find(e => e.split(" - ")[0] == this.professor.premium)
+        this.parseEscolas()
     },
     methods: {
+      format(value, event) {
+        return moment(value).format('YYYY-MM-DD')
+      },
+      parseEscolas: async function(){
+        var aux = []
+        for(var i = 0; i < this.escolasIds.length; i++){
+          aux.push(this.escolasIds[i].nome)
+        }
+        this.escolas = aux
+      },
       verTurmas : async function(id){
           var response = await axios.get(h + "professores/" + this.professor.codigo + "/turmas?token=" + this.token)
           this.turmas = response.data
@@ -126,11 +166,16 @@ const h = require("@/config/hosts").hostAPI
         this.$router.push({name: "Editar Turma", params: { id : id } })
       },
       editarProfessor : function(){
-          axios.put(h + "professores/" + this.id + "?token=" + this.token, this.professor)
-               .then(dados => {
-                 alert("Dados alterados com sucesso!")
-               })
-               .catch(error => alert("Não foi possível guardar as alterações."))
+          this.professor.premium = this.premiumAtual.split(" - ")[0]
+          this.professor.escola = this.escolasIds.find(e => e.nome == this.escolaAtual).cod
+          if(this.professor.premium && this.professor.escola){
+            
+            axios.put(h + "professores/" + this.professor.codigo + "?token=" + this.token, this.professor)
+                .then(dados => {
+                  alert("Dados alterados com sucesso!")
+                })
+                .catch(error => alert("Não foi possível guardar as alterações."))
+          }
       },
       editarPassword : async function(){
           if(this.password1 != "" && this.password2 != ""){

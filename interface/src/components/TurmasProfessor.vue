@@ -9,7 +9,7 @@
               <v-btn v-if="turmasAnoLetivo<limiteTurmas" class="white--text" style="background-color: #009263;" @click="criarTurma()"> 
                 <v-icon> mdi-book-plus </v-icon> Criar Turma 
               </v-btn>
-              <v-row class="justify-center" style="display: flex;  align-items: center;">
+              <v-row v-else class="justify-center" style="display: flex;  align-items: center;">
                 <v-icon color="red"> mdi-alert-outline </v-icon>
                 <span> Não pode criar mais turmas, uma vez que atingiu o limite deste ano letivo ({{limiteTurmas}}). </span>
               </v-row>

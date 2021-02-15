@@ -1,30 +1,28 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card class="pa-5">
-        <v-container style="width:60%;" v-if="type == 10">
+        <v-container class="grey lighten-3 mx-auto" v-if="type == 10">
             <!-- ALUNO !-->
             <Aluno/>
         </v-container>
-         <v-container style="width:50%;" v-else-if="type == 20">
+         <v-container class="grey lighten-3 mx-auto" v-else-if="type == 20">
             <!-- PROFESSOR !-->
             <Professor/>
         </v-container>
-         <v-container style="width:50%;" v-else-if="type == 30">
+         <v-container class="grey lighten-3 mx-auto" v-else-if="type == 30">
           <!-- MUNICIPIO !-->
             <Municipio/>
         </v-container>
-         <v-container style="width:50%;" v-else-if="type == 40">
+         <v-container class="grey lighten-3 mx-auto" v-else-if="type == 40">
             <!-- AGRUPAMENTO !-->
             <Agrupamento/>
         </v-container>
-        <v-container style="width:70%;" v-else>
+        <v-container class="grey lighten-3 mx-auto" v-else>
             <!-- Admin !-->
             <Professor/>
         </v-container>
-    </v-card>
     </v-main>
-  </v-app> 
+  </v-app>
 </template>
 
 

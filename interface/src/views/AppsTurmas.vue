@@ -150,6 +150,9 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         
     },
     methods: {
+      format(value, event) {
+        return moment(value).format('YYYY-MM-DD')
+      },
       parseApps: async function(){
           var aux = []
           for(var i = 0; i < this.appsInfo.length; i++){

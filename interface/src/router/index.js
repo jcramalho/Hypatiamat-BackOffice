@@ -6,6 +6,7 @@ const h = require("@/config/hosts").hostAPI
 import AuthApp from '../views/AuthApp.vue'
 import MyProfile from '../views/MyProfile.vue'
 import Professores from '../views/Professores.vue'
+import CodigosProfessores from '../views/CodigosProfessores.vue'
 import Alunos from '../views/Alunos.vue'
 import Escolas from '../views/Escolas.vue'
 import Turmas from '../views/Turmas.vue'
@@ -71,6 +72,20 @@ const routes = [
     path: '/professores',
     name: 'Professores',
     component: Professores,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(utilizador.type == 50){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    }
+  },
+  {
+    path: '/codigosprof',
+    name: 'Códigos Professores',
+    component: CodigosProfessores,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 50){

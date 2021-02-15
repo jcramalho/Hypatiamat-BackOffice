@@ -119,11 +119,11 @@ Escola.getTurmasFromEscola = function (id) {
 }
 
 
-Escola.updateEscola = function(id, escola){
+Escola.updateEscola = function(codigo, escola){
     //nome`, `localidade`, `distrito`, `pais`, `cod`
     return new Promise(function(resolve, reject) {
-        var args = [escola.nome, escola.localidade, escola.distrito, escola.pais, id]
-        sql.query("Update Escolas Set nome = ?, localidade = ?, distrito = ?, pais = ? where id = ?", args, function (err, res) {
+        var args = [escola.nome, escola.localidade, escola.distrito, escola.pais, codigo]
+        sql.query("Update Escolas Set nome = ?, localidade = ?, distrito = ?, pais = ? where cod = ?", args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
                     reject(err);

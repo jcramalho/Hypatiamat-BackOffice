@@ -4,8 +4,25 @@
     <v-card class="pa-5">
         <v-container>
             <v-card-title primary-title class="justify-center green--text">
-                Lista de Professores
+                Professores
             </v-card-title>
+            <!--<v-combobox
+                id="confirmacao"
+                prepend-icon="mdi-vpn"
+                label="Confirmação"
+                v-model="confirmacaoSel"
+                color="#009263"
+                :items="confirmacoes"
+                @change="getProfessores()"
+            ></v-combobox>
+            <v-combobox
+                id="validade"
+                prepend-icon="mdi-vpn"
+                label="Validade"
+                v-model="validadeSel"
+                color="#009263"
+                :items="validades"
+            ></v-combobox>-->
             <center><v-btn class="white--text" style="background-color: #009263;" @click="criarProfessor()"><v-icon> mdi-account-plus </v-icon> Criar Professor </v-btn></center>
             <v-text-field
                 v-model="filtrar"
@@ -27,8 +44,10 @@
                     <td>{{row.item.nome}}</td>
                     <td>{{row.item.localidade}}</td>
                     <td>{{row.item.escola}}</td>
+                    <td>{{row.item.socionum}}</td>
+                    <td>{{row.item.projeto}}</td>
                     <td>
-                    <v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>
+                    <!--<v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>-->
                     <v-icon @click="editarProfessor(row.item.id)"> mdi-pencil </v-icon>
                     <v-icon @click="apagarProfessor(row.item.codigo)"> mdi-delete </v-icon>
                     </td>
@@ -53,11 +72,14 @@ const h = require("@/config/hosts").hostAPI
       return {
         token: "",
         professores: [],
+        professoresOriginal:[],
          header_professores: [
             {text: "Username", sortable: true, value: 'codigo', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
             {text: "Localidade", value: 'localidade', class: 'subtitle-1'},
             {text: "Agrupamento", value: 'escola', class: 'subtitle-1'},
+            {text: "Sócio", value: 'socionum', class: 'subtitle-1'},
+            {text: "Projeto", value: 'projeto', class: 'subtitle-1'},
             {text: "Operações", class: 'subtitle-1'},
         ],
         footer_props: {
@@ -66,12 +88,20 @@ const h = require("@/config/hosts").hostAPI
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
+        confirmacaoSel: "Todos",
+        validadeSel: "Todos",
+        validades: ["Todos", "Dentro da validade", "Fora da validade"],
+        confirmacoes: ["Todos", "Confirmados", "Não Confirmados"],
+        today:"",
+        confirmadoBool: false,
+        validadeBool: false
       }
     },
     created: async function(){
         this.token = localStorage.getItem("token")
         var response = await axios.get(h + "professores?token=" + this.token)
         this.professores = response.data
+        this.professoresOriginal = this.professores
     },
     methods: {
       verProfessor : function(id){
@@ -80,6 +110,23 @@ const h = require("@/config/hosts").hostAPI
       editarProfessor : function(id){
           this.$router.push({name: "Editar Professor", params: { id : id } })
       },
+      /*
+      getConfirmados: async function(){
+        if(this.confirmacaoSel != "Todos"){
+          if(this.confirmacaoSel == "Confirmados"){
+            this.confirmadoBool = true 
+            this.getProfessores()
+          }
+          else if(this.confirmacaoSel == "Não Confirmados" ){
+            this.confirmadoBool = false
+            this.getProfessores()
+          }
+        }
+        else{
+          this.confirmadoBool = false
+          this.getProfessores()
+        }
+      },*/
       apagarProfessor: async function(id){
         Swal.fire({
           title: "De certeza que deseja apagar este professor?",

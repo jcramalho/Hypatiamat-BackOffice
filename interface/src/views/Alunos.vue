@@ -157,7 +157,7 @@ const h = require("@/config/hosts").hostAPI
            this.csvDialog = false
            Swal.fire({
                   icon: 'info',
-                  text: response.data,
+                  html: response.data.replaceAll('\n', '<br>'),
                   confirmButtonColor: '#009263'
                 })
         })

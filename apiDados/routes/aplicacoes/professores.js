@@ -15,7 +15,7 @@ router.get('/', passport.authenticate('jwt', {session: false}), function(req, re
 });
 
 /* GET todos os códigos de professores. */
-router.get('/codigos', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/codigos', function(req, res, next) {
   Professores.getProfessoresCodigo()
              .then(dados =>{
                res.jsonp(dados)

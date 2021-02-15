@@ -51,7 +51,7 @@ Quarentena.getPedido = function (id){
                 reject(err)
             }
             else{
-                if (res.length != 0) resolve(res)
+                if (res.length != 0) resolve(res[0])
                 else resolve(undefined)
             }
         })
@@ -60,8 +60,6 @@ Quarentena.getPedido = function (id){
 
 Quarentena.aceitaPedido = async function(id) {
     var aux = await Quarentena.getPedido(id);
-    //await Quarentena.deletePedido(id)
-    console.log(aux.codigo)
     let professor ={
         codigo : aux.codigo,
         nome : aux.nome,
@@ -71,11 +69,11 @@ Quarentena.aceitaPedido = async function(id) {
         confirmacao : 1,
         premium : 1,
         socionum : 0,
-        projeto : 0
+        projeto : 0,
+        quarentena: true
     }  
-    console.log(professor)
-    var result
-    //var result = await Professor.insertProfessor(professor)
+    var result = await Professor.insertProfessor(professor)
+    await Quarentena.deletePedido(id)
     return result 
 }
 

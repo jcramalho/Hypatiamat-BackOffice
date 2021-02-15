@@ -2,16 +2,15 @@
   <v-app id="inspire">
     <v-main class="grey lighten-3">
     <v-card class="pa-5">
-        <v-container style="width:50%;">
+        <v-container >
             <v-card-title primary-title class="justify-center green--text">
                 Editar Agrupamento de Escolas ({{nomeEscola}})
             </v-card-title>
                      
-          <v-text-field label="Nome" placeholder="Nome" v-model="escola.nome" color="#900000" required/>
-          <v-text-field label="Localidade" placeholder="Localidade" v-model="escola.localidade" color="#900000" required/>
-          <v-text-field label="Distrito" placeholder="Distrito" v-model="escola.distrito" color="#900000" required/>
-          <v-text-field label="País" placeholder="País " v-model="escola.pais"  color="#900000" required/>
-          <v-text-field label="Código" placeholder="Código" v-model="escola.cod"  color="#900000" required/>
+          <v-text-field prepend-icon="mdi-account" label="Nome" placeholder="Nome" v-model="escola.nome" :rules="[existeNome, string120]"  required/>
+          <v-text-field prepend-icon="mdi-city" label="Localidade" placeholder="Localidade" v-model="escola.localidade" :rules="[string30]"  required/>
+          <v-text-field prepend-icon="mdi-calendar" label="Distrito" placeholder="Distrito" v-model="escola.distrito" :rules="[string30]"  required/>
+          <v-text-field prepend-icon="mdi-bank" label="País" placeholder="País " v-model="escola.pais" :rules="[string20]" required/>
           
           <br>
           <center><v-btn class="white--text" style="background-color: #009263;" @click="verProfessores()"> Ver Professores </v-btn></center>
@@ -100,6 +99,7 @@ const h = require("@/config/hosts").hostAPI
         dialogProfessores : false,
         dialogAlunos : false,
         filtrar : "",
+        escolas:[],
         filtrar2 : "",
         header_professores: [
             {text: "Username", sortable: true, value: 'codigo', class: 'subtitle-1'},
@@ -114,11 +114,36 @@ const h = require("@/config/hosts").hostAPI
             "items-per-page-options": [5, 10, 20, -1],
             "items-per-page-all-text": "Todos"
         },
+        string10: v  => {
+          if(v.length <= 10) return true
+          else return "Apenas pode conter 10 caractéres"
+        },
+        string120: v  => {
+          if(v.length <= 120) return true
+          else return "Apenas pode conter 120 caractéres"
+        },
+        string30: v  => {
+          if(v.length <= 30) return true
+          else return "Apenas pode conter 30 caractéres"
+        },
+        string20: v  => {
+          if(v.length <= 20) return true
+          else return "Apenas pode conter 20 caractéres"
+        },
+        nomeExiste: v =>{
+          
+        },
+        existeNome: v =>{
+          if(this.escolas.find(element => element.nome == v) && this.nomeEscola != v) return 'Esse nome de agrupamento já existe. Escolha outro por favor.'
+          else return true
+        }
       }
     },
     created: async function(){
         this.token = localStorage.getItem("token")
         this.id = this.$route.params.id
+        var responseEsc = await axios.get(h + "escolas")
+        this.escolas = responseEsc.data
         var response = await axios.get(h + "escolas/" + this.id + "?token=" + this.token)
         this.escola = response.data
         this.cod = this.escola.cod

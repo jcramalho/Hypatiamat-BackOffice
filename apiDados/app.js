@@ -17,6 +17,7 @@ var secret = 'tese-hypatiamat2020'
 
 
 var professoresRouter = require('./routes/aplicacoes/professores');
+var codigosRouter = require('./routes/aplicacoes/codigosprof');
 var turmasRouter = require('./routes/aplicacoes/turmas')
 var escolasRouter = require('./routes/aplicacoes/escolas')
 var alunosRouter = require('./routes/aplicacoes/alunos')
@@ -148,6 +149,7 @@ app.use(
 );*/
 
 app.use('/aplicacoes/professores', professoresRouter);
+app.use('/aplicacoes/codigos', codigosRouter);
 app.use('/aplicacoes/turmas', turmasRouter)
 app.use('/aplicacoes/escolas', escolasRouter)
 app.use('/aplicacoes/alunos', alunosRouter)
