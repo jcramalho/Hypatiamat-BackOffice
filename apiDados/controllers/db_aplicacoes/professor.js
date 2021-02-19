@@ -49,7 +49,23 @@ Professor.insertProfessor = function (professor) {
 
 Professor.getProfessores = function () {
     return new Promise(function(resolve, reject) {
-        sql.query("Select p.id, p.codigo, p.nome, esc.localidade, esc.nome as escola, p.validade, p.confirmacao, p.socionum, p.projeto from professores p, Escolas esc where esc.cod = p.escola", function(err, res){
+        sql.query(`Select p.id, p.codigo, p.nome, esc.localidade, esc.nome as escola, p.confirmacao, p.socionum, p.projeto 
+        from professores p, Escolas esc where esc.cod = p.escola and p.confirmacao=1 and p.premium!=0 and now()<=p.validade Order by id desc;`, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+Professor.getProfessoresNaoConfirmados = function () {
+    return new Promise(function(resolve, reject) {
+        sql.query(`Select p.id, p.codigo, p.nome, esc.localidade, esc.nome as escola, (now()<=p.validade) as valido, p.confirmacao, p.socionum, p.projeto 
+                from professores p, Escolas esc where esc.cod = p.escola and (p.confirmacao=0 or p.premium = 0 or now()>p.validade) Order by id desc`, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -122,7 +138,7 @@ Professor.getProfessorByEmail = function (email) {
 
 Professor.getPassword = function (id) {
     return new Promise(function(resolve, reject) {
-        sql.query("Select password from professores where codigo=? and confirmacao=1 and now()<validade", id, function(err, res){
+        sql.query("Select password from professores where codigo=?", id, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -137,7 +153,23 @@ Professor.getPassword = function (id) {
 
 Professor.getProfessoresByEscola = function (escola) {
     return new Promise(function(resolve, reject) {
-        sql.query("Select id, codigo, nome, escola, email, confirmacao, premium, validade, socionum, projeto from professores where escola=?", escola, function(err, res){
+        sql.query(`Select id, codigo, nome, escola, email, confirmacao, premium, validade, socionum, projeto
+        from professores where escola=? and confirmacao=1`, escola, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+Professor.getProfessoresByEscolaNaoConfirmados = function (escola) {
+    return new Promise(function(resolve, reject) {
+        sql.query(`Select id, codigo, nome, escola, email, confirmacao, premium, validade, socionum, projeto, (now()<=validade) as valido
+         from professores where escola=? and (p.confirmacao=0 or p.premium = 0 or now()>p.validade) Order by id desc`, escola, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -201,7 +233,7 @@ Professor.alteraProfessor = function(codigo,professor){
 
 Professor.updatePassword = function(codigo, password){
     return new Promise(function(resolve, reject) {
-        var args = [password, codigo]
+        var args = [md5(password), codigo]
         sql.query("UPDATE professores SET password = ? Where codigo = ?", args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);

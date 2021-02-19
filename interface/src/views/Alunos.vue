@@ -8,11 +8,11 @@
             </v-card-title>
             <center><v-btn class="white--text" style="background-color: #009263;" @click="criarAluno()"><v-icon> mdi-account-plus </v-icon> Criar Aluno </v-btn></center>
             <br>
-            <v-dialog v-model="csvDialog" width="60%">
+            <v-dialog v-model="csvDialog" width="70%">
               <v-card class="pa-5">
                 <center>
                 <v-file-input show-size v-model="file" placeholder="Anexar ficheiro csv"  label="Anexar ficheiro csv"
-                 prepend-icon="mdi-paperclip" style="width:30%;" color="#009263" @change="checkFile()"/> 
+                 prepend-icon="mdi-paperclip" style="width:70%;" color="#009263" @change="checkFile()"/> 
 
                 <v-btn color="#009263" type='submit' @click="postFile()"> Inserir Alunos </v-btn>
                 </center>
@@ -52,7 +52,7 @@
                     <td>{{row.item.codprofessor}}</td>
                     <td>{{row.item.turma}}</td>
                     <td>
-                    <v-icon @click="verAluno(row.item.id)"> mdi-eye </v-icon>
+                    <!--<v-icon @click="verAluno(row.item.id)"> mdi-eye </v-icon>-->
                     <v-icon @click="editarAluno(row.item.id)"> mdi-pencil </v-icon>
                     <v-icon @click="apagarAluno(row.item.user)"> mdi-delete </v-icon>
                     </td>
@@ -62,7 +62,11 @@
             </v-container>
             <v-container v-else>
             <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
+            
             </v-container>
+            <v-dialog v-model="dialogEditar" width="85%">
+              <EditarAluno v-if="dialogEditar" :idProp="idEditar"/>
+            </v-dialog>
         </v-container>
     </v-card>
     </v-main>
@@ -76,14 +80,19 @@ import axios from "axios"
 import Swal from 'sweetalert2'
 var fs = require('fs')
 var fastcsv = require('fast-csv')
+import EditarAluno from '@/components/EditarAluno.vue'
 const h = require("@/config/hosts").hostAPI
 
   export default {
+    components:{
+         EditarAluno
+    },
     data(){
       return {
         token: "",
         alunos: [],
         csvDialog:false,
+        dialogEditar: false,
          header_alunos: [
             {text: "Username", sortable: true, value: 'user', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
@@ -101,7 +110,8 @@ const h = require("@/config/hosts").hostAPI
         escolas:[],
         escolasIds:[],
         escola:"",
-        file:{}
+        file:{},
+        idEditar:-1
       }
     },
     created: async function(){
@@ -166,7 +176,10 @@ const h = require("@/config/hosts").hostAPI
           this.$router.push({name: "Ver Aluno", params: { id : id } })
       },
       editarAluno : function(id){
-          this.$router.push({name: "Editar Aluno", params: { id : id } })
+          //this.$router.push({name: "Editar Aluno", params: { id : id } })
+          console.log("Abrir Editar Aluno")
+          this.idEditar = id
+          this.dialogEditar = true
       },
       getAlunos : async function(){
         this.ready = false

@@ -1,10 +1,9 @@
 <template>
-
+    <v-card class="pa-5">
     <v-container>
       
             <!-- PROFESSOR !-->
       <v-row>
-        <v-card class="elevation-5" background-color="gray">
         <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
             <v-card-title primary-title class="justify-center green--text">
                 Dados da minha conta ({{professor.codigo}})
@@ -41,14 +40,17 @@
           </v-col>
           <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="3">
           </v-col>
-        </v-row>
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
           <center><v-btn class="white--text" style="background-color: #009263;" @click="editarProfessor()"> Editar dados pessoais </v-btn></center>
-          <br>
+          </v-col>
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
           <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true"> Alterar password </v-btn></center>
-          <br>
+          </v-col>
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
           <center><v-btn v-if="type!=50" class="white--text" style="background-color: #009263;" @click="verTurmas()"> Ver Minhas Turmas </v-btn></center>
-          <br>
-        </v-card>
+          </v-col>
+        </v-row>
+          
           <v-dialog
             v-model="dialogTurmas"
             width="40%"
@@ -88,7 +90,7 @@
           </v-dialog>
       </v-row>
     </v-container>
-
+    </v-card>
 </template>
 
 <script>

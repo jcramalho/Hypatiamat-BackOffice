@@ -3,7 +3,7 @@
     <v-row class="text-xs-center pa-lg-16" justify-center align-center  >
       <v-col class="justify-center" cols="12" xs="12" sm="12" md="12" lg="12" xl="3">
       </v-col>
-      <v-col class="justify-center" cols="12" xs="12" sm="12" md="12" lg="6" xl="3">
+      <v-col class="justify-center" cols="12" xs="12" sm="12" md="12" lg="6" xl="3" fill-heigth>
         <center>
         <v-img 
           src="https://www.hypatiamat.com/imagens/images/backofficeAPP.png"
@@ -17,7 +17,7 @@
       <v-col cols="12" xs="12" sm="12" md="12" lg="6" xl="3">
         <v-row>
           <v-col cols="12">
-          <v-card class="pa-5" style="background-color: #d8dbd7;">
+          <v-card class="pa-4" style="background-color: #d8dbd7;">
               <v-card-title class="justify-center" style="text-color: #d8dbd7;">
                 Autenticação
               </v-card-title>
@@ -40,7 +40,7 @@
                 <v-btn class="white--text" primary large block style="background-color: #009263;" @click="login">Login</v-btn>
               </v-card-actions>
               </v-form>
-              <center><v-text> Ainda não possuí conta? </v-text> <span class="font-weight-bold black--text" @click="registar()" style="cursor: pointer;" > Registe-se aqui! </span></center>
+              <center><span> Ainda não possuí conta? </span> <span class="font-weight-bold black--text" @click="registar()" style="cursor: pointer;" > Registe-se aqui! </span></center>
           </v-card>
           </v-col>     
         </v-row>   

@@ -41,6 +41,7 @@ import Agrupamentos from '../views/Agrupamentos.vue'
 import AgrupamentoProfessores from '../views/AgrupamentoProfessores.vue'
 import EstatisticasMunicipios from '../views/EstatisticasMunicipios.vue'
 import EstatisticasAgrupamentos from '../views/EstatisticasAgrupamentos.vue'
+import Pendentes2 from '../views/Pendentes2.vue'
 
 
 
@@ -72,6 +73,20 @@ const routes = [
     path: '/professores',
     name: 'Professores',
     component: Professores,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(utilizador.type == 50){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    }
+  },
+  {
+    path: '/profspendentes',
+    name: 'Professores Pendentes',
+    component: Pendentes2,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 50){

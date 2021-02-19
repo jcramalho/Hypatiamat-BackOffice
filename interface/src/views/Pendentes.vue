@@ -2,7 +2,7 @@
   <v-app id="inspire">
     <v-main class="grey lighten-3">
     <v-card class="pa-5">
-        <v-container style="width:80%">
+        <v-container>
             <v-card-title primary-title class="justify-center green--text">
                 Lista de Pedidos de Inscrição
             </v-card-title>
@@ -26,7 +26,7 @@
                     <td>{{row.item.nome}}</td>
                     <td>{{row.item.escola}}</td>
                     <td>
-                    <v-icon @click="aceitarPedido(row.item.id)" color="#009263"> mdi-account-check </v-icon>
+                    <v-icon @click="aceitarPedido(row.item.id, row.item.codigo)" color="#009263"> mdi-account-check </v-icon>
                     </td>
                     <td>
                     <v-icon @click="rejeitarPedido(row.item.id)" color="red"> mdi-account-remove </v-icon>
@@ -34,6 +34,9 @@
                 </tr>
                 </template>
                 </v-data-table>
+                <v-dialog v-model="dialogEditarProfessor" width="80%">
+                  <EditarProfessor :idProp="idAceite"/>
+                </v-dialog>
         </v-container>
     </v-card>
     </v-main>
@@ -44,9 +47,13 @@
 
 <script>
 import axios from "axios"
+import EditarProfessor from '@/views/EditarProfessor.vue'
 const h = require("@/config/hosts").hostAPI
 
   export default {
+    components:{
+         EditarProfessor
+    },
     data(){
       return {
         token: "",
@@ -64,6 +71,8 @@ const h = require("@/config/hosts").hostAPI
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
+        idAceite:"",
+        dialogEditarProfessor: false
       }
     },
     created: async function(){
@@ -73,7 +82,10 @@ const h = require("@/config/hosts").hostAPI
     },
     methods: {
       aceitarPedido : async function(id){
-        await axios.post(h + "quarentenas/" + id + "?token=" + this.token)
+        var responseAceite = await axios.post(h + "quarentenas/" + id + "?token=" + this.token)
+                                        .catch(erro => console.log(erro))
+        this.idAceite = responseAceite.data.insertId
+        this.dialogEditarProfessor = true
         var response = await axios.get(h + "quarentenas?token=" + this.token)
         this.pendentes = response.data
       },

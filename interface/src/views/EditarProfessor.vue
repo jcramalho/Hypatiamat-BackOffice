@@ -2,7 +2,7 @@
   <v-app id="inspire">
     <v-main class="grey lighten-3">
     <v-card>
-        <v-container style="width:80%;">
+        <v-container>
             <v-card-title primary-title class="justify-center green--text">
                 Editar Professor ({{professor.codigo}})
             </v-card-title>
@@ -91,6 +91,7 @@ const h = require("@/config/hosts").hostAPI
 
   export default {
     data(){
+      
       return {
         turmas: [],
         dialogPassword: false,
@@ -134,9 +135,12 @@ const h = require("@/config/hosts").hostAPI
 
       }
     },
+    props:["idProp"],
     created: async function(){
         this.token = localStorage.getItem("token")
         this.id = this.$route.params.id
+        // caso o id seja passado por prop e não por parametro
+        if(!this.id) this.id = this.idProp
         var response = await axios.get(h + "professores/" + this.id + "?token=" + this.token)
         this.professor = response.data
         var responseEscolas = await axios.get(h + "escolas")

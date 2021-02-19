@@ -103,8 +103,9 @@ export default {
       // Admin    
       this.items = [
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
-        { title: 'Pendentes', icon: 'mdi-account-clock',href:"/pendentes" },
-        { title: 'Professores', icon: 'mdi-teach', href:"/professores" },
+        { title: 'Quarentena', icon: 'mdi-account-clock',href:"/pendentes" },
+        { title: 'Professores Pendentes', icon: 'mdi-account-clock', href:"/profspendentes" },
+        { title: 'Professores Ativos', icon: 'mdi-teach', href:"/professores" },
         { title: 'Códigos Professores', icon: 'mdi-barcode', href:"/codigosprof" },
         { title: 'Alunos', icon: 'mdi-account-group', href:"/alunos" },
         { title: 'Agrupamentos', icon: 'mdi-school', href:"/escolas" },

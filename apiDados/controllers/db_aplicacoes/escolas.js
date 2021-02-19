@@ -154,7 +154,7 @@ Escola.getJogosMunicipio = async function(jogoTable, jogoTipo, dataInicio, dataF
 }
 
 Escola.getAllJogosMunicipios = async function(dataInicio, dataFim){
-    var jogos = await Jogos.getJogos()
+    var jogos = await Jogos.getJogosDB()
     var res = await Escola.getJogosMunicipio(jogos[0].jogotable, jogos[0].tipo, dataInicio, dataFim)
     for(var i = 1; i < jogos.length; i++){
         var jogo = await Escola.getJogosMunicipio(jogos[i].jogotable, jogos[i].tipo, dataInicio, dataFim)
@@ -196,7 +196,7 @@ Escola.getJogosEscolas = async function(jogoTable, jogoTipo, dataInicio, dataFim
 }
 
 Escola.getAllJogosEscolas = async function(dataInicio, dataFim, municipio){
-    var jogos = await Jogos.getJogos()
+    var jogos = await Jogos.getJogosDB()
     var res = await Escola.getJogosEscolas(jogos[0].jogotable, jogos[0].tipo, dataInicio, dataFim, municipio)
     for(var i = 1; i < jogos.length; i++){
         var jogo = await Escola.getJogosEscolas(jogos[i].jogotable, jogos[i].tipo, dataInicio, dataFim, municipio)
@@ -241,7 +241,7 @@ Escola.getJogosProfessores = async function(jogoTable, jogoTipo, dataInicio, dat
 }
 
 Escola.getAllJogosProfessores = async function(dataInicio, dataFim, escola){
-    var jogos = await Jogos.getJogos()
+    var jogos = await Jogos.getJogosDB()
     var res = []
     for(var i = 0; i < jogos.length; i++){
         var jogo = await Escola.getJogosProfessores(jogos[i].jogotable, jogos[i].tipo, dataInicio, dataFim, escola)

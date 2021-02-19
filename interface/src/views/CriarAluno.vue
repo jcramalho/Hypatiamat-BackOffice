@@ -8,7 +8,7 @@
             <v-text-field prepend-icon="mdi-card-account-details" v-model="codigo" name="Username (Código)" label="Username (Código)" :rules="[string15, existeCodigo]" required></v-text-field>
             <v-text-field prepend-icon="mdi-account" v-model="nome" name="Nome" label="Nome" required></v-text-field>
             <v-text-field prepend-icon="mdi-email" v-model="email" name="Email" label="Email" :rules="[emailCheck, existeEmail]" required></v-text-field>
-            <v-text-field prepend-icon="mdi-calendar" v-model="datanasc" name="Data de Nascimento" label="Data de Nascimento" type="date" :format="format" required></v-text-field>
+            <v-text-field prepend-icon="mdi-calendar" v-model="datanasc" name="Data de Nascimento" label="Data de Nascimento" type="date" required></v-text-field>
             <v-text-field prepend-icon="mdi-bank" v-model="pais" name="País" label="País" required></v-text-field>
             <v-combobox
                 id="escola"
@@ -51,6 +51,8 @@
   const h = require("@/config/hosts").hostAPI
   import Swal from 'sweetalert2'
   import axios from "axios"
+  import moment from 'moment';
+
   export default {
     data(){
       return {
@@ -109,7 +111,7 @@
     },
      methods: {
       format(value, event) {
-        return moment(value).format('YYYY-MM-DD')
+        return moment(value).format('DD/MM/YYYY')
       },
       onEscolaChange: async function(item){
           if(this.escola == "") this.professores = []
@@ -137,12 +139,14 @@
         /* var args = [aluno.user, aluno.numero, aluno.nome, aluno.datanascimento, 
                 aluno.escola, aluno.turma, aluno.email, md5(aluno.password), 
                 aluno.codprofessor, aluno.pais] */
-
+        
         if (this.nome != "" && this.email != "" && this.codigo != "" && this.escola != "" && this.password != "" 
             && this.password2 && this.pais != "" && this.codprofessor != "" && this.numero != "" && this.datanasc != ""
             && this.turma != ""){ 
           if(this.password == this.password2){
             var aux = this.escola.split(" - ")
+            var date = this.datanasc.split("-")
+            var dataNascimento = date[2] + "/" + date[1] + "/" + date[0]
             var escolaEscolhida = this.escolasIds.find(element => element.nome == aux[1]).cod
             let data = {
                 numero: this.numero,
@@ -150,7 +154,7 @@
                 email : this.email,
                 user : this.codigo,
                 escola : escolaEscolhida,
-                datanascimento: this.datanasc,
+                datanascimento: dataNascimento,
                 turma: this.turma,
                 codprofessor : this.codprofessor,
                 pais: this.pais,

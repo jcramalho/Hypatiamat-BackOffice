@@ -58,6 +58,8 @@
 
 <script>
   const h = require("@/config/hosts").hostAPI
+  const AnoAtual = require("@/config/confs").anoAtual
+  const anoLetivoAtual = require("@/config/confs").anoletivo
   import Swal from 'sweetalert2'
   import axios from "axios"
 import TurmasVue from './Turmas.vue'
@@ -77,7 +79,7 @@ import TurmasVue from './Turmas.vue'
         escola: "",
         turmas:[],
         professores:[],
-        anoAtual:20,
+        anoAtual:AnoAtual,
         codigo: "",
         formatoTurma: v =>{
           var aux = v.split("-")
@@ -114,16 +116,6 @@ import TurmasVue from './Turmas.vue'
         this.turmas = response.data
       }
 
-      var date = new Date()
-      var ano = date.getFullYear()
-      var mes = date.getMonth()
-      if(mes < 9){
-        ano = ano.toString()
-      }
-      else{
-        ano = (ano+1).toString() 
-      }
-      this.anoAtual = ano.charAt(2) + ano.charAt(3)
     },
      methods: {
       onEscolaChange: async function(){
@@ -151,22 +143,43 @@ import TurmasVue from './Turmas.vue'
         }
       },
       criarTurma: async function () {
-        if (this.turma != ""){ 
+        if (this.turma != "" && this.anosEscolaridade.find(element => element == this.ano_escolaridade) && this.letra_turma.length ==1){ 
+            let data = {}
             if(this.escolher){
-              let data = {
+              data = {
                 idprofessor: this.codigo,
-                turma:this.turma
+                turma:this.turma,
+                anoletivo: anoLetivoAtual,
+
               }
+              var response = await axios.post(h + "turmas?token=" + this.token, data)
+                                        .then(()=> {
+                                          Swal.fire({
+                                              icon: 'success',
+                                              text: 'Turma inserida com sucesso.',
+                                              confirmButtonColor: '#009263'
+                                            })
+                                          this.$router.push({name: "Turmas"}) 
+                                        })
+                                        .catch(error => console.log(error))
             }
             else{
-              let data = {
+              data = {
                   idprofessor: this.utilizador.codigo,
-                  turma: this.turma
+                  turma: this.turma,
+                  anoletivo: anoLetivoAtual
               }
+              var response = await axios.post(h + "turmas?token=" + this.token, data)
+                                        .then(()=> {
+                                          Swal.fire({
+                                              icon: 'success',
+                                              text: 'Turma inserida com sucesso.',
+                                              confirmButtonColor: '#009263'
+                                            })
+                                          this.$router.push({name: "Minhas Turmas"}) 
+                                        })
+                                        .catch(error => console.log(error))
             }
-            
-            var response = await axios.post(h + "turmas?token=" + this.token, data)
-            this.$router.push({name: "Editar Turma", params: { id : response.data.insertedId } })   
         }
         else {
             Swal.fire({
@@ -188,7 +201,7 @@ import TurmasVue from './Turmas.vue'
         }
       },
       changeNomeTurma: async function(){
-        if(this.letra_turma != "" && this.anosEscolaridade.find(element => element == this.ano_escolaridade)){
+        if(this.letra_turma != "" && this.anosEscolaridade.find(e => e == this.ano_escolaridade)){
           console.log(this.anoAtual)
           var nome = this.ano_escolaridade_number + this.letra_turma
           nome += "-" + this.anoAtual + "-"

@@ -164,7 +164,7 @@ Estatistica.jogou = function(jogoTable, jogoTipo, turmas, agrupamentos){
 
 // Quantos jogos foram jogados por um conjunto de turmas e agrupamentos de um ano letivo
 Estatistica.quantosJogosTurmasAnoMun = async function(turmas, agrupamentos){
-    var jogos = await Jogos.getJogos()
+    var jogos = await Jogos.getJogosDB()
     var quantas = 0
     var freq = 0
     for(var i = 0; i < jogos.length; i++){
@@ -284,7 +284,7 @@ Estatistica.jogouAgru = function(jogoTable, jogoTipo, turmas, escola){
 }
 
 Estatistica.quantosJogosTurmasAnoAgru = async function(turmas, escola){
-    var jogos = await Jogos.getJogos()
+    var jogos = await Jogos.getJogosDB()
     var quantas = 0
     var freq = 0
     for(var i = 0; i < jogos.length; i++){

@@ -1,26 +1,20 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-        <v-container class="grey lighten-3 mx-auto" v-if="type == 10">
             <!-- ALUNO !-->
-            <Aluno/>
-        </v-container>
-         <v-container class="grey lighten-3 mx-auto" v-else-if="type == 20">
+            <Aluno v-if="type == 10"/>
+        
             <!-- PROFESSOR !-->
-            <Professor/>
-        </v-container>
-         <v-container class="grey lighten-3 mx-auto" v-else-if="type == 30">
-          <!-- MUNICIPIO !-->
-            <Municipio/>
-        </v-container>
-         <v-container class="grey lighten-3 mx-auto" v-else-if="type == 40">
+            <Professor v-else-if="type == 20"/>
+          
+            <!-- MUNICIPIO !-->
+            <Municipio v-else-if="type == 30"/>
+
             <!-- AGRUPAMENTO !-->
-            <Agrupamento/>
-        </v-container>
-        <v-container class="grey lighten-3 mx-auto" v-else>
+            <Agrupamento v-else-if="type == 40"/>
+       
             <!-- Admin !-->
-            <Professor/>
-        </v-container>
+            <Professor v-else />
     </v-main>
   </v-app>
 </template>

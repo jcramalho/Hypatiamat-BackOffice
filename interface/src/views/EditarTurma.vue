@@ -30,13 +30,27 @@
                 :footer-props="footer_props"
                 :search="filtrar"
                 >
+                <template v-slot:item="row">
+                <tr>
+                    <td>
+                        <v-checkbox color="green" v-model="selected" :value="row.item" style="margin:0px;padding:0px"
+                            hide-details />
+                    </td>
+                    <td>{{row.item.numero}}</td>
+                    <td>{{row.item.nome}}</td>
+                    <td>
+                    <!--<v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>-->
+                    <v-icon @click="editarAluno(row.item.id)"> mdi-pencil </v-icon>
+                    </td>
+                </tr>
+                </template>
                 </v-data-table>
         </v-card>
       </v-flex>
       <v-flex xs1>
         <v-container v-if="turma2.length != 0">
           <center>
-            <v-tooltip v-if="this.selected.length>0" top>
+            <v-tooltip v-if="this.selected.length>0 && this.anoLetivoTurma1 <= this.anoLetivoTurma2" top>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   icon
@@ -51,7 +65,7 @@
           </center>
           <br>
           <center>
-            <v-tooltip v-if="this.selected2.length>0" bottom>
+            <v-tooltip v-if="this.selected2.length>0 && this.anoLetivoTurma2 <= this.anoLetivoTurma1" bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   icon
@@ -111,6 +125,20 @@
                 :footer-props="footer_props"
                 :search="filtrar2"
                 >
+                <template v-slot:item="row">
+                <tr>
+                    <td>
+                        <v-checkbox color="green" v-model="selected2" :value="row.item" style="margin:0px;padding:0px"
+                            hide-details />
+                    </td>
+                    <td>{{row.item.numero}}</td>
+                    <td>{{row.item.nome}}</td>
+                    <td>
+                    <!--<v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>-->
+                    <v-icon @click="editarAluno(row.item.id)"> mdi-pencil </v-icon>
+                    </td>
+                </tr>
+                </template>
                 </v-data-table>
         </v-card>        
       </v-flex>
@@ -129,6 +157,7 @@
 <script>
 import axios from "axios"
 const h = require("@/config/hosts").hostAPI
+const anoLetivoAtual = require("@/config/hosts").anoAtual
 
   export default {
     data(){
@@ -142,11 +171,13 @@ const h = require("@/config/hosts").hostAPI
         dialogTransferencia: false,
         header_alunos: [
             {text: "Numero", sortable: true, value: 'numero', class: 'subtitle-1'},
-            {text: "Nome", value: 'nome', class: 'subtitle-1'}
+            {text: "Nome", value: 'nome', class: 'subtitle-1'},
+            {text: "Editar", class: 'subtitle-1'}
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20],
+            "items-per-page-options": [5, 10, 20, -1],
+            "items-per-page-all-text": "Todos"
         },
         token: "",
         turma: {},
@@ -163,7 +194,10 @@ const h = require("@/config/hosts").hostAPI
         escola: "",
         escolaId: "",
         escolaIdOriginal:"",
-        idprofessor2:""
+        idprofessor2:"",
+        anoLetivoTurma2:"21",
+        anoAtual: parseInt(anoLetivoAtual),
+        anoLetivoTurma1:"21"
       }
     },
     created: async function(){
@@ -174,6 +208,7 @@ const h = require("@/config/hosts").hostAPI
         this.idprofessor2 = this.idprofessor
         var response = await axios.get(h + "turmas/" + this.id + "?token=" + this.token)
         this.turma = response.data
+        this.anoLetivoTurma1 = parseInt(this.turma.turma.split("-")[1])
         response = await axios.get(h + "turmas/" + this.turma.turma + "/alunos?codprofessor="+ this.turma.idprofessor + "&token=" + this.token)
         this.alunosTurmaAtual = response.data
         var responseProf = await axios.get(h + "professores/codigos/" + this.idprofessor + "/?token=" + this.token)
@@ -212,11 +247,11 @@ const h = require("@/config/hosts").hostAPI
       },
       onTurmaChange: async function(item){
         if(item != null && this.idprofessor2 != "" && item != ""){
-         console.log("ENTREI")
-         var aux = item.split(" - ")
-         this.turma2 = aux[0]
+         this.anoLetivoTurma2 = parseInt(this.turma2.split("-")[1])
+         this.turma2 = item
          let response = await axios.get(h + "turmas/" + this.turma2 + "/alunos?codprofessor="+ this.idprofessor2 + "&token=" + this.token)
          this.alunosOutraTurma = response.data
+         this.selected2 = []
         }
       }, 
       getTurmas: async function(){
@@ -271,8 +306,10 @@ const h = require("@/config/hosts").hostAPI
       atualizaAlunos: async function(){
         var response = await axios.get(h + "turmas/" + this.turma.turma + "/alunos?codprofessor="+ this.turma.idprofessor + "&token=" + this.token)
         this.alunosTurmaAtual = response.data
+        this.selected = []
         response = await axios.get(h + "turmas/" + this.turma2 + "/alunos?codprofessor="+ this.idprofessor2 + "&token=" + this.token)
         this.alunosOutraTurma = response.data
+        this.selected2 = []
       }
     }
   }

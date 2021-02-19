@@ -1,6 +1,5 @@
 <template>
-  <v-app id="inspire justify-center">
-    <v-main class="grey lighten-3 justify-center" >
+  <v-container>
     <v-card class="justify-center">
         <v-container class="justify-center">
             <v-card-title primary-title class="justify-center green--text">
@@ -33,8 +32,7 @@
 
         </v-container>
     </v-card>
-    </v-main>
-  </v-app> 
+  </v-container>
 </template>
 
 

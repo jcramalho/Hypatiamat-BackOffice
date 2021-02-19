@@ -61,7 +61,7 @@ Aluno.getPassword = function (user){
 
 Aluno.getAlunos = function(){
     return new Promise(function(resolve, reject) {
-        sql.query("Select id, user, numero, nome, datanascimento, escola, turma, email, confirmacao, codprofessor from alunos", function(err, res){
+        sql.query("Select id, user, numero, nome, datanascimento, escola, turma, email, confirmacao, codprofessor from alunos Order by turma desc", function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -295,7 +295,7 @@ Aluno.jogou = async function(typeJogos, user){
 Aluno.apagar = async function(user){
     var apps = await Aluno.getApps(user)
     if(apps.length == 0){
-        var typeJogos = await Jogos.getJogos()
+        var typeJogos = await Jogos.getJogosDB()
         var jogou = await Aluno.jogou(typeJogos, user)
         if(jogou){
             return {removed: false, message: "O aluno já jogou alguns jogos, logo não pode ser removido."}

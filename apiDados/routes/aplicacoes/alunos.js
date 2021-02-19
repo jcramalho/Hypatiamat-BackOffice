@@ -159,7 +159,7 @@ router.put('/turmas/:turma', passport.authenticate('jwt', {session: false}), asy
 
 /* PUT altera a password de um aluno. */
 router.put('/:id/password', passport.authenticate('jwt', {session: false}), function(req, res, next) {
-  Alunos.updateTurma(req.params.id, req.body.password)
+  Alunos.updatePassword(req.params.id, req.body.password)
              .then(dados =>{
                   res.jsonp(dados)
              })

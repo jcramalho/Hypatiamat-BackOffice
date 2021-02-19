@@ -6,7 +6,9 @@
             <v-card-title primary-title class="justify-center green--text">
                 Códigos de Professores
             </v-card-title>
-            <center><v-btn class="white--text" style="background-color: #009263;" @click="criarCodigo()"><v-icon> mdi-account-plus </v-icon> Criar Codigo </v-btn></center>
+            <center><v-btn class="white--text" style="background-color: #009263;" @click="criarCodigo()"><v-icon> mdi-account-plus </v-icon> Criar Código </v-btn></center>
+            <br>
+            <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogGerar = true"><v-icon> mdi-horseshoe </v-icon> Gerar Codigos </v-btn></center>                                         
             <v-text-field
                 v-model="filtrar"
                 label="Filtrar"
@@ -40,9 +42,38 @@
                                         required
                                 ></v-text-field>
                             </v-form>
-                            <v-btn class="white--text" block style="background-color: #009263;" @click="inserirCodigo()">Criar Codigo</v-btn>
+                            <v-btn class="white--text" :disabled="disabled" block style="background-color: #009263;" @click="inserirCodigo()">Criar Código</v-btn>
                         </v-container>
                     </v-card>
+                </v-dialog>
+                <v-dialog v-model="dialogGerar" width="70%">
+                  <v-card class="pa-5">
+                  <v-container >
+                    <center>
+                    <v-form style="width:80%">
+                      <v-text-field color="#009263" type="number"
+                                    v-model="nCodigos" name="Numero de Códigos" :rules="[ruleNCodigos]" label="Número de Códigos" 
+                                        required
+                      ></v-text-field>
+                      <v-btn class="white--text" :disabled="disabledGerar" block style="background-color: #009263;" @click="gerarCodigos()">Gerar Códigos</v-btn>
+                      <br>
+                      <v-btn v-if="!inseridos && codigosGerados.length > 0" class="white--text" block style="background-color: #009263;" @click="inserirCodigos()">Inserir Códigos</v-btn>
+                    </v-form>
+                    </center>
+                    <v-container v-if="loading">
+                      <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
+                    </v-container>
+                    <v-container v-else>
+                      <v-data-table
+                          class="elevation-4"
+                          :headers="header_codigos_gerados"
+                          :items="codigosGerados"
+                          :footer-props="footer_props"
+                      >
+                      </v-data-table>
+                    </v-container>
+                  </v-container>
+                  </v-card>
                 </v-dialog>
         </v-container>
     </v-card>
@@ -62,31 +93,48 @@ const h = require("@/config/hosts").hostAPI
       return {
         token: "",
         novoCodigo: "",
+        inseridos: false,
+        nCodigos:10,
+        loading:false,
         codigos: [],
+        disabled:false,
         dialogCriar: false,
         codigosExistentes: [],
+        dialogGerar: false,
         header_codigos: [
             {text: "Código", sortable: true, value: 'codigo', class: 'subtitle-1'},
             {text: "Operações", class: 'subtitle-1'},
         ],
+        codigosGerados: [],
+        header_codigos_gerados: [
+            {text: "Código", align: 'center', sortable: true, value: 'codigo', class: 'subtitle-1'},
+        ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20, -1],
+            "items-per-page-options": [10, 20, 40, -1],
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
         string15: v =>{
-            if(v.length > 15) return 'Não pode ter mais que 15 caractéres'
+            if(v.length > 11) return 'Não pode ter mais que 11 digitos'
             return true
         },
         existeCodigo: v =>{
-            if(this.codigos.find(e => e.codigo == v)) return 'Código já existente.'
+            if(this.codigos.find(e => e.codigo == v)) { this.disabled = true; return 'Código já existente.'}
+            this.disabled = false
             return true
         },
         number: v  => {
           //if (!v.trim()) return true;
-          if (!isNaN(parseInt(v))) return true;
+          if (!isNaN(parseInt(v))) {this.disabled = false; return true;}
+          this.disabled = true
           return 'Tem que ser um inteiro';
+        },
+        ruleNCodigos: v  => {
+          //if (!v.trim()) return true;
+          if (!isNaN(parseInt(v)) && v > 0 && v <= 1000) {this.disabledGerar = false; return true;}
+          this.disabledGerar = true
+          return 'Tem que ser um inteiro (Compreendido entre 1 e 1000)';
         } 
       }
     },
@@ -131,6 +179,25 @@ const h = require("@/config/hosts").hostAPI
                     this.codigos = response.data
                     this.novoCodigo = ""     
                })
+      },
+      gerarCodigos: async function(){
+        this.loading = true
+        var auxCodigos = []
+        var random = Math.floor(Math.random() * (10000 - 1000) ) + 1000
+        var j = 0
+        for(var i = 0; i < this.nCodigos;){
+          var newCodigo = random + j
+          if(this.codigos.find(e => e.codigo == newCodigo)){
+            j++
+          }
+          else{
+            auxCodigos.push({codigo: newCodigo})
+            i++
+            j++
+          }
+        }
+        this.codigosGerados = auxCodigos
+        this.loading = false
       }
     }
   }

@@ -23,6 +23,15 @@ router.get('/codigos', function(req, res, next) {
              .catch(erro => res.status(500).jsonp(erro))
 });
 
+/* GET todos os códigos de professores. */
+router.get('/naoconfirmados', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  Professores.getProfessoresNaoConfirmados()
+             .then(dados =>{
+               res.jsonp(dados)
+             })
+             .catch(erro => res.status(500).jsonp(erro))
+});
+
 /* GET Informação de um professor através do seu id. */
 router.get('/:id', passport.authenticate('jwt', {session: false}), function(req, res, next) {
   Professores.getProfessorById(req.params.id)

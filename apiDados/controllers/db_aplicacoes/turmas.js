@@ -165,7 +165,7 @@ Turma.getJogosFromTurma  = function (dataInicio, dataFim, jogoTipo, tableJogo, t
 }
 
 Turma.getAllJogosTurma = async function(dataInicio, dataFim, turma, escola){
-    var jogos = await Jogos.getJogos()
+    var jogos = await Jogos.getJogosDB()
     console.log("deu")
     var res = await Turma.getJogosFromTurma(dataInicio, dataFim, jogos[0].tipo, jogos[0].jogotable, turma, escola)
     console.log("deu")
@@ -224,7 +224,7 @@ Turma.jogou = async function(jogoTable, jogoTipo, turma, escola){
 }
 
 Turma.getJogos = async function(turma, escola){
-    var jogos = await Jogos.getJogos()
+    var jogos = await Jogos.getJogosDB()
     var result = []
     for(var i = 0; i < jogos.length; i++){
         var turmaJogou = await Turma.jogou(jogos[i].jogotable, jogos[i].tipo, turma, escola)
