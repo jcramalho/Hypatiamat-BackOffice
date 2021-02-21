@@ -40,7 +40,7 @@
                     <td>{{row.item.nome}}</td>
                     <td>
                     <!--<v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>-->
-                    <v-icon @click="editarAluno(row.item.id)"> mdi-pencil </v-icon>
+                    <v-icon @click="dialogEditar1 = true; idEditar1=row.item.id"> mdi-pencil </v-icon>
                     </td>
                 </tr>
                 </template>
@@ -135,7 +135,7 @@
                     <td>{{row.item.nome}}</td>
                     <td>
                     <!--<v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>-->
-                    <v-icon @click="editarAluno(row.item.id)"> mdi-pencil </v-icon>
+                    <v-icon @click="dialogEditar2 = true; idEditar2=row.item.id"> mdi-pencil </v-icon>
                     </td>
                 </tr>
                 </template>
@@ -144,7 +144,17 @@
       </v-flex>
     </v-layout>
 
+            <v-dialog v-model="dialogEditar1" width="85%">
+              <v-card>
+              <EditarAluno v-if="dialogEditar1" @alteracao="atualizaAlunos1()" :idProp="idEditar1"/>
+              </v-card>
+            </v-dialog>
 
+            <v-dialog v-model="dialogEditar2" width="85%">
+              <v-card>
+              <EditarAluno v-if="dialogEditar2" @alteracao="atualizaAlunos2()" :idProp="idEditar2"/>
+              </v-card>
+            </v-dialog>
         
         </v-container>
     </v-card>
@@ -156,10 +166,15 @@
 
 <script>
 import axios from "axios"
+import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
 const anoLetivoAtual = require("@/config/hosts").anoAtual
+import EditarAluno from '@/components/EditarAluno.vue'
 
   export default {
+    components:{
+         EditarAluno
+    },
     data(){
       return {
         selected:[],
@@ -197,7 +212,11 @@ const anoLetivoAtual = require("@/config/hosts").anoAtual
         idprofessor2:"",
         anoLetivoTurma2:"21",
         anoAtual: parseInt(anoLetivoAtual),
-        anoLetivoTurma1:"21"
+        anoLetivoTurma1:"21", 
+        dialogEditar1: false, 
+        idEditar1:0,
+        dialogEditar2: false,
+        idEditar2:0
       }
     },
     created: async function(){
@@ -280,28 +299,48 @@ const anoLetivoAtual = require("@/config/hosts").anoAtual
         }
       },
       alteraTurma: async function(){
-        var body = {
-                codprofessor: this.turma.idprofessor, 
-                turmaOld: this.turma.turma,
-                alunos: this.selected, 
-                codprofessorNovo: this.idprofessor2,
-                codescola: this.escolaId
+        Swal.fire({
+          title: 'Tem a certeza que pretende transferir os alunos selecionados da turma ' + this.turma.turma + ' para a turma '+ this.turma2 +  '?',
+          showDenyButton: true,
+          confirmButtonColor: '#009263',
+          confirmButtonText: `Sim`,
+          denyButtonText: `Não`,
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            var body = {
+                    codprofessor: this.turma.idprofessor, 
+                    turmaOld: this.turma.turma,
+                    alunos: this.selected, 
+                    codprofessorNovo: this.idprofessor2,
+                    codescola: this.escolaId
+              }
+              await axios.put(h + "alunos/turmas/" + this.turma2 + "?token=" + this.token, body)
+              this.selected = []
+              this.atualizaAlunos()
           }
-          await axios.put(h + "alunos/turmas/" + this.turma2 + "?token=" + this.token, body)
-          this.selected = []
-          this.atualizaAlunos()
+        })
       },
       alteraTurma2: async function(){
-        var body = {
-                codprofessor: this.idprofessor2, 
-                turmaOld: this.turma2,
-                codprofessorNovo: this.turma.idprofessor,
-                alunos: this.selected2, 
-                codescola: this.escolaIdOriginal
+        Swal.fire({
+          title: 'Tem a certeza que pretende transferir os alunos selecionados da turma ' + this.turma2 + ' para a turma '+ this.turma.turma +  '?',
+          showDenyButton: true,
+          confirmButtonColor: '#009263',
+          confirmButtonText: `Sim`,
+          denyButtonText: `Não`,
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            var body = {
+                    codprofessor: this.idprofessor2, 
+                    turmaOld: this.turma2,
+                    codprofessorNovo: this.turma.idprofessor,
+                    alunos: this.selected2, 
+                    codescola: this.escolaIdOriginal
+              }
+              await axios.put(h + "alunos/turmas/" + this.turma.turma + "?token=" + this.token, body)
+              this.selected2 = []
+              this.atualizaAlunos()
           }
-          await axios.put(h + "alunos/turmas/" + this.turma.turma + "?token=" + this.token, body)
-          this.selected2 = []
-          this.atualizaAlunos()
+        })
       },
       atualizaAlunos: async function(){
         var response = await axios.get(h + "turmas/" + this.turma.turma + "/alunos?codprofessor="+ this.turma.idprofessor + "&token=" + this.token)
@@ -309,6 +348,24 @@ const anoLetivoAtual = require("@/config/hosts").anoAtual
         this.selected = []
         response = await axios.get(h + "turmas/" + this.turma2 + "/alunos?codprofessor="+ this.idprofessor2 + "&token=" + this.token)
         this.alunosOutraTurma = response.data
+        this.selected2 = []
+      },
+      atualizaAlunos1: async function(){
+        
+        var response = await axios.get(h + "alunos/" + this.idEditar1 + "/?token=" + this.token)
+        var al = this.alunosTurmaAtual.find(a => a.id == this.idEditar1) 
+        this.dialogEditar1 = false
+        var index = this.alunosTurmaAtual.indexOf(al)
+        this.alunosTurmaAtual.splice(index, 1, response.data)
+        this.selected = []
+      },
+      atualizaAlunos2: async function(){
+        
+        var response = await axios.get(h + "alunos/" + this.idEditar2 + "/?token=" + this.token)
+        var al = this.alunosOutraTurma.find(a => a.id == this.idEditar2) 
+        this.dialogEditar2 = false
+        var index = this.alunosOutraTurma.indexOf(al)
+        this.alunosOutraTurma.splice(index, 1, response.data)
         this.selected2 = []
       }
     }

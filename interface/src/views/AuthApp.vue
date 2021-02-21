@@ -10,7 +10,8 @@
       lg="1"
       xl="1"
     >-->
-    <Navbar @refreshLogout="refreshLogout"/>
+    <Navbar @refreshLogout="refreshLogout" @miniEvent="(value)=>{this.mini=value}"/>
+
     <!--</v-col>-->
     
     <!--
@@ -23,8 +24,11 @@
       lg="11"
       xl="11"
     >-->
-  <v-container>
-      <router-view/>
+  <v-container v-if="mobile" >
+      <router-view v-if="mobile" />
+  </v-container>
+  <v-container v-else class="grey lighten-3">
+    
   </v-container>
     <!--</v-col>
     
@@ -43,8 +47,16 @@ export default {
   },
   data(){
       return {
-      color: "#FF0000"
+      color: "#FF0000",
+      mini:true,
+      miniVariant: false,
     }
+  },
+  computed: {
+    mobile() {
+      if (this.$vuetify.breakpoint.xs) return this.mini
+      return true
+    },
   },
   methods:{
     refreshLogout : function(){

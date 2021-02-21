@@ -1,24 +1,24 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card class="pa-5">
+    <v-card class="ma-auto">
         <v-container>
             <v-card-title primary-title class="justify-center green--text">
                 Monotorização de Jogos do professor ({{this.idprofessor}})
             </v-card-title>
             <v-layout row class="text-xs-center pa-lg-4" justify-center align-center>
-                <v-flex xs3 v-if="alunos.length>0">
+                <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4" v-if="alunos.length>0">
                     <center><v-btn class="white--text" style="background-color: #009263;" @click="estatisticasGlobais()"> <v-icon> mdi-home-analytics </v-icon> Estatísticas Globais </v-btn></center>
-                </v-flex>
-                <v-flex xs3 v-if="alunos.length>0">
+                </v-col>
+                <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4" v-if="alunos.length>0">
                     <center><v-btn class="white--text" style="background-color: #009263;" @click="verGrafico()"> <v-icon> mdi-chart-bar-stacked </v-icon> Visualizar Gráfico </v-btn></center>
-                </v-flex>
-                <v-flex xs3 v-if="alunos.length>0">
+                </v-col>
+                <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4" v-if="alunos.length>0">
                     <center><v-btn class="white--text" style="background-color: #009263;" @click="exportPDF()"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn></center>
-                </v-flex>
+                </v-col>
             </v-layout>
-            <v-layout row class="text-xs-center pa-lg-4" justify-center align-center>
-                <v-flex xs3>
+            <v-layout row class="text-xs-center" justify-center align-center>
+                <v-col cols="12" xs="12"  sm="12" md="3" lg="3" xl="3">
                     <v-combobox
                         id="turmas"
                         v-model="turmaSel"
@@ -45,17 +45,17 @@
                         @change="onAnoChange"
                     ></v-combobox>
                     <v-layout row class="text-xs-center" justify-center align-center>
-                        <v-flex xs6>
+                        <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="6">
                         <v-text-field @change="onDataInChange" v-model="dataInicio" label="Data Inicio" type="date" :format="format" required></v-text-field>
-                        </v-flex>
-                        <v-flex xs6>
+                        </v-col>
+                        <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="6">
                             <v-text-field @change="onDataFimChange" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
-                        </v-flex>
+                        </v-col>
                     </v-layout>
-                </v-flex>
-                <v-flex xs1>
-                </v-flex>
-                <v-flex xs8>
+                </v-col>
+                <v-col cols="12" xs="12" sm="12" md="1" lg="1" xl="1">
+                </v-col>
+                <v-col cols="12" xs="12" sm="12" md="8" lg="8" xl="8" >
                     <v-container v-if="loading">
                         <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
                     </v-container>
@@ -71,7 +71,7 @@
                     </v-data-table>
                     </div>
                     </v-container>
-                </v-flex>
+                </v-col>
             </v-layout>
             <v-dialog
                 v-model="dialogEstatisticas"
@@ -321,8 +321,8 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         headersJogo:[
             {text: "Nº", value: 'numero', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
-            {text: "Max", value: 'max', class: 'subtitle-1'},
-            {text: "Min", value: 'min', class: 'subtitle-1'},
+            {text: "Max", value: 'maximo', class: 'subtitle-1'},
+            {text: "Min", value: 'minimo', class: 'subtitle-1'},
             {text: "Média", value: 'media', class: 'subtitle-1'},
             {text: "#", value: 'count', class: 'subtitle-1'},
         ],
@@ -431,7 +431,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           }
       },
       onJogoChange: async function(item){
-          if(this.jogos.find(element => element.jogo == this.jogo)){
+          if(this.jogos.find(element => element == this.jogo)){
               this.atualizaConteudo()
           }
       },

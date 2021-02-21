@@ -67,7 +67,7 @@ import Swal from 'sweetalert2'
 const host = require("@/config/hosts").host
 export default {
   props:[
-    'logged'
+    'logged',
   ],
   data () {
     return {
@@ -91,6 +91,12 @@ export default {
       idUtilizador:"",
       nomeUtilizador:"",
       nome:""
+    }
+  },
+  watch: {
+    mini: function(){
+      //console.log(this.mini)
+      this.$emit("miniEvent", this.mini)
     }
   },
   created: async function(){
@@ -185,6 +191,9 @@ export default {
       } else {
       return true
       }
+    },
+    navBarAberta: function(){
+
     }
   }
 }

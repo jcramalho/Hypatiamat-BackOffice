@@ -131,6 +131,21 @@ Turma.getTurmaByNomeProfessor = function (turma, codprofessor) {
     })
 }
 
+Turma.getTurmaByNomeEscola = function (turma, escola) {
+    return new Promise(function(resolve, reject) {
+        sql.query("Select t.* from (select * from turmas where turma=?) t, (select * from professores where escola=?) p where p.codigo = t.idprofessor", [turma, escola], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if(res.length!=0) resolve(res[0])
+                else resolve(undefined)
+            }
+        })
+    })
+}
+
 Turma.getTurmasByEscola = function (escola){
     return new Promise(function(resolve, reject) {
         sql.query(`SELECT t.* FROM ${bdAplicacoes}.turmas t, ${bdAplicacoes}.professores p where p.codigo=t.idprofessor and p.escola = ? ;`, escola, function(err, res){

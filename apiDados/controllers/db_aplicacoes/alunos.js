@@ -139,7 +139,7 @@ Aluno.getJogosGlobalFromAluno  = function (dataInicio, dataFim, jogoTipo, tableJ
 
 Aluno.getAlunoByUser = function(user){
     return new Promise(function(resolve, reject) {
-        sql.query("Select id, user, numero, nome, datanascimento, escola, turma, email, confirmacao from alunos where user=?", user, function(err, res){
+        sql.query("Select id, user, numero, nome, datanascimento, escola, turma, email, codprofessor, pais, confirmacao from alunos where user=?", user, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

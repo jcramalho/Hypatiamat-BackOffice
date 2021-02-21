@@ -25,14 +25,14 @@
               <v-form>
               <v-row>
                 <v-col cols="12">
-              <v-text-field prepend-icon="mdi-account" color="#009263" v-model="user" name="Username" label="Username" type="text" ></v-text-field>
+              <v-text-field prepend-icon="mdi-account" v-on:keyup.enter="login" color="#009263" v-model="user" name="Username" label="Username" type="text" ></v-text-field>
                 </v-col>
               </v-row>
               <v-row>
               <v-col class="d-flex" xs="12" sm="12" md="12" lg="12" xl="12">
-              <v-text-field v-if="showPassword" color="#009263" prepend-icon="mdi-key" v-model="password" name="Password" label="Password" type="text"></v-text-field>
-              <v-text-field v-else color="#009263" prepend-icon="mdi-key" v-model="password" name="Password" label="Password" type="password"></v-text-field>
-              <v-icon class="pl-2" v-if="showPassword" color="#009263" @click="showPassword=!showPassword">mdi-eye-off</v-icon>
+              <v-text-field v-if="showPassword" v-on:keyup.enter="login" color="#009263" prepend-icon="mdi-key" v-model="password" name="Password" label="Password" type="text"></v-text-field>
+              <v-text-field v-else color="#009263" v-on:keyup.enter="login" prepend-icon="mdi-key" v-model="password" name="Password" label="Password" type="password"></v-text-field>
+              <v-icon class="pl-2" v-if="showPassword"  color="#009263" @click="showPassword=!showPassword">mdi-eye-off</v-icon>
               <v-icon class="pl-2" v-else color="#009263" @click="showPassword=!showPassword">mdi-eye</v-icon>
               </v-col>
               </v-row>

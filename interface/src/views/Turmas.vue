@@ -127,21 +127,27 @@ const h = require("@/config/hosts").hostAPI
           this.$router.push({name: "Editar Turma", params: { turma : idTurma, idprofessor: idprofessor } })
       },
       apagarTurma: async function(turma, codprofessor){
-          if(confirm("De certeza que deseja apagar esta turma?")){
-              var resDelete = await axios.delete(h + "turmas/" + turma + "?codprofessor=" + codprofessor + "&token=" + this.token)
-              var apagado = resDelete.data
-              if(apagado.removed){
-                var response = await axios.get(h + "turmas?token=" + this.token)
-                this.turmas = response.data
-              }
-              else{
-                Swal.fire({
-                  icon: 'error',
-                  text: apagado.message,
-                  confirmButtonColor: '#009263'
-                })
-              }
-          }
+          Swal.fire({
+                title: 'De certeza que deseja eliminar esta turma?',
+                showDenyButton: true,
+                confirmButtonColor: '#009263',
+                confirmButtonText: `Sim`,
+                denyButtonText: `Não`,
+              }).then(async (result) => {
+                    if (result.isConfirmed) {
+                      var resDelete = await axios.delete(h + "turmas/" + turma + "?codprofessor=" + codprofessor + "&token=" + this.token)
+                      var apagado = resDelete.data
+                      if(apagado.removed){
+                        this.getTurmas()
+                      }
+                      else{
+                        Swal.fire({
+                          icon: 'error',
+                          text: apagado.message,
+                          confirmButtonColor: '#009263'
+                        })
+                      }
+                    }})
       }
     }
   }

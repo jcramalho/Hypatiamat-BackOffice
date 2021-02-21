@@ -7,6 +7,7 @@ var fastcsv = require('fast-csv')
 var CSV = require('csv-string');
 var multer = require('multer')
 var upload = multer({dest: 'uploads/'})
+var verifyToken = require('../../config/verifyToken')
 
 var Alunos = require('../../controllers/db_aplicacoes/alunos');
 var Professores = require('../../controllers/db_aplicacoes/professor');
@@ -33,7 +34,7 @@ async function verifyAluno(aluno){
   }
 }
 
-router.get('/', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
     Alunos.getAlunos()
                .then(dados =>{
                  res.jsonp(dados)
@@ -50,7 +51,7 @@ router.get('/codigos', function(req, res, next) {
 });
 
 /* GET devolve a informação de um aluno. */
-router.get('/:id', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/:id', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno(), function(req, res, next) {
     Alunos.getAluno(req.params.id)
                .then(dados =>{
                  res.jsonp(dados)
@@ -59,7 +60,7 @@ router.get('/:id', passport.authenticate('jwt', {session: false}), function(req,
 });
 
 /* GET devolve todos os registos de um jogo de um aluno. */
-router.get('/:user/jogos/:jogoTable', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/:user/jogos/:jogoTable', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2(), function(req, res, next) {
   Alunos.getJogosFromAluno(req.query.dataInicio, req.query.dataFim, req.query.jogoTipo, req.params.jogoTable, req.params.user)
              .then(dados =>{
                res.jsonp(dados)
@@ -68,7 +69,7 @@ router.get('/:user/jogos/:jogoTable', passport.authenticate('jwt', {session: fal
 });
 
 /* GET devolve as estatisticas gerais de um jogo de um aluno. */
-router.get('/:user/jogosGlobal/:jogoTable', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/:user/jogosGlobal/:jogoTable', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2(), function(req, res, next) {
   Alunos.getJogosGlobalFromAluno(req.query.dataInicio, req.query.dataFim, req.query.jogoTipo, req.params.jogoTable, req.params.user)
              .then(dados =>{
                res.jsonp(dados)
@@ -77,7 +78,7 @@ router.get('/:user/jogosGlobal/:jogoTable', passport.authenticate('jwt', {sessio
 });
 
 /* PUT altera a informação de um aluno. */
-router.put('/:id', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.put('/:id', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno(), function(req, res, next) {
     Alunos.updateAluno(req.params.id, req.body)
                .then(dados =>{
                  res.jsonp(dados)
@@ -87,7 +88,7 @@ router.put('/:id', passport.authenticate('jwt', {session: false}), function(req,
 
 
 /* PUT altera a escola de um aluno. */
-router.put('/:id/escola', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.put('/:id/escola', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno(), function(req, res, next) {
   Alunos.updateTurma(req.params.id, req.body.turma)
              .then(dados =>{
                   //TurmaOld.insertTurmaOld()
@@ -97,7 +98,7 @@ router.put('/:id/escola', passport.authenticate('jwt', {session: false}), functi
 });
 
 /* PUT altera a turma de uma lista de alunos. */
-router.put('/turmas/:turma', passport.authenticate('jwt', {session: false}), async function(req, res, next) {
+router.put('/turmas/:turma', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor(), async function(req, res, next) {
     var alunos = req.body.alunos;
     
     var codTurmaOld = req.body.turmaOld;
@@ -158,7 +159,7 @@ router.put('/turmas/:turma', passport.authenticate('jwt', {session: false}), asy
 });
 
 /* PUT altera a password de um aluno. */
-router.put('/:id/password', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.put('/:id/password', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno(), function(req, res, next) {
   Alunos.updatePassword(req.params.id, req.body.password)
              .then(dados =>{
                   res.jsonp(dados)
@@ -176,7 +177,7 @@ router.post('/', function(req, res, next) {
 });
 
 /* POST insere um csv de alunos. */
-router.post('/csv', passport.authenticate('jwt', {session: false}), upload.single('ficheiro'), function(req, res, next) {
+router.post('/csv', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), upload.single('ficheiro'),  function(req, res, next) {
     let path = __dirname + '/../../'+req.file.path    
     let alunos = []
     let erros = []
@@ -229,7 +230,7 @@ router.post('/csv', passport.authenticate('jwt', {session: false}), upload.singl
 });
 
 /* DELETE apaga um aluno. */
-router.delete('/:codigo', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.delete('/:codigo', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
     Alunos.apagar(req.params.codigo)
                .then(dados =>{
                  res.jsonp(dados)

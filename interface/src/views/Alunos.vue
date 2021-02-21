@@ -65,7 +65,9 @@
             
             </v-container>
             <v-dialog v-model="dialogEditar" width="85%">
-              <EditarAluno v-if="dialogEditar" :idProp="idEditar"/>
+              <v-card>
+              <EditarAluno v-if="dialogEditar" @alteracao="atualizaAlunos()" :idProp="idEditar"/>
+              </v-card>
             </v-dialog>
         </v-container>
     </v-card>
@@ -91,6 +93,7 @@ const h = require("@/config/hosts").hostAPI
       return {
         token: "",
         alunos: [],
+        page:1,
         csvDialog:false,
         dialogEditar: false,
          header_alunos: [
@@ -107,9 +110,10 @@ const h = require("@/config/hosts").hostAPI
         },
         filtrar : "",
         ready:false,
-        escolas:[],
+        escolas:["Todos"],
         escolasIds:[],
-        escola:"",
+        escola:"Todos",
+        escolaAnterior:"Todos",
         file:{},
         idEditar:-1
       }
@@ -177,18 +181,24 @@ const h = require("@/config/hosts").hostAPI
       },
       editarAluno : function(id){
           //this.$router.push({name: "Editar Aluno", params: { id : id } })
-          console.log("Abrir Editar Aluno")
           this.idEditar = id
           this.dialogEditar = true
       },
       getAlunos : async function(){
-        this.ready = false
-        var aux = this.escola.split(" - ")
-        var escolaEscolhida = this.escolasIds.find(element => element.nome == aux[1]).cod
-        var response = await axios.get(h + "escolas/" + escolaEscolhida + "/alunos?token=" + this.token )
-        console.log(response.data)
-        this.alunos = response.data
-        this.ready = true
+        if(this.escola){
+          this.ready = false
+          if(this.escola == "Todos"){
+            var response = await axios.get(h + "alunos/?token=" + this.token)
+          } 
+          else{
+            var aux = this.escola.split(" - ")
+            var escolaEscolhida = this.escolasIds.find(element => element.nome == aux[1]).cod
+            var response = await axios.get(h + "escolas/" + escolaEscolhida + "/alunos?token=" + this.token )
+          }
+          //if(this.escola != this.escolaAnterior) this.page = 1
+          this.alunos = response.data
+          this.ready = true
+        }
       },
       apagarAluno: async function(id){
         Swal.fire({
@@ -218,6 +228,13 @@ const h = require("@/config/hosts").hostAPI
       },
       criarAluno: async function(){
         this.$router.push({name: "Criar Aluno"})
+      },
+      atualizaAlunos: async function(){
+        this.dialogEditar = false
+        var response = await axios.get(h + "alunos/" + this.idEditar + "/?token=" + this.token)
+        var al = this.alunos.find(a => a.id == this.idEditar) 
+        var index = this.alunos.indexOf(al)
+        this.alunos.splice(index, 1, response.data)
       }
     }
   }

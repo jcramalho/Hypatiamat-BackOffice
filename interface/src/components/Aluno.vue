@@ -117,25 +117,23 @@ const h = require("@/config/hosts").hostAPI
         this.aluno.nomeType = "Aluno"
     },
     methods: {
-      verTurmas : async function(id){
-          var response = await axios.get(h + "professores/" + this.professor.codigo + "/turmas?token=" + this.token)
-          this.turmas = response.data
-          this.dialogTurmas = true
-      },
-      editarTurma : async function(turma){
-        var id = turma.id
-        if (this.professor.type == 50) this.$router.push({name: "Editar Turma", params: { id : id, minhaTurma:false} })
-        else this.$router.push({name: "Editar Turma", params: { id : id, minhaTurma:true} })
-      },
-      editarProfessor : function(){
-          this.$router.push({name: "Editar Professor", params: {id : this.professor.id}})
+      editarAluno : function(){
+          this.$router.push({name: "Editar Aluno", params: {id : this.professor.id}})
       },
       editarPassword : async function(){
           if(this.password1 != "" && this.password2 != ""){
             if(this.password1 == this.password2){
               if(confirm("Tem a certeza que pretende alterar a sua password?")){
-                await axios.put(h + "professores/" + this.professor.id + "/password", {password: this.password1})
-                this.dialogPassword = false
+                axios.put(h + "alunos/" + this.aluno.id + "/password", {password: this.password1})
+                     .then(() => {
+                       Swal.fire({
+                          icon: 'error',
+                          text: "As palavra passe de confirmação não coincide com a palavra passe primeiramente definida!",
+                          confirmButtonColor: '#009263'
+                        })
+                        this.dialogPassword = false
+                     })
+                     .catch(erro => console.log(erro))
               }
             }
             else{

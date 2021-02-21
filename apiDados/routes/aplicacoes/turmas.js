@@ -4,9 +4,11 @@ var passport = require('passport')
 
 var Alunos = require('../../controllers/db_aplicacoes/alunos')
 var Turmas = require('../../controllers/db_aplicacoes/turmas')
+var verifyToken = require('../../config/verifyToken')
+
 
 // Todas as turmas
-router.get('/', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
     Turmas.getTurmas()
                .then(dados =>{
                  res.jsonp(dados)
@@ -16,7 +18,7 @@ router.get('/', passport.authenticate('jwt', {session: false}), function(req, re
 
 
 // Todas as turmas de um determinado ano letivo (ano = 20) => (anoletivo = 20/21)
-router.get('/anos/:ano', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/anos/:ano', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
   var anoletivo = req.params.ano + "/" + (parseInt(req.params.ano) + 1)
   
   Turmas.getTurmasFromAnoLetivo(anoletivo)
@@ -27,7 +29,7 @@ router.get('/anos/:ano', passport.authenticate('jwt', {session: false}), functio
 });
 
 // Informação de uma turma
-router.get('/:id', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/:id', passport.authenticate('jwt', {session: false}), verifyToken.verifyTurma(), function(req, res, next) {
     Turmas.getTurmaById(req.params.id)
                .then(dados =>{
                  res.jsonp(dados)
@@ -36,25 +38,28 @@ router.get('/:id', passport.authenticate('jwt', {session: false}), function(req,
   });
 
 // Devolve todos os alunos de uma determinada turma
-router.get('/:turma/alunos', passport.authenticate('jwt', {session: false}), function(req, res){
+router.get('/:turma/alunos', passport.authenticate('jwt', {session: false}), verifyToken.verifyTurma2(), function(req, res){
     var turma = req.params.turma
     var codprofessor = req.query.codprofessor
-    Alunos.getAlunosFromTurma(turma, codprofessor)
-               .then(alunosAtuais =>{
-                /*
-                 TurmasOld.getAlunosFromTurma(turma)
-                          .then(alunosOld =>{
-                            res.jsonp({alunosAtuais : alunosAtuais, alunosOld : alunosOld})
-                          })
-                          .catch(erro => res.status(500).jsonp(erro))
-                */
-                res.jsonp(alunosAtuais)
-               })
-               .catch(erro => res.status(500).jsonp(erro))
+    if(req.query.codprofessor){
+      Alunos.getAlunosFromTurma(turma, codprofessor)
+                .then(alunosAtuais =>{
+                  /*
+                  TurmasOld.getAlunosFromTurma(turma)
+                            .then(alunosOld =>{
+                              res.jsonp({alunosAtuais : alunosAtuais, alunosOld : alunosOld})
+                            })
+                            .catch(erro => res.status(500).jsonp(erro))
+                  */
+                  res.jsonp(alunosAtuais)
+                })
+                .catch(erro => res.status(500).jsonp(erro))
+    }
+    else res.status(400).jsonp(erro)
 })
 
 // Devolve todos os jogos uma determinada turma jogou
-router.get('/:turma/jogos', passport.authenticate('jwt', {session: false}), function(req, res){
+router.get('/:turma/jogos', passport.authenticate('jwt', {session: false}), verifyToken.verifyTurma3(), function(req, res){
   var turma = req.params.turma
   var escola = req.query.escola
   Turmas.getJogos(turma, escola)
@@ -73,7 +78,7 @@ router.get('/:turma/jogos', passport.authenticate('jwt', {session: false}), func
 
 
 // Devolve todos as estatísticas de um jogo de uma turma
-router.get('/:turma/jogos/:tableJogo',  function(req, res){
+router.get('/:turma/jogos/:tableJogo', passport.authenticate('jwt', {session: false}), verifyToken.verifyTurma3(),  function(req, res){
   var turma = req.params.turma
   var tableJogo = req.params.tableJogo
   var dataInicio = req.query.dataInicio
@@ -81,7 +86,6 @@ router.get('/:turma/jogos/:tableJogo',  function(req, res){
   var jogoTipo = req.query.jogoTipo
   var escola = req.query.escola
   if(tableJogo != "Todos"){
-    console.log("Todoos")
     Turmas.getJogosFromTurma(dataInicio, dataFim, jogoTipo, tableJogo, turma, escola)
               .then(alunosAtuais =>{
                 
@@ -101,7 +105,7 @@ router.get('/:turma/jogos/:tableJogo',  function(req, res){
 })
 
 // Devolve todos os resultados de um jogo de uma turma
-router.get('/:turma/jogos/:tableJogo/estatisticasGlobais',  function(req, res){
+router.get('/:turma/jogos/:tableJogo/estatisticasGlobais', verifyToken.verifyTurma3(),  function(req, res){
   var turma = req.params.turma
   var tableJogo = req.params.tableJogo
   var dataInicio = req.query.dataInicio
@@ -117,7 +121,7 @@ router.get('/:turma/jogos/:tableJogo/estatisticasGlobais',  function(req, res){
 })
 
 //Insere uma nova turma
-router.post('/', passport.authenticate('jwt', {session: false}), function(req, res){
+router.post('/', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor2(), function(req, res){
     Turmas.insertTurma(req.body)
                .then(dados =>{
                  res.jsonp(dados)
@@ -126,7 +130,7 @@ router.post('/', passport.authenticate('jwt', {session: false}), function(req, r
 })
 
 //Altera uma turma
-router.put('/:id', passport.authenticate('jwt', {session: false}), function(req, res){
+router.put('/:id', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res){
   Turmas.updateTurma(req.params.id, req.body)
              .then(dados =>{
                res.jsonp(dados)
@@ -136,7 +140,7 @@ router.put('/:id', passport.authenticate('jwt', {session: false}), function(req,
 
 
 // Apaga uma determinado turma
-router.delete('/:id', passport.authenticate('jwt', {session: false}), function(req, res){
+router.delete('/:id', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res){
     Turmas.apagar(req.params.id, req.query.codprofessor)
                .then(dados =>{
                  res.jsonp(dados)

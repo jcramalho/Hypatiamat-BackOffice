@@ -100,6 +100,7 @@ const h = require("@/config/hosts").hostAPI
                   confirmButtonColor: '#009263'
                 })
                  this.aluno.datanascimento = formatada
+                 this.$emit("alteracao")
                })
                .catch(error => Swal.fire({
                   icon: 'error',
@@ -118,24 +119,32 @@ const h = require("@/config/hosts").hostAPI
       editarPassword : async function(){
           if(this.password1 != "" && this.password2 != ""){
             if(this.password1 == this.password2){
-              if(confirm("Tem a certeza que pretende alterar a sua password?")){
-                await axios.put(h + "alunos/" + this.aluno.id + "/password/?token="+this.token, {password: this.password1})
-                           .then(() => {
-                             Swal.fire({
-                                icon: 'success',
-                                text: "Password alterada com sucesso.",
-                                confirmButtonColor: '#009263'
+              Swal.fire({
+                title: 'De certeza que deseja alterar a password deste aluno?',
+                showDenyButton: true,
+                confirmButtonColor: '#009263',
+                confirmButtonText: `Sim`,
+                denyButtonText: `Não`,
+              }).then(async (result) => {
+                    if (result.isConfirmed) {
+                      await axios.put(h + "alunos/" + this.aluno.id + "/password/?token="+this.token, {password: this.password1})
+                              .then(() => {
+                                Swal.fire({
+                                    icon: 'success',
+                                    text: "Password alterada com sucesso.",
+                                    confirmButtonColor: '#009263'
+                                  })
                               })
-                           })
-                           .catch(() => {
-                             Swal.fire({
-                              icon: 'error',
-                              text: "Não foi possível guardar a nova password.",
-                              confirmButtonColor: '#009263'
-                            })
-                           })
-                this.dialogPassword = false
-              }
+                              .catch(() => {
+                                Swal.fire({
+                                  icon: 'error',
+                                  text: "Não foi possível guardar a nova password.",
+                                  confirmButtonColor: '#009263'
+                                })
+                              })
+                      this.dialogPassword = false
+                    }
+                  })
             }
             else{
               this.password2 = ""
