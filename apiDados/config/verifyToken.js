@@ -169,10 +169,7 @@ module.exports.verifyTurma3 = function(){
         else if(u.type == 40 && u.escola == escola) next()
         // municipio
         else if (u.type == 30 && u.escolas.find(esc => esc.cod == escola)) next()
-        else res.status(403).jsonp("Não tem permissão.")
-            
-            
-            
+        else res.status(403).jsonp("Não tem permissão.") 
         
     }
 }

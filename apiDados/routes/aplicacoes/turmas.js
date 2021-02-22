@@ -62,15 +62,10 @@ router.get('/:turma/alunos', passport.authenticate('jwt', {session: false}), ver
 router.get('/:turma/jogos', passport.authenticate('jwt', {session: false}), verifyToken.verifyTurma3(), function(req, res){
   var turma = req.params.turma
   var escola = req.query.escola
-  Turmas.getJogos(turma, escola)
+  var dataInicio = req.query.dataInicio
+  var dataFim = req.query.dataFim
+  Turmas.getJogos(turma, escola, dataInicio, dataFim)
              .then(jogos =>{
-              /*
-               TurmasOld.getAlunosFromTurma(turma)
-                        .then(alunosOld =>{
-                          res.jsonp({alunosAtuais : alunosAtuais, alunosOld : alunosOld})
-                        })
-                        .catch(erro => res.status(500).jsonp(erro))
-              */
               res.jsonp(jogos)
              })
              .catch(erro => res.status(500).jsonp(erro))
@@ -105,7 +100,7 @@ router.get('/:turma/jogos/:tableJogo', passport.authenticate('jwt', {session: fa
 })
 
 // Devolve todos os resultados de um jogo de uma turma
-router.get('/:turma/jogos/:tableJogo/estatisticasGlobais', verifyToken.verifyTurma3(),  function(req, res){
+router.get('/:turma/jogos/:tableJogo/estatisticasGlobais',passport.authenticate('jwt', {session: false}), verifyToken.verifyTurma3(),  function(req, res){
   var turma = req.params.turma
   var tableJogo = req.params.tableJogo
   var dataInicio = req.query.dataInicio

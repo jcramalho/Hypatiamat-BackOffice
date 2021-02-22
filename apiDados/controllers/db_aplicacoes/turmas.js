@@ -181,9 +181,7 @@ Turma.getJogosFromTurma  = function (dataInicio, dataFim, jogoTipo, tableJogo, t
 
 Turma.getAllJogosTurma = async function(dataInicio, dataFim, turma, escola){
     var jogos = await Jogos.getJogosDB()
-    console.log("deu")
     var res = await Turma.getJogosFromTurma(dataInicio, dataFim, jogos[0].tipo, jogos[0].jogotable, turma, escola)
-    console.log("deu")
     for(var i = 1; i < jogos.length; i++){
         var jogo = await Turma.getJogosFromTurma(dataInicio, dataFim, jogos[i].tipo, jogos[i].jogotable, turma, escola)
         for(var j = 0; j < jogo.length; j++){
@@ -224,9 +222,9 @@ Turma.updateTurma = function(id, turma){
     })
 }
 
-Turma.jogou = async function(jogoTable, jogoTipo, turma, escola){
+Turma.jogou = async function(jogoTable, jogoTipo, turma, escola, dataInicio, dataFim){
     return new Promise(function(resolve, reject) {
-        sqlSAMD.query(`Select idaluno from ${bdSAMD}.${jogoTable} where tipo = ? and turma = ? and idescola = ?`, [jogoTipo, turma, escola], function(err, res){
+        sqlSAMD.query(`Select idaluno from ${bdSAMD}.${jogoTable} where tipo = ? and turma = ? and idescola = ? and (data between ? and ?)`, [jogoTipo, turma, escola, dataInicio, dataFim], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -238,11 +236,49 @@ Turma.jogou = async function(jogoTable, jogoTipo, turma, escola){
     })
 }
 
-Turma.getJogos = async function(turma, escola){
+Turma.jogouCalcRapid = async function(turma, escola, dataInicio, dataFim){
+    return new Promise(function(resolve, reject) {
+        sqlSAMD.query(`Select idaluno from ${bdSAMD}.calcRapidHypatia where turma = ? and idescola = ? and (data between ? and ?)`, [turma, escola, dataInicio, dataFim], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+Turma.jogouCalculus = async function(turma, escola, dataInicio, dataFim){
+    return new Promise(function(resolve, reject) {
+        sqlSAMD.query(`Select user from ${bdSAMD}.minutenew where turma = ? and escola = ? and (data between ? and ?)`, [turma, escola, dataInicio, dataFim], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+Turma.getJogos = async function(turma, escola, dataInicio, dataFim){
     var jogos = await Jogos.getJogosDB()
     var result = []
+    
+    //calcrapid
+    var turmaCalcRapid = await Turma.jogouCalcRapid(turma, escola, dataInicio, dataFim)
+    if(turmaCalcRapid.length > 0) result.push({jogo: 'Calcrapid'})
+    
+    //calculus
+    var turmaCalculus = await Turma.jogouCalculus(turma, escola, dataInicio, dataFim)
+    if(turmaCalculus.length > 0) result.push({jogo: 'Calculus'})
+    console.log('calculus')
+
     for(var i = 0; i < jogos.length; i++){
-        var turmaJogou = await Turma.jogou(jogos[i].jogotable, jogos[i].tipo, turma, escola)
+        var turmaJogou = await Turma.jogou(jogos[i].jogotable, jogos[i].tipo, turma, escola, dataInicio, dataFim)
         if(turmaJogou.length > 0) result.push(jogos[i])
     }
     return result
@@ -250,7 +286,6 @@ Turma.getJogos = async function(turma, escola){
 
 Turma.getEstatisticasFromTurma = async function(dataInicio, dataFim, jogoTipo, tableJogo, turma, escola){
     return new Promise(function(resolve, reject) {
-        console.log("ola")
         sqlSAMD.query(`SELECT min(pontuacao) as min, max(pontuacao) as max, avg(pontuacao) as media, count(pontuacao) as number 
 		FROM ${bdSAMD}.${tableJogo} 
          WHERE turma!='99' AND turma = ? AND tipo=? AND idescola=? and (data BETWEEN ? and ?);`, [turma, jogoTipo, escola, dataInicio, dataFim], function(err, res){

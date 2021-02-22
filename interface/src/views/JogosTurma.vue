@@ -407,9 +407,11 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         return moment(value).format('YYYY-MM-DD')
       },
       onTurmaChange: async function(item){
-          if(this.turmaSel != ""){
+          if(this.turmaSel != "" && this.dataInicio && this.dataFim){
             this.loadingJogos = true
-            var response2 = await axios.get(h + "turmas/" + this.turmaSel + "/jogos?escola=" + this.escola + "&token=" + this.token)
+            var response2 = await axios.get(h + "turmas/" + this.turmaSel + "/jogos?escola=" 
+                                                + this.escola + "&dataInicio=" + this.dataInicio 
+                                                + "&dataFim=" + this.dataFim + "&token=" + this.token)
             this.jogosInfo = response2.data
             this.jogos = ["Todos"]
             this.alunos = []
@@ -427,7 +429,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
              var aux = this.anoLetivo.split("/")
              this.dataInicio = aux[0] + "-09-01"
              this.dataFim = aux[1] + "-09-01"
-             this.atualizaConteudo()
+             this.onTurmaChange()
           }
       },
       onJogoChange: async function(item){
@@ -437,12 +439,12 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       },
       onDataInChange: async function(item){
           if(this.dataInicio){
-              this.atualizaConteudo()
+              this.onTurmaChange()
           }
       },
       onDataFimChange: async function(item){
           if(this.dataFim){
-              this.atualizaConteudo()
+              this.onTurmaChange()
           }
       },
       atualizaConteudo: async function(){

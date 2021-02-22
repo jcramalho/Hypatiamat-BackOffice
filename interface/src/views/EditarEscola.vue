@@ -106,6 +106,7 @@ const h = require("@/config/hosts").hostAPI
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
         ],
         header_alunos: [
+            {text: "Turma", sortable: true, value: 'turma', class: 'subtitle-1'},
             {text: "Username", sortable: true, value: 'user', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
         ],

@@ -47,6 +47,7 @@
                     <td>{{row.item.turma}}</td>
                     <td>{{row.item.anoletivo}}</td>
                     <td>
+                    <v-icon @click="getPassaporte(row.item.turma, row.item.idprofessor)"> mdi-passport </v-icon>
                     <v-icon @click="editarTurma(row.item.id, row.item.idprofessor)"> mdi-pencil </v-icon>
                     <v-icon @click="apagarTurma(row.item.turma, row.item.idprofessor)"> mdi-delete </v-icon>
                     </td>
@@ -65,6 +66,7 @@
 import axios from "axios"
 import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
+import {Passaport} from '../config/passport'
 
   export default {
     data(){
@@ -148,6 +150,9 @@ const h = require("@/config/hosts").hostAPI
                         })
                       }
                     }})
+      },
+      getPassaporte : function(turma, codprofessor){
+        Passaport.getPassaporteTurma( turma, codprofessor, this.escola.split(" - ")[1].split(",")[0] )
       }
     }
   }
