@@ -3,18 +3,28 @@
     <v-row class="text-xs-center pa-lg-16" justify-center align-center  >
       <v-col class="justify-center" cols="12" xs="12" sm="12" md="12" lg="12" xl="3">
       </v-col>
-      <v-col class="justify-center" cols="12" xs="12" sm="12" md="12" lg="6" xl="3" fill-heigth>
+      <v-col class="justify-center" align-self="center" cols="12" xs="12" sm="12" md="6" lg="6" xl="3" fill-heigth>
         <center>
         <v-img 
+          v-if="small"
           src="https://www.hypatiamat.com/imagens/images/backofficeAPP.png"
           lazy-src="https://www.hypatiamat.com/imagens/images/backofficeAPP.png"
           max-height="30%"
-          width="75%"
+          width="60%"
+          >
+        </v-img>
+        <v-img 
+          v-else
+          src="https://www.hypatiamat.com/imagens/images/backofficeAPP.png"
+          lazy-src="https://www.hypatiamat.com/imagens/images/backofficeAPP.png"
+          max-height="15%"
+          width="40%"
           >
         </v-img>
         </center>
       </v-col>
-      <v-col cols="12" xs="12" sm="12" md="12" lg="6" xl="3">
+      <v-col class="justify-center" cols="12" xs="12" sm="12" md="6" lg="6" xl="3">
+        <v-container :v-bind:style="[small ? 'width:60%;' : 'width:10%;']">
         <v-row>
           <v-col cols="12">
           <v-card class="pa-4" style="background-color: #d8dbd7;">
@@ -44,6 +54,7 @@
           </v-card>
           </v-col>     
         </v-row>   
+        </v-container>
       </v-col>
       <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="3">
       </v-col>
@@ -74,6 +85,12 @@ import { ResponsiveDirective } from "vue-responsive-components"
 
   directives: {
     responsive: ResponsiveDirective
+  },
+  computed:{
+    small() {
+      if (this.$vuetify.breakpoint.sm) return true
+      return false
+    },
   },
     methods: {
       login: async function () {

@@ -371,7 +371,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           return true
       },
       atualizaConteudo: async function(){
-          if(this.jogo != "" && this.dataFim != "" && this.dataInicio != ""){
+          if(this.jogo && this.jogo != "" && this.dataFim != "" && this.dataInicio != ""){
               this.loading = true
               if(this.jogo == "Todos"){
                   this.headers = this.headersTodos
@@ -421,6 +421,12 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         doc.setFontSize(11)
         doc.text("Jogo: " + this.jogo, 15, 50)
         doc.text("Período: " + this.dataInicio + " a " + this.dataFim, 130, 50)
+        doc.text("Tipos de Operações realizadas:", 15, 56)
+        ytotal = 56;
+        for(var i = 0; i < this.tiposCalc.length; i++){
+            ytotal += 4
+            doc.text(this.tiposCalc[i], 15, ytotal);
+        }
         var listaRes = []
         var header = [['Agrupamento de Escolas', 'P.Certa', "P.Errada", "#Operações", "#"]]
         var jogo = this.jogo
@@ -441,7 +447,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             head: header,
             body: listaRes,
             headStyles: { fillColor: [0, 146, 99] },
-            margin:{top: 65, bottom:30},
+            margin:{top: ytotal+6, bottom:30},
             didDrawPage: function (data) {
                     data.settings.margin.top = 10;
                     ytotal = doc.internal.pageSize.getHeight()
@@ -458,8 +464,72 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
 
         doc.save(pdfName)
       },
+      exportPDFCalculus: async function(){
+          var doc = new jsPDF({
+        })
+        var xImage = doc.internal.pageSize.getWidth() / 4
+        var ytotal = 0
+        var pdfName = this.jogo + "-" + this.municipioAtual + ".pdf"
+        doc.addImage(hypatiaImg, 'PNG', xImage, 4);
+        //doc.text("Jogo:")
+        //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
+        doc.setFontSize(11)
+        doc.text("Jogo: " + this.jogo, 15, 50)
+        doc.text("Período: " + this.dataInicio + " a " + this.dataFim, 130, 50)
+        doc.text("Tipos de Operações:", 15, 56)
+        var ytotal1 = 56
+        for(var i = 0; i < this.tiposCalculusSel.length; i++){
+            ytotal1 += 4
+            doc.text(this.tiposCalculusSel[i], 15, ytotal1)
+        }
+        doc.text("Níveis Selecionados:", 130, 56)
+        var ytotal2 = 56
+        for(var i = 0; i < this.niveisSel.length; i++){
+            ytotal2 +=4
+            doc.text("- Nível " + this.niveisSel[i], 130, ytotal2)
+        }
+        if(ytotal2 > ytotal1) ytotal = ytotal2;
+        else ytotal = ytotal1
+        var listaRes = []
+        var header = [['Agrupamento de Escolas', 'N.Certas', "N.Erradas", "T.Pontos", "#"]]
+        var jogo = this.jogo
+        
+        //var auxTotal = ['Todos', -1, this.items[0].min, 0, 0]
+        for(var i = 0; i<this.items.length; i++){
+            var aux = [];
+            aux.push(this.items[i].nome)
+            aux.push(this.items[i].numcertas)
+            aux.push(this.items[i].numerradas)
+            aux.push(this.items[i].pontos)
+            aux.push(this.items[i].frequencia)
+            listaRes.push(aux)
+        }
+        //auxTotal[3] = (auxTotal[3]/(this.items.length)).toFixed(0)
+        //listaRes.push(auxTotal)
+        doc.autoTable({
+            head: header,
+            body: listaRes,
+            headStyles: { fillColor: [0, 146, 99] },
+            margin:{top: ytotal+6, bottom:30},
+            didDrawPage: function (data) {
+                    data.settings.margin.top = 10;
+                    ytotal = doc.internal.pageSize.getHeight()
+                    doc.setFontSize(8)
+                    //doc.setFontType('bold'
+                    doc.text("Legenda:" , 10, ytotal -22)
+                    doc.text("N.Certas - Total de Operações certas", 10, ytotal-18)
+                    doc.text("N.Erradas - Total de Operações erradas", 10, ytotal-14)
+                    doc.text("T.Pontos - Total de Pontos obtidos", 10, ytotal-10)
+                    doc.text("# - Frequência", 10, ytotal-6)
+                },
+        })
+        
+
+        doc.save(pdfName)
+      },
       exportPDF: async function(){
         if(this.jogo == "Calcrapid") {this.exportPDFCalcRapid(); return;}
+        else if(this.jogo == "Calculus") {this.exportPDFCalculus(); return;}
         var doc = new jsPDF({
         })
         var xImage = doc.internal.pageSize.getWidth() / 4

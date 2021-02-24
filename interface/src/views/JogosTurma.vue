@@ -37,6 +37,39 @@
                         @change="onJogoChange"
                     ></v-combobox>
                     <v-combobox
+                        id="tiposCalcRapid"
+                        chips
+                        v-if="jogo=='Calcrapid' && !loadingJogos"
+                        v-model="tiposCalc"
+                        label="Tipo de Operação"
+                        color="green"
+                        :multiple="true"
+                        :items="tiposCalcRapid"
+                        @change="onTipoCalcChange"
+                    ></v-combobox>
+                    <v-combobox
+                        id="niveisCalculus"
+                        chips
+                        v-if="jogo=='Calculus'  && !loadingJogos"
+                        v-model="niveisSel"
+                        label="Nível"
+                        color="green"
+                        :multiple="true"
+                        :items="niveisCalculus"
+                        @change="onNivelChange"
+                    ></v-combobox>
+                    <v-combobox
+                        id="tiposCalculus"
+                        chips
+                        v-if="jogo=='Calculus'  && !loadingJogos"
+                        v-model="tiposCalculusSel"
+                        label="Tipo de Operações"
+                        color="green"
+                        :multiple="true"
+                        :items="tiposCalculus"
+                        @change="onTipoCalculusChange"
+                    ></v-combobox>
+                    <v-combobox
                         id="anos"
                         v-model="anoLetivo"
                         label="Ano Letivo"
@@ -334,6 +367,22 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             {text: "Média", value: 'media', class: 'subtitle-1'},
             {text: "#", value: 'count', class: 'subtitle-1'},
         ],
+        headers_calcrapid:[
+            {text: "Nº", value: 'numero', class: 'subtitle-1'},
+            {text: "Nome", value: 'nome', class: 'subtitle-1'},
+            {text: "P.Certa", value: 'pontcerta', class: 'subtitle-1'},
+            {text: "P.Errada", value: 'ponterrada', class: 'subtitle-1'},
+            {text: "#Operações", value: 'oprealizadas', class: 'subtitle-1'},
+            {text: "#", value: 'frequencia', class: 'subtitle-1'},
+        ],
+        headers_minutenew:[
+            {text: "Nº", value: 'numero', class: 'subtitle-1'},
+            {text: "Nome", value: 'nome', class: 'subtitle-1'},
+            {text: "N.Certas", value: 'numcertas', class: 'subtitle-1'},
+            {text: "N.Erradas", value: 'numerradas', class: 'subtitle-1'},
+            {text: "T.Pontos", value: 'pontos', class: 'subtitle-1'},
+            {text: "#", value: 'frequencia', class: 'subtitle-1'},
+        ],
         footer_props: {
             "items-per-page-text": "Mostrar",
             "items-per-page-options": [5, 10, 20, -1],
@@ -367,7 +416,14 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             }
         },
         escola:"", 
-        loading: false
+        loading: false,
+        tiposCalcRapid:["1 - Adição", "2 - Subtração", "3 - Multiplicação", "4 - Divisão"],
+        tiposCalc:["1 - Adição", "2 - Subtração", "3 - Multiplicação", "4 - Divisão"],
+        niveisCalculus:["1","2","3","4","5"],
+        tiposCalculus:["0 - Todas as combinações", "1 – Adição", "2 – Subtração", "3 - Multiplicação", "4 - Divisão"],
+        niveisSel:["1","2","3","4","5"],
+        tiposCalculusSel:["0 - Todas as combinações"],
+        tiposCalculusSelAnterior:["0 - Todas as combinações"]
       }
     },
     created: async function(){
@@ -377,7 +433,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         if(this.$route.params.escola) this.escola = this.$route.params.escola
         else{ 
            var response2 = await axios.get(h + "professores/codigos/" + this.idprofessor + "/?token=" + this.token )
-            this.escola = response2.data.escola
+           this.escola = response2.data.escola
         }
         
         var response = await axios.get(h + "professores/" + this.idprofessor + "/turmas?token=" + this.token)
@@ -407,7 +463,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         return moment(value).format('YYYY-MM-DD')
       },
       onTurmaChange: async function(item){
-          if(this.turmaSel != "" && this.dataInicio && this.dataFim){
+          if(this.turmaSel != "" && this.turmaSel && this.dataInicio && this.dataFim){
             this.loadingJogos = true
             var response2 = await axios.get(h + "turmas/" + this.turmaSel + "/jogos?escola=" 
                                                 + this.escola + "&dataInicio=" + this.dataInicio 
@@ -447,10 +503,158 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
               this.onTurmaChange()
           }
       },
+      onNivelChange: async function(item){
+          if(this.tiposCalculusSel.find(e => e == "0 - Todas as combinações")){
+              if(this.niveisSel.length < this.niveisCalculus.length){
+                  if(this.niveisSel.length > 0){
+                      console.log("Por níveis")
+                      this.atualizaMinuteNewNiveis()
+                  }
+              }
+              else{
+                  console.log("Todos os registos")
+                  this.atualizaMinuteNew()
+              }
+          }
+          else{
+              if(this.niveisSel.length < this.niveisCalculus.length){
+                  if(this.niveisSel.length > 0){
+                      console.log("Por níveis e tipos")
+                      this.atualizaMinuteNewTiposNiveis()
+                  }
+              }
+              else{
+                  console.log("Por tipos")
+                  this.atualizaMinuteNewTipos()
+              }
+          }
+      },
+      onTipoCalculusChange: async function(item){
+          var todos = this.tiposCalculusSel.find(e => e == "0 - Todas as combinações")
+          if(todos && !this.tiposCalculusSelAnterior.find(e => e == "0 - Todas as combinações")){
+                this.tiposCalculusSel = ["0 - Todas as combinações"]
+                    if(this.niveisSel.length < this.niveisCalculus.length){
+                        console.log("Por niveis")
+                        this.atualizaMinuteNewNiveis()
+                    }
+                    else{
+                        console.log("Todos os registos")
+                        this.atualizaMinuteNew()
+                    }       
+        }
+        else{
+            if(todos){
+                var index = this.tiposCalculusSel.indexOf(todos)
+                this.tiposCalculusSel.splice(index, index+1)
+            }
+            if(this.niveisSel.length < this.niveisCalculus.length){
+                console.log("Por niveis e tipos")
+                this.atualizaMinuteNewTiposNiveis()
+            }
+            else{
+                console.log("Por tipos")
+                this.atualizaMinuteNewTipos()
+            }
+        }
+          this.tiposCalculusSelAnterior = this.tiposCalculusSel
+      },
+      onTipoCalcChange: async function(item){
+          if(this.jogo && this.jogo != "" && this.dataFim != "" && this.dataInicio != "" && this.tiposCalc.length > 0){
+              this.atualizaCalcRapid()
+          }
+      },
+      parseTiposCalculus: async function(){
+          var res = ""
+          for(var i = 0; i < this.tiposCalculusSel.length; i++){
+              var aux = this.tiposCalc[i].split(" - ")
+              res += aux[0]
+          }
+          return res
+      },
+      parseTiposCalcRapid: async function(){
+          var res = []
+          for(var i = 0; i < this.tiposCalc.length; i++){
+              var aux = this.tiposCalc[i].split(" - ")
+              res.push(aux[0])
+          }
+          return res
+      },
+      atualizaCalcRapid: async function(){
+          this.header_alunos = this.headers_calcrapid
+          this.loading = true
+          if(this.tiposCalc.length < this.tiposCalcRapid.length){
+              var tipos = await this.parseTiposCalcRapid()
+              var response = await axios.get(hostJogos + "calcrapid/turmas/" + this.turmaSel
+                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                    + "&escola=" + this.escola +"&tipo="+ tipos + "&token=" + this.token)
+              this.alunos = response.data
+          }
+          else{
+            var response = await axios.get(hostJogos + "calcrapid/turmas/" + this.turmaSel
+                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                    + "&escola=" + this.escola +  "&token=" + this.token)
+            this.alunos = response.data
+          }
+          this.loading = false
+          return true
+      },
+      atualizaMinuteNew: async function(){
+          this.loading = true
+          this.header_alunos = this.headers_minutenew
+          var response = await axios.get(hostJogos + "minutenew/turmas/" + this.turmaSel
+                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                    + "&escola=" + this.escola + "&token=" + this.token)
+          this.alunos = response.data
+          this.loading = false
+          return true
+      },
+      atualizaMinuteNewTipos: async function(){
+          this.loading = true
+          var tipos = await this.parseTiposCalculus()
+          this.header_alunos = this.headers_minutenew
+          var response = await axios.get(hostJogos + "minutenew/turmas/" + this.turmaSel
+                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                    + "&tipos=" + tipos + "&escola=" + this.escola +"&token=" + this.token)
+          this.alunos = response.data
+          this.loading = false
+          return true
+      },
+      atualizaMinuteNewNiveis: async function(){
+          this.loading = true
+          this.header_alunos = this.headers_minutenew
+          var response = await axios.get(hostJogos + "minutenew/turmas/" + this.turmaSel
+                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                    + "&niveis=" + this.niveisSel + "&escola=" + this.escola +"&token=" + this.token)
+          this.alunos = response.data
+          this.loading = false
+          return true
+      },
+      atualizaMinuteNewTiposNiveis: async function(){
+          this.loading = true
+          var tipos = await this.parseTiposCalculus()
+          this.header_alunos = this.headers_minutenew
+          var response = await axios.get(hostJogos + "minutenew/turmas/" + this.turmaSel
+                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim + "&escola=" + this.escola
+                                                    +  "&niveis=" + this.niveisSel + "&tipos=" + tipos + "&token=" + this.token)
+          this.alunos = response.data
+          this.loading = false
+          return true
+      },
       atualizaConteudo: async function(){
-          if(this.jogo != "" && this.dataFim != "" && this.dataInicio != "" && this.turmaSel != "" ){
+          if(this.jogo && this.jogo != "" && this.dataFim != "" && this.dataInicio != "" && this.turmaSel != "" ){
               this.loading = true
-              if(this.jogo != "Todos"){
+              if(this.jogo == "Todos"){
+                this.header_alunos = this.headersTodos
+                var idescola = this.escola
+
+                var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/Todos" 
+                                                + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                + "&escola=" + idescola + "&token=" + this.token)
+                this.alunos = response.data
+              }
+              else if(this.jogo == "Calcrapid") this.atualizaCalcRapid()
+              else if(this.jogo == "Calculus") this.onNivelChange()
+              else{
                 var aux = this.jogosInfo.find(element => element.jogo == this.jogo)
                 if(aux){
                     this.header_alunos = this.headersJogo
@@ -466,15 +670,6 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
                     this.alunos = response.data
                 }
                 else this.loading=false
-              }
-              else{
-                  this.header_alunos = this.headersTodos
-                  var idescola = this.escola
-
-                  var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/Todos" 
-                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                    + "&escola=" + idescola + "&token=" + this.token)
-                  this.alunos = response.data
               }
               this.loading = false
           } 
@@ -507,7 +702,129 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           }
           else return []
       },
+      exportPDFCalculus: async function(){
+          var doc = new jsPDF({
+        })
+        var xImage = doc.internal.pageSize.getWidth() / 4
+        var ytotal = 0
+        var pdfName = this.jogo + "-" + this.turmaSel + ".pdf"
+        doc.addImage(hypatiaImg, 'PNG', xImage, 4);
+        //doc.text("Jogo:")
+        //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
+        doc.setFontSize(11)
+        doc.text("Jogo: " + this.jogo, 15, 50)
+        doc.text("Período: " + this.dataInicio + " a " + this.dataFim, 130, 50)
+        doc.text("Tipos de Operações:", 15, 56)
+        var ytotal1 = 56
+        for(var i = 0; i < this.tiposCalculusSel.length; i++){
+            ytotal1 += 4
+            doc.text(this.tiposCalculusSel[i], 15, ytotal1)
+        }
+        doc.text("Níveis Selecionados:", 130, 56)
+        var ytotal2 = 56
+        for(var i = 0; i < this.niveisSel.length; i++){
+            ytotal2 +=4
+            doc.text("- Nível " + this.niveisSel[i], 130, ytotal2)
+        }
+        if(ytotal2 > ytotal1) ytotal = ytotal2;
+        else ytotal = ytotal1
+        var listaRes = []
+        var header = [['Nº', 'Nome', 'N.Certas', "N.Erradas", "T.Pontos", "#"]]
+        var jogo = this.jogo
+        
+        //var auxTotal = ['Todos', -1, this.items[0].min, 0, 0]
+        for(var i = 0; i<this.alunos.length; i++){
+            var aux = [];
+            aux.push(this.alunos[i].numero)
+            aux.push(this.alunos[i].nome)
+            aux.push(this.alunos[i].numcertas)
+            aux.push(this.alunos[i].numerradas)
+            aux.push(this.alunos[i].pontos)
+            aux.push(this.alunos[i].frequencia)
+            listaRes.push(aux)
+        }
+        //auxTotal[3] = (auxTotal[3]/(this.items.length)).toFixed(0)
+        //listaRes.push(auxTotal)
+        doc.autoTable({
+            head: header,
+            body: listaRes,
+            headStyles: { fillColor: [0, 146, 99] },
+            margin:{top: ytotal+6, bottom:30},
+            didDrawPage: function (data) {
+                    data.settings.margin.top = 10;
+                    ytotal = doc.internal.pageSize.getHeight()
+                    doc.setFontSize(8)
+                    //doc.setFontType('bold'
+                    doc.text("Legenda:" , 10, ytotal -22)
+                    doc.text("N.Certas - Total de Operações certas", 10, ytotal-18)
+                    doc.text("N.Erradas - Total de Operações erradas", 10, ytotal-14)
+                    doc.text("T.Pontos - Total de Pontos obtidos", 10, ytotal-10)
+                    doc.text("# - Frequência", 10, ytotal-6)
+                },
+        })
+        
+
+        doc.save(pdfName)
+      },
+      exportPDFCalcRapid: async function(){
+        var doc = new jsPDF({
+        })
+        var xImage = doc.internal.pageSize.getWidth() / 4
+        var ytotal = 0
+        var pdfName = this.jogo + "-" + this.turmaSel + ".pdf"
+        doc.addImage(hypatiaImg, 'PNG', xImage, 4);
+        //doc.text("Jogo:")
+        //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
+        doc.setFontSize(11)
+        doc.text("Jogo: " + this.jogo, 15, 50)
+        doc.text("Período: " + this.dataInicio + " a " + this.dataFim, 130, 50)
+        doc.text("Tipos de Operações realizadas:", 15, 56)
+        ytotal = 56;
+        for(var i = 0; i < this.tiposCalc.length; i++){
+            ytotal += 4
+            doc.text(this.tiposCalc[i], 15, ytotal);
+        }
+        var listaRes = []
+        var header = [['Nº', 'Nome', 'P.Certa', "P.Errada", "#Operações", "#"]]
+        var jogo = this.jogo
+        
+        //var auxTotal = ['Todos', -1, this.items[0].min, 0, 0]
+        for(var i = 0; i<this.alunos.length; i++){
+            var aux = [];
+            aux.push(this.alunos[i].numero)
+            aux.push(this.alunos[i].nome)
+            aux.push(this.alunos[i].pontcerta)
+            aux.push(this.alunos[i].ponterrada)
+            aux.push(this.alunos[i].oprealizadas)
+            aux.push(this.alunos[i].frequencia)
+            listaRes.push(aux)
+        }
+        //auxTotal[3] = (auxTotal[3]/(this.items.length)).toFixed(0)
+        //listaRes.push(auxTotal)
+        doc.autoTable({
+            head: header,
+            body: listaRes,
+            headStyles: { fillColor: [0, 146, 99] },
+            margin:{top: ytotal+6, bottom:30},
+            didDrawPage: function (data) {
+                    data.settings.margin.top = 10;
+                    ytotal = doc.internal.pageSize.getHeight()
+                    doc.setFontSize(8)
+                    //doc.setFontType('bold'
+                    doc.text("Legenda:" , 10, ytotal -22)
+                    doc.text("P.Certa - Total de Pontuação Certa", 10, ytotal-18)
+                    doc.text("P.Errada - Total de Pontuaçao Errada", 10, ytotal-14)
+                    doc.text("#Operações - Total de Operações Realizadas", 10, ytotal-10)
+                    doc.text("# - Frequência", 10, ytotal-6)
+                },
+        })
+        
+
+        doc.save(pdfName)
+      },
       exportPDF: async function(){
+        if(this.jogo == "Calcrapid") {this.exportPDFCalcRapid(); return;}
+        else if(this.jogo == "Calculus") {this.exportPDFCalculus(); return;}
         var doc = new jsPDF({
         })
 

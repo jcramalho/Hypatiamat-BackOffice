@@ -9,10 +9,16 @@
             <v-row class="text-xs-center" no-gutters>
             <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
               <center>
-              <v-img class="mx-auto" :src="require('@/assets/hypatiamat.png')" width="20%">
+              <v-img v-if="!mobile" class="mx-auto" :src="require('@/assets/hypatiamat.png')" width="20%">
+              </v-img>
+              <v-img v-else-if="$vuetify.breakpoint.sm" class="mx-auto" :src="require('@/assets/hypatiamat.png')" width="50%">
+              </v-img>
+              <v-img v-else class="mx-auto" :src="require('@/assets/hypatiamat.png')" width="60%">
               </v-img>
               </center>
+              <v-divider></v-divider>
             </v-col>
+            
             <v-col  cols="12" xs="12" sm="6" md="6" lg="6"  xl="6">
               <v-btn v-if="isProfessor" class="white--text" large block style="background-color: #27451e;" width="100%"> Professor </v-btn>
               <v-btn v-else class="white--text" @click="disabledCodigo = false; disabledEmail = false; isProfessor=!isProfessor" large block style="background-color: #009263;"> Professor </v-btn>
@@ -172,6 +178,12 @@
           if(this.codigosprofs.find(e => e.codigo == v)) {this.disabledCodProfAluno = false; return true;}
           else {this.disabledCodProfAluno = true; return 'Não existe nenhum professor com esse código.';}
         }
+      }
+    },
+    computed: {
+      mobile() {
+        if (this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm) return true
+        return false
       }
     },
     created : async function() {

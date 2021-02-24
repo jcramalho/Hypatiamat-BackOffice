@@ -14,7 +14,6 @@ CodigoProf.insertCodigo = function (codigoProf) {
                     reject(err);
                 }
                 else{
-                    console.log(res.insertId);
                     resolve(res);
                 }
         });   
@@ -29,7 +28,6 @@ CodigoProf.getCodigos = function () {
                     reject(err);
                 }
                 else{
-                    console.log(res.insertId);
                     resolve(res);
                 }
         });   
@@ -45,7 +43,6 @@ CodigoProf.getCodigo = function (id) {
                     reject(err);
                 }
                 else{
-                    console.log(res.insertId);
                     resolve(res);
                 }
         });   
@@ -60,7 +57,6 @@ CodigoProf.deleteCodigo = function (id) {
                     reject(err);
                 }
                 else{
-                    console.log(res.insertId);
                     resolve(res);
                 }
         });   

@@ -189,14 +189,14 @@ const h = require("@/config/hosts").hostAPI
           this.ready = false
           if(this.escola == "Todos"){
             var response = await axios.get(h + "alunos/?token=" + this.token)
+            this.alunos = response.data
           } 
           else{
             var aux = this.escola.split(" - ")
-            var escolaEscolhida = this.escolasIds.find(element => element.nome == aux[1]).cod
-            var response = await axios.get(h + "escolas/" + escolaEscolhida + "/alunos?token=" + this.token )
+            var escolaEscolhida = this.escolasIds.find(element => element.nome == aux[1])
+            if(escolaEscolhida) {var response = await axios.get(h + "escolas/" + escolaEscolhida.cod + "/alunos?token=" + this.token ); this.alunos = response.data}
           }
           //if(this.escola != this.escolaAnterior) this.page = 1
-          this.alunos = response.data
           this.ready = true
         }
       },

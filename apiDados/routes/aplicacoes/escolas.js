@@ -131,7 +131,7 @@ router.get('/localidades/:municipio', passport.authenticate('jwt', {session: fal
   });
 
   // Estatisticas globais de uma localidade (por agrupamento ou totalidade)
-router.get('/localidades/:municipio/estatisticas', verifyToken.verifyAdminEMunicipio(), function(req, res, next) {
+router.get('/localidades/:municipio/estatisticas',passport.authenticate('jwt', {session: false}), verifyToken.verifyAdminEMunicipio(), function(req, res, next) {
   var ano = req.query.ano
   if(ano){
     var anoletivo = ano + "/" + ((parseInt(ano) + 1))

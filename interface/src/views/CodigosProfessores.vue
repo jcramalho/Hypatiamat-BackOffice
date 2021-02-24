@@ -55,9 +55,8 @@
                                     v-model="nCodigos" name="Numero de Códigos" :rules="[ruleNCodigos]" label="Número de Códigos" 
                                         required
                       ></v-text-field>
-                      <v-btn class="white--text" :disabled="disabledGerar" block style="background-color: #009263;" @click="gerarCodigos()">Gerar Códigos</v-btn>
+                      <v-btn class="white--text" :disabled="disabledGerar" block style="background-color: #009263;" @click="gerarCodigos()">Gerar e Inserir Códigos</v-btn>
                       <br>
-                      <v-btn v-if="!inseridos && codigosGerados.length > 0" class="white--text" block style="background-color: #009263;" @click="inserirCodigos()">Inserir Códigos</v-btn>
                     </v-form>
                     </center>
                     <v-container v-if="loading">
@@ -98,6 +97,7 @@ const h = require("@/config/hosts").hostAPI
         loading:false,
         codigos: [],
         disabled:false,
+        disabledGerar: false,
         dialogCriar: false,
         codigosExistentes: [],
         dialogGerar: false,
@@ -197,7 +197,20 @@ const h = require("@/config/hosts").hostAPI
           }
         }
         this.codigosGerados = auxCodigos
-        this.loading = false
+        console.log(this.codigosGerados)
+        axios.post(h + "codigos/lista?token=" + this.token, {codigos: this.codigosGerados})
+             .then(async ()=>{ 
+               Swal.fire({
+                      icon: 'success',
+                      title: 'Códigos gerados e inseridos com sucesso.',
+                      confirmButtonColor: '#009263'
+                    })
+                this.loading = false
+                var response = await axios.get(h + "codigos?token=" + this.token)
+                this.codigos = response.data
+             })
+             .catch(erro=> console.log(erro))
+        
       }
     }
   }

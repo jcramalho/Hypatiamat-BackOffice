@@ -49,7 +49,7 @@ Professor.insertProfessor = function (professor) {
 
 Professor.getProfessores = function () {
     return new Promise(function(resolve, reject) {
-        sql.query(`Select p.id, p.codigo, p.nome, esc.localidade, esc.nome as escola, p.confirmacao, p.socionum, p.projeto 
+        sql.query(`Select p.id, p.codigo, p.nome, esc.localidade, esc.nome as agrupamento, p.escola, p.confirmacao, p.socionum, p.projeto 
         from professores p, Escolas esc where esc.cod = p.escola and p.confirmacao=1 and p.premium!=0 and now()<=p.validade Order by id desc;`, function(err, res){
             if(err){
                 console.log("erro: " + err)
@@ -64,7 +64,7 @@ Professor.getProfessores = function () {
 
 Professor.getProfessoresNaoConfirmados = function () {
     return new Promise(function(resolve, reject) {
-        sql.query(`Select p.id, p.codigo, p.nome, esc.localidade, esc.nome as escola, (now()<=p.validade) as valido, p.confirmacao, p.socionum, p.projeto 
+        sql.query(`Select p.id, p.codigo, p.nome, esc.localidade, esc.nome as agrupamento, p.escola,  (now()<=p.validade) as valido, p.confirmacao, p.socionum, p.projeto 
                 from professores p, Escolas esc where esc.cod = p.escola and (p.confirmacao=0 or p.premium = 0 or now()>p.validade) Order by id desc`, function(err, res){
             if(err){
                 console.log("erro: " + err)
@@ -93,7 +93,9 @@ Professor.getProfessoresCodigo = function () {
 
 Professor.getProfessorById = function (id) {
     return new Promise(function(resolve, reject) {
-        sql.query("Select id, codigo, nome, escola, email, confirmacao, premium, validade, socionum, projeto from professores where id=?", id, function(err, res){
+        sql.query(`Select p.id, p.codigo, p.nome, p.escola, esc.localidade, esc.nome as agrupamento, p.email, p.confirmacao, p.premium, p.validade, p.socionum, p.projeto,
+        (now()<=p.validade) as valido 
+        from (select * from professores where id=?) p, Escolas esc where esc.cod=p.escola`, id, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

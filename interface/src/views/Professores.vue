@@ -43,7 +43,7 @@
                     <td>{{row.item.codigo}}</td>
                     <td>{{row.item.nome}}</td>
                     <td>{{row.item.localidade}}</td>
-                    <td>{{row.item.escola}}</td>
+                    <td>{{row.item.agrupamento}}</td>
                     <td>{{row.item.socionum}}</td>
                     <td>{{row.item.projeto}}</td>
                     <td>
@@ -54,6 +54,11 @@
                 </tr>
                 </template>
                 </v-data-table>
+                <v-dialog v-model="dialogEditar" width="80%">
+                  <v-card>
+                  <EditarProfessor v-if="dialogEditar" :idProp="idEditar" @alteracao="atualizaProfessores()"/>
+                  </v-card>
+                </v-dialog>
         </v-container>
     </v-card>
     </v-main>
@@ -65,9 +70,13 @@
 <script>
 import axios from "axios"
 import Swal from 'sweetalert2'
+import EditarProfessor from '@/components/EditarProfessor.vue'
 const h = require("@/config/hosts").hostAPI
 
   export default {
+    components:{
+         EditarProfessor
+    },
     data(){
       return {
         token: "",
@@ -77,7 +86,7 @@ const h = require("@/config/hosts").hostAPI
             {text: "Username", sortable: true, value: 'codigo', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
             {text: "Localidade", value: 'localidade', class: 'subtitle-1'},
-            {text: "Agrupamento", value: 'escola', class: 'subtitle-1'},
+            {text: "Agrupamento", value: 'agrupamento', class: 'subtitle-1'},
             {text: "Sócio", value: 'socionum', class: 'subtitle-1'},
             {text: "Projeto", value: 'projeto', class: 'subtitle-1'},
             {text: "Operações", class: 'subtitle-1'},
@@ -94,7 +103,9 @@ const h = require("@/config/hosts").hostAPI
         confirmacoes: ["Todos", "Confirmados", "Não Confirmados"],
         today:"",
         confirmadoBool: false,
-        validadeBool: false
+        validadeBool: false, 
+        idEditar: -1,
+        dialogEditar: false
       }
     },
     created: async function(){
@@ -108,25 +119,10 @@ const h = require("@/config/hosts").hostAPI
           this.$router.push({name: "Ver Professor", params: { id : id } })
       },
       editarProfessor : function(id){
-          this.$router.push({name: "Editar Professor", params: { id : id } })
+          this.dialogEditar = true;
+          this.idEditar = id
+          //this.$router.push({name: "Editar Professor", params: { id : id } })
       },
-      /*
-      getConfirmados: async function(){
-        if(this.confirmacaoSel != "Todos"){
-          if(this.confirmacaoSel == "Confirmados"){
-            this.confirmadoBool = true 
-            this.getProfessores()
-          }
-          else if(this.confirmacaoSel == "Não Confirmados" ){
-            this.confirmadoBool = false
-            this.getProfessores()
-          }
-        }
-        else{
-          this.confirmadoBool = false
-          this.getProfessores()
-        }
-      },*/
       apagarProfessor: async function(id){
         Swal.fire({
           title: "De certeza que deseja apagar este professor?",
@@ -154,6 +150,13 @@ const h = require("@/config/hosts").hostAPI
       },
       criarProfessor: async function(){
         this.$router.push({name:"Criar Professor"})
+      },
+      atualizaProfessores: async function(){
+        this.dialogEditar = false
+        var response = await axios.get(h + "professores/" + this.idEditar + "/?token=" + this.token)
+        var al = this.professores.find(a => a.id == this.idEditar) 
+        var index = this.professores.indexOf(al)
+        this.professores.splice(index, 1, response.data)
       }
     }
   }

@@ -41,6 +41,11 @@
                 </tr>
                 </template>
                 </v-data-table>
+                <v-dialog v-model="dialogEditar" width="80%">
+                  <v-card>
+                  <EditarProfessor v-if="dialogEditar" :idProp="idEditar" @alteracao="atualizaProfessores()"/>
+                  </v-card>
+                </v-dialog>
         </v-container>
     </v-card>
     </v-main>
@@ -51,9 +56,14 @@
 
 <script>
 import axios from "axios"
+import Swal from 'sweetalert2'
+import EditarProfessor from '@/components/EditarProfessor.vue'
 const h = require("@/config/hosts").hostAPI
 
   export default {
+    components:{
+         EditarProfessor
+    },
     data(){
       return {
         token: "",
@@ -74,20 +84,61 @@ const h = require("@/config/hosts").hostAPI
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
+        idEditar: -1,
+        dialogEditar: false
       }
     },
     created: async function(){
         this.token = localStorage.getItem("token")
         var response = await axios.get(h + "professores/naoconfirmados?token=" + this.token)
         this.professores = response.data
-        console.log(this.professores)
     },
     methods: {
-      aceitarPedido : async function(id){
-        
+     editarProfessor : function(id){
+          this.dialogEditar = true;
+          this.idEditar = id
+          //this.$router.push({name: "Editar Professor", params: { id : id } })
       },
-      rejeitarPedido: async function(id){
-        
+      apagarProfessor: async function(id){
+        Swal.fire({
+          title: "De certeza que deseja apagar este professor?",
+          showDenyButton: true,
+          confirmButtonColor: '#009263',
+          confirmButtonText: `Sim`,
+          denyButtonText: `Não`,
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            var a = await axios.delete(h + "professores/" + id + "?token=" + this.token)
+              var apagado = a.data
+              if(apagado.removed){
+                var response = await axios.get(h + "professores?token=" + this.token)
+                this.professores = response.data
+              }
+              else{
+                Swal.fire({
+                  icon: 'error',
+                  text: apagado.message,
+                  confirmButtonColor: '#009263'
+                })
+              }
+          }
+        })
+      },
+      criarProfessor: async function(){
+        this.$router.push({name:"Criar Professor"})
+      },
+      atualizaProfessores: async function(){
+        this.dialogEditar = false
+        var response = await axios.get(h + "professores/" + this.idEditar + "/?token=" + this.token)
+        var edited = response.data
+        var al = this.professores.find(a => a.id == this.idEditar) 
+        var index = this.professores.indexOf(al)
+        if(edited.confirmacao == 1 && edited.premium != 0 && edited.valido){
+          this.professores.splice(index, index+1)
+        }
+        else{
+          this.professores.splice(index, 1, edited)
+        }
       }
     }
   }

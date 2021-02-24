@@ -412,6 +412,20 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         doc.setFontSize(11)
         doc.text("Jogo: " + this.jogo, 15, 50)
         doc.text("Período: " + this.dataInicio + " a " + this.dataFim, 130, 50)
+        doc.text("Tipos de Operações:", 15, 56)
+        var ytotal1 = 56
+        for(var i = 0; i < this.tiposCalculusSel.length; i++){
+            ytotal1 += 4
+            doc.text(this.tiposCalculusSel[i], 15, ytotal1)
+        }
+        doc.text("Níveis Selecionados:", 130, 56)
+        var ytotal2 = 56
+        for(var i = 0; i < this.niveisSel.length; i++){
+            ytotal2 +=4
+            doc.text("- Nível " + this.niveisSel[i], 130, ytotal2)
+        }
+        if(ytotal2 > ytotal1) ytotal = ytotal2;
+        else ytotal = ytotal1
         var listaRes = []
         var header = [['Município', 'N.Certas', "N.Erradas", "T.Pontos", "#"]]
         var jogo = this.jogo
@@ -432,7 +446,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             head: header,
             body: listaRes,
             headStyles: { fillColor: [0, 146, 99] },
-            margin:{top: 65, bottom:30},
+            margin:{top: ytotal+6, bottom:30},
             didDrawPage: function (data) {
                     data.settings.margin.top = 10;
                     ytotal = doc.internal.pageSize.getHeight()
@@ -461,6 +475,13 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         doc.setFontSize(11)
         doc.text("Jogo: " + this.jogo, 15, 50)
         doc.text("Período: " + this.dataInicio + " a " + this.dataFim, 130, 50)
+        doc.text("Tipos de Operações realizadas:", 15, 56)
+        ytotal = 56;
+        for(var i = 0; i < this.tiposCalc.length; i++){
+            ytotal += 4
+            doc.text(this.tiposCalc[i], 15, ytotal);
+        }
+        
         var listaRes = []
         var header = [['Município', 'P.Certa', "P.Errada", "#Operações", "#"]]
         var jogo = this.jogo
@@ -481,7 +502,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             head: header,
             body: listaRes,
             headStyles: { fillColor: [0, 146, 99] },
-            margin:{top: 65, bottom:30},
+            margin:{top: ytotal+6, bottom:30},
             didDrawPage: function (data) {
                     data.settings.margin.top = 10;
                     ytotal = doc.internal.pageSize.getHeight()

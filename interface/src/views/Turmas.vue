@@ -110,7 +110,7 @@ import {Passaport} from '../config/passport'
           this.$router.push({name: "Criar Turma",  params:{isAdmin:true} })
       },
       getTurmas : async function(){
-        if(this.escola!=""){
+        if(this.escola!="" && this.escola){
           var aux = this.escola.split(" - ")
           var escolaEscolhida = this.escolasIds.find(element => element.nome == aux[1]).cod
           if(this.anoletivo == "Todos"){

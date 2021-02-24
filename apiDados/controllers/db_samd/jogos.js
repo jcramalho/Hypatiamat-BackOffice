@@ -171,13 +171,13 @@ Jogos.getCalcRapidTipoAgrupamentos = async function(dataInicio, dataFim, tipo, m
 
 // por cada aluno de uma turma de um professor e todos os tipos do calcrapid
 Jogos.getTodosCalcRapidTurmas = async function(dataInicio, dataFim, escola, turma){
-    var args = [dataInicio, dataFim, escola, turma, escola, turma]
+    var args = [dataInicio, dataFim, escola, turma, escola]
     return new Promise(function(resolve, reject) {
-        sql.query(`select prof.codigo, prof.nome, sum(pontcerta) as pontcerta, sum(ponterrada) as ponterrada,  sum(n) as oprealizadas, sum(f) as frequencia 
+        sql.query(`select jogo.idaluno, al.numero, al.nome, sum(pontcerta) as pontcerta, sum(ponterrada) as ponterrada,  sum(n) as oprealizadas, sum(f) as frequencia 
 		from (select * from ${bdSAMD}.calcRapidHypatia 
         where (data BETWEEN ? and ?) and idescola = ? and turma = ?) as jogo, 
-        (select * from ${bdAplicacoes}.alunos where escola = ? and turma = ?) as al
-        where al.user = jogo.idaluno Group By jogo.idaluno;`, args, function (err, res) {            
+        (select * from ${bdAplicacoes}.alunos where escola = ?) as al
+        where al.user = jogo.idaluno Group By jogo.idaluno Order by al.numero;`, args, function (err, res) {            
                 if(err) {
                     console.log("error: ", err);
                     reject(err);
@@ -191,13 +191,13 @@ Jogos.getTodosCalcRapidTurmas = async function(dataInicio, dataFim, escola, turm
 
 // por cada aluno de uma turma de um professor e por uma lista de tipos do calcrapid
 Jogos.getTiposCalcRapidTurmas = async function(dataInicio, dataFim, tipo, escola, turma){
-    var args = [dataInicio, dataFim, tipo, escola, escola]
+    var args = [dataInicio, dataFim, tipo, escola, turma, escola]
     return new Promise(function(resolve, reject) {
-        sql.query(`select prof.codigo, prof.nome, sum(pontcerta) as pontcerta, sum(ponterrada) as ponterrada,  sum(n) as oprealizadas, sum(f) as frequencia 
+        sql.query(`select jogo.idaluno, al.numero, al.nome, sum(pontcerta) as pontcerta, sum(ponterrada) as ponterrada,  sum(n) as oprealizadas, sum(f) as frequencia 
 		from (select * from ${bdSAMD}.calcRapidHypatia 
-        where (data BETWEEN ? and ?) and tipo in (?) and idescola = ?) as jogo, 
-        (select * from ${bdAplicacoes}.alunos where escola=?) as al, ${bdAplicacoes}.professores  prof
-        where jogo.idescola = prof.escola and al.user = jogo.idaluno and al.codprofessor=prof.codigo Group By prof.codigo;`, args, function (err, res) {            
+        where (data BETWEEN ? and ?) and tipo in (?) and idescola = ? and turma=?) as jogo, 
+        (select * from ${bdAplicacoes}.alunos where escola=?) as al
+        where al.user = jogo.idaluno Group By jogo.idaluno Order by al.numero;`, args, function (err, res) {            
                 if(err) {
                     console.log("error: ", err);
                     reject(err);
@@ -419,6 +419,81 @@ Jogos.getNiveisMinuteNewProfessores = async function(escola, dataInicio, dataFim
             });   
     })  
 }
+
+// por cada aluno de uma turma e todos os tipos e niveis do jogo minutenew
+Jogos.getTodosMinuteNewTurma = async function(turma, escola, dataInicio, dataFim){
+    var args = [dataInicio, dataFim, escola, turma, escola]
+    return new Promise(function(resolve, reject) {
+        sql.query(`select jogo.user, al.numero, al.nome, sum(jogo.numcertas) as numcertas, sum(jogo.numerradas) as numerradas, sum(jogo.pontos) as pontos, count(jogo.pontos) as frequencia
+		from (select * from ${bdSAMD}.minutenew where (data between ? and ?) and escola = ? and turma=?) jogo, 
+        (select * from ${bdAplicacoes}.alunos where escola=?) as al
+        where jogo.user = al.user Group By jogo.user Order by al.numero;`, args, function (err, res) {            
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    })  
+}
+
+Jogos.getTiposNiveisMinuteNewTurma = async function(turma, escola, dataInicio, dataFim, niveis, tipo){
+    var args = [dataInicio, dataFim, escola, turma, niveis, tipo, escola]
+    return new Promise(function(resolve, reject) {
+        sql.query(`select jogo.user, al.numero, al.nome, sum(jogo.numcertas) as numcertas, sum(jogo.numerradas) as numerradas, sum(jogo.pontos) as pontos, count(jogo.pontos) as frequencia
+		from (select * from ${bdSAMD}.minutenew where (data between ? and ?) and escola = ? and turma=? and nivel in (?) and op=?) jogo, 
+        (select * from ${bdAplicacoes}.alunos where escola=?) as al
+        where jogo.user = al.user Group By jogo.user Order by al.numero;`, args, function (err, res) {            
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    })  
+}
+
+Jogos.getNiveisMinuteNewTurma = async function(turma, escola, dataInicio, dataFim, niveis){
+    var args = [dataInicio, dataFim, escola, turma, niveis, escola]
+    return new Promise(function(resolve, reject) {
+        sql.query(`select jogo.user, al.numero, al.nome, sum(jogo.numcertas) as numcertas, sum(jogo.numerradas) as numerradas, sum(jogo.pontos) as pontos, count(jogo.pontos) as frequencia
+		from (select * from ${bdSAMD}.minutenew where (data between ? and ?) and escola = ? and turma=? and nivel in (?)) jogo, 
+        (select * from ${bdAplicacoes}.alunos where escola=?) as al
+        where jogo.user = al.user Group By jogo.user Order by al.numero;`, args, function (err, res) {            
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    })  
+}
+
+Jogos.getTiposMinuteNewTurma = async function(turma, escola, dataInicio, dataFim, tipo){
+    var args = [dataInicio, dataFim, escola, turma, tipo, escola]
+    return new Promise(function(resolve, reject) {
+        sql.query(`select jogo.user, al.numero, al.nome, sum(jogo.numcertas) as numcertas, sum(jogo.numerradas) as numerradas, sum(jogo.pontos) as pontos, count(jogo.pontos) as frequencia
+		from (select * from ${bdSAMD}.minutenew where (data between ? and ?) and escola = ? and turma=? and op = ?) jogo, 
+        (select * from ${bdAplicacoes}.alunos where escola=?) as al
+        where jogo.user = al.user Group By jogo.user Order by al.numero;`, args, function (err, res) {            
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    })  
+}
+
+
 
 
 module.exports = Jogos

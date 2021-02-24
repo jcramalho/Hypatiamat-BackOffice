@@ -35,7 +35,9 @@
                 </template>
                 </v-data-table>
                 <v-dialog v-model="dialogEditarProfessor" width="80%">
-                  <EditarProfessor :idProp="idAceite"/>
+                  <v-card>
+                  <EditarProfessor v-if="dialogEditarProfessor" :idProp="idAceite" @alteracao="dialogEditarProfessor = false"/>
+                  </v-card>
                 </v-dialog>
         </v-container>
     </v-card>
@@ -47,7 +49,7 @@
 
 <script>
 import axios from "axios"
-import EditarProfessor from '@/views/EditarProfessor.vue'
+import EditarProfessor from '@/components/EditarProfessor.vue'
 const h = require("@/config/hosts").hostAPI
 
   export default {
@@ -85,14 +87,14 @@ const h = require("@/config/hosts").hostAPI
         var responseAceite = await axios.post(h + "quarentenas/" + id + "?token=" + this.token)
                                         .catch(erro => console.log(erro))
         this.idAceite = responseAceite.data.insertId
+        var index = this.pendentes.indexOf((this.pendentes.find(e => e.id == id)))
+        this.pendentes.splice(index, index+1)
         this.dialogEditarProfessor = true
-        var response = await axios.get(h + "quarentenas?token=" + this.token)
-        this.pendentes = response.data
       },
       rejeitarPedido: async function(id){
         await axios.delete(h + "quarentenas/" + id + "?token=" + this.token)
-        var response = await axios.get(h + "quarentenas?token=" + this.token)
-        this.pendentes = response.data
+        var index = this.pendentes.indexOf((this.pendentes.find(e => e.id == id)))
+        this.pendentes.splice(index, index+1)
       }
     }
   }

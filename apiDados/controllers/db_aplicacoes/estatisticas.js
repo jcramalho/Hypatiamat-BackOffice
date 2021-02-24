@@ -10,7 +10,7 @@ const Estatistica = function(estatistica){
 Estatistica.getTurmasAnoMun = function(municipio, anoletivo){
     return new Promise(function(resolve, reject) {
         var args = [anoletivo, municipio]
-        sql.query(`select t.id, t.turma, p.escola from (select * from turmas where anoletivo = ?) t, 
+        sql.query(`select distinct t.id, t.turma, p.escola from (select * from turmas where anoletivo = ?) t, 
             (select * from Escolas where localidade = ?) e, professores p
             where t.idprofessor = p.codigo and e.cod = p.escola
             Group by t.id;`, args, function (err, res) {
@@ -28,7 +28,7 @@ Estatistica.getTurmasAnoMun = function(municipio, anoletivo){
 Estatistica.getProfessoresAnoMun = function(municipio, anoletivo){
     return new Promise(function(resolve, reject) {
         var args = [anoletivo, municipio]
-        sql.query(`select p.codigo from (select * from turmas where anoletivo=?) t, 
+        sql.query(`select distinct p.codigo from (select * from turmas where anoletivo=?) t, 
         (select * from Escolas where localidade = ?) e, professores p
         where t.idprofessor = p.codigo and e.cod = p.escola
         Group by p.codigo;`, args, function (err, res) {

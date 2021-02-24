@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var passport = require('passport')
+var passport = require('passport');
+const Turma = require('../../controllers/db_aplicacoes/turmas');
 
 var Jogos = require('../../controllers/db_samd/jogos');
 
@@ -79,28 +80,29 @@ router.get('/calcrapid/escolas/:escola', passport.authenticate('jwt', {session: 
   }
 });
 
-// Calcrapid por professor de um agrupamento
-router.get('/calcrapid/escolas/:escola', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+
+// Calcrapid por aluno de uma turma
+router.get('/calcrapid/turmas/:turma', passport.authenticate('jwt', {session: false}), function(req, res, next) {
   var tipo = req.query.tipo
   var dataInicio = req.query.dataInicio
   var dataFim = req.query.dataFim
-  var escola = req.params.escola
+  var turma = req.params.turma
+  var escola = req.query.escola
   if(tipo && tipo.length > 0){
-    Jogos.getTiposCalcRapidProfessores(dataInicio, dataFim, tipo.split(','), escola)
+    Jogos.getTiposCalcRapidTurmas(dataInicio, dataFim, tipo.split(','), escola, turma)
               .then(dados =>{
                 res.jsonp(dados)
               })
               .catch(erro => res.status(500).jsonp(erro))
   }
   else{
-    Jogos.getTodosCalcRapidProfessores(dataInicio, dataFim, escola)
+    Jogos.getTodosCalcRapidTurmas(dataInicio, dataFim, escola, turma)
               .then(dados =>{
                 res.jsonp(dados)
               })
               .catch(erro => res.status(500).jsonp(erro))
   }
 });
-
 
 router.get('/minutenew/municipios', passport.authenticate('jwt', {session: false}), function(req, res, next) {
   var dataInicio = req.query.dataInicio
@@ -202,6 +204,43 @@ router.get('/minutenew/escolas/:escola', passport.authenticate('jwt', {session: 
   }
   else{
     Jogos.getTodosMinuteNewProfessores(escola, dataInicio, dataFim)
+              .then(dados =>{
+                res.jsonp(dados)
+              })
+              .catch(erro => res.status(500).jsonp(erro))
+  }
+});
+
+router.get('/minutenew/turmas/:turma', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  var dataInicio = req.query.dataInicio
+  var dataFim = req.query.dataFim
+  var niveis = req.query.niveis
+  var tipos = req.query.tipos
+  var turma = req.params.turma
+  var escola = req.query.escola
+  if(tipos && niveis){
+    Jogos.getTiposNiveisMinuteNewTurma(turma, escola, dataInicio, dataFim, niveis.split(","), tipos)
+              .then(dados =>{
+                res.jsonp(dados)
+              })
+              .catch(erro => res.status(500).jsonp(erro))
+  }
+  else if(tipos){
+    Jogos.getTiposMinuteNewTurma(turma, escola, dataInicio, dataFim, tipos)
+              .then(dados =>{
+                res.jsonp(dados)
+              })
+              .catch(erro => res.status(500).jsonp(erro)) 
+  }
+  else if(niveis){
+    Jogos.getNiveisMinuteNewTurma(turma, escola, dataInicio, dataFim, niveis.split(","))
+              .then(dados =>{
+                res.jsonp(dados)
+              })
+              .catch(erro => res.status(500).jsonp(erro)) 
+  }
+  else{
+    Jogos.getTodosMinuteNewTurma(turma, escola, dataInicio, dataFim)
               .then(dados =>{
                 res.jsonp(dados)
               })

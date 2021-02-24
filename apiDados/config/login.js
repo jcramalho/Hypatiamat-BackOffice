@@ -7,12 +7,13 @@ var Escolas = require('../controllers/db_aplicacoes/escolas')
 
 const jwtKey = "tese-hypatiamat2020"
 const jwtExpirySeconds = 60 * 60
+const jwtExpirySecondsAdmin = 90 * 60
 
-generateToken = function(user){
+generateToken = function(user, time){
 
     const token = jwt.sign({ user }, jwtKey, {
 		algorithm: "HS256",
-		expiresIn: jwtExpirySeconds,
+		expiresIn: time,
     })
 
     return token
@@ -36,7 +37,7 @@ module.exports.login = async function(user, password){
           return {
               type : 10,
               authentication : true, 
-              token : generateToken(utilizador)
+              token : generateToken(utilizador, jwtExpirySeconds)
           }
       }
       else return {authentication:false}
@@ -47,6 +48,7 @@ module.exports.login = async function(user, password){
       else {
           if(md5Password == professor.password){
               var utilizadorAux = await Professores.getProfessorByCodigo(user)
+              var time = jwtExpirySeconds
               var utilizador = {
                 id : utilizadorAux.id,
                 codigo : utilizadorAux.codigo,
@@ -69,12 +71,13 @@ module.exports.login = async function(user, password){
               else if(utilizadorAux.premium == 5) {
                   utilizador.type = 50
                   utilizador.agrupamento = (await Escolas.getEscola(utilizadorAux.escola)).nome
+                  time = jwtExpirySecondsAdmin
               }
 
               return {
                   type : utilizador.type,
                   authentication : true, 
-                  token : generateToken(utilizador)
+                  token : generateToken(utilizador, time)
               }
           }
           else return {authentication:false}

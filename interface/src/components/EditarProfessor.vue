@@ -1,7 +1,6 @@
 <template>
-  <v-app id="inspire">
-    <v-main class="grey lighten-3">
-    <v-card>
+  <v-container>
+    <v-card class="justify-center">
         <v-container>
             <v-card-title primary-title class="justify-center green--text">
                 Editar Professor ({{professor.codigo}})
@@ -78,8 +77,7 @@
         
         </v-container>
     </v-card>
-    </v-main>
-  </v-app> 
+  </v-container>
 </template>
 
 
@@ -98,8 +96,8 @@ const h = require("@/config/hosts").hostAPI
         dialogTurmas: false,
         filtrar: "",
         header_turmas: [
-            {text: "Id", sortable: true, value: 'id', class: 'subtitle-1'},
-            {text: "Turma", value: 'turma', class: 'subtitle-1'}
+            {text: "Turma", value: 'turma', class: 'subtitle-1'},
+            {text: "Ano Letivo", value: 'anoletivo', class:'subtitle-1'}
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
@@ -176,25 +174,64 @@ const h = require("@/config/hosts").hostAPI
             
             axios.put(h + "professores/" + this.professor.codigo + "?token=" + this.token, this.professor)
                 .then(dados => {
-                  alert("Dados alterados com sucesso!")
+                  Swal.fire({
+                    icon: 'success',
+                    text: "Professor alterado com sucesso.",
+                    confirmButtonColor: '#009263'
+                  })
+                  this.$emit("alteracao")
                 })
-                .catch(error => alert("Não foi possível guardar as alterações."))
+                .catch(error => Swal.fire({
+                                      icon: 'error',
+                                      text: "Não foi possível guardar as informações alteradas.",
+                                      confirmButtonColor: '#009263'
+                                    }))
           }
       },
       editarPassword : async function(){
           if(this.password1 != "" && this.password2 != ""){
             if(this.password1 == this.password2){
-              if(confirm("Tem a certeza que pretende alterar a sua password?")){
-                await axios.put(h + "professores/" + this.professor.codigo + "/password?token=" + this.token, {password: this.password1})
-                this.dialogPassword = false
-              }
+               Swal.fire({
+                title: 'De certeza que deseja alterar a password deste professor?',
+                showDenyButton: true,
+                confirmButtonColor: '#009263',
+                confirmButtonText: `Sim`,
+                denyButtonText: `Não`,
+              }).then(async (result) => {
+                    if (result.isConfirmed) {
+                      await axios.put(h + "professores/" + this.professor.codigo + "/password?token=" + this.token, {password: this.password1})
+                                 .then(() => {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        text: "Password alterada com sucesso.",
+                                        confirmButtonColor: '#009263'
+                                      })
+                                  })
+                                  .catch(() => {
+                                    Swal.fire({
+                                      icon: 'error',
+                                      text: "Não foi possível guardar a nova password.",
+                                      confirmButtonColor: '#009263'
+                                    })
+                                  })
+                      this.dialogPassword = false
+                    }
+              })
             }
             else{
               this.password2 = ""
-              alert("As palavra passe de confirmação não coincide com a palavra passe primeiramente definida!")
+              Swal.fire({
+                icon: 'error',
+                text: "A password a alterar e a sua confirmação devem ser iguais.",
+                confirmButtonColor: '#009263'
+              })
             }
           }
-          else alert("Tem de preencher os dois campos!")
+          else Swal.fire({
+                icon: 'error',
+                text: "Tem de preencher os dois campos.",
+                confirmButtonColor: '#009263'
+              })
       },
     }
   }
