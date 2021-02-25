@@ -9,7 +9,8 @@
                 <center><v-btn v-if="items.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn></center>
                 <br v-if="items.length>0">
                 <center>
-                <v-card class="pa-5" width="60%">
+                <v-container style="width:80%">
+                <v-card class="pa-5" >
                     <v-combobox
                         id="turmas"
                         v-model="turmaSel"
@@ -35,14 +36,15 @@
                         @change="onAnoChange"
                     ></v-combobox>
                     <v-layout row class="text-xs-center" justify-center align-center>
-                        <v-flex xs5>
+                        <v-col cols="12" xs="12" sm="12" md="12" lg="6" xl="6">
                         <v-text-field @change="onDataInChange" prepend-icon="mdi-calendar" v-model="dataInicio" label="Data Inicio" type="date" :format="format" required></v-text-field>
-                        </v-flex>
-                        <v-flex xs5>
+                        </v-col>
+                        <v-col cols="12" xs="12" sm="12" md="12" lg="6" xl="6">
                             <v-text-field @change="onDataFimChange" prepend-icon="mdi-calendar" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
-                        </v-flex>
+                        </v-col>
                     </v-layout>
                 </v-card>
+                </v-container>
                 </center>
                 <br>
         <v-container v-if="loading">

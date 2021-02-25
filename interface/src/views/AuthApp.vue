@@ -25,11 +25,13 @@
       xl="11"
     >-->
   <v-container v-if="mobile" >
+    <keep-alive v-if="mobile" include="EstatisticasMunicipios">
       <router-view v-if="mobile" />
+    </keep-alive>
   </v-container>
   <v-container v-else class="grey lighten-3">
       <v-main class="grey lighten-3">
-        <p :style="styleP"> Dado que se encontra no telemóvel ou num dispositivo pequeno, para visualizar os dados de forma clara, <b> minimize a barra de navegação </b> através do botão '<'. </p> 
+        <p :style="styleP"> Dado que se encontra no telemóvel ou num dispositivo pequeno, para visualizar os dados de forma clara, <b> minimize a barra de navegação </b> através do botão <span :style="styleP">&#8918;</span> . </p> 
       </v-main>
   </v-container>
     <!--</v-col>

@@ -9,7 +9,8 @@
                 <center><v-btn v-if="items.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn></center>
                 <br v-if="items.length>0">
                 <center>
-                <v-card class="pa-5" width="80%">
+                <v-container style="width:80%">
+                <v-card class="pa-5"> 
                     <v-combobox
                         id="jogos"
                         v-model="jogo"
@@ -68,6 +69,7 @@
                         </v-col>
                     </v-layout>
                 </v-card>
+                </v-container>
                 </center>
                 <br>
         <v-text-field

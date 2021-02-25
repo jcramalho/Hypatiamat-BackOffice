@@ -68,6 +68,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         header_estatisticas: [
             {text: "Agrupamento", value: 'nome', class: 'subtitle-1'},
             {text: "#Turmas", value: 'nturmas', class: 'subtitle-1'},
+            {text: "#TurmasMistas", value: 'turmasmistas', class: 'subtitle-1'},
             {text: "#Professores", value: 'nprofessores', class: 'subtitle-1'},
             {text: "#Alunos", value: 'nalunos', class: 'subtitle-1'},
         ],
@@ -103,16 +104,18 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
       },
       parseEstatisticas: async function(){
         var listaRes = []
-        var total = ["Todos", 0, 0, 0]
+        var total = ["Todos", 0, 0, 0, 0]
         for(var i = 0; i<this.estatisticas.length; i++){
             var aux = [];
             aux.push(this.estatisticas[i].nome)
             aux.push(this.estatisticas[i].nturmas)
             total[1] += this.estatisticas[i].nturmas
+            aux.push(this.estatisticas[i].turmasmistas)
+            total[2] += this.estatisticas[i].turmasmistas
             aux.push(this.estatisticas[i].nprofessores)
-            total[2] += this.estatisticas[i].nprofessores
+            total[3] += this.estatisticas[i].nprofessores
             aux.push(this.estatisticas[i].nalunos)
-            total[3] += this.estatisticas[i].nalunos
+            total[4] += this.estatisticas[i].nalunos
 
             listaRes.push(aux)
         }
@@ -133,20 +136,21 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         var listaRes = await this.parseEstatisticas()
         
         doc.autoTable({
-            head: [['Agrupamento', '#Turmas', '#Professores', '#Alunos']],
+            head: [['Agrupamento', '#Turmas', '#TurmasMistas', '#Professores', '#Alunos']],
             body: listaRes,
             headStyles: { fillColor: [0, 146, 99] },
-            margin:{top: 65, bottom:20},
+            margin:{top: 65, bottom:25},
             didDrawPage: function (data) {
                     // Reseting top margin. The change will be reflected only after print the first page.
                     data.settings.margin.top = 10;
                     ytotal = doc.internal.pageSize.getHeight()
                     doc.setFontSize(8)
                     //doc.setFontType('bold'
-                    doc.text("Legenda:" , 10, ytotal -18)
-                    doc.text("#Turmas - N.º de turmas existentes", 10, ytotal -14)
-                    doc.text("#Professores- N.º de professores existentes", 10, ytotal-10)
-                    doc.text("#Alunos - N.º de alunos existentes", 10, ytotal-6)
+                    doc.text("Legenda:" , 10, ytotal -22)
+                    doc.text("#Turmas - N.º total de turmas existentes", 10, ytotal -18)
+                    doc.text("#TurmasMistas - N.º total de turmas mistas", 10, ytotal -14)
+                    doc.text("#Professores- N.º total de professores que possuem turmas", 10, ytotal-10)
+                    doc.text("#Alunos - N.º total de alunos existentes", 10, ytotal-6)
                 },
             willDrawCell: function (data) {
                 var rows = data.table.body;

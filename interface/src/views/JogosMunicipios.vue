@@ -10,8 +10,8 @@
                 <center><v-btn v-if="items.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn></center>
                 <br v-if="items.length>0">
                 <center>
-                <v-container>
-                <v-card class="pa-5" width="80%"> 
+                <v-container style="width:80%">
+                <v-card class="pa-5"> 
                     <v-combobox
                         id="jogos"
                         v-model="jogo"
@@ -64,10 +64,10 @@
                     ></v-combobox>
                     <v-layout row class="text-xs-center" justify-center align-center>
                         <v-col cols="12" xs="12" sm="12" md="12" lg="6" xl="6">
-                        <v-text-field @change="onDataInChange" v-model="dataInicio" label="Data Inicio" type="date" :format="format" required></v-text-field>
+                            <v-text-field @change="onDataInChange" v-model="dataInicio" name="Data Inicio" label="Data Inicio" type="date" :format="format" required></v-text-field>
                         </v-col >
                         <v-col cols="12" xs="12" sm="12" md="12" lg="6" xl="6">
-                            <v-text-field @change="onDataFimChange" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
+                            <v-text-field @change="onDataFimChange" v-model="dataFim" name="Data Fim" label="Data Fim" type="date" :format="format" required></v-text-field>
                         </v-col>
                     </v-layout>
                     

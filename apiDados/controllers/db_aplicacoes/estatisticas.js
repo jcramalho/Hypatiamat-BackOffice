@@ -10,7 +10,7 @@ const Estatistica = function(estatistica){
 Estatistica.getTurmasAnoMun = function(municipio, anoletivo){
     return new Promise(function(resolve, reject) {
         var args = [anoletivo, municipio]
-        sql.query(`select distinct t.id, t.turma, p.escola from (select * from turmas where anoletivo = ?) t, 
+        sql.query(`select distinct t.id, t.turma, t.idprofessor from (select * from turmas where anoletivo = ?) t, 
             (select * from Escolas where localidade = ?) e, professores p
             where t.idprofessor = p.codigo and e.cod = p.escola
             Group by t.id;`, args, function (err, res) {
@@ -65,10 +65,48 @@ Estatistica.getAgrupamentosAnoMun = function(municipio, anoletivo){
     })
 }
 
+Estatistica.getMunicipiosAno = function( anoletivo){
+    return new Promise(function(resolve, reject) {
+        var args = [anoletivo]
+        sql.query(`select distinct e.localidade from (select * from turmas where anoletivo=?) t, 
+        Escolas e, professores p
+        where t.idprofessor = p.codigo and e.cod = p.escola;`, args, function (err, res) {
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    /*
+                    var resultado = []
+                    for(var i = 0; i < res.length; i++){
+                        resultado.push(res[i].cod)
+                    }*/
+                    resolve(res);
+                }
+            });   
+    })
+}
+
+
 Estatistica.getNumAlunos = function(professores, turmas){
     return new Promise(function(resolve, reject) {
         var args = [professores, turmas]
         sql.query(`select count(a.user) as numalunos from alunos a where a.codprofessor in (?) and a.turma in (?);`, args, function (err, res) {
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res[0]);
+                }
+            });   
+    })
+}
+
+Estatistica.getNumAlunos2 = function(professor, turma){
+    return new Promise(function(resolve, reject) {
+        var args = [professor, turma]
+        sql.query(`select count(a.user) as numalunos from alunos a where a.codprofessor=? and a.turma=?;`, args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
                     reject(err);
@@ -182,43 +220,40 @@ Estatistica.quantosJogosTurmasAnoMun = async function(turmas, agrupamentos){
 Estatistica.getEstatisticasMunicipioAno = async function(municipio, anoletivo){
     var turmas = await Estatistica.getTurmasAnoMun(municipio, anoletivo)
     var professores = await Estatistica.getProfessoresAnoMun(municipio, anoletivo)
-    //var agrupamentos = await Estatistica.getAgrupamentosAnoMun(municipio, anoletivo)
     var professoresAux = []
     var turmasAux = []
-    var anoAux = anoletivo.split("/")
-    var dataInicio = "20" + anoAux[0] + "-09-01"
-    var dataFim = "20" + anoAux[1] + "-09-01"
+    var turmasMistas = 0;
 
     for(var i = 0; i < turmas.length; i++){
-        turmasAux.push(turmas[i].turma)
-    }
-    for(var i = 0; i < professores.length; i++){
-        professoresAux.push(professores[i].codigo)
+        var turma = turmas[i].turma
+        if(!turmasAux.find(e => e == turma )) turmasAux.push(turma)
     }
 
+    for(var i = 0; i < professores.length; i++){
+        var codProf = professores[i].codigo
+        if(!professoresAux.find(e => e == codProf)) professoresAux.push(codProf)
+        if(turmas.filter(t => t.idprofessor == codProf).length > 1){
+            turmasMistas++;
+        }
+
+    }
+    
     var nalunos = await Estatistica.getNumAlunos(professoresAux, turmasAux)
     var nalunosTurmasOld = {numalunos: 0}
-
+    
     if(anoletivo != "20/21"){
         nalunosTurmasOld = await Estatistica.getNumAlunosOld(professoresAux, turmasAux)
     }
 
-    //var nappsTurmas = await Estatistica.getFreqAppsTurmasAnoMun(professoresAux, turmasAux)
-    //var nappsAno = await Estatistica.getFreqAppsAnoMun(municipio, dataInicio, dataFim)
-
-    //var jogos = await Estatistica.quantosJogosTurmasAnoMun(turmasAux, agrupamentos)
-
     return {nturmas: turmas.length, nprofessores: professores.length, 
-            nalunos: nalunos.numalunos + nalunosTurmasOld.numalunos}
-            //appsTurma: nappsTurmas, appsTotal: nappsAno,
-            //njogos: jogos.njogos, freqjogos: jogos.freq}
+            nalunos: nalunos.numalunos + nalunosTurmasOld.numalunos, turmasmistas:turmasMistas}
 
 }
 
 Estatistica.getTurmasAnoAgru = function(escola, anoletivo){
     return new Promise(function(resolve, reject) {
         var args = [anoletivo, escola]
-        sql.query(`select t.turma
+        sql.query(`select distinct t.id, t.turma, t.idprofessor
                     from (select * from turmas where anoletivo=?) t, professores p
                     where t.idprofessor = p.codigo and p.escola = ?
                     Group by t.id;`, args, function (err, res) {
@@ -305,17 +340,20 @@ Estatistica.getEstatisticasAgrupamentoAno = async function(escola, anoletivo){
     var professores = await Estatistica.getProfessoresAnoAgru(escola, anoletivo)
     var professoresAux = []
     var turmasAux = []
-    var anoAux = anoletivo.split("/")
-    var dataInicio = "20" + anoAux[0] + "-09-01"
-    var dataFim = "20" + anoAux[1] + "-09-01"
+    var turmasMistas = 0
+   
     for(var i = 0; i < turmas.length; i++){
-        turmasAux.push(turmas[i].turma)
+        var turma = turmas[i].turma
+        if(!turmasAux.find(e => e == turma )) turmasAux.push(turma)
     }
     for(var i = 0; i < professores.length; i++){
-        professoresAux.push(professores[i].codigo)
+        var codProf = professores[i].codigo
+        if(!professoresAux.find(e => e == codProf)) professoresAux.push(codProf)
+        if(turmas.filter(t => t.idprofessor == codProf).length > 1){
+            turmasMistas++;
+        }
     }
 
-    //console.log(anoletivo)
     if(turmasAux.length > 0 && professoresAux.length > 0){
         var nalunos = await Estatistica.getNumAlunos(professoresAux, turmasAux)
         var nalunosTurmasOld = {numalunos: 0}        
@@ -324,25 +362,18 @@ Estatistica.getEstatisticasAgrupamentoAno = async function(escola, anoletivo){
             nalunosTurmasOld = await Estatistica.getNumAlunosOld(professoresAux, turmasAux)
         }
 
-        //var nappsTurmas = await Estatistica.getFreqAppsTurmasAnoMun(professoresAux, turmasAux)
-
-        //var jogos = await Estatistica.quantosJogosTurmasAnoAgru(turmasAux, escola)
     }
     else{
         var nalunos = {numalunos:0}
         var nalunosTurmasOld = {numalunos: 0}
-        var nappsTurmas = {ncertas: 0, ntotal:0, freqapps: 0}
-        var jogos = {njogos: 0, freq: 0}
     }
 
-    //var nappsAno = await Estatistica.getFreqAppsAnoAgru(escola, dataInicio, dataFim)
 
     
 
     return {nturmas: turmas.length, nprofessores: professores.length, 
-            nalunos: nalunos.numalunos + nalunosTurmasOld.numalunos}
-            //appsTurma: nappsTurmas, appsTotal: nappsAno,
-            //njogos: jogos.njogos, freqjogos: jogos.freq}
+            nalunos: nalunos.numalunos + nalunosTurmasOld.numalunos, turmasmistas: turmasMistas}
+
 
 }
 
@@ -367,7 +398,7 @@ Estatistica.getEstatisticaAgruMun = async function(municipio, anoletivo){
 }
 
 
-
+/*
 Estatistica.getEstatisticasMunicipios = async function (anoletivo){
     return new Promise(function(resolve, reject) {
         var args = [anoletivo]
@@ -387,13 +418,26 @@ Estatistica.getEstatisticasMunicipios = async function (anoletivo){
             });   
     })
 }
+*/
 
 
 
-/*
 Estatistica.getEstatisticasMunicipios = async function (anoletivo){
+    var municipios = await Estatistica.getMunicipiosAno(anoletivo)
+    var resultado = []
+    for(var i = 0; i < municipios.length; i++){
+        var municipio = await Estatistica.getEstatisticasMunicipioAno(municipios[i].localidade, anoletivo)
+        municipio.localidade = municipios[i].localidade
+        resultado.push(municipio)
+    }
     
-}*/
+    await resultado.sort(function (a, b) {
+        return (a.nalunos > b.nalunos) ? -1 : 1;
+      });
+    
+    return resultado
+    
+}
 
 
 module.exports = Estatistica

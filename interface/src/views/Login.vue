@@ -9,16 +9,16 @@
           v-if="small"
           src="https://www.hypatiamat.com/imagens/images/backofficeAPP.png"
           lazy-src="https://www.hypatiamat.com/imagens/images/backofficeAPP.png"
-          max-height="30%"
-          width="60%"
+          max-height="15%"
+          width="55%"
           >
         </v-img>
         <v-img 
           v-else
           src="https://www.hypatiamat.com/imagens/images/backofficeAPP.png"
           lazy-src="https://www.hypatiamat.com/imagens/images/backofficeAPP.png"
-          max-height="15%"
-          width="40%"
+          max-height="30%"
+          width="75%"
           >
         </v-img>
         </center>
