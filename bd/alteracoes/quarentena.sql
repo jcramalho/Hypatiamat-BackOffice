@@ -1,4 +1,4 @@
-use hypat_aplicacoes;
+use hypati67_aplicacoes;
 
 CREATE TABLE `quarentena` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

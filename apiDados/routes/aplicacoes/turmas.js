@@ -135,8 +135,8 @@ router.put('/:id', passport.authenticate('jwt', {session: false}), verifyToken.v
 
 
 // Apaga uma determinado turma
-router.delete('/:id', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res){
-    Turmas.apagar(req.params.id, req.query.codprofessor)
+router.delete('/:turma', passport.authenticate('jwt', {session: false}), verifyToken.verifyTurma4(), function(req, res){
+    Turmas.apagar(req.params.turma, req.query.codprofessor)
                .then(dados =>{
                  res.jsonp(dados)
                })

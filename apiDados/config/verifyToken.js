@@ -48,7 +48,7 @@ module.exports.verifyAdmin_Professor_Aluno = function(){
         // professor
         else if(u.type == 20){
             var aluno = await Alunos.getAluno(id)
-            if(u.codigo == aluno.codprofessor) next()
+            if(aluno && u.codigo == aluno.codprofessor) next()
             else res.status(403).jsonp("Não tem permissão.")
         }
         else res.status(403).jsonp("Não tem permissão.")
@@ -66,7 +66,7 @@ module.exports.verifyAdmin_Professor_Aluno2 = function(){
         // professor
         else if(u.type == 20){
             var aluno = await Alunos.getAlunoByUser(user)
-            if(u.codigo == aluno.codprofessor) next()
+            if(aluno && u.codigo == aluno.codprofessor) next()
             else res.status(403).jsonp("Não tem permissão.")
         }
         else res.status(403).jsonp("Não tem permissão.")
@@ -162,6 +162,7 @@ module.exports.verifyTurma3 = function(){
         // professor
         else if( u.type == 20){
             var turmaObj = await Turmas.getTurmaByNomeEscola(turma, escola)
+            console.log(turmaObj)
             if(turmaObj.idprofessor == u.codigo) next()
             else res.status(403).jsonp("Não tem permissão.")
         } 
@@ -171,6 +172,17 @@ module.exports.verifyTurma3 = function(){
         else if (u.type == 30 && u.escolas.find(esc => esc.cod == escola)) next()
         else res.status(403).jsonp("Não tem permissão.") 
         
+    }
+}
+
+module.exports.verifyTurma4 = function(){
+    return async function(req, res, next) {
+        var u = req.user.user
+        var codprofessor = req.query.codprofessor
+
+        if( u.type == 50 ) next()
+        else if( u.type == 20 && u.codigo == codprofessor ) next()
+        else res.status(403).jsonp("Não tem permissão.")
     }
 }
 

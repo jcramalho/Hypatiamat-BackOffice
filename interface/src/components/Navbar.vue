@@ -126,9 +126,12 @@ export default {
       // Professor
       this.items = [
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
-        { title: 'Minhas Turmas', icon: 'mdi-book-account', href:"/minhasturmas" },
+        { title: 'Gestão de Turmas', icon: 'mdi-book-account', href:"/gestaoTurmas" },
+        { title: 'Gestão de Alunos', icon: 'mdi-account-group', href:"/gestaoAlunos" },
         { title: 'Monitorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/" + utilizador.codigo },
         { title: 'Monotorização de Apps', icon: 'mdi-apps', href:"/apps/" + utilizador.codigo},
+        { title: 'Jogos Turmas', icon: 'mdi-podium', href:"/classificacoes/jogos"},
+        { title: 'Apps Turmas', icon: 'mdi-podium', href:"/classificacoes/apps"},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }

@@ -42,10 +42,10 @@ import AgrupamentoProfessores from '../views/AgrupamentoProfessores.vue'
 import EstatisticasMunicipios from '../views/EstatisticasMunicipios.vue'
 import EstatisticasAgrupamentos from '../views/EstatisticasAgrupamentos.vue'
 import Pendentes2 from '../views/Pendentes2.vue'
-
-
-
-
+import GestaoTurmas from '../views/GestaoTurmas.vue'
+import GestaoAlunos from '../views/GestaoAlunos.vue'
+import RankingJogos from '../views/RankingJogos.vue'
+import RankingApps from '../views/RankingApps.vue'
 
 
 
@@ -112,6 +112,34 @@ const routes = [
     }
   },
   {
+    path: '/gestaoTurmas',
+    name: 'Gestão de Turmas',
+    component: GestaoTurmas,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(utilizador.type == 20){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    }
+  },
+  {
+    path: '/gestaoAlunos',
+    name: 'Gestão de Alunos',
+    component: GestaoAlunos,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(utilizador.type == 20){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    }
+  },
+  {
     path: '/agrupamentos',
     name: 'Agrupamentos',
     component: Agrupamentos,
@@ -132,6 +160,42 @@ const routes = [
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if( utilizador.type == 20 ){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/classificacoes/jogos',
+    name: 'Ranking Jogos',
+    component: RankingJogos,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if((utilizador.type == 50 || utilizador.type == 20)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/classificacoes/apps',
+    name: 'Ranking Apps',
+    component: RankingApps,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if((utilizador.type == 50 || utilizador.type == 20)){
         next()
       }
       else{

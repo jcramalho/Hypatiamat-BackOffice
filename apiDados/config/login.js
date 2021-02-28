@@ -56,8 +56,12 @@ module.exports.login = async function(user, password){
                 escola: utilizadorAux.escola,
                 type: 20
               }
+              // professor
+              if(utilizadorAux.premium == 1){
+                utilizador.agrupamento = (await Escolas.getEscola(utilizadorAux.escola)).nome
+              }
               //municipio
-              if(utilizadorAux.premium == 2) {
+              else if(utilizadorAux.premium == 2) {
                   utilizador.type = 30
                   utilizador.infoEscola = await Escolas.getEscola(utilizadorAux.escola)
                   utilizador.escolas = await Escolas.getEscolasByLocalidade(utilizador.infoEscola.localidade)

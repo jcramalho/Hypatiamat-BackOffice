@@ -76,9 +76,8 @@ const h = require("@/config/hosts").hostAPI
     props:["idProp"],
     created: async function(){
         this.token = localStorage.getItem("token")
-        this.id = this.$route.params.id
         // caso seja passado o id por prpo
-        if(!this.id) this.id = this.idProp
+        this.id = this.idProp
         var response = await axios.get(h + "alunos/" + this.id + "?token=" + this.token)
         this.aluno = response.data
         var aux = this.aluno.datanascimento.split("/")

@@ -1,15 +1,16 @@
 var mysql = require('mysql')
+var database = 'hypati67_aplicacoes'
 var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'PEI2020',
-    database: 'hypat_aplicacoes'
-  })
+    password: "admin",
+    database: database
+})
 
 getTurmasOldAnos = async function(){
 
     return new Promise(function(resolve, reject) {
-        connection.query("Select id, SUBSTRING_INDEX(SUBSTRING_INDEX(turma,'-',2),'-',-1) as ano from hypat_aplicacoes.turmasold;"
+        connection.query(`Select id, SUBSTRING_INDEX(SUBSTRING_INDEX(turma,'-',2),'-',-1) as ano from ${database}.turmasold;`
         , function(err, res){
             if(err){
                 console.log("erro: " + err)
@@ -25,15 +26,15 @@ getTurmasOldAnos = async function(){
 
 
 run = async function(){
-var turmas = await getTurmasOldAnos()
-console.log(turmas)
+    var turmas = await getTurmasOldAnos()
 
-for(var i = 0; i < turmas.length; i++){
-    var id = turmas[i].id
-    var ano = turmas[i].ano
-    var anoLetivo = (parseInt(ano) - 1) + "/" + ano
-    connection.query("Update hypat_aplicacoes.turmasold Set anoletivo = ? where id = ?", [anoLetivo, id])
-}
+    for(var i = 0; i < turmas.length; i++){
+        var id = turmas[i].id
+        var ano = turmas[i].ano
+        var anoLetivo = (parseInt(ano) - 1) + "/" + ano
+        connection.query(`Update ${database}.turmasold Set anoletivo = ? where id = ?`, [anoLetivo, id])
+    }
 }
 
-run()
+run();
+return;

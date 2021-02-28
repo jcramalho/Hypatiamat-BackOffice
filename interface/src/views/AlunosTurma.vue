@@ -26,12 +26,32 @@
                     <td>{{row.item.numero}}</td>
                     <td>{{row.item.nome}}</td>
                     <td>{{row.item.user}}</td>
+                    <td>{{row.item.email}}</td>
+                    <td>{{row.item.agrupamento}}</td>
                     <td>
-                    <v-icon @click="editarAluno(row.item.id)"> mdi-pencil </v-icon>
+                      <v-tooltip top>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          icon
+                          v-bind="attrs" 
+                          v-on="on"
+                        >
+                        <v-icon @click="editarAluno(row.item.id)"> mdi-pencil </v-icon>
+                        </v-btn>
+                        </template>
+                        <span>Poderá editar informações do seu aluno.</span>
+                      </v-tooltip>
                     </td>
                 </tr>
                 </template>
                 </v-data-table>
+                <center>
+                  <v-dialog style="align-self: flex-end;" v-model="dialogEditar" width="85%">
+                    <v-card>
+                      <EditarAluno v-if="dialogEditar" @alteracao="atualizaAlunos()" :idProp="this.idEditarAluno"/>
+                    </v-card>
+                  </v-dialog>
+                </center>
         </v-container>
     </v-card>
     </v-main>
@@ -42,9 +62,14 @@
 
 <script>
 import axios from "axios"
+import EditarAluno from '@/components/EditarAluno.vue'
+import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
 
   export default {
+    components:{
+         EditarAluno
+    },
     data(){
       return {
         token: "",
@@ -53,17 +78,21 @@ const h = require("@/config/hosts").hostAPI
             {text: "Número", value: 'numero', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
             {text: "Username", value: 'user', class: 'subtitle-1'},
+            {text: "Email", value: 'email', class: 'subtitle-1'},
+            {text: "Agrupamento", value: 'agrupamento', class: 'subtitle-1'},
             {text: "Editar", sortable:false, class: 'subtitle-1'},
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20, -1],
+            "items-per-page-options": [30, -1],
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
         idTurma: "",
         turma: {},
-        utilizador:{}
+        utilizador:{},
+        dialogEditar: false,
+        idEditarAluno:-1,
       }
     },
     created: async function(){
@@ -76,11 +105,20 @@ const h = require("@/config/hosts").hostAPI
         this.alunos = responseA.data
     },
     methods: {
-      editarAluno : function(id){
-          this.$router.push({name: "Editar Aluno", params: { id : id } })
+      editarAluno : function(idAluno){
+          this.idEditarAluno = idAluno;
+          this.dialogEditar = true;
+          //this.$router.push({name: "Editar Aluno", params: { id : idAluno } })
       },
       editarTurma: function(id){
 
+      },
+      atualizaAlunos: async function(){
+        this.dialogEditar = false
+        var response = await axios.get(h + "alunos/" + this.idEditarAluno + "/?token=" + this.token)
+        var al = this.alunos.find(a => a.id == this.idEditarAluno) 
+        var index = this.alunos.indexOf(al)
+        this.alunos.splice(index, 1, response.data)
       }
   }
   }
