@@ -126,6 +126,10 @@ const anosletivos1 = require("@/config/confs").anosletivos
           var response = await axios.get(h + "professores/" + this.utilizador.codigo + "/turmas?token=" + this.token + "&ano=" + ano)
           this.turmas = response.data
         }
+        else{
+          var response = await axios.get(h + "professores/" + this.utilizador.codigo + "/turmas?token=" + this.token)
+          this.turmas = response.data
+        }
       },
       verTurma : function(id){
         this.$router.push({name:"Ver Turma", params:{ id : id }})

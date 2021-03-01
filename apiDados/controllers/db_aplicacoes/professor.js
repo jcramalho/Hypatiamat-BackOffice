@@ -49,7 +49,7 @@ Professor.insertProfessor = function (professor) {
 
 Professor.getProfessores = function () {
     return new Promise(function(resolve, reject) {
-        sql.query(`Select p.id, p.codigo, p.nome, esc.localidade, esc.nome as agrupamento, p.escola, p.confirmacao, p.socionum, p.projeto 
+        sql.query(`Select p.id, p.codigo, p.nome, esc.localidade, esc.nome as agrupamento, p.escola, p.confirmacao, p.socionum, p.projeto, p.validade
         from professores p, Escolas esc where esc.cod = p.escola and p.confirmacao=1 and p.premium!=0 and now()<=p.validade Order by id desc;`, function(err, res){
             if(err){
                 console.log("erro: " + err)

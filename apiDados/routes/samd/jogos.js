@@ -4,6 +4,7 @@ var passport = require('passport');
 const Turma = require('../../controllers/db_aplicacoes/turmas');
 
 var Jogos = require('../../controllers/db_samd/jogos');
+var Rankings = require('../../controllers/db_samd/rankings');
 
 // Todas os jogos
 router.get('/', passport.authenticate('jwt', {session: false}), function(req, res, next) {
@@ -102,6 +103,30 @@ router.get('/calcrapid/turmas/:turma', passport.authenticate('jwt', {session: fa
               })
               .catch(erro => res.status(500).jsonp(erro))
   }
+});
+
+router.get('/:jogo/turmas/:turma/ranking', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  var turma = req.params.turma
+  var escola = req.query.escola
+  var codprofessor = req.query.codprofessor
+  var anoletivo = req.query.anoletivo
+  var jogo = req.params.jogo 
+  var jogoTipo = req.query.jogoTipo
+  if(turma && escola && codprofessor && anoletivo && jogo && jogoTipo){
+    var aux = anoletivo.split("/")
+    if(aux.length == 2){
+      var dataInicio = aux[0] + "-09-01"
+      var dataFim = aux[1] + "-09-01"
+      Rankings.calculaRankingTurma(jogo, jogoTipo, turma, escola, codprofessor, dataInicio, dataFim)
+            .then(dados => res.jsonp(dados))
+            .catch(error => { console.log(error); res.status(500).jsonp("Error")})
+      
+    }
+    else res.status(400).jsonp("Ano letivo tem de ser do formato YYYY/YYYY.")
+
+  }
+  else res.status(400).jsonp("Faltam parâmetros.")
+
 });
 
 router.get('/minutenew/municipios', passport.authenticate('jwt', {session: false}), function(req, res, next) {

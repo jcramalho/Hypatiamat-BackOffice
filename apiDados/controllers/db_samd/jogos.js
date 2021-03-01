@@ -496,4 +496,6 @@ Jogos.getTiposMinuteNewTurma = async function(turma, escola, dataInicio, dataFim
 
 
 
+
+
 module.exports = Jogos

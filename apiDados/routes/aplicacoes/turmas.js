@@ -4,8 +4,10 @@ var passport = require('passport')
 
 var Alunos = require('../../controllers/db_aplicacoes/alunos')
 var Turmas = require('../../controllers/db_aplicacoes/turmas')
-var verifyToken = require('../../config/verifyToken')
-
+var TurmasOld = require('../../controllers/db_aplicacoes/turmasold')
+var verifyToken = require('../../config/verifyToken');
+const { getAllJogosMunicipios } = require('../../controllers/db_aplicacoes/escolas');
+var anoAtual = "21"
 
 // Todas as turmas
 router.get('/', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
@@ -38,22 +40,30 @@ router.get('/:id', passport.authenticate('jwt', {session: false}), verifyToken.v
   });
 
 // Devolve todos os alunos de uma determinada turma
-router.get('/:turma/alunos', passport.authenticate('jwt', {session: false}), verifyToken.verifyTurma2(), function(req, res){
+router.get('/:turma/alunos', passport.authenticate('jwt', {session: false}), verifyToken.verifyTurma2(), async function(req, res){
     var turma = req.params.turma
     var codprofessor = req.query.codprofessor
-    if(req.query.codprofessor){
-      Alunos.getAlunosFromTurma(turma, codprofessor)
-                .then(alunosAtuais =>{
-                  /*
-                  TurmasOld.getAlunosFromTurma(turma)
-                            .then(alunosOld =>{
-                              res.jsonp({alunosAtuais : alunosAtuais, alunosOld : alunosOld})
-                            })
-                            .catch(erro => res.status(500).jsonp(erro))
-                  */
-                  res.jsonp(alunosAtuais)
-                })
-                .catch(erro => res.status(500).jsonp(erro))
+    var aux
+    if(( aux = turma.split("-") )){
+      if(req.query.codprofessor){
+        if(aux[1] == anoAtual){
+          Alunos.getAlunosFromTurma(turma, codprofessor)
+                    .then(alunosAtuais =>{
+                      res.jsonp(alunosAtuais)
+                    })
+                    .catch(erro => res.status(500).jsonp(erro))
+        }
+        else{
+          var alunosAtuais = await Alunos.getAlunosFromTurma(turma, codprofessor);
+          var alunosOld = await TurmasOld.getAlunosFromTurma(turma, codprofessor);
+          for(var i = 0; i < alunosOld.length; i++){
+            alunosOld[i].alunoOld = true
+            alunosAtuais.push(alunosOld[i])
+          }
+          res.jsonp(alunosAtuais)
+        }
+      }
+      else res.status(400).jsonp(erro)
     }
     else res.status(400).jsonp(erro)
 })

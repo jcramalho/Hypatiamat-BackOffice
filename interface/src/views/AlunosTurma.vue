@@ -21,8 +21,8 @@
                 :footer-props="footer_props"
                 :search="filtrar"
                 >
-                <template v-slot:item="row">
-                <tr>
+                <template v-slot:item="row" >
+                <tr :class="row.item.alunoOld ? 'style-AlunoOld' : 'style-AlunoAtual'">
                     <td>{{row.item.numero}}</td>
                     <td>{{row.item.nome}}</td>
                     <td>{{row.item.user}}</td>
@@ -119,7 +119,21 @@ const h = require("@/config/hosts").hostAPI
         var al = this.alunos.find(a => a.id == this.idEditarAluno) 
         var index = this.alunos.indexOf(al)
         this.alunos.splice(index, 1, response.data)
+      },
+      itemRowBackground: function (item) {
+        console.log(item)
+        return item.alunoOld ? 'style-1' : 'style-2'
       }
+
   }
   }
 </script>
+
+<style>
+.style-AlunoOld {
+  background-color: rgb(215,215,44)
+}
+.style-AlunoAtual {
+  background-color: white
+}
+</style>

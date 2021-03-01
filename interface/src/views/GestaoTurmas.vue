@@ -4,7 +4,7 @@
     <v-card class="pa-5">
         <v-container>
             <v-card-title primary-title class="justify-center green--text">
-                Gestão de Turmas
+                <span> Gestão de Turmas</span>
             </v-card-title>
             <center>
               <v-btn v-if="turmasAnoLetivo<limiteTurmas" class="white--text" style="background-color: #009263;" @click="criarTurma()"> 
@@ -13,6 +13,21 @@
               <v-row v-else class="justify-center" style="display: flex;  align-items: center;">
                 <v-icon color="red"> mdi-alert-outline </v-icon>
                 <span> Não pode criar mais turmas, uma vez que atingiu o limite deste ano letivo ({{limiteTurmas}}). </span>
+              </v-row>
+              <br>
+              <br>
+              <v-row class="justify-center">
+                <v-col cols="12">
+                <p><span> 1. Se desejar visualizar as suas turmas antigas, pode fazê-lo através da seleção de um ano letivo diferente ou de todos. </span></p>
+                </v-col>
+                <v-col cols="12">
+                <p><span> 2. Caso queira o passaporte de uma turma, basta clicar em <v-icon> mdi-passport </v-icon> da respetiva turma. 
+                Além disso, caso sejam credenciais de alunos fornecidas pelo Hypatiamat, poderá selecionar a opção do passaporte vir com a password do aluno. </span> </p>
+                </v-col>
+                <v-col cols="12">
+                <p><span> 3. Caso deseje eliminar uma turma e esta não possua alunos ou jogos que foram jogados por antigos alunos da turma, 
+                  também o poderá fazer, clicando em <v-icon> mdi-delete </v-icon> da respetiva turma. </span> </p>
+                </v-col>
               </v-row>
             </center>
             <v-combobox
@@ -148,6 +163,10 @@ const anosletivos1 = require("@/config/confs").anosletivos
           var response = await axios.get(h + "professores/" + this.utilizador.codigo + "/turmas?token=" + this.token + "&ano=" + ano)
           this.turmas = response.data
         }
+        else{
+          var response = await axios.get(h + "professores/" + this.utilizador.codigo + "/turmas?token=" + this.token)
+          this.turmas = response.data
+        }
       },
       verTurma : function(id){
         this.$router.push({name:"Ver Turma", params:{ id : id }})
@@ -195,8 +214,13 @@ const anosletivos1 = require("@/config/confs").anosletivos
         var passwords = false;
         if(passportPassword) passwords = true
         var codprofessor = this.utilizador.codigo
-        console.log(this.utilizador.agrupamento)
-        Passaport.getPassaporteTurma( turma, codprofessor, this.utilizador.agrupamento.split(",")[0] )
+        if(passwords){
+          Passaport.getPassaporteTurmaPassword( turma, codprofessor, this.utilizador.agrupamento.split(",")[0] )
+        }
+        else{
+          Passaport.getPassaporteTurma( turma, codprofessor, this.utilizador.agrupamento.split(",")[0] )
+        }
+        
       }
     }
   }

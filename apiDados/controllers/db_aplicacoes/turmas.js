@@ -275,7 +275,6 @@ Turma.getJogos = async function(turma, escola, dataInicio, dataFim){
     //calculus
     var turmaCalculus = await Turma.jogouCalculus(turma, escola, dataInicio, dataFim)
     if(turmaCalculus.length > 0) result.push({jogo: 'Calculus'})
-    console.log('calculus')
 
     for(var i = 0; i < jogos.length; i++){
         var turmaJogou = await Turma.jogou(jogos[i].jogotable, jogos[i].tipo, turma, escola, dataInicio, dataFim)

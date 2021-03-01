@@ -154,7 +154,9 @@ Aluno.getAlunoByUser = function(user){
 
 Aluno.getAlunosFromTurma = function(turma, codprofessor){
     return new Promise(function(resolve, reject) {
-        sql.query("Select id, user, numero, nome, datanascimento, escola, (select nome from Escolas e where e.cod=escola) as agrupamento, turma, email, confirmacao from alunos where turma=? and codprofessor=? Order by numero asc", [turma, codprofessor], function(err, res){
+        sql.query(`Select id, user, numero, nome, datanascimento, escola, (select nome from Escolas e where e.cod=escola) as agrupamento, 
+                    turma, email, confirmacao
+                    from alunos where turma=? and codprofessor=? Order by numero asc`, [turma, codprofessor], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

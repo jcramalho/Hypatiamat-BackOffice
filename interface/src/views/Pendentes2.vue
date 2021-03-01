@@ -28,7 +28,7 @@
                     <td>{{row.item.codigo}}</td>
                     <td>{{row.item.nome}}</td>
                     <td>{{row.item.localidade}}</td>
-                    <td>{{row.item.escola}}</td>
+                    <td>{{row.item.agrupamento}}</td>
                     <td>{{row.item.socionum}}</td>
                     <td>{{row.item.projeto}}</td>
                     <td v-if="row.item.valido"> <v-icon color="green">mdi-check-bold</v-icon> </td>
@@ -72,7 +72,7 @@ const h = require("@/config/hosts").hostAPI
             {text: "Username", value: 'codigo', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
             {text: "Localidade", value: 'localidade', class: 'subtitle-1'},
-            {text: "Agrupamento", value: 'escola', class: 'subtitle-1'},
+            {text: "Agrupamento", value: 'agrupamento', class: 'subtitle-1'},
             {text: "Sócio", value: 'socionum', class: 'subtitle-1'},
             {text: "Projeto", value: 'projeto', class: 'subtitle-1'},
             {text: "Válido", value:'valido', class:"subtitle-1"},

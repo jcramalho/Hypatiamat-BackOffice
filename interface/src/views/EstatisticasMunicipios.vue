@@ -137,7 +137,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         var listaRes = await this.parseEstatisticas()
         
         doc.autoTable({
-            head: [['Município', '#Turmas', '#Turmas', '#Professores', '#Alunos']],
+            head: [['Município', '#Turmas', '#TurmasMistas', '#Professores', '#Alunos']],
             body: listaRes,
             headStyles: { fillColor: [0, 146, 99] },
             margin:{top: 65, bottom:25},

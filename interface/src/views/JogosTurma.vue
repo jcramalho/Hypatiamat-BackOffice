@@ -17,78 +17,83 @@
                     <center><v-btn class="white--text" style="background-color: #009263;" @click="exportPDF()"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn></center>
                 </v-col>
             </v-layout>
+            
             <v-layout row class="text-xs-center" justify-center align-center>
-                <v-col cols="12" xs="12"  sm="12" md="3" lg="3" xl="3">
-                    <v-combobox
-                        id="turmas"
-                        v-model="turmaSel"
-                        label="Turma"
-                        color="green"
-                        :items="turmas"
-                        @change="onTurmaChange"
-                    ></v-combobox>
-                    <v-combobox
-                        v-if="!loadingJogos"
-                        id="jogos"
-                        v-model="jogo"
-                        label="Jogo"
-                        color="green"
-                        :items="jogos"
-                        @change="onJogoChange"
-                    ></v-combobox>
-                    <v-combobox
-                        id="tiposCalcRapid"
-                        chips
-                        v-if="jogo=='Calcrapid' && !loadingJogos"
-                        v-model="tiposCalc"
-                        label="Tipo de Operação"
-                        color="green"
-                        :multiple="true"
-                        :items="tiposCalcRapid"
-                        @change="onTipoCalcChange"
-                    ></v-combobox>
-                    <v-combobox
-                        id="niveisCalculus"
-                        chips
-                        v-if="jogo=='Calculus'  && !loadingJogos"
-                        v-model="niveisSel"
-                        label="Nível"
-                        color="green"
-                        :multiple="true"
-                        :items="niveisCalculus"
-                        @change="onNivelChange"
-                    ></v-combobox>
-                    <v-combobox
-                        id="tiposCalculus"
-                        chips
-                        v-if="jogo=='Calculus'  && !loadingJogos"
-                        v-model="tiposCalculusSel"
-                        label="Tipo de Operações"
-                        color="green"
-                        :multiple="true"
-                        :items="tiposCalculus"
-                        @change="onTipoCalculusChange"
-                    ></v-combobox>
-                    <v-combobox
-                        id="anos"
-                        v-model="anoLetivo"
-                        label="Ano Letivo"
-                        color="green"
-                        :items="anosLetivos"
-                        @change="onAnoChange"
-                    ></v-combobox>
-                    <v-layout row class="text-xs-center" justify-center align-center>
-                        <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="6">
-                        <v-text-field @change="onDataInChange" v-model="dataInicio" label="Data Inicio" type="date" :format="format" required></v-text-field>
-                        </v-col>
-                        <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="6">
-                            <v-text-field @change="onDataFimChange" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
-                        </v-col>
-                    </v-layout>
+                <v-col cols="12" xs="12" sm="12" md="12" lg="3" xl="3">
+                    <v-container >
+                        <v-card class="pa-3">
+                            <v-combobox
+                                id="turmas"
+                                v-model="turmaSel"
+                                label="Turma"
+                                color="green"
+                                :items="turmas"
+                                @change="onTurmaChange"
+                            ></v-combobox>
+                            <v-combobox
+                                v-if="!loadingJogos"
+                                id="jogos"
+                                v-model="jogo"
+                                label="Jogo"
+                                color="green"
+                                :items="jogos"
+                                @change="onJogoChange"
+                            ></v-combobox>
+                            <v-combobox
+                                id="tiposCalcRapid"
+                                chips
+                                v-if="jogo=='Calcrapid' && !loadingJogos"
+                                v-model="tiposCalc"
+                                label="Tipo de Operação"
+                                color="green"
+                                :multiple="true"
+                                :items="tiposCalcRapid"
+                                @change="onTipoCalcChange"
+                            ></v-combobox>
+                            <v-combobox
+                                id="niveisCalculus"
+                                chips
+                                v-if="jogo=='Calculus'  && !loadingJogos"
+                                v-model="niveisSel"
+                                label="Nível"
+                                color="green"
+                                :multiple="true"
+                                :items="niveisCalculus"
+                                @change="onNivelChange"
+                            ></v-combobox>
+                            <v-combobox
+                                id="tiposCalculus"
+                                chips
+                                v-if="jogo=='Calculus'  && !loadingJogos"
+                                v-model="tiposCalculusSel"
+                                label="Tipo de Operações"
+                                color="green"
+                                :multiple="true"
+                                :items="tiposCalculus"
+                                @change="onTipoCalculusChange"
+                            ></v-combobox>
+                            <v-combobox
+                                id="anos"
+                                v-model="anoLetivo"
+                                label="Ano Letivo"
+                                color="green"
+                                :items="anosLetivos"
+                                @change="onAnoChange"
+                            ></v-combobox>
+                            <v-layout row class="text-xs-center" justify-center align-center>
+                                <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
+                                <v-text-field @change="onDataInChange" v-model="dataInicio" label="Data Inicio" type="date" :format="format" required></v-text-field>
+                                </v-col>
+                                <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
+                                    <v-text-field @change="onDataFimChange" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
+                                </v-col>
+                            </v-layout>
+                        </v-card>
+                        </v-container>
+                    </v-col>
+                <v-col cols="12" xs="12" sm="12" md="12" lg="1" xl="1">
                 </v-col>
-                <v-col cols="12" xs="12" sm="12" md="1" lg="1" xl="1">
-                </v-col>
-                <v-col cols="12" xs="12" sm="12" md="8" lg="8" xl="8" >
+                <v-col cols="12" xs="12" sm="12" md="12" lg="8" xl="8" >
                     <v-container v-if="loading">
                         <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
                     </v-container>
@@ -423,7 +428,8 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         tiposCalculus:["0 - Todas as combinações", "1 – Adição", "2 – Subtração", "3 - Multiplicação", "4 - Divisão"],
         niveisSel:["1","2","3","4","5"],
         tiposCalculusSel:["0 - Todas as combinações"],
-        tiposCalculusSelAnterior:["0 - Todas as combinações"]
+        tiposCalculusSelAnterior:["0 - Todas as combinações"],
+        escolaOriginal: ""
       }
     },
     created: async function(){
@@ -432,8 +438,12 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         this.idprofessor = this.$route.params.idprofessor
         if(this.$route.params.escola) this.escola = this.$route.params.escola
         else{ 
-           var response2 = await axios.get(h + "professores/codigos/" + this.idprofessor + "/?token=" + this.token )
-           this.escola = response2.data.escola
+           if(this.utilizador.type != 20){
+            var response2 = await axios.get(h + "professores/codigos/" + this.idprofessor + "/?token=" + this.token )
+            this.escola = response2.data.escola
+            this.escolaOriginal = response2.data.escola
+           }
+           else this.escola = this.escolaOriginal = this.utilizador.codigo
         }
         
         var response = await axios.get(h + "professores/" + this.idprofessor + "/turmas?token=" + this.token)
@@ -465,9 +475,33 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       onTurmaChange: async function(item){
           if(this.turmaSel != "" && this.turmaSel && this.dataInicio && this.dataFim){
             this.loadingJogos = true
+            this.escola = this.escolaOriginal
+            console.log(this.escola)
+            var responseAlunos = await axios.get(h + "turmas/" + this.turmaSel + 
+                                                    "/alunos?codprofessor=" + this.idprofessor
+                                                    + "&token=" + this.token)
+
+            var escolas = []
+            console.log(responseAlunos.data)
+            for(var i = 0; i < responseAlunos.data.length; i++){
+                if(responseAlunos.data[i].escola != this.escola){
+                    var auxEscola = escolas.find(a => a.escola == responseAlunos.data[i].escola)
+                    if(auxEscola){
+                        auxEscola.numero++;
+                    }
+                    else escolas.push({escola: responseAlunos.data[i].escola, numero:1})
+                }
+            }
+            if(escolas.length > 0){
+                var res = Math.max.apply(Math, escolas.map(function(o){return o.numero;}))
+                var escolaAux = escolas.find(function(o){ return o.numero == res; })
+                console.log(escolaAux.escola)
+                if(escolaAux && escolaAux.escola != this.escola) this.escola = escolaAux.escola;
+            }
+                                                        
             var response2 = await axios.get(h + "turmas/" + this.turmaSel + "/jogos?escola=" 
                                                 + this.escola + "&dataInicio=" + this.dataInicio 
-                                                + "&dataFim=" + this.dataFim + "&token=" + this.token)
+                                                + "&dataFim=" + this.dataFim + "&codprofessor=" + this.idprofessor + "&token=" + this.token)
             this.jogosInfo = response2.data
             this.jogos = ["Todos"]
             this.alunos = []
@@ -586,13 +620,15 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
               var tipos = await this.parseTiposCalcRapid()
               var response = await axios.get(hostJogos + "calcrapid/turmas/" + this.turmaSel
                                                     + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                    + "&escola=" + this.escola +"&tipo="+ tipos + "&token=" + this.token)
+                                                    + "&escola=" + this.escola + "&codprofessor=" + this.idprofessor + 
+                                                    "&tipo="+ tipos + "&token=" + this.token)
               this.alunos = response.data
           }
           else{
             var response = await axios.get(hostJogos + "calcrapid/turmas/" + this.turmaSel
                                                     + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                    + "&escola=" + this.escola +  "&token=" + this.token)
+                                                    + "&escola=" + this.escola + "&codprofessor=" + this.idprofessor + 
+                                                    "&token=" + this.token)
             this.alunos = response.data
           }
           this.loading = false
@@ -603,6 +639,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           this.header_alunos = this.headers_minutenew
           var response = await axios.get(hostJogos + "minutenew/turmas/" + this.turmaSel
                                                     + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                    + "&codprofessor=" + this.idprofessor 
                                                     + "&escola=" + this.escola + "&token=" + this.token)
           this.alunos = response.data
           this.loading = false
@@ -614,6 +651,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           this.header_alunos = this.headers_minutenew
           var response = await axios.get(hostJogos + "minutenew/turmas/" + this.turmaSel
                                                     + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                    + "&codprofessor=" + this.idprofessor 
                                                     + "&tipos=" + tipos + "&escola=" + this.escola +"&token=" + this.token)
           this.alunos = response.data
           this.loading = false
@@ -624,6 +662,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           this.header_alunos = this.headers_minutenew
           var response = await axios.get(hostJogos + "minutenew/turmas/" + this.turmaSel
                                                     + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                    + "&codprofessor=" + this.idprofessor 
                                                     + "&niveis=" + this.niveisSel + "&escola=" + this.escola +"&token=" + this.token)
           this.alunos = response.data
           this.loading = false
@@ -635,6 +674,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           this.header_alunos = this.headers_minutenew
           var response = await axios.get(hostJogos + "minutenew/turmas/" + this.turmaSel
                                                     + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim + "&escola=" + this.escola
+                                                    + "&codprofessor=" + this.idprofessor 
                                                     +  "&niveis=" + this.niveisSel + "&tipos=" + tipos + "&token=" + this.token)
           this.alunos = response.data
           this.loading = false
@@ -646,9 +686,10 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
               if(this.jogo == "Todos"){
                 this.header_alunos = this.headersTodos
                 var idescola = this.escola
-
+                console.log(this.idprofessor + " - professor")
                 var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/Todos" 
                                                 + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                + "&codprofessor=" + this.idprofessor
                                                 + "&escola=" + idescola + "&token=" + this.token)
                 this.alunos = response.data
               }
@@ -666,6 +707,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
                     var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/" + jogoTable 
                                                         + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
                                                         + "&jogoTipo=" + jogoTipo + "&escola=" + idescola
+                                                        + "&codprofessor=" + this.idprofessor
                                                         + "&token=" + this.token)
                     this.alunos = response.data
                 }
@@ -683,6 +725,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/" + jogoTable + "/estatisticasGlobais"
                                         + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
                                         + "&jogoTipo=" + jogoTipo + "&escola=" + idescola
+                                        + "&codprofessor=" + this.idprofessor +
                                         + "&token=" + this.token)
 
           this.estatisticas = response.data
@@ -697,6 +740,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/" + jogoTable + "/estatisticasGlobais"
                                             + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
                                             + "&jogoTipo=" + jogoTipo + "&escola=" + idescola
+                                            + "&codprofessor=" + this.idprofessor 
                                             + "&token=" + this.token)
             return response.data
           }

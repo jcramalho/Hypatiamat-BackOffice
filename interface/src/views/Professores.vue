@@ -46,6 +46,7 @@
                     <td>{{row.item.agrupamento}}</td>
                     <td>{{row.item.socionum}}</td>
                     <td>{{row.item.projeto}}</td>
+                    <td>{{row.item.validade}}</td>
                     <td>
                     <!--<v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>-->
                     <v-icon @click="editarProfessor(row.item.id)"> mdi-pencil </v-icon>
@@ -89,6 +90,7 @@ const h = require("@/config/hosts").hostAPI
             {text: "Agrupamento", value: 'agrupamento', class: 'subtitle-1'},
             {text: "Sócio", value: 'socionum', class: 'subtitle-1'},
             {text: "Projeto", value: 'projeto', class: 'subtitle-1'},
+            {text: "Validade", value: 'validade', class: 'subtitle-1'},
             {text: "Operações", class: 'subtitle-1'},
         ],
         footer_props: {

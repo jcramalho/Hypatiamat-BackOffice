@@ -137,7 +137,7 @@ module.exports.verifyTurma2 = function(){
 
         if( u.type == 50 ) next()
         // professor
-        else if( u.type == 20 && u.codigo == codprofessor) next()
+        else if( u.type == 20 && u.codigo == codprofessor ) next()
         else {
             var professor = await Professores.getProfessorByCodigo(codprofessor)
             // agrupamento
@@ -155,17 +155,13 @@ module.exports.verifyTurma3 = function(){
         var u = req.user.user
         var turma = req.params.turma
         var escola = req.query.escola
+        var codprofessor = req.query.codprofessor
 
         if(!escola) res.status(400).jsonp("É necessário indicar a escola pertencente à turma.")
 
         if( u.type == 50 ) next()
         // professor
-        else if( u.type == 20){
-            var turmaObj = await Turmas.getTurmaByNomeEscola(turma, escola)
-            console.log(turmaObj)
-            if(turmaObj.idprofessor == u.codigo) next()
-            else res.status(403).jsonp("Não tem permissão.")
-        } 
+        else if( u.type == 20 && u.codigo == codprofessor) next() 
         // agrupamento
         else if(u.type == 40 && u.escola == escola) next()
         // municipio

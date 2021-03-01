@@ -115,7 +115,7 @@ export default {
         { title: 'Códigos Professores', icon: 'mdi-barcode', href:"/codigosprof" },
         { title: 'Alunos', icon: 'mdi-account-group', href:"/alunos" },
         { title: 'Agrupamentos', icon: 'mdi-school', href:"/escolas" },
-        { title: 'Turmas', icon: 'mdi-book-account', href:"/turmas" },
+        { title: 'Gestão de Turmas', icon: 'mdi-book-account', href:"/turmas" },
         { title: 'Monotorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/municipios"},
         { title: 'Monotorização de Apps', icon: 'mdi-apps', href:"/apps/municipios"},
         { title: 'Outras Estatísticas', icon: 'mdi-home-analytics', href:"/estatisticas/municipios"},
