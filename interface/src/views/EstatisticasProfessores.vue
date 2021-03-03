@@ -4,7 +4,7 @@
     <v-card class="pa-5">
         <v-container>
           <v-card-title primary-title class="justify-center green--text">
-                Estatísticas Gerais - Agrupamentos de Escolas de {{this.municipio}}
+                Estatísticas Gerais - {{this.nomeEscola}}
             </v-card-title>
 
                 <center><v-btn v-if="!loading && estatisticas.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> 
@@ -36,7 +36,6 @@
                     :items="estatisticas"
                     :footer-props="footer_props"
                     :search="filtrar"
-                    @click:row="goToProfessores"
                   ></v-data-table>
 
                 </v-container>
@@ -67,10 +66,9 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         anos: ["20/21", "19/20", "18/19", "17/18", "16/17", "15/16", "14/15" ],
         escolas: [],
         header_estatisticas: [
-            {text: "Agrupamento", value: 'nome', class: 'subtitle-1'},
+            {text: "Professor", value: 'nome', class: 'subtitle-1'},
             {text: "#Turmas", value: 'nturmas', class: 'subtitle-1'},
             {text: "#TurmasMistas", value: 'turmasmistas', class: 'subtitle-1'},
-            {text: "#Professores", value: 'nprofessores', class: 'subtitle-1'},
             {text: "#Alunos", value: 'nalunos', class: 'subtitle-1'},
         ],
         footer_props: {
@@ -79,13 +77,19 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
-        municipio:""
+        escola:"",
+        nomeEscola: ""
       }
     },
     created: async function(){
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
-        this.municipio = this.$route.params.municipio
+        this.escola = this.$route.params.escola
+        if(this.$route.params.nomeEscola) this.nomeEscola = this.$route.params.nomeEscola
+        else{
+            var response = await axios.get(h + "escolas/" + this.escola + "?token=" + this.token)
+            this.nomeEscola = response.data.nome
+        }
         if(this.$route.params.ano){
             this.ano = this.$route.params.ano
         }
@@ -97,15 +101,15 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         this.loading = true
         if(this.anos.find(element=> element == this.ano)){
           var aux = this.ano.split("/")[0]
-          var response = await axios.get(h + "escolas/localidades/" + this.municipio + 
-                                          "/estatisticas?ano=" + aux + "&agrupamentos=true&token=" + this.token)
+          var response = await axios.get(h + "escolas/" + this.escola + "/estatisticas/professores/?ano=" +  
+                                           aux + "&token=" + this.token)
           this.estatisticas = response.data
         }
         this.loading = false
       },
       parseEstatisticas: async function(){
         var listaRes = []
-        var total = ["Todos", 0, 0, 0, 0]
+        var total = ["Todos", 0, 0, 0]
         for(var i = 0; i<this.estatisticas.length; i++){
             var aux = [];
             aux.push(this.estatisticas[i].nome)
@@ -113,10 +117,8 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
             total[1] += this.estatisticas[i].nturmas
             aux.push(this.estatisticas[i].turmasmistas)
             total[2] += this.estatisticas[i].turmasmistas
-            aux.push(this.estatisticas[i].nprofessores)
-            total[3] += this.estatisticas[i].nprofessores
             aux.push(this.estatisticas[i].nalunos)
-            total[4] += this.estatisticas[i].nalunos
+            total[3] += this.estatisticas[i].nalunos
 
             listaRes.push(aux)
         }
@@ -128,16 +130,16 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         var ytotal = 0
 
         // nome do PDF e algumas informacoes sobre o relatório gerado
-        var pdfName = "EstatisticasGerais-" + this.municipio + ".pdf"
+        var pdfName = "EstatisticasGerais-" + this.escola + ".pdf"
         doc.addImage(hypatiaImg, 'PNG', doc.internal.pageSize.getWidth() / 4, 4);
         doc.setFontSize(11)
         doc.text("Ano Letivo: " + this.ano, 15, 50)
-        doc.text("Estatisticas Gerais - Agrupamentos de Escolas de " + this.municipio, doc.internal.pageSize.getWidth() / 2, 56, null, null, 'center')
+        doc.text("Estatisticas Gerais - " + this.nomeEscola, doc.internal.pageSize.getWidth() / 2, 56, null, null, 'center')
 
         var listaRes = await this.parseEstatisticas()
         
         doc.autoTable({
-            head: [['Agrupamento', '#Turmas', '#TurmasMistas', '#Professores', '#Alunos']],
+            head: [['Professor', '#Turmas', '#TurmasMistas', '#Alunos']],
             body: listaRes,
             headStyles: { fillColor: [0, 146, 99] },
             margin:{top: 65, bottom:25},
@@ -147,10 +149,9 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
                     ytotal = doc.internal.pageSize.getHeight()
                     doc.setFontSize(8)
                     //doc.setFontType('bold'
-                    doc.text("Legenda:" , 10, ytotal -22)
-                    doc.text("#Turmas - N.º total de turmas existentes", 10, ytotal -18)
-                    doc.text("#TurmasMistas - N.º total de turmas mistas", 10, ytotal -14)
-                    doc.text("#Professores- N.º total de professores que possuem turmas", 10, ytotal-10)
+                    doc.text("Legenda:" , 10, ytotal -18)
+                    doc.text("#Turmas - N.º total de turmas existentes", 10, ytotal -14)
+                    doc.text("#TurmasMistas - N.º total de turmas mistas", 10, ytotal -10)
                     doc.text("#Alunos - N.º total de alunos existentes", 10, ytotal-6)
                 },
             willDrawCell: function (data) {
@@ -163,10 +164,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         })
 
         doc.save(pdfName)
-      },
-      goToProfessores: async function(item){
-          this.$router.push({name: "Estatisticas Professores", params: { escola : item.cod, nomeEscola: item.nome, ano: this.ano } })
-      },
+      }
  
 
     }

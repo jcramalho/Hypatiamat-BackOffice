@@ -41,6 +41,7 @@ import Agrupamentos from '../views/Agrupamentos.vue'
 import AgrupamentoProfessores from '../views/AgrupamentoProfessores.vue'
 import EstatisticasMunicipios from '../views/EstatisticasMunicipios.vue'
 import EstatisticasAgrupamentos from '../views/EstatisticasAgrupamentos.vue'
+import EstatisticasProfessores from '../views/EstatisticasProfessores.vue'
 import Pendentes2 from '../views/Pendentes2.vue'
 import GestaoTurmas from '../views/GestaoTurmas.vue'
 import GestaoAlunos from '../views/GestaoAlunos.vue'
@@ -247,6 +248,24 @@ const routes = [
     path: '/estatisticas/municipios/:municipio',
     name: 'Estatisticas Agrupamentos',
     component: EstatisticasAgrupamentos,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if((utilizador.type == 50)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Esatísticas",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/estatisticas/escolas/:escola',
+    name: 'Estatisticas Professores',
+    component: EstatisticasProfessores,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50)){

@@ -133,12 +133,9 @@ router.get('/localidades/:municipio', passport.authenticate('jwt', {session: fal
   // Estatisticas globais de uma localidade (por agrupamento ou totalidade)
 router.get('/localidades/:municipio/estatisticas',passport.authenticate('jwt', {session: false}), verifyToken.verifyAdminEMunicipio(), function(req, res, next) {
   var ano = req.query.ano
-  if(ano){
-    var anoletivo = ano + "/" + ((parseInt(ano) + 1))
-  }
-  else{
-    var anoletivo = anoletivoAtual
-  }
+  if(ano) var anoletivo = ano + "/" + ((parseInt(ano) + 1))
+  else var anoletivo = anoletivoAtual
+
   var agrupamentos = req.query.agrupamentos
   if(!agrupamentos){
     Estatisticas.getEstatisticasMunicipioAno(req.params.municipio, anoletivo)
@@ -201,6 +198,16 @@ router.get('/:codigo/jogos/professores', passport.authenticate('jwt', {session: 
   }
 })
 
+router.get('/:codigo/estatisticas/professores', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Municipio_Agrupamento(), function(req, res){
+  var ano = req.query.ano
+  if(ano) var anoletivo = ano + "/" + ((parseInt(ano) + 1))
+  else var anoletivo = anoletivoAtual
+  var escola = req.params.codigo;
+  Estatisticas.getEstatisticaAnoAgruProf(escola, anoletivo)
+              .then(dados => res.jsonp(dados))
+              .catch(erro => res.status(500).jsonp("Error"))
+
+})
 
 // Pontuações de jogos por escola de um municipio
 router.get('/jogos/:jogo/municipios/:municipio', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdminEMunicipio(), function(req, res, next) {

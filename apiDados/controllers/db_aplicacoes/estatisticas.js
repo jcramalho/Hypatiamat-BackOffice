@@ -25,6 +25,22 @@ Estatistica.getTurmasAnoMun = function(municipio, anoletivo){
     })
 }
 
+Estatistica.getTurmasAnoProf = function(codprofessor, anoletivo){
+    return new Promise(function(resolve, reject) {
+        var args = [anoletivo, codprofessor]
+        sql.query(`select distinct t.id, t.turma
+                    from turmas t where t.anoletivo=? and t.idprofessor=?`, args, function (err, res) {
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    })
+}
+
 Estatistica.getProfessoresAnoMun = function(municipio, anoletivo){
     return new Promise(function(resolve, reject) {
         var args = [anoletivo, municipio]
@@ -103,10 +119,10 @@ Estatistica.getNumAlunos = function(professores, turmas){
     })
 }
 
-Estatistica.getNumAlunos2 = function(professor, turma){
+Estatistica.getNumAlunos2 = function(professor, turmas){
     return new Promise(function(resolve, reject) {
-        var args = [professor, turma]
-        sql.query(`select count(a.user) as numalunos from alunos a where a.codprofessor=? and a.turma=?;`, args, function (err, res) {
+        var args = [professor, turmas]
+        sql.query(`select count(a.user) as numalunos from alunos a where a.codprofessor=? and a.turma in (?);`, args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
                     reject(err);
@@ -122,6 +138,21 @@ Estatistica.getNumAlunosOld = function(professores, turmas){
     return new Promise(function(resolve, reject) {
         var args = [professores, turmas]
         sql.query(`select count(codAluno) as numalunos from turmasold where codProfessor in (?) and turma in (?);`, args, function (err, res) {
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res[0]);
+                }
+            });   
+    })
+}
+
+Estatistica.getNumAlunosOld2 = function(professor, turmas){
+    return new Promise(function(resolve, reject) {
+        var args = [professor, turmas]
+        sql.query(`select count(codAluno) as numalunos from turmasold where codProfessor=? and turma in (?);`, args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
                     reject(err);
@@ -271,7 +302,7 @@ Estatistica.getTurmasAnoAgru = function(escola, anoletivo){
 Estatistica.getProfessoresAnoAgru = function(escola, anoletivo){
     return new Promise(function(resolve, reject) {
         var args = [anoletivo, escola]
-        sql.query(`select p.codigo
+        sql.query(`select p.codigo, p.nome
                     from (select * from turmas where anoletivo=?) t, professores p
                     where t.idprofessor = p.codigo and p.escola = ?
                     Group by p.codigo;`, args, function (err, res) {
@@ -387,6 +418,69 @@ Estatistica.getEstatisticaAgruMun = async function(municipio, anoletivo){
         agrupamento.cod = agrupamentos[i].cod
         agrupamento.nome = agrupamentos[i].nome
         resultado.push(agrupamento)
+    }
+    
+    await resultado.sort(function (a, b) {
+        return (a.nalunos > b.nalunos) ? -1 : 1;
+      });
+    
+    return resultado
+            
+}
+
+Estatistica.getAlunosAnoProf = async function(escola, codProf, anoletivo){
+    return new Promise(function(resolve, reject) {
+        var args = [escola, anoletivo, codProf,
+                    escola, codProf, anoletivo]
+        sql.query(`Select count(a.user) as nalunos
+        From ((SELECT a.*
+            FROM (select * from hypati67_aplicacoes.alunos a where escola=?) a, 
+                (select * from hypati67_aplicacoes.turmas where anoletivo=? and idprofessor=?) t
+            Where t.turma=a.turma)
+        UNION
+         (SELECT a.*
+            FROM (select * from hypati67_aplicacoes.alunos where escola=?) a
+            RIGHT JOIN (select * from hypati67_aplicacoes.turmasold where codProfessor=? and anoletivo=?) aold 
+                ON a.user = aold.codAluno)) a;`, args, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res[0])
+            }
+        })
+    })
+}
+
+Estatistica.getEstatisticaAnoAgruProf = async function(escola, anoletivo){
+
+    var professores = await Estatistica.getProfessoresAnoAgru(escola, anoletivo)
+    var resultado = []
+    for(var i = 0; i < professores.length; i++){
+        var turmasMistas = 0;
+        var codProf = professores[i].codigo
+        var turmas = await Estatistica.getTurmasAnoProf(codProf, anoletivo)
+
+        if(turmas.length > 1) turmasMistas = 1;
+        
+        var turmasAux = []
+        for(var j = 0; j < turmas.length ; j++){
+            turmasAux.push(turmas[j].turma)
+        }
+
+        var nalunos = await Estatistica.getNumAlunos2(codProf, turmasAux)
+        var nalunosTurmasOld = {numalunos: 0}        
+
+        if(anoletivo != "20/21"){
+            nalunosTurmasOld = await Estatistica.getNumAlunosOld2(codProf, turmasAux)
+        }
+        
+        var prof = {codigo: codProf, nome: professores[i].nome,
+                    nturmas: turmas.length,nalunos: nalunos.numalunos + nalunosTurmasOld.numalunos, 
+                    turmasmistas: turmasMistas}
+
+        resultado.push(prof)
     }
     
     await resultado.sort(function (a, b) {
