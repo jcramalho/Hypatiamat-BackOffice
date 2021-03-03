@@ -3,6 +3,7 @@ var router = express.Router();
 var passport = require('passport')
 
 var Apps = require('../../controllers/db_testeconhecimentos/apps');
+const Rankings = require('../../controllers/db_testeconhecimentos/rankings');
 
 // Todas os temas das apps
 router.get('/temas', function(req, res, next) {
@@ -155,6 +156,100 @@ router.get('/turmas/:turma', passport.authenticate('jwt', {session: false}), fun
             })
             .catch(erro => res.status(500).jsonp(erro))
     }          
+});
+
+// O ranking de uma app ou de todas as apps de uma turma (critério NTRC)
+router.get('/turmas/:turma/ranking/NTRC', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var anoletivo = req.query.anoletivo
+    var turma = req.params.turma
+    var codProf = req.query.codProf
+    var codtema = req.query.codtema
+    var codsubtema = req.query.codsubtema
+    var escola = req.query.escola
+    // calculaRankingTurmaNTRC = async function(turma, escola, codprofessor, dataInicio, dataFim)
+    if(turma && escola && codProf && anoletivo){
+        var aux = anoletivo.split("/")
+        if(aux){
+            var dataInicio = aux[0] + "-09-01"
+            var dataFim = aux[1] + "-09-01"
+            if(codtema){
+                // é um tema
+                if(codsubtema){
+                    // com subtema
+                    Rankings.calculaRankingTurmaNTRCSubTema(turma, escola, codProf, dataInicio, dataFim, codtema, codsubtema)
+                            .then(dados =>{
+                                res.jsonp(dados)
+                            })
+                            .catch(erro => res.status(500).jsonp(erro))
+                }
+                else{
+                    // sem subtema
+                    Rankings.calculaRankingTurmaNTRCTema(turma, escola, codProf, dataInicio, dataFim, codtema)
+                            .then(dados =>{
+                                res.jsonp(dados)
+                            })
+                            .catch(erro => res.status(500).jsonp(erro))
+                }
+            }
+            else{
+                // todas
+                Rankings.calculaRankingTurmaNTRC(turma, escola, codProf, dataInicio, dataFim)
+                        .then(dados =>{
+                            res.jsonp(dados)
+                        })
+                        .catch(erro => res.status(500).jsonp(erro))
+            }
+        }
+        else res.status(400).jsonp("Ano letivo deve ser do tipo YYYY/YYYY.")
+    }
+    else res.status(400).jsonp("Parametros em falta.")          
+});
+
+// O ranking de uma app ou de todas as apps de uma turma (critério percentagem de acerto)
+router.get('/turmas/:turma/ranking/Acerto', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var anoletivo = req.query.anoletivo
+    var turma = req.params.turma
+    var codProf = req.query.codProf
+    var codtema = req.query.codtema
+    var codsubtema = req.query.codsubtema
+    var escola = req.query.escola
+    // calculaRankingTurmaNTRC = async function(turma, escola, codprofessor, dataInicio, dataFim)
+    if(turma && escola && codProf && anoletivo){
+        var aux = anoletivo.split("/")
+        if(aux){
+            var dataInicio = aux[0] + "-09-01"
+            var dataFim = aux[1] + "-09-01"
+            if(codtema){
+                // é um tema
+                if(codsubtema){
+                    // com subtema
+                    Rankings.calculaRankingTurmaAcertoSubTema(turma, escola, codProf, dataInicio, dataFim, codtema, codsubtema)
+                            .then(dados =>{
+                                res.jsonp(dados)
+                            })
+                            .catch(erro => res.status(500).jsonp(erro))
+                }
+                else{
+                    // sem subtema
+                    Rankings.calculaRankingTurmaAcertoTema(turma, escola, codProf, dataInicio, dataFim, codtema)
+                            .then(dados =>{
+                                res.jsonp(dados)
+                            })
+                            .catch(erro => res.status(500).jsonp(erro))
+                }
+            }
+            else{
+                // todas
+                Rankings.calculaRankingTurmaAcerto(turma, escola, codProf, dataInicio, dataFim)
+                        .then(dados =>{
+                            res.jsonp(dados)
+                        })
+                        .catch(erro => res.status(500).jsonp(erro))
+            }
+        }
+        else res.status(400).jsonp("Ano letivo deve ser do tipo YYYY/YYYY.")
+    }
+    else res.status(400).jsonp("Parametros em falta.")          
 });
 
 module.exports = router

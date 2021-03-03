@@ -25,7 +25,7 @@
                       :items="jogos"
                       @change="onJogoChange"
                   ></v-combobox>
-                  <!--
+                  
                   <v-combobox
                       id="tiposCalcRapid"
                       chips
@@ -59,7 +59,6 @@
                       :items="tiposCalculus"
                       @change="onTipoCalculusChange"
                   ></v-combobox>
-                  -->
                   <v-combobox
                       id="anos"
                       v-model="anoLetivo"
@@ -140,7 +139,14 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
-        loading:false
+        loading:false,
+        tiposCalcRapid:["1 - Adição", "2 - Subtração", "3 - Multiplicação", "4 - Divisão"],
+        tiposCalc:["1 - Adição", "2 - Subtração", "3 - Multiplicação", "4 - Divisão"],
+        niveisCalculus:["1","2","3","4","5"],
+        tiposCalculus:["0 - Todas as combinações", "1 – Adição", "2 – Subtração", "3 - Multiplicação", "4 - Divisão"],
+        niveisSel:["1","2","3","4","5"],
+        tiposCalculusSel:["0 - Todas as combinações"],
+        tiposCalculusSelAnterior:["0 - Todas as combinações"],
       }
     },
     created: async function(){
@@ -166,13 +172,11 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           if(this.turmaSel != "" && this.turmaSel && this.anoLetivo){
             this.loadingJogos = true
             this.escola = this.escolaOriginal
-            console.log(this.escola)
             var responseAlunos = await axios.get(h + "turmas/" + this.turmaSel + 
                                                     "/alunos?codprofessor=" + this.idprofessor
                                                     + "&token=" + this.token)
 
             var escolas = []
-            console.log(responseAlunos.data)
             for(var i = 0; i < responseAlunos.data.length; i++){
                 if(responseAlunos.data[i].escola != this.escola){
                     var auxEscola = escolas.find(a => a.escola == responseAlunos.data[i].escola)
@@ -185,7 +189,6 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             if(escolas.length > 0){
                 var res = Math.max.apply(Math, escolas.map(function(o){return o.numero;}))
                 var escolaAux = escolas.find(function(o){ return o.numero == res; })
-                console.log(escolaAux.escola)
                 if(escolaAux && escolaAux.escola != this.escola) this.escola = escolaAux.escola;
             }
             var aux = this.anoLetivo.split("/")
@@ -215,11 +218,142 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
               this.atualizaConteudo()
           }
       },
+      onNivelChange: async function(item){
+          if(this.tiposCalculusSel.find(e => e == "0 - Todas as combinações")){
+              if(this.niveisSel.length < this.niveisCalculus.length){
+                  if(this.niveisSel.length > 0){
+                      this.atualizaMinuteNewNiveis()
+                  }
+              }
+              else{
+                  this.atualizaMinuteNew()
+              }
+          }
+          else{
+              if(this.niveisSel.length < this.niveisCalculus.length){
+                  if(this.niveisSel.length > 0){
+                      this.atualizaMinuteNewTiposNiveis()
+                  }
+              }
+              else{
+                  this.atualizaMinuteNewTipos()
+              }
+          }
+      },
+      onTipoCalculusChange: async function(item){
+          var todos = this.tiposCalculusSel.find(e => e == "0 - Todas as combinações")
+          if(todos && !this.tiposCalculusSelAnterior.find(e => e == "0 - Todas as combinações")){
+                this.tiposCalculusSel = ["0 - Todas as combinações"]
+                    if(this.niveisSel.length < this.niveisCalculus.length){
+                        this.atualizaMinuteNewNiveis()
+                    }
+                    else{
+                        this.atualizaMinuteNew()
+                    }       
+        }
+        else{
+            if(todos){
+                var index = this.tiposCalculusSel.indexOf(todos)
+                this.tiposCalculusSel.splice(index, index+1)
+            }
+            if(this.niveisSel.length < this.niveisCalculus.length){
+                this.atualizaMinuteNewTiposNiveis()
+            }
+            else{
+                this.atualizaMinuteNewTipos()
+            }
+        }
+          this.tiposCalculusSelAnterior = this.tiposCalculusSel
+      },
+      onTipoCalcChange: async function(item){
+          if(this.jogo && this.jogo != "" && this.dataFim != "" && this.dataInicio != "" && this.tiposCalc.length > 0){
+              this.atualizaCalcRapid()
+          }
+      },
+      parseTiposCalculus: async function(){
+          var res = ""
+          for(var i = 0; i < this.tiposCalculusSel.length; i++){
+              var aux = this.tiposCalc[i].split(" - ")
+              res += aux[0]
+          }
+          return res
+      },
+      parseTiposCalcRapid: async function(){
+          var res = []
+          for(var i = 0; i < this.tiposCalc.length; i++){
+              var aux = this.tiposCalc[i].split(" - ")
+              res.push(aux[0])
+          }
+          return res
+      },
+      atualizaMinuteNew: async function(){
+          this.loading = true
+          var response = await axios.get(hostJogos + "minutenew/turmas/" + this.turmaSel + "/ranking"
+                                                    + "?anoletivo=" + this.anoLetivo
+                                                    + "&codprofessor=" + this.idprofessor 
+                                                    + "&escola=" + this.escola + "&token=" + this.token)
+          this.items = response.data
+          this.loading = false
+          return true
+      },
+      atualizaMinuteNewTipos: async function(){
+          this.loading = true
+          var tipos = await this.parseTiposCalculus()
+          var response = await axios.get(hostJogos + "minutenew/turmas/" + this.turmaSel + "/ranking"
+                                                    + "?anoletivo=" + this.anoLetivo
+                                                    + "&codprofessor=" + this.idprofessor 
+                                                    + "&tipos=" + tipos + "&escola=" + this.escola +"&token=" + this.token)
+          this.items = response.data
+          this.loading = false
+          return true
+      },
+      atualizaMinuteNewNiveis: async function(){
+          this.loading = true
+          var response = await axios.get(hostJogos + "minutenew/turmas/" + this.turmaSel + "/ranking"
+                                                    + "?anoletivo=" + this.anoLetivo
+                                                    + "&codprofessor=" + this.idprofessor 
+                                                    + "&niveis=" + this.niveisSel + "&escola=" + this.escola +"&token=" + this.token)
+          this.items = response.data
+          this.loading = false
+          return true
+      },
+      atualizaMinuteNewTiposNiveis: async function(){
+          this.loading = true
+          var tipos = await this.parseTiposCalculus()
+          var response = await axios.get(hostJogos + "minutenew/turmas/" + this.turmaSel + "/ranking"
+                                                    + "?anoletivo=" + this.anoLetivo + "&escola=" + this.escola
+                                                    + "&codprofessor=" + this.idprofessor 
+                                                    +  "&niveis=" + this.niveisSel + "&tipos=" + tipos + "&token=" + this.token)
+          this.items = response.data
+          this.loading = false
+          return true
+      },
+      atualizaCalcRapid: async function(){
+          //this.header_alunos = this.headers_calcrapid
+          this.loading = true
+          if(this.tiposCalc.length < this.tiposCalcRapid.length && this.tiposCalc.length > 0){
+              var tipos = await this.parseTiposCalcRapid()
+              var response = await axios.get(hostJogos + "calcrapid/turmas/" + this.turmaSel + "/ranking"
+                                                    + "?anoletivo=" + this.anoLetivo
+                                                    + "&escola=" + this.escola + "&codprofessor=" + this.idprofessor + 
+                                                    "&tipo="+ tipos + "&token=" + this.token)
+              this.items = response.data
+          }
+          else{
+            var response = await axios.get(hostJogos + "calcrapid/turmas/" + this.turmaSel + "/ranking"
+                                                    + "?anoletivo=" + this.anoLetivo
+                                                    + "&escola=" + this.escola + "&codprofessor=" + this.idprofessor + 
+                                                    "&token=" + this.token)
+            this.items = response.data
+          }
+          this.loading = false
+          return true
+      },
       atualizaConteudo: async function(){
           if(this.jogo && this.jogo != "" && this.dataFim != "" && this.dataInicio != "" && this.turmaSel != "" ){
               this.loading = true
-              if(this.jogo == "Calcrapid") alert("Não disponível")
-              else if(this.jogo == "Calculus") alert("Não disponível")
+              if(this.jogo == "Calcrapid") this.atualizaCalcRapid()
+              else if(this.jogo == "Calculus") this.onNivelChange()
               else{
                 var aux = this.jogosInfo.find(element => element.jogo == this.jogo)
                 if(aux){

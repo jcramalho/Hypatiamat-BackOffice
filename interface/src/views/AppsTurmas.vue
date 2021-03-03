@@ -179,7 +179,9 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           }
       },
       onAppChange: async function(item){
+          if(this.app){
             this.atualizaConteudo()
+          }
       },
       onDataInChange: async function(item){
           if(this.dataInicio){

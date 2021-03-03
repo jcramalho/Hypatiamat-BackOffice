@@ -105,6 +105,82 @@ router.get('/calcrapid/turmas/:turma', passport.authenticate('jwt', {session: fa
   }
 });
 
+router.get('/calcrapid/turmas/:turma/ranking', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  var turma = req.params.turma
+  var escola = req.query.escola
+  var codprofessor = req.query.codprofessor
+  var anoletivo = req.query.anoletivo
+  var tipo = req.query.tipo
+  if(turma && escola && codprofessor && anoletivo){
+    var aux = anoletivo.split("/")
+    if(aux.length == 2){
+      var dataInicio = aux[0] + "-09-01"
+      var dataFim = aux[1] + "-09-01"
+      if(tipo){
+        Rankings.calculaRankingTurmaCalcRapidTipos(turma, escola, codprofessor, dataInicio, dataFim, tipo.split(','))
+              .then(dados => res.jsonp(dados))
+              .catch(error => { console.log(error); res.status(500).jsonp("Error")})
+      }
+      else{
+        Rankings.calculaRankingTurmaCalcRapid(turma, escola, codprofessor, dataInicio, dataFim)
+              .then(dados => res.jsonp(dados))
+              .catch(error => { console.log(error); res.status(500).jsonp("Error")})
+      }
+    }
+    else res.status(400).jsonp("Ano letivo tem de ser do formato YYYY/YYYY.")
+  }
+  else res.status(400).jsonp("Faltam parâmetros.")
+
+});
+
+router.get('/minutenew/turmas/:turma/ranking', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  var turma = req.params.turma
+  var escola = req.query.escola
+  var codprofessor = req.query.codprofessor
+  var anoletivo = req.query.anoletivo
+  var tipos = req.query.tipos
+  var niveis = req.query.niveis
+  if(turma && escola && codprofessor && anoletivo){
+    var aux = anoletivo.split("/")
+    if(aux.length == 2){
+      var dataInicio = aux[0] + "-09-01"
+      var dataFim = aux[1] + "-09-01"
+      if(tipos && niveis){
+        Rankings.calculaRankingTurmaMinuteNewNiveisTipos(turma, escola, codprofessor, dataInicio, dataFim, niveis.split(","), tipos)
+                  .then(dados =>{
+                    res.jsonp(dados)
+                  })
+                  .catch(erro => res.status(500).jsonp(erro))
+      }
+      else if(tipos){
+        Rankings.calculaRankingTurmaMinuteNewTipos(turma, escola, codprofessor, dataInicio, dataFim, tipos)
+                  .then(dados =>{
+                    res.jsonp(dados)
+                  })
+                  .catch(erro => res.status(500).jsonp(erro)) 
+      }
+      else if(niveis){
+        Rankings.calculaRankingTurmaMinuteNewNiveis(turma, escola, codprofessor, dataInicio, dataFim, niveis.split(","))
+                  .then(dados =>{
+                    res.jsonp(dados)
+                  })
+                  .catch(erro => res.status(500).jsonp(erro)) 
+      }
+      else{
+        Rankings.calculaRankingTurmaMinuteNew(turma, escola, codprofessor, dataInicio, dataFim)
+                  .then(dados =>{
+                    res.jsonp(dados)
+                  })
+                  .catch(erro => res.status(500).jsonp(erro))
+      }
+    }
+    else res.status(400).jsonp("Ano letivo tem de ser do formato YYYY/YYYY.")
+  }
+  else res.status(400).jsonp("Faltam parâmetros.")
+
+});
+
+
 router.get('/:jogo/turmas/:turma/ranking', passport.authenticate('jwt', {session: false}), function(req, res, next) {
   var turma = req.params.turma
   var escola = req.query.escola
