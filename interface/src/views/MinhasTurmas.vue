@@ -1,9 +1,10 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <TurmasProfessor v-if="utilizador.type==20"/>
-    <TurmasAgrupamento v-else />
-    
+      <v-container>
+        <TurmasProfessor v-if="utilizador.type==20"/>
+        <TurmasAgrupamento v-else />
+      </v-container>
     </v-main>
   </v-app> 
 </template>

@@ -1,163 +1,165 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card class="pa-5">
-        <v-container>
-            <v-card-title primary-title class="justify-center green--text">
-                Transferência de Alunos ({{turma.turma}})
-            </v-card-title>
-                     
-           <v-layout row class="text-xs-center pa-lg-16" justify-center align-center >
-      <v-flex xs5>
-        <v-card class="pa-4">
-            <v-card-title primary-title class="justify-center">
-                Alunos da Turma {{turma.turma}}
-            </v-card-title>
-             <v-text-field
-                v-model="filtrar"
-                label="Filtrar"
-                prepend-icon="mdi-magnify"
-                color="#009263"
-                single-line
-                ></v-text-field>
-                <v-data-table
-                class="elevation-1"
-                v-model="selected"
-                :single-select="false"
-                show-select
-                :headers="header_alunos"
-                :items="alunosTurmaAtual"
-                :footer-props="footer_props"
-                :search="filtrar"
-                >
-                <template v-slot:item="row">
-                <tr>
-                    <td>
-                        <v-checkbox color="green" v-model="selected" :value="row.item" style="margin:0px;padding:0px"
-                            hide-details />
-                    </td>
-                    <td>{{row.item.numero}}</td>
-                    <td>{{row.item.nome}}</td>
-                    <td>
-                    <!--<v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>-->
-                    <v-icon @click="dialogEditar1 = true; idEditar1=row.item.id"> mdi-pencil </v-icon>
-                    </td>
-                </tr>
-                </template>
-                </v-data-table>
+      <v-container>
+        <v-card class="pa-5">
+            <v-container>
+                <v-card-title primary-title class="justify-center green--text">
+                    Transferência de Alunos ({{turma.turma}})
+                </v-card-title>
+                        
+              <v-layout row class="text-xs-center pa-lg-16" justify-center align-center >
+          <v-flex xs5>
+            <v-card class="pa-4">
+                <v-card-title primary-title class="justify-center">
+                    Alunos da Turma {{turma.turma}}
+                </v-card-title>
+                <v-text-field
+                    v-model="filtrar"
+                    label="Filtrar"
+                    prepend-icon="mdi-magnify"
+                    color="#009263"
+                    single-line
+                    ></v-text-field>
+                    <v-data-table
+                    class="elevation-1"
+                    v-model="selected"
+                    :single-select="false"
+                    show-select
+                    :headers="header_alunos"
+                    :items="alunosTurmaAtual"
+                    :footer-props="footer_props"
+                    :search="filtrar"
+                    >
+                    <template v-slot:item="row">
+                    <tr>
+                        <td>
+                            <v-checkbox color="green" v-model="selected" :value="row.item" style="margin:0px;padding:0px"
+                                hide-details />
+                        </td>
+                        <td>{{row.item.numero}}</td>
+                        <td>{{row.item.nome}}</td>
+                        <td>
+                        <!--<v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>-->
+                        <v-icon @click="dialogEditar1 = true; idEditar1=row.item.id"> mdi-pencil </v-icon>
+                        </td>
+                    </tr>
+                    </template>
+                    </v-data-table>
+            </v-card>
+          </v-flex>
+          <v-flex xs1>
+            <v-container v-if="turma2.length != 0">
+              <center>
+                <v-tooltip v-if="this.selected.length>0 && this.anoLetivoTurma1 <= this.anoLetivoTurma2" top>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      icon
+                      v-bind="attrs" 
+                      v-on="on"
+                    >
+                    <v-icon large color="#009263" @click="alteraTurma"> mdi-arrow-right-box </v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Irá transferir os alunos selecionados da turma {{turma.turma}} para a {{turma2}}</span>
+                </v-tooltip>
+              </center>
+              <br>
+              <center>
+                <v-tooltip v-if="this.selected2.length>0 && this.anoLetivoTurma2 <= this.anoLetivoTurma1" bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      icon
+                      v-bind="attrs" 
+                      v-on="on"
+                    >
+                    <v-icon  large color="#009263" @click="alteraTurma2"> mdi-arrow-left-box </v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Irá transferir os alunos selecionados da turma {{turma2}} para a {{turma.turma}}</span>
+                </v-tooltip>
+              </center>
+            </v-container>
+          </v-flex>
+          <v-flex xs5>
+            <v-card class="pa-4">
+            
+                <v-combobox
+                    id="escola"
+                    label="Agrupamento de Escolas"
+                    v-model="escola"
+                    :items="agrupamentos"
+                    @change="onAgrupamentoChange"
+                ></v-combobox>
+                <v-combobox
+                    v-if="professores.length > 0"
+                    id="professor"
+                    label="Professor"
+                    v-model="idprofessor2"
+                    :items="professores"
+                    @change="onProfessorChange"
+                ></v-combobox>
+                <v-combobox
+                    v-if="turmas.length>0 && professores.length > 0"
+                    id="turma"
+                    label="Turma"
+                    v-model="turma2"
+                    :items="turmas"
+                    @change="onTurmaChange"
+                ></v-combobox>
+                
+                
+                <v-text-field
+                    v-model="filtrar2"
+                    label="Filtrar"
+                    prepend-icon="mdi-magnify"
+                    color="#009263"
+                    single-line
+                    ></v-text-field>
+                    <v-data-table
+                    class="elevation-1"
+                    v-model="selected2"
+                    :single-select="false"
+                    show-select
+                    :headers="header_alunos"
+                    :items="alunosOutraTurma"
+                    :footer-props="footer_props"
+                    :search="filtrar2"
+                    >
+                    <template v-slot:item="row">
+                    <tr>
+                        <td>
+                            <v-checkbox color="green" v-model="selected2" :value="row.item" style="margin:0px;padding:0px"
+                                hide-details />
+                        </td>
+                        <td>{{row.item.numero}}</td>
+                        <td>{{row.item.nome}}</td>
+                        <td>
+                        <!--<v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>-->
+                        <v-icon @click="dialogEditar2 = true; idEditar2=row.item.id"> mdi-pencil </v-icon>
+                        </td>
+                    </tr>
+                    </template>
+                    </v-data-table>
+            </v-card>        
+          </v-flex>
+        </v-layout>
+
+                <v-dialog v-model="dialogEditar1" width="85%">
+                  <v-card>
+                  <EditarAluno v-if="dialogEditar1" @alteracao="atualizaAlunos1()" :idProp="idEditar1"/>
+                  </v-card>
+                </v-dialog>
+
+                <v-dialog v-model="dialogEditar2" width="85%">
+                  <v-card>
+                  <EditarAluno v-if="dialogEditar2" @alteracao="atualizaAlunos2()" :idProp="idEditar2"/>
+                  </v-card>
+                </v-dialog>
+            
+            </v-container>
         </v-card>
-      </v-flex>
-      <v-flex xs1>
-        <v-container v-if="turma2.length != 0">
-          <center>
-            <v-tooltip v-if="this.selected.length>0 && this.anoLetivoTurma1 <= this.anoLetivoTurma2" top>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  icon
-                  v-bind="attrs" 
-                  v-on="on"
-                >
-                <v-icon large color="#009263" @click="alteraTurma"> mdi-arrow-right-box </v-icon>
-                </v-btn>
-              </template>
-              <span>Irá transferir os alunos selecionados da turma {{turma.turma}} para a {{turma2}}</span>
-            </v-tooltip>
-          </center>
-          <br>
-          <center>
-            <v-tooltip v-if="this.selected2.length>0 && this.anoLetivoTurma2 <= this.anoLetivoTurma1" bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  icon
-                  v-bind="attrs" 
-                  v-on="on"
-                >
-                <v-icon  large color="#009263" @click="alteraTurma2"> mdi-arrow-left-box </v-icon>
-                </v-btn>
-              </template>
-              <span>Irá transferir os alunos selecionados da turma {{turma2}} para a {{turma.turma}}</span>
-            </v-tooltip>
-          </center>
-        </v-container>
-      </v-flex>
-      <v-flex xs5>
-        <v-card class="pa-4">
-        
-            <v-combobox
-                id="escola"
-                label="Agrupamento de Escolas"
-                v-model="escola"
-                :items="agrupamentos"
-                @change="onAgrupamentoChange"
-            ></v-combobox>
-            <v-combobox
-                v-if="professores.length > 0"
-                id="professor"
-                label="Professor"
-                v-model="idprofessor2"
-                :items="professores"
-                @change="onProfessorChange"
-            ></v-combobox>
-            <v-combobox
-                v-if="turmas.length>0 && professores.length > 0"
-                id="turma"
-                label="Turma"
-                v-model="turma2"
-                :items="turmas"
-                @change="onTurmaChange"
-            ></v-combobox>
-            
-            
-            <v-text-field
-                v-model="filtrar2"
-                label="Filtrar"
-                prepend-icon="mdi-magnify"
-                color="#009263"
-                single-line
-                ></v-text-field>
-                <v-data-table
-                class="elevation-1"
-                v-model="selected2"
-                :single-select="false"
-                show-select
-                :headers="header_alunos"
-                :items="alunosOutraTurma"
-                :footer-props="footer_props"
-                :search="filtrar2"
-                >
-                <template v-slot:item="row">
-                <tr>
-                    <td>
-                        <v-checkbox color="green" v-model="selected2" :value="row.item" style="margin:0px;padding:0px"
-                            hide-details />
-                    </td>
-                    <td>{{row.item.numero}}</td>
-                    <td>{{row.item.nome}}</td>
-                    <td>
-                    <!--<v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>-->
-                    <v-icon @click="dialogEditar2 = true; idEditar2=row.item.id"> mdi-pencil </v-icon>
-                    </td>
-                </tr>
-                </template>
-                </v-data-table>
-        </v-card>        
-      </v-flex>
-    </v-layout>
-
-            <v-dialog v-model="dialogEditar1" width="85%">
-              <v-card>
-              <EditarAluno v-if="dialogEditar1" @alteracao="atualizaAlunos1()" :idProp="idEditar1"/>
-              </v-card>
-            </v-dialog>
-
-            <v-dialog v-model="dialogEditar2" width="85%">
-              <v-card>
-              <EditarAluno v-if="dialogEditar2" @alteracao="atualizaAlunos2()" :idProp="idEditar2"/>
-              </v-card>
-            </v-dialog>
-        
-        </v-container>
-    </v-card>
+      </v-container>
     </v-main>
   </v-app> 
 </template>
@@ -191,7 +193,7 @@ import EditarAluno from '@/components/EditarAluno.vue'
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20, -1],
+            "items-per-page-options": [30, 50, -1],
             "items-per-page-all-text": "Todos"
         },
         token: "",
@@ -255,7 +257,7 @@ import EditarAluno from '@/components/EditarAluno.vue'
         return aux
       },
       getProfessores: async function(item){
-        if(this.escola != ""){
+        if(this.escola != "" && this.escola){
           var responseProfs = await axios.get(h + "escolas/" + this.escolaId + "/professores/?token=" + this.token)
           var aux = []
           for(var i = 0; i < responseProfs.data.length; i++){

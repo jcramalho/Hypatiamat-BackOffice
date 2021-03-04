@@ -47,6 +47,9 @@ import GestaoTurmas from '../views/GestaoTurmas.vue'
 import GestaoAlunos from '../views/GestaoAlunos.vue'
 import RankingJogos from '../views/RankingJogos.vue'
 import RankingApps from '../views/RankingApps.vue'
+import RankingJogosAdmin from '../views/RankingJogosAdmin.vue'
+import RankingAppsAdmin from '../views/RankingAppsAdmin.vue'
+
 
 
 
@@ -191,12 +194,48 @@ const routes = [
     }
   },
   {
+    path: '/classificacoes/jogos/admin',
+    name: 'Ranking Jogos Admin',
+    component: RankingJogosAdmin,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if((utilizador.type == 50)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
     path: '/classificacoes/apps',
     name: 'Ranking Apps',
     component: RankingApps,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50 || utilizador.type == 20)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/classificacoes/apps/admin',
+    name: 'Ranking Apps Admin',
+    component: RankingAppsAdmin,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if((utilizador.type == 50)){
         next()
       }
       else{

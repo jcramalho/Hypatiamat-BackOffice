@@ -1,41 +1,39 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card class="pa-5">
-        <v-container>
-            <v-card-title primary-title class="justify-center green--text">
-                Professores do Agrupamento {{escola.nome}}
-            </v-card-title>
-            <v-text-field
-                v-model="filtrar"
-                label="Filtrar"
-                prepend-icon="mdi-magnify"
-                color="#009263"
-                single-line
-                ></v-text-field>
-                <v-data-table
-                class="elevation-1"
-                :headers="header_professores"
-                :items="professores"
-                :footer-props="footer_props"
-                :search="filtrar"
-                >
-                <template v-slot:item="row">
-                <tr>
-                    <td>{{row.item.codigo}}</td>
-                    <td>{{row.item.nome}}</td>
-                    <td>
-                    <v-icon @click="verTurmas(row.item.id)"> mdi-eye </v-icon>
-                    </td>
-                    <td>
-                    <v-icon @click="editarProfessor(row.item.id)"> mdi-pencil </v-icon>
-                    <v-icon @click="apagarProfessor(row.item.codigo)"> mdi-delete </v-icon>
-                    </td>
-                </tr>
-                </template>
-                </v-data-table>
-        </v-container>
-    </v-card>
+      <v-container>
+        <v-card class="pa-5">
+            <v-container>
+                <v-card-title primary-title class="justify-center green--text">
+                    Professores do Agrupamento {{escola.nome}}
+                </v-card-title>
+                <v-text-field
+                    v-model="filtrar"
+                    label="Filtrar"
+                    prepend-icon="mdi-magnify"
+                    color="#009263"
+                    single-line
+                    ></v-text-field>
+                    <v-data-table
+                    class="elevation-1"
+                    :headers="header_professores"
+                    :items="professores"
+                    :footer-props="footer_props"
+                    :search="filtrar"
+                    >
+                    <template v-slot:item="row">
+                    <tr>
+                        <td>{{row.item.codigo}}</td>
+                        <td>{{row.item.nome}}</td>
+                        <td>
+                        <v-icon @click="verTurmas(row.item.id)"> mdi-eye </v-icon>
+                        </td>
+                    </tr>
+                    </template>
+                    </v-data-table>
+            </v-container>
+        </v-card>
+      </v-container>
     </v-main>
   </v-app> 
 </template>
@@ -57,11 +55,10 @@ const h = require("@/config/hosts").hostAPI
             {text: "Username", sortable: true, value: 'codigo', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
             {text: "Ver Turmas", class: 'subtitle-1'},
-            {text: "Operações", class: 'subtitle-1'},
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20, -1],
+            "items-per-page-options": [50, 100, 200, -1],
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
@@ -110,6 +107,10 @@ const h = require("@/config/hosts").hostAPI
       },
       criarProfessor: async function(){
         this.$router.push({name:"Criar Professor"})
+      },
+      verTurmas: async function(){
+        //this.$router.push({name:''})
+        alert('Ainda não funcional.')
       }
     }
   }

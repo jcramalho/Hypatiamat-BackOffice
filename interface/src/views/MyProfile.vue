@@ -1,6 +1,7 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
+      <v-container>
             <!-- ALUNO !-->
             <Aluno v-if="type == 10"/>
         
@@ -15,6 +16,7 @@
        
             <!-- Admin !-->
             <Professor v-else />
+      </v-container>
     </v-main>
   </v-app>
 </template>

@@ -4,18 +4,35 @@
     <v-container>
         <v-card class="pa-5">
             <v-card-title primary-title class="justify-center green--text">
-                Ranking dos Alunos das suas turmas (Jogos)
+                Ranking dos Alunos (Jogos)
             </v-card-title>
             <v-container>
               <v-card class="pa-3">
-                  <v-combobox
+                <v-combobox
+                    id="escola"
+                    label="Agrupamento de Escolas"
+                    v-model="escola"
+                    color="green"
+                    :items="agrupamentos"
+                    @change="onAgrupamentoChange"
+                ></v-combobox>
+                    <v-combobox
+                    v-if="professores.length > 0"
+                    id="professor"
+                    label="Professor"
+                    color="green"
+                    v-model="idprofessor"
+                    :items="professores"
+                    @change="getTurmas()"
+                ></v-combobox>
+                <v-combobox
                       id="turmas"
                       v-model="turmaSel"
                       label="Turma"
                       color="green"
                       :items="turmas"
                       @change="onTurmaChange"
-                  ></v-combobox>
+                ></v-combobox>
                   <v-combobox
                       v-if="!loadingJogos"
                       id="jogos"
@@ -119,8 +136,6 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         jogos:[],
         jogosInfo:[],
         loadingJogos: false,
-        escola:"", 
-        escolaOriginal: "",
         idprofessor: "",
         turmaSel:"",
         turmas: [],
@@ -147,38 +162,75 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         niveisSel:["1","2","3","4","5"],
         tiposCalculusSel:["0 - Todas as combinações"],
         tiposCalculusSelAnterior:["0 - Todas as combinações"],
+        agrupamentos: [],
+        agrupamentosIds: [],
+        professores: [],
+        escola: "",
+        escolaId: "",
+        escolaIdOriginal:"",
       }
     },
     created: async function(){
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
-        if(this.utilizador.type != 20){
-          var response2 = await axios.get(h + "professores/codigos/" + this.idprofessor + "/?token=" + this.token )
-          this.escola = response2.data.escola
-          this.escolaOriginal = response2.data.escola
-        }
-        else {
-          this.idprofessor = this.utilizador.codigo
-          this.escola = this.escolaOriginal = this.utilizador.escola
-        }
-        var response = await axios.get(h + "professores/" + this.idprofessor + "/turmas?token=" + this.token)
-        var i = 0
-        for(i = 0; i < response.data.length; i++){
-          this.turmas.push(response.data[i].turma)
-        }
+        this.agrupamentos = await this.getAgrupamentos()
+        
     },
     methods: {
+      getAgrupamentos: async function(item){
+        var response = await axios.get(h + "escolas/?token=" + this.token)
+        this.agrupamentosIds = response.data
+        var aux = []
+        for(var i = 0; i < this.agrupamentosIds.length; i++){
+          aux.push(this.agrupamentosIds[i].nome)
+        }
+        return aux
+      },
+      getProfessores: async function(item){
+        if(this.escola != "" && this.escola){
+          this.turmaSel = ""
+          this.jogo = ""
+          this.jogos = []
+          var responseProfs = await axios.get(h + "escolas/" + this.escolaId + "/professores/?token=" + this.token)
+          var aux = []
+          for(var i = 0; i < responseProfs.data.length; i++){
+            aux.push(responseProfs.data[i].codigo)
+          }
+          this.professores = aux
+        }
+      },
+      onAgrupamentoChange: async function(item){
+        if(item != null && item != ""){
+          this.idprofessor = ""
+          this.turmaSel = ""
+          this.items = []
+          this.escolaIdOriginal = this.escolaId = this.agrupamentosIds.find(e => e.nome == this.escola).cod
+          this.getProfessores()
+        }
+      },
+      getTurmas: async function(){
+          if(this.idprofessor && this.idprofessor != ""){
+            this.turmaSel = ""
+            var responseTurmas = await axios.get(h + "professores/" + this.idprofessor + "/turmas?token=" + this.token)
+            var i = 0
+            var aux = []
+            for(i = 0; i < responseTurmas.data.length; i++){
+                aux.push(responseTurmas.data[i].turma)
+            }
+            this.turmas = aux
+          }
+      },
       onTurmaChange: async function(item){
           if(this.turmaSel != "" && this.turmaSel && this.anoLetivo){
             this.loadingJogos = true
-            this.escola = this.escolaOriginal
+            this.escolaId = this.escolaIdOriginal
             var responseAlunos = await axios.get(h + "turmas/" + this.turmaSel + 
                                                     "/alunos?codprofessor=" + this.idprofessor
                                                     + "&token=" + this.token)
 
             var escolas = []
             for(var i = 0; i < responseAlunos.data.length; i++){
-                if(responseAlunos.data[i].escola != this.escola){
+                if(responseAlunos.data[i].escola != this.escolaId){
                     var auxEscola = escolas.find(a => a.escola == responseAlunos.data[i].escola)
                     if(auxEscola){
                         auxEscola.numero++;
@@ -189,13 +241,13 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             if(escolas.length > 0){
                 var res = Math.max.apply(Math, escolas.map(function(o){return o.numero;}))
                 var escolaAux = escolas.find(function(o){ return o.numero == res; })
-                if(escolaAux && escolaAux.escola != this.escola) this.escola = escolaAux.escola;
+                if(escolaAux && escolaAux.escola != this.escolaId) this.escolaId = escolaAux.escola;
             }
             var aux = this.anoLetivo.split("/")
             var dataInicio = aux[0] + "-09-01"  
             var dataFim = aux[1] + "-09-01"                                          
             var response2 = await axios.get(h + "turmas/" + this.turmaSel + "/jogos?escola=" 
-                                                + this.escola + "&dataInicio=" + dataInicio 
+                                                + this.escolaId + "&dataInicio=" + dataInicio 
                                                 + "&dataFim=" + dataFim + "&codprofessor=" + this.idprofessor + "&token=" + this.token)
             this.jogosInfo = response2.data
             this.jogos = []
@@ -291,7 +343,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           var response = await axios.get(hostJogos + "minutenew/turmas/" + this.turmaSel + "/ranking"
                                                     + "?anoletivo=" + this.anoLetivo
                                                     + "&codprofessor=" + this.idprofessor 
-                                                    + "&escola=" + this.escola + "&token=" + this.token)
+                                                    + "&escola=" + this.escolaId + "&token=" + this.token)
           this.items = response.data
           this.loading = false
           return true
@@ -302,7 +354,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           var response = await axios.get(hostJogos + "minutenew/turmas/" + this.turmaSel + "/ranking"
                                                     + "?anoletivo=" + this.anoLetivo
                                                     + "&codprofessor=" + this.idprofessor 
-                                                    + "&tipos=" + tipos + "&escola=" + this.escola +"&token=" + this.token)
+                                                    + "&tipos=" + tipos + "&escola=" + this.escolaId +"&token=" + this.token)
           this.items = response.data
           this.loading = false
           return true
@@ -312,7 +364,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           var response = await axios.get(hostJogos + "minutenew/turmas/" + this.turmaSel + "/ranking"
                                                     + "?anoletivo=" + this.anoLetivo
                                                     + "&codprofessor=" + this.idprofessor 
-                                                    + "&niveis=" + this.niveisSel + "&escola=" + this.escola +"&token=" + this.token)
+                                                    + "&niveis=" + this.niveisSel + "&escola=" + this.escolaid +"&token=" + this.token)
           this.items = response.data
           this.loading = false
           return true
@@ -321,7 +373,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           this.loading = true
           var tipos = await this.parseTiposCalculus()
           var response = await axios.get(hostJogos + "minutenew/turmas/" + this.turmaSel + "/ranking"
-                                                    + "?anoletivo=" + this.anoLetivo + "&escola=" + this.escola
+                                                    + "?anoletivo=" + this.anoLetivo + "&escola=" + this.escolaId
                                                     + "&codprofessor=" + this.idprofessor 
                                                     +  "&niveis=" + this.niveisSel + "&tipos=" + tipos + "&token=" + this.token)
           this.items = response.data
@@ -335,14 +387,14 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
               var tipos = await this.parseTiposCalcRapid()
               var response = await axios.get(hostJogos + "calcrapid/turmas/" + this.turmaSel + "/ranking"
                                                     + "?anoletivo=" + this.anoLetivo
-                                                    + "&escola=" + this.escola + "&codprofessor=" + this.idprofessor + 
+                                                    + "&escola=" + this.escolaId + "&codprofessor=" + this.idprofessor + 
                                                     "&tipo="+ tipos + "&token=" + this.token)
               this.items = response.data
           }
           else{
             var response = await axios.get(hostJogos + "calcrapid/turmas/" + this.turmaSel + "/ranking"
                                                     + "?anoletivo=" + this.anoLetivo
-                                                    + "&escola=" + this.escola + "&codprofessor=" + this.idprofessor + 
+                                                    + "&escola=" + this.escolaId + "&codprofessor=" + this.idprofessor + 
                                                     "&token=" + this.token)
             this.items = response.data
           }
@@ -361,7 +413,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           
                     var jogoTipo = aux.tipo
                     var jogoTable = aux.jogotable
-                    var idescola = this.escola
+                    var idescola = this.escolaId
                     // :jogo/turmas/:turma/ranking
                     var response = await axios.get(hostJogos + jogoTable + "/turmas/" + this.turmaSel + "/ranking/" 
                                                         + "?anoletivo=" + this.anoLetivo

@@ -22,17 +22,17 @@ Rankings.calculaRankingTurma = async function(jogo, jogoTipo, turma, escola, cod
                     FROM (select * from ${bdAplicacoes}.alunos where escola=?) a
                     RIGHT JOIN (select * from ${bdAplicacoes}.turmasold where codProfessor=? and turma=?) aold ON a.user = aold.codAluno)) a,
 			 (select ranking.*, @rownum := @rownum + 1 AS posicao 
-				from (select idaluno, sum(pontuacao) as total 
+				from (select idaluno, max(pontuacao) as total 
 						from ${bdSAMD}.${jogo}
 						where tipo = ? and idescola=? and turma=? and data between ? and ? 
 						group by idaluno order by total desc) ranking, (SELECT @rownum := 0) AS r) posicaoturma,
 				(select @rownumesc := @rownumesc + 1 AS posicao, ranking.*  
-					from (select idaluno, sum(pontuacao) as total
+					from (select idaluno, max(pontuacao) as total
 							from ${bdSAMD}.${jogo}
 							where tipo = ? and idescola=? and data between ? and ?
 							group by idaluno order by total desc) ranking, (SELECT @rownumesc := 0) AS r) posicaoescola,
 				(select @rownumhypatia := @rownumhypatia + 1 AS posicao, ranking.*  
-					from (select idaluno, sum(pontuacao) as total
+					from (select idaluno, max(pontuacao) as total
 							from ${bdSAMD}.${jogo}
 							where tipo = ? and data between ? and ?
 							group by idaluno order by total desc) ranking, (SELECT @rownumhypatia := 0) AS r) posicaoHypatia
@@ -155,17 +155,17 @@ Rankings.calculaRankingTurmaMinuteNew = async function(turma, escola, codprofess
                     FROM (select * from ${bdAplicacoes}.alunos where escola=?) a
                     RIGHT JOIN (select * from ${bdAplicacoes}.turmasold where codProfessor=? and turma=?) aold ON a.user = aold.codAluno)) a,
 			 (select ranking.*, @rownum := @rownum + 1 AS posicao 
-				from (select user, sum(pontos) as total 
+				from (select user, max(pontos) as total 
 						from ${bdSAMD}.minutenew 
 						where escola=? and turma=? and data between ? and ? 
 						group by user order by total desc) ranking, (SELECT @rownum := 0) AS r) posicaoturma,
 				(select @rownumesc := @rownumesc + 1 AS posicao, ranking.*  
-					from (select user, sum(pontos) as total
+					from (select user, max(pontos) as total
 							from ${bdSAMD}.minutenew 
 							where escola=? and data between ? and ?
 							group by user order by total desc) ranking, (SELECT @rownumesc := 0) AS r) posicaoescola,
 				(select @rownumhypatia := @rownumhypatia + 1 AS posicao, ranking.*  
-					from (select user, sum(pontos) as total
+					from (select user, max(pontos) as total
 							from ${bdSAMD}.minutenew
 							where data between ? and ?
 							group by user order by total desc) ranking, (SELECT @rownumhypatia := 0) AS r) posicaoHypatia
@@ -198,17 +198,17 @@ Rankings.calculaRankingTurmaMinuteNewNiveisTipos = async function(turma, escola,
                     FROM (select * from ${bdAplicacoes}.alunos where escola=?) a
                     RIGHT JOIN (select * from ${bdAplicacoes}.turmasold where codProfessor=? and turma=?) aold ON a.user = aold.codAluno)) a,
 			 (select ranking.*, @rownum := @rownum + 1 AS posicao 
-				from (select user, sum(pontos) as total 
+				from (select user, max(pontos) as total 
 						from ${bdSAMD}.minutenew 
 						where escola=? and turma=? and (data between ? and ?) and nivel in (?) and op=?
 						group by user order by total desc) ranking, (SELECT @rownum := 0) AS r) posicaoturma,
 				(select @rownumesc := @rownumesc + 1 AS posicao, ranking.*  
-					from (select user, sum(pontos) as total
+					from (select user, max(pontos) as total
 							from ${bdSAMD}.minutenew 
 							where escola=? and (data between ? and ?) and nivel in (?) and op=?
 							group by user order by total desc) ranking, (SELECT @rownumesc := 0) AS r) posicaoescola,
 				(select @rownumhypatia := @rownumhypatia + 1 AS posicao, ranking.*  
-					from (select user, sum(pontos) as total
+					from (select user, max(pontos) as total
 							from ${bdSAMD}.minutenew
 							where (data between ? and ?) and nivel in (?) and op=?
 							group by user order by total desc) ranking, (SELECT @rownumhypatia := 0) AS r) posicaoHypatia
@@ -241,17 +241,17 @@ Rankings.calculaRankingTurmaMinuteNewTipos = async function(turma, escola, codpr
                     FROM (select * from ${bdAplicacoes}.alunos where escola=?) a
                     RIGHT JOIN (select * from ${bdAplicacoes}.turmasold where codProfessor=? and turma=?) aold ON a.user = aold.codAluno)) a,
 			 (select ranking.*, @rownum := @rownum + 1 AS posicao 
-				from (select user, sum(pontos) as total 
+				from (select user, max(pontos) as total 
 						from ${bdSAMD}.minutenew 
 						where escola=? and turma=? and (data between ? and ?) and op=?
 						group by user order by total desc) ranking, (SELECT @rownum := 0) AS r) posicaoturma,
 				(select @rownumesc := @rownumesc + 1 AS posicao, ranking.*  
-					from (select user, sum(pontos) as total
+					from (select user, max(pontos) as total
 							from ${bdSAMD}.minutenew 
 							where escola=? and (data between ? and ?) and op=?
 							group by user order by total desc) ranking, (SELECT @rownumesc := 0) AS r) posicaoescola,
 				(select @rownumhypatia := @rownumhypatia + 1 AS posicao, ranking.*  
-					from (select user, sum(pontos) as total
+					from (select user, max(pontos) as total
 							from ${bdSAMD}.minutenew
 							where (data between ? and ?) and op=?
 							group by user order by total desc) ranking, (SELECT @rownumhypatia := 0) AS r) posicaoHypatia
@@ -284,17 +284,17 @@ Rankings.calculaRankingTurmaMinuteNewNiveis = async function(turma, escola, codp
                     FROM (select * from ${bdAplicacoes}.alunos where escola=?) a
                     RIGHT JOIN (select * from ${bdAplicacoes}.turmasold where codProfessor=? and turma=?) aold ON a.user = aold.codAluno)) a,
 			 (select ranking.*, @rownum := @rownum + 1 AS posicao 
-				from (select user, sum(pontos) as total 
+				from (select user, max(pontos) as total 
 						from ${bdSAMD}.minutenew 
 						where escola=? and turma=? and (data between ? and ?) and nivel in (?)
 						group by user order by total desc) ranking, (SELECT @rownum := 0) AS r) posicaoturma,
 				(select @rownumesc := @rownumesc + 1 AS posicao, ranking.*  
-					from (select user, sum(pontos) as total
+					from (select user, max(pontos) as total
 							from ${bdSAMD}.minutenew 
 							where escola=? and (data between ? and ?) and nivel in (?)
 							group by user order by total desc) ranking, (SELECT @rownumesc := 0) AS r) posicaoescola,
 				(select @rownumhypatia := @rownumhypatia + 1 AS posicao, ranking.*  
-					from (select user, sum(pontos) as total
+					from (select user, max(pontos) as total
 							from ${bdSAMD}.minutenew
 							where (data between ? and ?) and nivel in (?)
 							group by user order by total desc) ranking, (SELECT @rownumhypatia := 0) AS r) posicaoHypatia

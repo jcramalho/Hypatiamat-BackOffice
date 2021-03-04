@@ -1,83 +1,85 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card>
-        <v-container>
-            <v-card-title primary-title class="justify-center green--text">
-                Editar Professor ({{professor.codigo}})
-            </v-card-title>
-                     
-          <v-text-field prepend-icon="mdi-account" label="Nome" placeholder="Nome" v-model="professor.nome" color="#009263" required/>
-          <v-combobox
-                id="escola"
-                prepend-icon="mdi-school"
-                label="Agrupamento de Escolas"
-                v-model="escolaAtual"
-                color="#009263"
-                :items="escolas"
-          ></v-combobox>
-          <v-text-field prepend-icon="mdi-email" label="Email" placeholder="Email" v-model="professor.email" color="#009263" required/>
-          <v-text-field prepend-icon="mdi-ticket-confirmation-outline" label="Confirmação (0 ou 1)" placeholder="Confirmação (0 ou 1) " v-model="professor.confirmacao" :rules="[number0or1]" color="#009263" required/>
-          <v-combobox
-                id="premium"
-                prepend-icon="mdi-vpn"
-                label="Premium"
-                v-model="premiumAtual"
-                color="#009263"
-                :items="typePremium"
-            ></v-combobox>
-          <v-text-field prepend-icon="mdi-calendar" label="Validade (YYYY-MM-DD)" placeholder="Validade (YYYY-MM-DD)" v-model="professor.validade" type="date" :format="format" color="#009263" required/>
-          <v-text-field prepend-icon="mdi-handshake" label="Número de Sócio" placeholder="Número de Sócio" v-model="professor.socionum" type="number" color="#009263" :rules="[number]" required/>
-          <v-text-field prepend-icon="mdi-projector-screen-outline" label="Projeto" placeholder="Projeto" v-model="professor.projeto" type="number" color="#009263" :rules="[number]" required/>
-          <br>
-          <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true"> Alterar password </v-btn></center>
-          <br>
-          <center><v-btn class="white--text" style="background-color: #009263;" @click="verTurmas()"> Ver Turmas </v-btn></center>
-          <br>
-          <v-dialog
-            v-model="dialogTurmas"
-            width="40%"
-            >
-                <v-card class="pa-5">
-                <v-text-field
-                v-model="filtrar"
-                prepend-icon="mdi-magnify"
-                color="#009263"
-                label="Filtrar"
-                single-line
-                ></v-text-field>
-                <v-data-table
-                class="elevation-1"
-                :headers="header_turmas"
-                :items="turmas"
-                :footer-props="footer_props"
-                :search="filtrar"
-                @click:row="editarTurma"
+      <v-container>
+        <v-card>
+            <v-container>
+                <v-card-title primary-title class="justify-center green--text">
+                    Editar Professor ({{professor.codigo}})
+                </v-card-title>
+                        
+              <v-text-field prepend-icon="mdi-account" label="Nome" placeholder="Nome" v-model="professor.nome" color="#009263" required/>
+              <v-combobox
+                    id="escola"
+                    prepend-icon="mdi-school"
+                    label="Agrupamento de Escolas"
+                    v-model="escolaAtual"
+                    color="#009263"
+                    :items="escolas"
+              ></v-combobox>
+              <v-text-field prepend-icon="mdi-email" label="Email" placeholder="Email" v-model="professor.email" color="#009263" required/>
+              <v-text-field prepend-icon="mdi-ticket-confirmation-outline" label="Confirmação (0 ou 1)" placeholder="Confirmação (0 ou 1) " v-model="professor.confirmacao" :rules="[number0or1]" color="#009263" required/>
+              <v-combobox
+                    id="premium"
+                    prepend-icon="mdi-vpn"
+                    label="Premium"
+                    v-model="premiumAtual"
+                    color="#009263"
+                    :items="typePremium"
+                ></v-combobox>
+              <v-text-field prepend-icon="mdi-calendar" label="Validade (YYYY-MM-DD)" placeholder="Validade (YYYY-MM-DD)" v-model="professor.validade" type="date" :format="format" color="#009263" required/>
+              <v-text-field prepend-icon="mdi-handshake" label="Número de Sócio" placeholder="Número de Sócio" v-model="professor.socionum" type="number" color="#009263" :rules="[number]" required/>
+              <v-text-field prepend-icon="mdi-projector-screen-outline" label="Projeto" placeholder="Projeto" v-model="professor.projeto" type="number" color="#009263" :rules="[number]" required/>
+              <br>
+              <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true"> Alterar password </v-btn></center>
+              <br>
+              <center><v-btn class="white--text" style="background-color: #009263;" @click="verTurmas()"> Ver Turmas </v-btn></center>
+              <br>
+              <v-dialog
+                v-model="dialogTurmas"
+                width="40%"
                 >
-                </v-data-table>
-                </v-card>
-            </v-dialog>
+                    <v-card class="pa-5">
+                    <v-text-field
+                    v-model="filtrar"
+                    prepend-icon="mdi-magnify"
+                    color="#009263"
+                    label="Filtrar"
+                    single-line
+                    ></v-text-field>
+                    <v-data-table
+                    class="elevation-1"
+                    :headers="header_turmas"
+                    :items="turmas"
+                    :footer-props="footer_props"
+                    :search="filtrar"
+                    @click:row="editarTurma"
+                    >
+                    </v-data-table>
+                    </v-card>
+                </v-dialog>
 
-          <v-dialog
-            v-model="dialogPassword"
-            width="40%"
-            >
-                <v-card class="pa-5">
-                  <v-card-title primary-title class="justify-center green--text">
-                  Alterar Password
-                  </v-card-title>
-                  <v-text-field label="Password Nova" placeholder="Password nova" v-model="password1" color="#900000" type="password" required />
-                  <v-text-field label="Confirmação Password" placeholder="Confirmação Password" v-model="password2" color="#900000" type="password" required />
-                  <v-btn class="white--text" primary large block style="background-color: #009263;" @click="editarPassword()">Confirmar alteração</v-btn>
-                </v-card>
-          </v-dialog>
+              <v-dialog
+                v-model="dialogPassword"
+                width="40%"
+                >
+                    <v-card class="pa-5">
+                      <v-card-title primary-title class="justify-center green--text">
+                      Alterar Password
+                      </v-card-title>
+                      <v-text-field label="Password Nova" placeholder="Password nova" v-model="password1" color="#900000" type="password" required />
+                      <v-text-field label="Confirmação Password" placeholder="Confirmação Password" v-model="password2" color="#900000" type="password" required />
+                      <v-btn class="white--text" primary large block style="background-color: #009263;" @click="editarPassword()">Confirmar alteração</v-btn>
+                    </v-card>
+              </v-dialog>
 
 
 
-          <center><v-btn class="white--text" style="background-color: #009263;" @click="editarProfessor()"> Confirmar Alterações </v-btn></center>
-        
-        </v-container>
-    </v-card>
+              <center><v-btn class="white--text" style="background-color: #009263;" @click="editarProfessor()"> Confirmar Alterações </v-btn></center>
+            
+            </v-container>
+        </v-card>
+      </v-container>
     </v-main>
   </v-app> 
 </template>
@@ -98,12 +100,12 @@ const h = require("@/config/hosts").hostAPI
         dialogTurmas: false,
         filtrar: "",
         header_turmas: [
-            {text: "Id", sortable: true, value: 'id', class: 'subtitle-1'},
-            {text: "Turma", value: 'turma', class: 'subtitle-1'}
+            {text: "Turma", value: 'turma', class: 'subtitle-1'},
+            {text: "Ano Letivo", value: 'anoletivo', class:'subtitle-1'}
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20, -1],
+            "items-per-page-options": [15, 30, -1],
             "items-per-page-all-text": "Todos"
         },
         token: "",

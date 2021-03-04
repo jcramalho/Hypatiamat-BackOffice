@@ -1,46 +1,48 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card class="pa-5">
-        <v-container>
-            <v-card-title primary-title class="justify-center green--text">
-                Lista de Pedidos de Inscrição
-            </v-card-title>
-            <v-text-field
-                v-model="filtrar"
-                label="Filtrar"
-                prepend-icon="mdi-magnify"
-                color="#009263"
-                single-line
-                ></v-text-field>
-                <v-data-table
-                class="elevation-1"
-                :headers="header_pendentes"
-                :items="pendentes"
-                :footer-props="footer_props"
-                :search="filtrar"
-                >
-                <template v-slot:item="row">
-                <tr>
-                    <td>{{row.item.codigo}}</td>
-                    <td>{{row.item.nome}}</td>
-                    <td>{{row.item.escola}}</td>
-                    <td>
-                    <v-icon @click="aceitarPedido(row.item.id, row.item.codigo)" color="#009263"> mdi-account-check </v-icon>
-                    </td>
-                    <td>
-                    <v-icon @click="rejeitarPedido(row.item.id)" color="red"> mdi-account-remove </v-icon>
-                    </td>
-                </tr>
-                </template>
-                </v-data-table>
-                <v-dialog v-model="dialogEditarProfessor" width="80%">
-                  <v-card>
-                  <EditarProfessor v-if="dialogEditarProfessor" :idProp="idAceite" @alteracao="dialogEditarProfessor = false"/>
-                  </v-card>
-                </v-dialog>
-        </v-container>
-    </v-card>
+      <v-container>
+        <v-card class="pa-5">
+            <v-container>
+                <v-card-title primary-title class="justify-center green--text">
+                    Lista de Pedidos de Inscrição
+                </v-card-title>
+                <v-text-field
+                    v-model="filtrar"
+                    label="Filtrar"
+                    prepend-icon="mdi-magnify"
+                    color="#009263"
+                    single-line
+                    ></v-text-field>
+                    <v-data-table
+                    class="elevation-1"
+                    :headers="header_pendentes"
+                    :items="pendentes"
+                    :footer-props="footer_props"
+                    :search="filtrar"
+                    >
+                    <template v-slot:item="row">
+                    <tr>
+                        <td>{{row.item.codigo}}</td>
+                        <td>{{row.item.nome}}</td>
+                        <td>{{row.item.escola}}</td>
+                        <td>
+                        <v-icon @click="aceitarPedido(row.item.id, row.item.codigo)" color="#009263"> mdi-account-check </v-icon>
+                        </td>
+                        <td>
+                        <v-icon @click="rejeitarPedido(row.item.id)" color="red"> mdi-account-remove </v-icon>
+                        </td>
+                    </tr>
+                    </template>
+                    </v-data-table>
+                    <v-dialog v-model="dialogEditarProfessor" width="80%">
+                      <v-card>
+                      <EditarProfessor v-if="dialogEditarProfessor" :idProp="idAceite" @alteracao="dialogEditarProfessor = false"/>
+                      </v-card>
+                    </v-dialog>
+            </v-container>
+          </v-card>
+      </v-container>
     </v-main>
   </v-app> 
 </template>
@@ -69,7 +71,7 @@ const h = require("@/config/hosts").hostAPI
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20, -1],
+            "items-per-page-options": [50, 100, 200, -1],
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",

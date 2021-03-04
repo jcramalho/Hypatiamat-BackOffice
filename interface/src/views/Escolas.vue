@@ -1,58 +1,60 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card class="pa-5">
-        <v-container>
-          <v-card-title primary-title class="justify-center green--text">
-                Lista de Agrupamentos de Escolas
-            </v-card-title>
-            <center><v-btn class="white--text" style="background-color: #009263;" @click="criarEscola()"><v-icon> mdi-account-plus </v-icon> Criar Agrupamento </v-btn></center>
-            <center>
-            <v-text-field
-                class="text--black"
-                label="Procurar escolas por distrito ou país..."
-                color="#009263"
-                v-model="searchInput"
-                hide-details
-                style="max-width:700px;"
-                >
-            </v-text-field>
-            <br>
-            <center><v-btn class="white--text" style="background-color: #009263;" @click="pesquisarLocalidade()"> Pesquisar por Localidade </v-btn></center>
-            <br>
-            <center><v-btn class="white--text" style="background-color: #009263;" @click="pesquisarDistrito()"> Pesquisar por Distrito </v-btn></center>
-            <br>
-            <center><v-btn class="white--text" style="background-color: #009263;" @click="pesquisarPais()"> Pesquisar por País </v-btn></center>
-            <br>
-            <v-btn class="white--text" style="background-color: #009263;" @click="reporTudo()"> Repor tudo </v-btn>
-            </center>
-            <v-text-field
-                v-model="filtrar"
-                label="Filtrar"
-                prepend-icon="mdi-magnify"
-                color="#009263"
-                single-line
-                ></v-text-field>
-                <v-data-table
-                class="elevation-1"
-                :headers="header_escolas"
-                :items="escolas"
-                :footer-props="footer_props"
-                :search="filtrar"
-                >
-                <template v-slot:item="row">
-                <tr>
-                    <td>{{row.item.nome}}</td>
-                    <td>{{row.item.localidade}}</td>
-                    <td>
-                    <v-icon @click="editarEscola(row.item.cod)"> mdi-pencil </v-icon>
-                    <v-icon @click="apagarEscola(row.item.cod)"> mdi-delete </v-icon>
-                    </td>
-                </tr>
-                </template>
-                </v-data-table>
-        </v-container>
-    </v-card>
+      <v-container>
+        <v-card class="pa-5">
+            <v-container>
+              <v-card-title primary-title class="justify-center green--text">
+                    Lista de Agrupamentos de Escolas
+                </v-card-title>
+                <center><v-btn class="white--text" style="background-color: #009263;" @click="criarEscola()"><v-icon> mdi-account-plus </v-icon> Criar Agrupamento </v-btn></center>
+                <center>
+                <v-text-field
+                    class="text--black"
+                    label="Procurar escolas por distrito ou país..."
+                    color="#009263"
+                    v-model="searchInput"
+                    hide-details
+                    style="max-width:700px;"
+                    >
+                </v-text-field>
+                <br>
+                <center><v-btn class="white--text" style="background-color: #009263;" @click="pesquisarLocalidade()"> Pesquisar por Localidade </v-btn></center>
+                <br>
+                <center><v-btn class="white--text" style="background-color: #009263;" @click="pesquisarDistrito()"> Pesquisar por Distrito </v-btn></center>
+                <br>
+                <center><v-btn class="white--text" style="background-color: #009263;" @click="pesquisarPais()"> Pesquisar por País </v-btn></center>
+                <br>
+                <v-btn class="white--text" style="background-color: #009263;" @click="reporTudo()"> Repor tudo </v-btn>
+                </center>
+                <v-text-field
+                    v-model="filtrar"
+                    label="Filtrar"
+                    prepend-icon="mdi-magnify"
+                    color="#009263"
+                    single-line
+                    ></v-text-field>
+                    <v-data-table
+                    class="elevation-1"
+                    :headers="header_escolas"
+                    :items="escolas"
+                    :footer-props="footer_props"
+                    :search="filtrar"
+                    >
+                    <template v-slot:item="row">
+                    <tr>
+                        <td>{{row.item.nome}}</td>
+                        <td>{{row.item.localidade}}</td>
+                        <td>
+                        <v-icon @click="editarEscola(row.item.cod)"> mdi-pencil </v-icon>
+                        <v-icon @click="apagarEscola(row.item.cod)"> mdi-delete </v-icon>
+                        </td>
+                    </tr>
+                    </template>
+                    </v-data-table>
+            </v-container>
+        </v-card>
+      </v-container>
     </v-main>
   </v-app> 
 </template>
@@ -77,7 +79,7 @@ const h = require("@/config/hosts").hostAPI
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20, -1],
+            "items-per-page-options": [50, 100, 200, -1],
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",

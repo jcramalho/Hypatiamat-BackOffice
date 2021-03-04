@@ -1,76 +1,78 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card class="pa-5">
-        <v-container>
-            <v-card-title primary-title class="justify-center green--text" >
-                Lista de Alunos
-            </v-card-title>
-            <center><v-btn class="white--text" style="background-color: #009263;" @click="criarAluno()"><v-icon> mdi-account-plus </v-icon> Criar Aluno </v-btn></center>
-            <br>
-            <v-dialog v-model="csvDialog" width="70%">
-              <v-card class="pa-5">
-                <center>
-                <v-file-input show-size v-model="file" placeholder="Anexar ficheiro csv"  label="Anexar ficheiro csv"
-                 prepend-icon="mdi-paperclip" style="width:70%;" color="#009263" @change="checkFile()"/> 
+      <v-container>
+        <v-card class="pa-5">
+            <v-container>
+                <v-card-title primary-title class="justify-center green--text" >
+                    Lista de Alunos
+                </v-card-title>
+                <center><v-btn class="white--text" style="background-color: #009263;" @click="criarAluno()"><v-icon> mdi-account-plus </v-icon> Criar Aluno </v-btn></center>
+                <br>
+                <v-dialog v-model="csvDialog" width="70%">
+                  <v-card class="pa-5">
+                    <center>
+                    <v-file-input show-size v-model="file" placeholder="Anexar ficheiro csv"  label="Anexar ficheiro csv"
+                    prepend-icon="mdi-paperclip" style="width:70%;" color="#009263" @change="checkFile()"/> 
 
-                <v-btn color="#009263" type='submit' @click="postFile()"> Inserir Alunos </v-btn>
-                </center>
-              </v-card>
-            </v-dialog>
-            <center><v-btn class="white--text" style="background-color: #009263;" @click="csvDialog = true"><v-icon> mdi-file-delimited </v-icon> Inserir CSV </v-btn></center>
-            <v-combobox
-                id="escola"
-                label="Agrupamento de Escolas"
-                prepend-icon="mdi-school"
-                :return-object="true"
-                v-model="escola"
-                color="#009263"
-                :items="escolas"
-                @change="getAlunos()"
-            ></v-combobox>
-            <v-container v-if="ready">
-            <v-text-field
-                v-model="filtrar"
-                label="Filtrar"
-                prepend-icon="mdi-magnify"
-                color="#009263"
-                single-line
-                ></v-text-field>
-                <v-data-table
-                class="elevation-1"
-                loading-text="A carregar alunos..."
-                :headers="header_alunos"
-                :items="alunos"
-                :footer-props="footer_props"
-                :search="filtrar"
-                >
-                <template v-slot:item="row">
-                <tr>
-                    <td>{{row.item.user}}</td>
-                    <td>{{row.item.nome}}</td>
-                    <td>{{row.item.codprofessor}}</td>
-                    <td>{{row.item.turma}}</td>
-                    <td>
-                    <!--<v-icon @click="verAluno(row.item.id)"> mdi-eye </v-icon>-->
-                    <v-icon @click="editarAluno(row.item.id)"> mdi-pencil </v-icon>
-                    <v-icon @click="apagarAluno(row.item.user)"> mdi-delete </v-icon>
-                    </td>
-                </tr>
-                </template>
-                </v-data-table>
+                    <v-btn color="#009263" type='submit' @click="postFile()"> Inserir Alunos </v-btn>
+                    </center>
+                  </v-card>
+                </v-dialog>
+                <center><v-btn class="white--text" style="background-color: #009263;" @click="csvDialog = true"><v-icon> mdi-file-delimited </v-icon> Inserir CSV </v-btn></center>
+                <v-combobox
+                    id="escola"
+                    label="Agrupamento de Escolas"
+                    prepend-icon="mdi-school"
+                    :return-object="true"
+                    v-model="escola"
+                    color="#009263"
+                    :items="escolas"
+                    @change="getAlunos()"
+                ></v-combobox>
+                <v-container v-if="ready">
+                <v-text-field
+                    v-model="filtrar"
+                    label="Filtrar"
+                    prepend-icon="mdi-magnify"
+                    color="#009263"
+                    single-line
+                    ></v-text-field>
+                    <v-data-table
+                    class="elevation-1"
+                    loading-text="A carregar alunos..."
+                    :headers="header_alunos"
+                    :items="alunos"
+                    :footer-props="footer_props"
+                    :search="filtrar"
+                    >
+                    <template v-slot:item="row">
+                    <tr>
+                        <td>{{row.item.user}}</td>
+                        <td>{{row.item.nome}}</td>
+                        <td>{{row.item.codprofessor}}</td>
+                        <td>{{row.item.turma}}</td>
+                        <td>
+                        <!--<v-icon @click="verAluno(row.item.id)"> mdi-eye </v-icon>-->
+                        <v-icon @click="editarAluno(row.item.id)"> mdi-pencil </v-icon>
+                        <v-icon @click="apagarAluno(row.item.user)"> mdi-delete </v-icon>
+                        </td>
+                    </tr>
+                    </template>
+                    </v-data-table>
+                </v-container>
+                <v-container v-else>
+                <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
+                
+                </v-container>
+                <v-dialog v-model="dialogEditar" width="85%">
+                  <v-card>
+                  <EditarAluno v-if="dialogEditar" @alteracao="atualizaAlunos()" :idProp="idEditar"/>
+                  </v-card>
+                </v-dialog>
             </v-container>
-            <v-container v-else>
-            <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
-            
-            </v-container>
-            <v-dialog v-model="dialogEditar" width="85%">
-              <v-card>
-              <EditarAluno v-if="dialogEditar" @alteracao="atualizaAlunos()" :idProp="idEditar"/>
-              </v-card>
-            </v-dialog>
-        </v-container>
-    </v-card>
+        </v-card>
+      </v-container>
     </v-main>
   </v-app> 
 </template>
@@ -105,7 +107,7 @@ const h = require("@/config/hosts").hostAPI
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20, -1],
+            "items-per-page-options": [50, 100, 200, -1],
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",

@@ -1,8 +1,8 @@
 <template>
- <div id="app">
+ <v-app id="inspire">
   <v-container>
     <v-layout row class="text-xs-center">
-        <v-container style="position: relative;top: 15%; width: 60%;" class="text-xs-center">
+        <v-container style="position: relative;top: 15%; width: 80%;" class="text-xs-center">
           <v-card class="pa-5">
             <v-form>
             <v-text-field prepend-icon="mdi-card-account-details" v-model="codigo" name="Username (Código)" label="Username (Código)" :rules="[string15, existeCodigo]" required></v-text-field>
@@ -44,7 +44,7 @@
         </v-container>
     </v-layout>
   </v-container>
-</div>
+ </v-app>
 </template>
 
 <script>

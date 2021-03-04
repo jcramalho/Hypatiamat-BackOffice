@@ -1,59 +1,60 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card class="pa-5">
-        <v-container>
-            <v-card-title primary-title class="justify-center green--text">
-                Alunos da Turma {{turma.turma}}
-            </v-card-title>
-            <v-text-field
-                v-model="filtrar"
-                label="Filtrar"
-                prepend-icon="mdi-magnify"
-                color="#009263"
-                single-line
-                ></v-text-field>
-                <v-data-table
-                class="elevation-1"
-                loading-text="A carregar alunos..."
-                :headers="header_alunos"
-                :items="alunos"
-                :footer-props="footer_props"
-                :search="filtrar"
-                >
-                <template v-slot:item="row" >
-                <tr :class="row.item.alunoOld ? 'style-AlunoOld' : 'style-AlunoAtual'">
-                    <td>{{row.item.numero}}</td>
-                    <td>{{row.item.nome}}</td>
-                    <td>{{row.item.user}}</td>
-                    <td>{{row.item.email}}</td>
-                    <td>{{row.item.agrupamento}}</td>
-                    <td>
-                      <v-tooltip top>
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          icon
-                          v-bind="attrs" 
-                          v-on="on"
-                        >
-                        <v-icon @click="editarAluno(row.item.id)"> mdi-pencil </v-icon>
-                        </v-btn>
-                        </template>
-                        <span>Poderá editar informações do seu aluno.</span>
-                      </v-tooltip>
-                    </td>
-                </tr>
-                </template>
-                </v-data-table>
-                <center>
-                  <v-dialog style="align-self: flex-end;" v-model="dialogEditar" width="85%">
-                    <v-card>
-                      <EditarAluno v-if="dialogEditar" @alteracao="atualizaAlunos()" :idProp="this.idEditarAluno"/>
-                    </v-card>
-                  </v-dialog>
-                </center>
-        </v-container>
-    </v-card>
+      <v-container>
+        <v-card class="pa-5">
+            <v-container>
+                <v-card-title primary-title class="justify-center green--text">
+                    Alunos da Turma {{turma.turma}}
+                </v-card-title>
+                <v-text-field
+                    v-model="filtrar"
+                    label="Filtrar"
+                    prepend-icon="mdi-magnify"
+                    color="#009263"
+                    single-line
+                    ></v-text-field>
+                    <v-data-table
+                    class="elevation-1"
+                    loading-text="A carregar alunos..."
+                    :headers="header_alunos"
+                    :items="alunos"
+                    :footer-props="footer_props"
+                    :search="filtrar"
+                    >
+                    <template v-slot:item="row" >
+                    <tr :class="row.item.alunoOld ? 'style-AlunoOld' : 'style-AlunoAtual'">
+                        <td>{{row.item.numero}}</td>
+                        <td>{{row.item.nome}}</td>
+                        <td>{{row.item.user}}</td>
+                        <td>{{row.item.email}}</td>
+                        <td>{{row.item.agrupamento}}</td>
+                        <td>
+                          <v-tooltip top>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              icon
+                              v-bind="attrs" 
+                              v-on="on"
+                            >
+                            <v-icon @click="editarAluno(row.item.id)"> mdi-pencil </v-icon>
+                            </v-btn>
+                            </template>
+                            <span>Poderá editar informações do seu aluno.</span>
+                          </v-tooltip>
+                        </td>
+                    </tr>
+                    </template>
+                    </v-data-table>
+                      
+                      <v-dialog class="mydialog" v-model="dialogEditar" width="85%" >
+                        <v-card id="inspire">
+                          <EditarAluno v-if="dialogEditar" @alteracao="atualizaAlunos()" :idProp="this.idEditarAluno"/>
+                        </v-card>
+                      </v-dialog>
+            </v-container>
+        </v-card>
+      </v-container>
     </v-main>
   </v-app> 
 </template>
@@ -84,7 +85,7 @@ const h = require("@/config/hosts").hostAPI
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [30, -1],
+            "items-per-page-options": [30, 50, -1],
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
@@ -136,4 +137,8 @@ const h = require("@/config/hosts").hostAPI
 .style-AlunoAtual {
   background-color: white
 }
+
+.mydialog {
+    align-self: flex-end;
+  }
 </style>

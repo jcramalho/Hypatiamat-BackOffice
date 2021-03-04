@@ -1,42 +1,16 @@
 <template>
 <div class="grey lighten-3"> 
-      <!--<v-row class="grey lighten-3" no-gutters>
-    <v-col
-      class="grey lighten-3"
-      cols="12"
-      xs="12"
-      sm="12"
-      md="2"
-      lg="1"
-      xl="1"
-    >-->
+
     <Navbar @refreshLogout="refreshLogout" @miniEvent="(value)=>{this.mini=value}"/>
 
-    <!--</v-col>-->
-    
-    <!--
-    <v-col
-      class="grey lighten-3"
-      cols="12"
-      xs="12"
-      sm="12"
-      md="10"
-      lg="11"
-      xl="11"
-    >-->
-  <v-container v-if="mobile" >
+
     <keep-alive v-if="mobile" include="EstatisticasMunicipios">
       <router-view v-if="mobile" />
     </keep-alive>
-  </v-container>
-  <v-container v-else class="grey lighten-3">
-      <v-main class="grey lighten-3">
-        <p :style="styleP"> Dado que se encontra no telemóvel ou num dispositivo pequeno, para visualizar os dados de forma clara, <b> minimize a barra de navegação </b> através do botão <span :style="styleP">&#8918;</span> . </p> 
-      </v-main>
-  </v-container>
-    <!--</v-col>
-    
-    </v-row>-->
+    <v-main v-else class="grey lighten-3">
+      <p :style="styleP"> Dado que se encontra no telemóvel ou num dispositivo pequeno, para visualizar os dados de forma clara, <b> minimize a barra de navegação </b> através do botão <span :style="styleP">&#8918;</span> . </p> 
+    </v-main>
+
 </div>
 </template>
 
@@ -63,8 +37,6 @@ export default {
       if (this.$vuetify.breakpoint.xs) return this.mini
       return true
     },
-    
-    
   },
   created: function(){
     this.windowWidth = window.innerWidth

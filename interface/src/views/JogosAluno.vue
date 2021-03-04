@@ -1,114 +1,116 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card class="pa-5">
-        <v-container style="width:70%">
-            <v-card-title primary-title class="justify-center green--text">
-                Desempenho nos Jogos
-            </v-card-title>
+        <v-container>
+            <v-card class="pa-5">
                 <v-container style="width:70%">
-                    <v-combobox
-                        id="jogos"
-                        v-model="jogo"
-                        label="Jogo"
-                        color="#009263"
-                        :items="jogos"
-                        @change="onJogoChange"
-                    ></v-combobox>
-                    <v-combobox
-                        id="anos"
-                        v-model="anoLetivo"
-                        label="Ano Letivo"
-                        color="#009263"
-                        :items="anosLetivos"
-                        @change="onAnoChange"
-                    ></v-combobox>
-                
-                    <v-layout row class="text-xs-center" justify-center align-center>
-                        <v-flex xs6>
-                        <v-text-field @change="onDataInChange" prepend-icon="mdi-calendar" color="#009263" v-model="dataInicio" label="Data Inicio" type="date" :format="format" required></v-text-field>
-                        </v-flex>
-                        <v-flex xs6>
-                            <v-text-field @change="onDataFimChange" prepend-icon="mdi-calendar" color="#009263" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
-                        </v-flex>
-                    </v-layout>
-                    </v-container>
-                    <v-card class="pa-4 elevation-5">
-                        <v-container v-if="resultadosGlobais.idaluno == undefined">
-                            <center><v-icon large color="#009263"> mdi-home-analytics </v-icon></center>
-                            <br>
-                           <center> Ainda não preencheu os campos necessários para ver resultados ou nunca jogou este jogo. </center>
-                        </v-container>
-                        <v-container v-else>
-                            <center><v-icon large color="#009263"> mdi-home-analytics </v-icon></center>
-                            <br>
-                            <v-layout class="text-xs-center" row justify-center align-center>
-                                <v-flex xs3>
-                                    <v-card  style="background-color:#DDAF94">
-                                        <v-card-title  primary-title class="justify-center">
-                                            Média
-                                        </v-card-title>
-                                        <center>
-                                        <v-card-text class="justify-center">
-                                            {{resultadosGlobais.media}}
-                                        </v-card-text>
-                                        </center>
-                                    </v-card>
+                    <v-card-title primary-title class="justify-center green--text">
+                        Desempenho nos Jogos
+                    </v-card-title>
+                        <v-container style="width:70%">
+                            <v-combobox
+                                id="jogos"
+                                v-model="jogo"
+                                label="Jogo"
+                                color="#009263"
+                                :items="jogos"
+                                @change="onJogoChange"
+                            ></v-combobox>
+                            <v-combobox
+                                id="anos"
+                                v-model="anoLetivo"
+                                label="Ano Letivo"
+                                color="#009263"
+                                :items="anosLetivos"
+                                @change="onAnoChange"
+                            ></v-combobox>
+                        
+                            <v-layout row class="text-xs-center" justify-center align-center>
+                                <v-flex xs6>
+                                <v-text-field @change="onDataInChange" prepend-icon="mdi-calendar" color="#009263" v-model="dataInicio" label="Data Inicio" type="date" :format="format" required></v-text-field>
                                 </v-flex>
-                                <v-flex xs3>
-                                    <v-card  style="background-color:#E8CEBF">
-                                        <v-card-title  primary-title class="justify-center">
-                                            Mínimo
-                                        </v-card-title>
-                                        <center>
-                                        <v-card-text class="justify-center">
-                                            {{resultadosGlobais.minimo}}
-                                        </v-card-text>
-                                        </center>
-                                    </v-card>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-card  style="background-color:#DDAF94">
-                                        <v-card-title  primary-title class="justify-center">
-                                            Máximo
-                                        </v-card-title>
-                                        <center>
-                                        <v-card-text class="justify-center">
-                                            {{resultadosGlobais.maximo}}
-                                        </v-card-text>
-                                        </center>
-                                    </v-card>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-card  style="background-color:#E8CEBF">
-                                        <v-card-title  primary-title class="justify-center">
-                                            Nº de vezes que jogou
-                                        </v-card-title>
-                                        <center>
-                                        <v-card-text class="justify-center">
-                                            {{resultadosGlobais.count}}
-                                        </v-card-text>
-                                        </center>
-                                    </v-card>
+                                <v-flex xs6>
+                                    <v-text-field @change="onDataFimChange" prepend-icon="mdi-calendar" color="#009263" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
                                 </v-flex>
                             </v-layout>
-                            <br>
-                            <center><v-btn class="white--text" color="#009263" @click="verTodos()"> Ver todos estes resultados </v-btn></center>
-                        </v-container>
-                    </v-card>
-                    <v-dialog v-model="verTotal" width="60%">
-                        <v-card class="pa-5" >
-                        <v-data-table
-                        class="elevation-4"
-                        :headers="header_resultados"
-                        :items="resultadosTotal"
-                        :footer-props="footer_props"
-                        >
-                        </v-data-table>
-                        </v-card>
-                    </v-dialog>
+                            </v-container>
+                            <v-card class="pa-4 elevation-5">
+                                <v-container v-if="resultadosGlobais.idaluno == undefined">
+                                    <center><v-icon large color="#009263"> mdi-home-analytics </v-icon></center>
+                                    <br>
+                                <center> Ainda não preencheu os campos necessários para ver resultados ou nunca jogou este jogo. </center>
+                                </v-container>
+                                <v-container v-else>
+                                    <center><v-icon large color="#009263"> mdi-home-analytics </v-icon></center>
+                                    <br>
+                                    <v-layout class="text-xs-center" row justify-center align-center>
+                                        <v-flex xs3>
+                                            <v-card  style="background-color:#DDAF94">
+                                                <v-card-title  primary-title class="justify-center">
+                                                    Média
+                                                </v-card-title>
+                                                <center>
+                                                <v-card-text class="justify-center">
+                                                    {{resultadosGlobais.media}}
+                                                </v-card-text>
+                                                </center>
+                                            </v-card>
+                                        </v-flex>
+                                        <v-flex xs3>
+                                            <v-card  style="background-color:#E8CEBF">
+                                                <v-card-title  primary-title class="justify-center">
+                                                    Mínimo
+                                                </v-card-title>
+                                                <center>
+                                                <v-card-text class="justify-center">
+                                                    {{resultadosGlobais.minimo}}
+                                                </v-card-text>
+                                                </center>
+                                            </v-card>
+                                        </v-flex>
+                                        <v-flex xs3>
+                                            <v-card  style="background-color:#DDAF94">
+                                                <v-card-title  primary-title class="justify-center">
+                                                    Máximo
+                                                </v-card-title>
+                                                <center>
+                                                <v-card-text class="justify-center">
+                                                    {{resultadosGlobais.maximo}}
+                                                </v-card-text>
+                                                </center>
+                                            </v-card>
+                                        </v-flex>
+                                        <v-flex xs3>
+                                            <v-card  style="background-color:#E8CEBF">
+                                                <v-card-title  primary-title class="justify-center">
+                                                    Nº de vezes que jogou
+                                                </v-card-title>
+                                                <center>
+                                                <v-card-text class="justify-center">
+                                                    {{resultadosGlobais.count}}
+                                                </v-card-text>
+                                                </center>
+                                            </v-card>
+                                        </v-flex>
+                                    </v-layout>
+                                    <br>
+                                    <center><v-btn class="white--text" color="#009263" @click="verTodos()"> Ver todos estes resultados </v-btn></center>
+                                </v-container>
+                            </v-card>
+                            <v-dialog v-model="verTotal" width="60%">
+                                <v-card class="pa-5" >
+                                <v-data-table
+                                class="elevation-4"
+                                :headers="header_resultados"
+                                :items="resultadosTotal"
+                                :footer-props="footer_props"
+                                >
+                                </v-data-table>
+                                </v-card>
+                            </v-dialog>
+                </v-container>
+            </v-card>
         </v-container>
-    </v-card>
     </v-main>
   </v-app> 
 </template>
@@ -141,7 +143,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20, -1],
+            "items-per-page-options": [50, 100, 200, -1],
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",

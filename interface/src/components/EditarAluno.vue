@@ -45,16 +45,6 @@ const h = require("@/config/hosts").hostAPI
   export default {
     data(){
       return {
-        header_turmas: [
-            {text: "Id", sortable: true, value: 'id', class: 'subtitle-1'},
-            {text: "Username do professor", value: 'idprofessor', class: 'subtitle-1'},
-            {text: "Turma", value: 'turma', class: 'subtitle-1'}
-        ],
-        footer_props: {
-            "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20, -1],
-            "items-per-page-all-text": "Todos"
-        },
         token: "",
         aluno: {},
         id : 0,

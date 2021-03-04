@@ -3,7 +3,7 @@
   <v-main class="grey lighten-3">
     <v-container>
       <v-layout row class="text-xs-center">
-          <v-container style="position: relative;top: 15%;" class="text-xs-center">
+          <v-container style="position: relative;top: 15%; width:80%;" class="text-xs-center">
             <v-card class="pa-5">
               <v-form>
               <v-text-field prepend-icon="mdi-account" v-model="nome" name="Nome do Agrupamento" label="Nome do Agrupamento" :rules="[existeNome, string120]" required></v-text-field>

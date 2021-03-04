@@ -1,57 +1,59 @@
 <template>
 <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card>
-        
-        <v-container style="position: relative;top: 15%; width: 60%;" class="text-xs-center">
-            <v-card-title primary-title class="justify-center green--text">
-                Criar Turma
-            </v-card-title>
-            <v-form>
-            <v-combobox
-                id="escola"
-                v-if="escolher"
-                prepend-icon="mdi-school"
-                label="Agrupamento de Escolas"
-                v-model="escola"
-                :items="escolas"
-                @change="onEscolaChange"
-            ></v-combobox>
-            <v-combobox
-                id="professor"
-                v-if="escolher"
-                prepend-icon="mdi-teach"
-                label="Professor"
-                v-model="codigo"
-                :items="professores"
-                @change="onProfessorChange"
-            ></v-combobox>
-            <v-text-field v-if="!escolher" prepend-icon="mdi-account" v-model="utilizador.codigo" name="Username do Professor" label="Username do Professor" required disabled></v-text-field>
-            <v-combobox
-              id="ano_escolaridade"
-              label="Ano de Escolaridade"
-              prepend-icon="mdi-numeric-1-box-outline"
-              v-model="ano_escolaridade"
-              :items="anosEscolaridade"
-              @change="onAnoChange"
-            >
-            </v-combobox>
-            <v-combobox
-              id="letra"
-              label="Letra da Turma"
-              prepend-icon="mdi-alpha-a-box-outline"
-              v-model="letra_turma"
-              :items="['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']"
-              @change="onLetraChange"
-            >
-            </v-combobox>
-            <v-text-field prepend-icon="mdi-book-account" v-model="turma" name="Nome da Turma" label="Nome da Turma" :rules="[formatoTurma]" required disabled></v-text-field>
-            <v-card-actions>
-              <v-btn class="white--text" primary large block style="background-color: #009263;" @click="criarTurma">Confirmar</v-btn>
-            </v-card-actions>
-            </v-form>
-        </v-container>
-    </v-card>
+      <v-container>
+        <v-card>
+            
+            <v-container style="position: relative;top: 15%; width: 80%;" class="text-xs-center">
+                <v-card-title primary-title class="justify-center green--text">
+                    Criar Turma
+                </v-card-title>
+                <v-form>
+                <v-combobox
+                    id="escola"
+                    v-if="escolher"
+                    prepend-icon="mdi-school"
+                    label="Agrupamento de Escolas"
+                    v-model="escola"
+                    :items="escolas"
+                    @change="onEscolaChange"
+                ></v-combobox>
+                <v-combobox
+                    id="professor"
+                    v-if="escolher"
+                    prepend-icon="mdi-teach"
+                    label="Professor"
+                    v-model="codigo"
+                    :items="professores"
+                    @change="onProfessorChange"
+                ></v-combobox>
+                <v-text-field v-if="!escolher" prepend-icon="mdi-account" v-model="utilizador.codigo" name="Username do Professor" label="Username do Professor" required disabled></v-text-field>
+                <v-combobox
+                  id="ano_escolaridade"
+                  label="Ano de Escolaridade"
+                  prepend-icon="mdi-numeric-1-box-outline"
+                  v-model="ano_escolaridade"
+                  :items="anosEscolaridade"
+                  @change="onAnoChange"
+                >
+                </v-combobox>
+                <v-combobox
+                  id="letra"
+                  label="Letra da Turma"
+                  prepend-icon="mdi-alpha-a-box-outline"
+                  v-model="letra_turma"
+                  :items="['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']"
+                  @change="onLetraChange"
+                >
+                </v-combobox>
+                <v-text-field prepend-icon="mdi-book-account" v-model="turma" name="Nome da Turma" label="Nome da Turma" :rules="[formatoTurma]" required disabled></v-text-field>
+                <v-card-actions>
+                  <v-btn class="white--text" primary large block style="background-color: #009263;" @click="criarTurma">Confirmar</v-btn>
+                </v-card-actions>
+                </v-form>
+            </v-container>
+        </v-card>
+      </v-container>
     </v-main>
 </v-app>
 </template>

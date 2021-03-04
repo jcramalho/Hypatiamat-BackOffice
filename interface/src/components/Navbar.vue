@@ -9,9 +9,9 @@
           :mini-variant.sync="mini"
           permanent
           floating
+          height="100%"
           color="#009263"
           mobile-breakpoint="991"
-          width="260"
           >
           <v-list
             dense
@@ -73,7 +73,7 @@ export default {
     return {
       reatividade : "#900000",
       drawer: true,
-      mini: true,
+      mini: false,
       items: [
       ],
       color: '#900000',
@@ -105,6 +105,7 @@ export default {
     if(utilizador.user) this.idUtilizador = utilizador.user
     else this.idUtilizador = utilizador.codigo
     this.nomeUtilizador = utilizador.nome
+    this.$emit("miniEvent", this.mini)
     if(utilizador.type == 50){
       // Admin    
       this.items = [
@@ -118,6 +119,8 @@ export default {
         { title: 'Gestão de Turmas', icon: 'mdi-book-account', href:"/turmas" },
         { title: 'Monotorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/municipios"},
         { title: 'Monotorização de Apps', icon: 'mdi-apps', href:"/apps/municipios"},
+        { title: 'Ranking Jogos', icon: 'mdi-podium', href:"/classificacoes/jogos/admin"},
+        { title: 'Ranking Apps', icon: 'mdi-podium', href:"/classificacoes/apps/admin"},
         { title: 'Outras Estatísticas', icon: 'mdi-home-analytics', href:"/estatisticas/municipios"},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
@@ -130,8 +133,8 @@ export default {
         { title: 'Gestão de Alunos', icon: 'mdi-account-group', href:"/gestaoAlunos" },
         { title: 'Monitorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/" + utilizador.codigo },
         { title: 'Monotorização de Apps', icon: 'mdi-apps', href:"/apps/" + utilizador.codigo},
-        { title: 'Jogos Turmas', icon: 'mdi-podium', href:"/classificacoes/jogos"},
-        { title: 'Apps Turmas', icon: 'mdi-podium', href:"/classificacoes/apps"},
+        { title: 'Ranking Jogos', icon: 'mdi-podium', href:"/classificacoes/jogos"},
+        { title: 'Ranking Apps', icon: 'mdi-podium', href:"/classificacoes/apps"},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }

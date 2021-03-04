@@ -1,61 +1,86 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card class="pa-5">
-        <v-container>
-            <v-card-title primary-title class="justify-center green--text">
-                Lista de Turmas
-            </v-card-title>
-            <center><v-btn class="white--text" style="background-color: #009263;" @click="criarTurma()"> <v-icon> mdi-book-plus </v-icon> Criar Turma </v-btn></center>
-            <v-combobox
-                id="escola"
-                label="Agrupamento de Escolas"
-                prepend-icon="mdi-school"
-                :return-object="true"
-                v-model="escola"
-                color="#009263"
-                :items="escolas"
-                @change="getTurmas()"
-            ></v-combobox>
-            <v-combobox
-                id="anoletivo"
-                label="Ano Letivo"
-                prepend-icon="mdi-counter"
-                v-model="anoletivo"
-                color="#009263"
-                :items="anosletivos"
-                @change="getTurmas()"
-            ></v-combobox>
-            <v-text-field
-                v-model="filtrar"
-                label="Filtrar"
-                prepend-icon="mdi-magnify"
-                color="#009263"
-                single-line
-                ></v-text-field>
-                <v-data-table
-                class="elevation-1"
-                :headers="header_turmas"
-                :items="turmas"
-                :footer-props="footer_props"
-                :search="filtrar"
-                >
-                <template v-slot:item="row">
-                <tr>
-                    <td @click="verProfessor(row.item.idprofessor)" style="cursor: pointer;">{{row.item.idprofessor}}</td>
-                    <td @click="verProfessor(row.item.idprofessor)" style="cursor: pointer;">{{row.item.nome}}</td>
-                    <td>{{row.item.turma}}</td>
-                    <td>{{row.item.anoletivo}}</td>
-                    <td>
-                    <v-icon @click="getPassaporte(row.item.turma, row.item.idprofessor)"> mdi-passport </v-icon>
-                    <v-icon @click="editarTurma(row.item.id, row.item.idprofessor)"> mdi-pencil </v-icon>
-                    <v-icon @click="apagarTurma(row.item.turma, row.item.idprofessor)"> mdi-delete </v-icon>
-                    </td>
-                </tr>
-                </template>
-                </v-data-table>
-        </v-container>
-    </v-card>
+      <v-container>
+        <v-card class="pa-5">
+            <v-container>
+                <v-card-title primary-title class="justify-center green--text">
+                    Lista de Turmas
+                </v-card-title>
+                <center><v-btn class="white--text" style="background-color: #009263;" @click="criarTurma()"> <v-icon> mdi-book-plus </v-icon> Criar Turma </v-btn></center>
+                <v-combobox
+                    id="escola"
+                    label="Agrupamento de Escolas"
+                    prepend-icon="mdi-school"
+                    :return-object="true"
+                    v-model="escola"
+                    color="#009263"
+                    :items="escolas"
+                    @change="getTurmas()"
+                ></v-combobox>
+                <v-combobox
+                    id="anoletivo"
+                    label="Ano Letivo"
+                    prepend-icon="mdi-counter"
+                    v-model="anoletivo"
+                    color="#009263"
+                    :items="anosletivos"
+                    @change="getTurmas()"
+                ></v-combobox>
+                <v-text-field
+                    v-model="filtrar"
+                    label="Filtrar"
+                    prepend-icon="mdi-magnify"
+                    color="#009263"
+                    single-line
+                    ></v-text-field>
+                    <v-data-table
+                    class="elevation-1"
+                    :headers="header_turmas"
+                    :items="turmas"
+                    :footer-props="footer_props"
+                    :search="filtrar"
+                    >
+                    <template v-slot:item="row">
+                    <tr>
+                        <td >{{row.item.idprofessor}}</td>
+                        <td>{{row.item.nome}}</td>
+                        <td>{{row.item.turma}}</td>
+                        <td>{{row.item.anoletivo}}</td>
+                        <td class="d-flex align-center">
+                        <v-tooltip top>
+                            <template v-slot:activator="{ on, attrs }">
+                            <v-simple-checkbox
+                                v-model="row.item.passportPassword"
+                                color="#009263"
+                                v-bind="attrs" 
+                                v-on="on"
+                                :ripple="false"
+                            ></v-simple-checkbox>
+                            </template>
+                            <span>Se selecionar esta opção, a palavra-passe dos alunos do passaporte irá ser preenchida com a palavra-passe gerada pelo Hypatiamat.</span>
+                        </v-tooltip>
+                        <v-tooltip top>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              icon
+                              v-bind="attrs" 
+                              v-on="on"
+                            >
+                            <v-icon @click="getPassaporte(row.item.turma, row.item.idprofessor, row.item.passportPassword)"> mdi-passport </v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Gerar um passaporte (PDF) à cerca dos alunos da turma.</span>
+                        </v-tooltip>
+                        <v-icon @click="editarTurma(row.item.id, row.item.idprofessor)"> mdi-pencil </v-icon>
+                        <v-icon @click="apagarTurma(row.item.turma, row.item.idprofessor)"> mdi-delete </v-icon>
+                        </td>
+                    </tr>
+                    </template>
+                    </v-data-table>
+            </v-container>
+        </v-card>
+      </v-container>
     </v-main>
   </v-app> 
 </template>
@@ -84,7 +109,7 @@ import {Passaport} from '../config/passport'
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20, -1],
+            "items-per-page-options": [50, 100, 200, -1],
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
@@ -151,8 +176,15 @@ import {Passaport} from '../config/passport'
                       }
                     }})
       },
-      getPassaporte : function(turma, codprofessor){
-        Passaport.getPassaporteTurma( turma, codprofessor, this.escola.split(" - ")[1].split(",")[0] )
+      getPassaporte : function(turma, codprofessor, passportPassword){
+        var passwords = false;
+        if(passportPassword) passwords = true
+        if(passwords){
+          Passaport.getPassaporteTurmaPassword( turma, codprofessor, this.escola.split("-")[1].split(",")[0] )
+        }
+        else{
+          Passaport.getPassaporteTurma( turma, codprofessor, this.escola.split("-")[1].split(",")[0] )
+        }
       }
     }
   }

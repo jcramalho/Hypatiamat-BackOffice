@@ -1,80 +1,81 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card class="pa-5">
-        <v-container >
-            <v-card-title primary-title class="justify-center green--text">
-                Editar Agrupamento de Escolas ({{nomeEscola}})
-            </v-card-title>
-                     
-          <v-text-field prepend-icon="mdi-account" label="Nome" placeholder="Nome" v-model="escola.nome" :rules="[existeNome, string120]"  required/>
-          <v-text-field prepend-icon="mdi-city" label="Localidade" placeholder="Localidade" v-model="escola.localidade" :rules="[string30]"  required/>
-          <v-text-field prepend-icon="mdi-calendar" label="Distrito" placeholder="Distrito" v-model="escola.distrito" :rules="[string30]"  required/>
-          <v-text-field prepend-icon="mdi-bank" label="País" placeholder="País " v-model="escola.pais" :rules="[string20]" required/>
-          
-          <br>
-          <center><v-btn class="white--text" style="background-color: #009263;" @click="verProfessores()"> Ver Professores </v-btn></center>
-          <br>
-          <center><v-btn class="white--text" style="background-color: #009263;" @click="verAlunos()"> Ver Alunos </v-btn></center>
-          <br>
-          <center><v-btn class="white--text" style="background-color: #009263;" @click="editarEscola()"> Confirmar Alterações </v-btn></center>
-        
-          <v-dialog
-            v-model="dialogProfessores"
-            width="40%"
-            >
-                <v-card class="pa-5">
+      <v-container>
+        <v-card class="pa-5">
+            <v-container >
                 <v-card-title primary-title class="justify-center green--text">
-                    Professores do Agrupamento
-                </v-card-title> 
-                <v-text-field
-                prepend-icon="mdi-magnify"
-                color="#009263"
-                v-model="filtrar"
-                label="Filtrar"
-                single-line
-                ></v-text-field>
-                <v-data-table
-                class="elevation-1"
-                :headers="header_professores"
-                :items="professores"
-                :footer-props="footer_props"
-                :search="filtrar"
-                @click:row="verProfessor"
-                >
-                </v-data-table>
-                </v-card>
-            </v-dialog>
-
-            <v-dialog
-            v-model="dialogAlunos"
-            width="40%"
-            >
-                <v-card class="pa-5">
-                <v-card-title primary-title class="justify-center green--text">
-                  Alunos do Agrupamento
+                    Editar Agrupamento de Escolas ({{nomeEscola}})
                 </v-card-title>
-                <v-text-field
-                prepend-icon="mdi-magnify"
-                color="#009263"
-                v-model="filtrar2"
-                label="Filtrar"
-                single-line
-                ></v-text-field>
-                <v-data-table
-                class="elevation-1"
-                :headers="header_alunos"
-                :items="alunos"
-                :footer-props="footer_props"
-                :search="filtrar2"
-                @click:row="verAluno"
+                        
+              <v-text-field prepend-icon="mdi-account" label="Nome" placeholder="Nome" v-model="escola.nome" :rules="[existeNome, string120]"  required/>
+              <v-text-field prepend-icon="mdi-city" label="Localidade" placeholder="Localidade" v-model="escola.localidade" :rules="[string30]"  required/>
+              <v-text-field prepend-icon="mdi-calendar" label="Distrito" placeholder="Distrito" v-model="escola.distrito" :rules="[string30]"  required/>
+              <v-text-field prepend-icon="mdi-bank" label="País" placeholder="País " v-model="escola.pais" :rules="[string20]" required/>
+              
+              <br>
+              <center><v-btn class="white--text" style="background-color: #009263;" @click="verProfessores()"> Ver Professores </v-btn></center>
+              <br>
+              <center><v-btn class="white--text" style="background-color: #009263;" @click="verAlunos()"> Ver Alunos </v-btn></center>
+              <br>
+              <center><v-btn class="white--text" style="background-color: #009263;" @click="editarEscola()"> Confirmar Alterações </v-btn></center>
+            
+              <v-dialog
+                v-model="dialogProfessores"
+                width="40%"
                 >
-                </v-data-table>
-                </v-card>
-            </v-dialog>
+                    <v-card class="pa-5">
+                    <v-card-title primary-title class="justify-center green--text">
+                        Professores do Agrupamento
+                    </v-card-title> 
+                    <v-text-field
+                    prepend-icon="mdi-magnify"
+                    color="#009263"
+                    v-model="filtrar"
+                    label="Filtrar"
+                    single-line
+                    ></v-text-field>
+                    <v-data-table
+                    class="elevation-1"
+                    :headers="header_professores"
+                    :items="professores"
+                    :footer-props="footer_props"
+                    :search="filtrar"
+                    @click:row="verProfessor"
+                    >
+                    </v-data-table>
+                    </v-card>
+                </v-dialog>
 
-        </v-container>
-    </v-card>
+                <v-dialog
+                v-model="dialogAlunos"
+                width="40%"
+                >
+                    <v-card class="pa-5">
+                    <v-card-title primary-title class="justify-center green--text">
+                      Alunos do Agrupamento
+                    </v-card-title>
+                    <v-text-field
+                    prepend-icon="mdi-magnify"
+                    color="#009263"
+                    v-model="filtrar2"
+                    label="Filtrar"
+                    single-line
+                    ></v-text-field>
+                    <v-data-table
+                    class="elevation-1"
+                    :headers="header_alunos"
+                    :items="alunos"
+                    :footer-props="footer_props"
+                    :search="filtrar2"
+                    >
+                    </v-data-table>
+                    </v-card>
+                </v-dialog>
+
+            </v-container>
+        </v-card>
+      </v-container>
     </v-main>
   </v-app> 
 </template>
@@ -112,7 +113,7 @@ const h = require("@/config/hosts").hostAPI
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20, -1],
+            "items-per-page-options": [50, 100, 200, -1],
             "items-per-page-all-text": "Todos"
         },
         string10: v  => {

@@ -1,47 +1,54 @@
 <template>
+    <v-card class="pa-5">
     <v-container>
-            <!-- PROFESSOR !-->
+      <v-row>
+            <!-- Agrupamento !-->
+            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
             <v-card-title primary-title class="justify-center green--text">
                 Dados do Agrupamento ({{professor.codigo}})
             </v-card-title>
-        <v-card background-color="gray">
+            </v-col>
+           <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
             <center>
            <v-list-item-avatar class="elevation-6" color="#009263" size="120">
                 <v-icon size="80" color="white">mdi-account</v-icon>             
            </v-list-item-avatar>
             </center>
-        <v-layout row class="text-xs-center pa-lg-16" justify-center align-center >
-          <v-flex xs5>
+          </v-col>
+         <v-row class="mx-auto">
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
           <v-text-field label="Nome" v-model="professor.nome" color="#009263" outlined disabled/>
-          </v-flex>
-          <v-flex xs2>
-          </v-flex>
-          <v-flex xs5>
-          <v-text-field label="Identificador do Agrupamento" v-model="professor.escola" color="#009263" outlined disabled/>
-          </v-flex>
-          <v-flex xs5>
+          </v-col>
+          <v-col v-if="xl" cols="2" xl="2">
+          </v-col>
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
+          <v-text-field label="Agrupamento" v-model="professor.agrupamento" color="#009263" outlined disabled/>
+          </v-col>
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
               <v-text-field label="Tipo de Utilizador" v-model="professor.nomeType" color="#009263" outlined disabled/>
-          </v-flex>
-          <v-flex xs2>
-          </v-flex>
-          <v-flex xs5>
+          </v-col>
+          <v-col v-if="xl" cols="2" xl="2">
+          </v-col>
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
               <v-text-field label="Email"  v-model="professor.email" color="#009263" outlined disabled/>
-          </v-flex>
-          <v-flex xs3>
-          </v-flex>
-          <v-flex xs5>
+          </v-col>
+          <v-col v-if="xl" cols="3" xl="3">
+          </v-col>
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="6">
           <v-text-field label="Validade (YYYY-MM-DD)" v-model="professor.validade" color="#009263" outlined disabled/>
-          </v-flex>
-          <v-flex xs3>
-          </v-flex>
-        </v-layout>
-          <center><v-btn class="white--text" style="background-color: #009263;" @click="editarProfessor()"> Editar dados pessoais </v-btn></center>
-          <br>
-          <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true"> Alterar password </v-btn></center>
-          <br>
-          <center><v-btn class="white--text" style="background-color: #009263;" @click="verTurmas()"> Ver Minhas Turmas </v-btn></center>
-          <br>
-        </v-card>
+          </v-col>
+          <v-col v-if="xl" cols="3" xl="3">
+          </v-col>
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
+            <center><v-btn class="white--text" style="background-color: #009263;" @click="editarProfessor()"> Editar dados pessoais </v-btn></center>
+          </v-col>
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
+            <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true"> Alterar password </v-btn></center>
+          </v-col>
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
+            <center><v-btn class="white--text" style="background-color: #009263;" @click="verTurmas()"> Ver Minhas Turmas </v-btn></center>
+          </v-col>
+        </v-row>
           <v-dialog
             v-model="dialogTurmas"
             width="40%"
@@ -79,7 +86,9 @@
                   <v-btn class="white--text" primary large block style="background-color: #009263;" @click="editarPassword()">Confirmar alteração</v-btn>
                 </v-card>
           </v-dialog>
+      </v-row>
     </v-container>
+    </v-card>
 </template>
 
 <script>
@@ -104,7 +113,7 @@ const h = require("@/config/hosts").hostAPI
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20, -1],
+            "items-per-page-options": [50, 100, 200, -1],
             "items-per-page-all-text": "Todos"
         },
         token: "",
@@ -124,6 +133,12 @@ const h = require("@/config/hosts").hostAPI
         } 
 
       }
+    },
+    computed: {
+      xl() {
+        if (this.$vuetify.breakpoint.xl) return true
+        return false
+      },
     },
     created: async function(){
         this.token = localStorage.getItem("token")

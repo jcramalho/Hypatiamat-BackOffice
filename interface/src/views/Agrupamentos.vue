@@ -1,163 +1,26 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card class="pa-5">
-        <v-container>
-          <v-card-title primary-title class="justify-center green--text">
-                Meus Agrupamentos
-            </v-card-title>
-            <center>
-            <v-row justify="center space-around">
-              <v-btn @click="verEstatisticasMun()" class="white--text mr-2" color="#009263" ><v-icon>mdi-home-analytics</v-icon>Estatisticas Globais</v-btn>
-              <v-btn @click="verEstatisticasAgruMun()" class="white--text" color="#009263"><v-icon>mdi-home-analytics</v-icon>Estatisticas por cada Agrupamento</v-btn>
-            </v-row>
-            
-            <v-dialog v-model="dialogAgruMun" width="75%">
-              <v-card class="pa-4">
-                <v-card-title primary-title class="justify-center green--text">
-                  Estatisticas por Agrupamento de Escolas do Município
+      <v-container>
+        <v-card class="pa-5">
+            <v-container>
+              <v-card-title primary-title class="justify-center green--text">
+                    Meus Agrupamentos
                 </v-card-title>
-                <center><v-btn v-if="!loading && estatisticasAgruMun.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> 
-                  <v-icon> mdi-pdf-box </v-icon> Exportar 
-                </v-btn></center>
-                <v-combobox
-                  id="anoletivo2"
-                  label="Ano Letivo"
-                  prepend-icon="mdi-counter"
-                  v-model="ano"
-                  color="#009263"
-                  :items="anos"
-                  @change="getEstatisticasAgruMun()" 
-                ></v-combobox>
-                <v-container v-if="loading">
-                  <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
-                </v-container>
-                <v-container v-else>
-                  <v-text-field
-                    v-model="filtrar2"
-                    label="Filtrar"
-                    prepend-icon="mdi-magnify"
-                    color="#009263"
-                    single-line
-                  ></v-text-field>
-                    <v-data-table
-                    class="elevation-2"
-                    :headers="header_estatisticas_escolas"
-                    :items="estatisticasAgruMun"
-                    :footer-props="footer_props"
-                    :search="filtrar2"
-                  ></v-data-table>
-
-                </v-container>
-              </v-card>
-            </v-dialog>
-            <v-dialog v-model="dialogEstatisticasMun" width="60%">
-              <v-card class="pa-4">
-                <v-card-title primary-title class="justify-center green--text">
-                  Estatisticas do Município por Ano Letivo
-                </v-card-title>
-                <v-combobox
-                  id="anoletivo"
-                  label="Ano Letivo"
-                  prepend-icon="mdi-counter"
-                  v-model="ano"
-                  color="#009263"
-                  :items="anos"
-                  @change="getEstatisticasMun()" 
-                ></v-combobox>
-                <v-container v-if="loading || estatisticasMun.nturmas == undefined">
-                  <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
-                </v-container>
-                <v-container  v-else>
-                    <center>
-                    <ul style="list-style: none;">
-                        <li>
-                            Nº de turmas:  {{estatisticasMun.nturmas}}
-                        </li>
-                        <br>
-                        <li>
-                            Nº de professores:  {{estatisticasMun.nprofessores}}
-                        </li>
-                        <br>
-                        <li>
-                            Nº de alunos:  {{estatisticasMun.nalunos}}
-                        </li>
-                    </ul>
-                  </center>
-                        <!--
-                        <br>
-                        <li>
-                            Apps de conteúdos das turmas registadas em 20/21 (#):  {{estatisticasMun.appsTurma.freqapps}}
-                        </li>
-                        <br>
-                        <li>
-                            Apps de conteúdos das turmas registadas em 20/21 (NTRC):  {{estatisticasMun.appsTurma.ncertas}}
-                        </li>
-                        <br>
-                        <li>
-                            Apps de conteúdos das turmas registadas em 20/21 (NTotal):  {{estatisticasMun.appsTurma.ntotal}}
-                        </li>
-                        <br>
-                        <li>
-                            Apps de conteúdos de todas as turmas (#):  {{estatisticasMun.appsTotal.freqapps}}
-                        </li>
-                        <br>
-                        <li>
-                            Apps de conteúdos de todas as turmas (NTRC):  {{estatisticasMun.appsTotal.ncertas}}
-                        </li>
-                        <br>
-                        <li>
-                            Apps de conteúdos de todas as turmas (NTR):  {{estatisticasMun.appsTotal.ntotal}}
-                        </li>
-                        <br>
-                        <li>
-                            Nº de jogos jogados:  {{estatisticasMun.njogos}} 
-                        </li>
-                        <br>
-                        <li>
-                            Frequência nos Jogos:  {{estatisticasMun.freqjogos}} 
-                        </li>
-                    </ul>
-                    </center>
-                            <br>
-                            <v-card outlined>
-                            <center><span># - Frequência</span></center>
-                            <center><span>NTRC - Nº de tarefas resolvidas corretamente</span></center>
-                            <center><span>NTR - Nº de tarefas resolvidas</span></center>
-                            </v-card>
-                            !-->
-                </v-container>
-              </v-card>
-            </v-dialog>
-            </center>
-            <v-text-field
-                v-model="filtrar"
-                label="Filtrar"
-                prepend-icon="mdi-magnify"
-                color="#009263"
-                single-line
-                ></v-text-field>
-                <v-data-table
-                class="elevation-1"
-                :headers="header_escolas"
-                :items="escolas"
-                :footer-props="footer_props"
-                :search="filtrar"
-                >
-                <template v-slot:item="row">
-                <tr>
-                    <td>{{row.item.nome}}</td>
-                    <td>{{row.item.localidade}}</td>
-                    <td><v-icon @click="verEstatisticasAgru(row.item)"> mdi-home-analytics </v-icon></td>
-                    <td><v-icon @click="verProfessores(row.item.cod)"> mdi-eye </v-icon></td>
-                </tr>
-                </template>
-                </v-data-table>
-                <v-dialog v-model="dialogEstatisticasAgru" width="60%">
+                <center>
+                <v-row justify="center space-around">
+                  <v-btn @click="verEstatisticasMun()" class="white--text mr-2" color="#009263" ><v-icon>mdi-home-analytics</v-icon>Estatisticas Globais</v-btn>
+                  <v-btn @click="verEstatisticasAgruMun()" class="white--text" color="#009263"><v-icon>mdi-home-analytics</v-icon>Estatisticas por cada Agrupamento</v-btn>
+                </v-row>
+                
+                <v-dialog v-model="dialogAgruMun" width="75%">
                   <v-card class="pa-4">
                     <v-card-title primary-title class="justify-center green--text">
-                      Estatisticas por Ano Letivo ({{agrupamentoAtual.nome}})
+                      Estatisticas por Agrupamento de Escolas do Município
                     </v-card-title>
+                    <center><v-btn v-if="!loading && estatisticasAgruMun.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> 
+                      <v-icon> mdi-pdf-box </v-icon> Exportar 
+                    </v-btn></center>
                     <v-combobox
                       id="anoletivo2"
                       label="Ano Letivo"
@@ -165,66 +28,129 @@
                       v-model="ano"
                       color="#009263"
                       :items="anos"
-                      @change="getEstatisticasAgru()" 
+                      @change="getEstatisticasAgruMun()" 
                     ></v-combobox>
-                    <v-container v-if="loading || estatisticasAgru.nturmas == undefined">
+                    <v-container v-if="loading">
                       <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
                     </v-container>
                     <v-container v-else>
-                  <center>
-                    <ul style="list-style: none;">
-                        <li>
-                            Nº de turmas:  {{estatisticasAgru.nturmas}}
-                        </li>
-                        <br>
-                        <li>
-                            Nº de professores:  {{estatisticasAgru.nprofessores}}
-                        </li>
-                        <br>
-                        <li>
-                            Nº de alunos:  {{estatisticasAgru.nalunos}}
-                        </li>
-                    </ul>
-                  </center>
-                        <!--
-                        <li>
-                            Apps de conteúdos das turmas registadas em 20/21 (#):  {{estatisticasAgru.appsTurma.freqapps}}
-                        </li>
-                        <li>
-                            Apps de conteúdos das turmas registadas em 20/21 (NTRC):  {{estatisticasAgru.appsTurma.ncertas}}
-                        </li>
-                        <li>
-                            Apps de conteúdos das turmas registadas em 20/21 (NTotal):  {{estatisticasAgru.appsTurma.ntotal}}
-                        </li>
-                        <li>
-                            Apps de conteúdos de todas as turmas (#):  {{estatisticasAgru.appsTotal.freqapps}}
-                        </li>
-                        <li>
-                            Apps de conteúdos de todas as turmas (NTRC):  {{estatisticasAgru.appsTotal.ncertas}}
-                        </li>
-                        <li>
-                            Apps de conteúdos de todas as turmas (NTR):  {{estatisticasAgru.appsTotal.ntotal}}
-                        </li>
-                        <li>
-                            Nº de jogos jogados:  {{estatisticasAgru.njogos}} 
-                        </li>
-                        <li>
-                            Frequência nos Jogos:  {{estatisticasAgru.freqjogos}} 
-                        </li>
-                    </ul>
-                    </center>
-                            <br>
-                            <v-card outlined>
-                            <center><span># - Frequência</span></center>
-                            <center><span>NTRC - Nº de tarefas resolvidas corretamente</span></center>
-                            <center><span>NTR - Nº de tarefas resolvidas</span></center>
-                            </v-card>
-                            !-->
-                </v-container>
+                      <v-text-field
+                        v-model="filtrar2"
+                        label="Filtrar"
+                        prepend-icon="mdi-magnify"
+                        color="#009263"
+                        single-line
+                      ></v-text-field>
+                        <v-data-table
+                        class="elevation-2"
+                        :headers="header_estatisticas_escolas"
+                        :items="estatisticasAgruMun"
+                        :footer-props="footer_props"
+                        :search="filtrar2"
+                      ></v-data-table>
+
+                    </v-container>
                   </v-card>
                 </v-dialog>
-        </v-container>
-    </v-card>
+                <v-dialog v-model="dialogEstatisticasMun" width="60%">
+                  <v-card class="pa-4">
+                    <v-card-title primary-title class="justify-center green--text">
+                      Estatisticas do Município por Ano Letivo
+                    </v-card-title>
+                    <v-combobox
+                      id="anoletivo"
+                      label="Ano Letivo"
+                      prepend-icon="mdi-counter"
+                      v-model="ano"
+                      color="#009263"
+                      :items="anos"
+                      @change="getEstatisticasMun()" 
+                    ></v-combobox>
+                    <v-container v-if="loading || estatisticasMun.nturmas == undefined">
+                      <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
+                    </v-container>
+                    <v-container  v-else>
+                        <center>
+                        <ul style="list-style: none;">
+                            <li>
+                                Nº de turmas:  {{estatisticasMun.nturmas}}
+                            </li>
+                            <br>
+                            <li>
+                                Nº de professores:  {{estatisticasMun.nprofessores}}
+                            </li>
+                            <br>
+                            <li>
+                                Nº de alunos:  {{estatisticasMun.nalunos}}
+                            </li>
+                        </ul>
+                      </center>
+                    </v-container>
+                  </v-card>
+                </v-dialog>
+                </center>
+                <v-text-field
+                    v-model="filtrar"
+                    label="Filtrar"
+                    prepend-icon="mdi-magnify"
+                    color="#009263"
+                    single-line
+                    ></v-text-field>
+                    <v-data-table
+                    class="elevation-1"
+                    :headers="header_escolas"
+                    :items="escolas"
+                    :footer-props="footer_props"
+                    :search="filtrar"
+                    >
+                    <template v-slot:item="row">
+                    <tr>
+                        <td>{{row.item.nome}}</td>
+                        <td>{{row.item.localidade}}</td>
+                        <td><v-icon @click="verEstatisticasAgru(row.item)"> mdi-home-analytics </v-icon></td>
+                        <td><v-icon @click="verProfessores(row.item.cod)"> mdi-eye </v-icon></td>
+                    </tr>
+                    </template>
+                    </v-data-table>
+                    <v-dialog v-model="dialogEstatisticasAgru" width="60%">
+                      <v-card class="pa-4">
+                        <v-card-title primary-title class="justify-center green--text">
+                          Estatisticas por Ano Letivo ({{agrupamentoAtual.nome}})
+                        </v-card-title>
+                        <v-combobox
+                          id="anoletivo2"
+                          label="Ano Letivo"
+                          prepend-icon="mdi-counter"
+                          v-model="ano"
+                          color="#009263"
+                          :items="anos"
+                          @change="getEstatisticasAgru()" 
+                        ></v-combobox>
+                        <v-container v-if="loading || estatisticasAgru.nturmas == undefined">
+                          <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
+                        </v-container>
+                        <v-container v-else>
+                      <center>
+                        <ul style="list-style: none;">
+                            <li>
+                                Nº de turmas:  {{estatisticasAgru.nturmas}}
+                            </li>
+                            <br>
+                            <li>
+                                Nº de professores:  {{estatisticasAgru.nprofessores}}
+                            </li>
+                            <br>
+                            <li>
+                                Nº de alunos:  {{estatisticasAgru.nalunos}}
+                            </li>
+                        </ul>
+                      </center>
+                    </v-container>
+                      </v-card>
+                    </v-dialog>
+            </v-container>
+        </v-card>
+      </v-container>
     </v-main>
   </v-app> 
 </template>
@@ -266,7 +192,7 @@ import Swal from 'sweetalert2'
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20, -1],
+            "items-per-page-options": [50, 100, 200, -1],
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",

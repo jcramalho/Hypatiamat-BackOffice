@@ -1,67 +1,52 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card class="pa-5">
-        <v-container>
-            <v-card-title primary-title class="justify-center green--text">
-                Professores
-            </v-card-title>
-            <!--<v-combobox
-                id="confirmacao"
-                prepend-icon="mdi-vpn"
-                label="Confirmação"
-                v-model="confirmacaoSel"
-                color="#009263"
-                :items="confirmacoes"
-                @change="getProfessores()"
-            ></v-combobox>
-            <v-combobox
-                id="validade"
-                prepend-icon="mdi-vpn"
-                label="Validade"
-                v-model="validadeSel"
-                color="#009263"
-                :items="validades"
-            ></v-combobox>-->
-            <center><v-btn class="white--text" style="background-color: #009263;" @click="criarProfessor()"><v-icon> mdi-account-plus </v-icon> Criar Professor </v-btn></center>
-            <v-text-field
-                v-model="filtrar"
-                label="Filtrar"
-                prepend-icon="mdi-magnify"
-                color="#009263"
-                single-line
-                ></v-text-field>
-                <v-data-table
-                class="elevation-1"
-                :headers="header_professores"
-                :items="professores"
-                :footer-props="footer_props"
-                :search="filtrar"
-                >
-                <template v-slot:item="row">
-                <tr>
-                    <td>{{row.item.codigo}}</td>
-                    <td>{{row.item.nome}}</td>
-                    <td>{{row.item.localidade}}</td>
-                    <td>{{row.item.agrupamento}}</td>
-                    <td>{{row.item.socionum}}</td>
-                    <td>{{row.item.projeto}}</td>
-                    <td>{{row.item.validade}}</td>
-                    <td>
-                    <!--<v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>-->
-                    <v-icon @click="editarProfessor(row.item.id)"> mdi-pencil </v-icon>
-                    <v-icon @click="apagarProfessor(row.item.codigo)"> mdi-delete </v-icon>
-                    </td>
-                </tr>
-                </template>
-                </v-data-table>
-                <v-dialog v-model="dialogEditar" width="80%">
-                  <v-card>
-                  <EditarProfessor v-if="dialogEditar" :idProp="idEditar" @alteracao="atualizaProfessores()"/>
-                  </v-card>
-                </v-dialog>
-        </v-container>
-    </v-card>
+      <v-container>
+        <v-card class="pa-5">
+            <v-container>
+                <v-card-title primary-title class="justify-center green--text">
+                    Professores
+                </v-card-title>
+                <center><v-btn class="white--text" style="background-color: #009263;" @click="criarProfessor()"><v-icon> mdi-account-plus </v-icon> Criar Professor </v-btn></center>
+                <v-text-field
+                    v-model="filtrar"
+                    label="Filtrar"
+                    prepend-icon="mdi-magnify"
+                    color="#009263"
+                    single-line
+                    ></v-text-field>
+                    <v-data-table
+                    class="elevation-1"
+                    :headers="header_professores"
+                    :items="professores"
+                    :footer-props="footer_props"
+                    :search="filtrar"
+                    >
+                    <template v-slot:item="row">
+                    <tr>
+                        <td>{{row.item.codigo}}</td>
+                        <td>{{row.item.nome}}</td>
+                        <td>{{row.item.localidade}}</td>
+                        <td>{{row.item.agrupamento}}</td>
+                        <td>{{row.item.socionum}}</td>
+                        <td>{{row.item.projeto}}</td>
+                        <td>{{row.item.validade}}</td>
+                        <td>
+                        <!--<v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>-->
+                        <v-icon @click="editarProfessor(row.item.id)"> mdi-pencil </v-icon>
+                        <v-icon @click="apagarProfessor(row.item.codigo)"> mdi-delete </v-icon>
+                        </td>
+                    </tr>
+                    </template>
+                    </v-data-table>
+                    <v-dialog v-model="dialogEditar" width="80%">
+                      <v-card>
+                      <EditarProfessor v-if="dialogEditar" :idProp="idEditar" @alteracao="atualizaProfessores()"/>
+                      </v-card>
+                    </v-dialog>
+            </v-container>
+        </v-card>
+      </v-container>
     </v-main>
   </v-app> 
 </template>
@@ -95,7 +80,7 @@ const h = require("@/config/hosts").hostAPI
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20, -1],
+            "items-per-page-options": [50, 100, 200, -1],
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",

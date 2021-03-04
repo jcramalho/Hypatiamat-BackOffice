@@ -1,55 +1,63 @@
 <template>
-    <v-container>
+    <v-card class="elevation-5 pa-5" background-color="gray" rounded>
+      <v-container>
             <!-- Aluno !-->
             
-        <v-card class="elevation-5" background-color="gray" rounded>
-            <v-card-title primary-title class="justify-center green--text">
-                Dados da minha conta ({{aluno.user}})
-            </v-card-title>
-            <center>
-           <v-list-item-avatar class="elevation-6" color="#009263" size="120">
-                <v-icon size="80" color="white">mdi-account</v-icon>             
-           </v-list-item-avatar>
-            </center>
-        <v-layout row class="text-xs-center pa-lg-8" justify-center align-center >
-          <v-flex xs5>
-          <v-text-field label="Nome" v-model="aluno.nome" color="#009263" outlined disabled/>
-          </v-flex>
-          <v-flex xs2>
-          </v-flex>
-          <v-flex xs5>
-          <v-text-field label="Identificador do Agrupamento" v-model="aluno.escola" color="#009263" outlined disabled/>
-          </v-flex>
-          <v-flex xs5>
+          <v-row>
+            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
+              <v-card-title primary-title class="justify-center green--text">
+                  Dados da minha conta ({{aluno.user}})
+              </v-card-title>
+            </v-col>
+            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
+              <center>
+                <v-list-item-avatar class="elevation-6" color="#009263" size="120">
+                      <v-icon size="80" color="white">mdi-account</v-icon>             
+                </v-list-item-avatar>
+              </center>
+            </v-col>
+          <v-row class="mx-auto">
+            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
+              <v-text-field label="Nome" v-model="aluno.nome" color="#009263" outlined disabled/>
+            </v-col>
+            <v-col v-if="xl" cols="2" xl="2">
+            </v-col>
+            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
+              <v-text-field label="Agrupamento" v-model="aluno.agrupamento" color="#009263" outlined disabled/>
+            </v-col>
+            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
               <v-text-field label="Tipo de Utilizador" v-model="aluno.nomeType" color="#009263" outlined disabled/>
-          </v-flex>
-          <v-flex xs2>
-          </v-flex>
-          <v-flex xs5>
+            </v-col>
+            <v-col v-if="xl" cols="2" xl="2">
+            </v-col>
+            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
               <v-text-field label="Email"  v-model="aluno.email" color="#009263" outlined disabled/>
-          </v-flex>
-           <v-flex xs5>
+            </v-col>
+            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
               <v-text-field label="Data de Nascimento" v-model="aluno.datanascimento" color="#009263" outlined disabled/>
-          </v-flex>
-          <v-flex xs2>
-          </v-flex>
-          <v-flex xs5>
+            </v-col>
+            <v-col v-if="xl" cols="2" xl="2">
+            </v-col>
+            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
               <v-text-field label="Turma"  v-model="aluno.turma" color="#009263" outlined disabled/>
-          </v-flex>
-          <v-flex xs5>
+            </v-col>
+            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
               <v-text-field label="Professor do Aluno" v-model="aluno.codprofessor" color="#009263" outlined disabled/>
-          </v-flex>
-          <v-flex xs2>
-          </v-flex>
-          <v-flex xs5>
+            </v-col>
+            <v-col v-if="xl" cols="2" xl="2">
+            </v-col>
+            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
               <v-text-field label="País"  v-model="aluno.pais" color="#009263" outlined disabled/>
-          </v-flex>
-        </v-layout>
-          <center><v-btn class="white--text" style="background-color: #009263;" @click="editarAluno()"> Editar dados pessoais </v-btn></center>
-          <br>
-          <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true"> Alterar password </v-btn></center>
-          <br>
-        </v-card>
+            </v-col>
+            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
+              <center><v-btn class="white--text" style="background-color: #009263;" @click="editarAluno()"> Editar dados pessoais </v-btn></center>
+            </v-col>
+            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
+              <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true"> Alterar password </v-btn></center>
+            </v-col>
+          </v-row>
+        </v-row>
+      </v-container>
           <v-dialog
             v-model="dialogPassword"
             width="40%"
@@ -63,7 +71,7 @@
                   <v-btn class="white--text" primary large block style="background-color: #009263;" @click="editarPassword()">Confirmar alteração</v-btn>
                 </v-card>
           </v-dialog>
-    </v-container>
+    </v-card>
 </template>
 
 <script>
@@ -115,6 +123,12 @@ const h = require("@/config/hosts").hostAPI
         var response = await axios.get(h + "alunos/" + aluno.id + "?token=" + this.token)
         this.aluno = response.data
         this.aluno.nomeType = "Aluno"
+    },
+    computed: {
+      xl() {
+        if (this.$vuetify.breakpoint.xl) return true
+        return false
+      },
     },
     methods: {
       editarAluno : function(){

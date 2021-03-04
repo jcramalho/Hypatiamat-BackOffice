@@ -1,325 +1,329 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card class="ma-auto">
         <v-container>
-            <v-card-title primary-title class="justify-center green--text">
-                Monotorização de Jogos do professor ({{this.idprofessor}})
-            </v-card-title>
-            <v-layout row class="text-xs-center pa-lg-4" justify-center align-center>
-                <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4" v-if="alunos.length>0">
-                    <center><v-btn class="white--text" style="background-color: #009263;" @click="estatisticasGlobais()"> <v-icon> mdi-home-analytics </v-icon> Estatísticas Globais </v-btn></center>
-                </v-col>
-                <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4" v-if="alunos.length>0">
-                    <center><v-btn class="white--text" style="background-color: #009263;" @click="verGrafico()"> <v-icon> mdi-chart-bar-stacked </v-icon> Visualizar Gráfico </v-btn></center>
-                </v-col>
-                <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4" v-if="alunos.length>0">
-                    <center><v-btn class="white--text" style="background-color: #009263;" @click="exportPDF()"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn></center>
-                </v-col>
-            </v-layout>
-            
-            <v-layout row class="text-xs-center" justify-center align-center>
-                <v-col cols="12" xs="12" sm="12" md="12" lg="3" xl="3">
-                    <v-container >
-                        <v-card class="pa-3">
-                            <v-combobox
-                                id="turmas"
-                                v-model="turmaSel"
-                                label="Turma"
-                                color="green"
-                                :items="turmas"
-                                @change="onTurmaChange"
-                            ></v-combobox>
-                            <v-combobox
-                                v-if="!loadingJogos"
-                                id="jogos"
-                                v-model="jogo"
-                                label="Jogo"
-                                color="green"
-                                :items="jogos"
-                                @change="onJogoChange"
-                            ></v-combobox>
-                            <v-combobox
-                                id="tiposCalcRapid"
-                                chips
-                                v-if="jogo=='Calcrapid' && !loadingJogos"
-                                v-model="tiposCalc"
-                                label="Tipo de Operação"
-                                color="green"
-                                :multiple="true"
-                                :items="tiposCalcRapid"
-                                @change="onTipoCalcChange"
-                            ></v-combobox>
-                            <v-combobox
-                                id="niveisCalculus"
-                                chips
-                                v-if="jogo=='Calculus'  && !loadingJogos"
-                                v-model="niveisSel"
-                                label="Nível"
-                                color="green"
-                                :multiple="true"
-                                :items="niveisCalculus"
-                                @change="onNivelChange"
-                            ></v-combobox>
-                            <v-combobox
-                                id="tiposCalculus"
-                                chips
-                                v-if="jogo=='Calculus'  && !loadingJogos"
-                                v-model="tiposCalculusSel"
-                                label="Tipo de Operações"
-                                color="green"
-                                :multiple="true"
-                                :items="tiposCalculus"
-                                @change="onTipoCalculusChange"
-                            ></v-combobox>
-                            <v-combobox
-                                id="anos"
-                                v-model="anoLetivo"
-                                label="Ano Letivo"
-                                color="green"
-                                :items="anosLetivos"
-                                @change="onAnoChange"
-                            ></v-combobox>
-                            <v-layout row class="text-xs-center" justify-center align-center>
-                                <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
-                                <v-text-field @change="onDataInChange" v-model="dataInicio" label="Data Inicio" type="date" :format="format" required></v-text-field>
-                                </v-col>
-                                <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
-                                    <v-text-field @change="onDataFimChange" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
-                                </v-col>
-                            </v-layout>
-                        </v-card>
-                        </v-container>
-                    </v-col>
-                <v-col cols="12" xs="12" sm="12" md="12" lg="1" xl="1">
-                </v-col>
-                <v-col cols="12" xs="12" sm="12" md="12" lg="8" xl="8" >
-                    <v-container v-if="loading">
-                        <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
-                    </v-container>
-                    <v-container v-else>     
-                    <div id="tableResultados">          
-                    <v-data-table
-                    class="elevation-4"
-                    :headers="header_alunos"
-                    :items="alunos"
-                    :footer-props="footer_props"
-                    :search="filtrar"
+            <v-card class="ma-auto">
+                <v-container>
+                    <v-card-title primary-title class="justify-center green--text">
+                        Monotorização de Jogos do professor ({{this.idprofessor}})
+                    </v-card-title>
+                    <v-layout row class="text-xs-center pa-lg-4" justify-center align-center>
+                        <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4" v-if="alunos.length>0">
+                            <center><v-btn class="white--text" style="background-color: #009263;" 
+                            @click="estatisticasGlobais()"> <v-icon> mdi-home-analytics </v-icon> Estatísticas Globais 
+                            </v-btn></center>
+                        </v-col>
+                        <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4" v-if="alunos.length>0">
+                            <center><v-btn class="white--text" style="background-color: #009263;" @click="verGrafico()"> <v-icon> mdi-chart-bar-stacked </v-icon> Visualizar Gráfico </v-btn></center>
+                        </v-col>
+                        <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4" v-if="alunos.length>0">
+                            <center><v-btn class="white--text" style="background-color: #009263;" @click="exportPDF()"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn></center>
+                        </v-col>
+                    </v-layout>
+                    
+                    <v-layout row class="text-xs-center" justify-center align-center>
+                        <v-col cols="12" xs="12" sm="12" md="12" lg="3" xl="3">
+                            <v-container >
+                                <v-card class="pa-3">
+                                    <v-combobox
+                                        id="turmas"
+                                        v-model="turmaSel"
+                                        label="Turma"
+                                        color="green"
+                                        :items="turmas"
+                                        @change="onTurmaChange"
+                                    ></v-combobox>
+                                    <v-combobox
+                                        v-if="!loadingJogos"
+                                        id="jogos"
+                                        v-model="jogo"
+                                        label="Jogo"
+                                        color="green"
+                                        :items="jogos"
+                                        @change="onJogoChange"
+                                    ></v-combobox>
+                                    <v-combobox
+                                        id="tiposCalcRapid"
+                                        chips
+                                        v-if="jogo=='Calcrapid' && !loadingJogos"
+                                        v-model="tiposCalc"
+                                        label="Tipo de Operação"
+                                        color="green"
+                                        :multiple="true"
+                                        :items="tiposCalcRapid"
+                                        @change="onTipoCalcChange"
+                                    ></v-combobox>
+                                    <v-combobox
+                                        id="niveisCalculus"
+                                        chips
+                                        v-if="jogo=='Calculus'  && !loadingJogos"
+                                        v-model="niveisSel"
+                                        label="Nível"
+                                        color="green"
+                                        :multiple="true"
+                                        :items="niveisCalculus"
+                                        @change="onNivelChange"
+                                    ></v-combobox>
+                                    <v-combobox
+                                        id="tiposCalculus"
+                                        chips
+                                        v-if="jogo=='Calculus'  && !loadingJogos"
+                                        v-model="tiposCalculusSel"
+                                        label="Tipo de Operações"
+                                        color="green"
+                                        :multiple="true"
+                                        :items="tiposCalculus"
+                                        @change="onTipoCalculusChange"
+                                    ></v-combobox>
+                                    <v-combobox
+                                        id="anos"
+                                        v-model="anoLetivo"
+                                        label="Ano Letivo"
+                                        color="green"
+                                        :items="anosLetivos"
+                                        @change="onAnoChange"
+                                    ></v-combobox>
+                                    <v-layout row class="text-xs-center" justify-center align-center>
+                                        <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
+                                        <v-text-field @change="onDataInChange" v-model="dataInicio" label="Data Inicio" type="date" :format="format" required></v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
+                                            <v-text-field @change="onDataFimChange" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
+                                        </v-col>
+                                    </v-layout>
+                                </v-card>
+                                </v-container>
+                            </v-col>
+                        <v-col cols="12" xs="12" sm="12" md="12" lg="1" xl="1">
+                        </v-col>
+                        <v-col cols="12" xs="12" sm="12" md="12" lg="8" xl="8" >
+                            <v-container v-if="loading">
+                                <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
+                            </v-container>
+                            <v-container v-else>     
+                            <div id="tableResultados">          
+                            <v-data-table
+                            class="elevation-4"
+                            :headers="header_alunos"
+                            :items="alunos"
+                            :footer-props="footer_props"
+                            :search="filtrar"
+                            >
+                            </v-data-table>
+                            </div>
+                            </v-container>
+                        </v-col>
+                    </v-layout>
+                    <v-dialog
+                        v-model="dialogEstatisticas"
+                        width="50%"
                     >
-                    </v-data-table>
+                    <div ref="estatisticas">
+                    <v-card class="pa-5">
+                        <v-card-title class="justify-center" primary-title>
+                            Estatísticas globais ({{jogo}})
+                        </v-card-title>
+                        <br>
+                        <v-layout class="text-xs-center" row justify-center align-center>
+                            <v-flex xs3 outlined>
+                            </v-flex>
+                            <v-flex xs3>
+                                <v-card outlined style="background-color:#f58733">
+                                    <center>
+                                    <v-card-text>
+                                        TURMA
+                                    </v-card-text>
+                                    </center>
+                                </v-card>
+                            </v-flex>
+                            <v-flex xs3>
+                                <v-card outlined style="background-color:#f58733">
+                                    <center>
+                                    <v-card-text>
+                                        AGRUPAMENTO
+                                    </v-card-text>
+                                    </center>
+                                </v-card>
+                            </v-flex>
+                            <v-flex xs3>
+                                <v-card outlined style="background-color:#f58733">
+                                    <center>
+                                    <v-card-text>
+                                        HYPATIA
+                                    </v-card-text>
+                                    </center>
+                                </v-card>
+                            </v-flex>
+                        </v-layout>
+                        <v-layout row>
+                            <v-flex xs3>
+                                <v-card outlined style="background-color:#134517">
+                                    <center>
+                                    <v-card-text class="white--text">
+                                        MIN
+                                    </v-card-text>
+                                    </center>
+                                </v-card>
+                            </v-flex>
+                            <v-flex xs3>
+                                <v-card outlined>
+                                    <center>
+                                    <v-card-text >
+                                        {{estatisticas.turma.min}}
+                                    </v-card-text>
+                                    </center>
+                                </v-card>
+                            </v-flex>
+                            <v-flex xs3>
+                                <v-card outlined>
+                                    <center>
+                                    <v-card-text >
+                                        {{estatisticas.escola.min}}
+                                    </v-card-text>
+                                    </center>
+                                </v-card>
+                            </v-flex>
+                            <v-flex xs3>
+                                <v-card outlined>
+                                    <center>
+                                    <v-card-text >
+                                        {{estatisticas.hypatia.min}}
+                                    </v-card-text>
+                                    </center>
+                                </v-card>
+                            </v-flex>
+                        </v-layout>
+                        <v-layout row>
+                            <v-flex xs3>
+                                <v-card outlined style="background-color:#134517">
+                                    <center>
+                                    <v-card-text class="white--text">
+                                        MAX
+                                    </v-card-text>
+                                    </center>
+                                </v-card>
+                            </v-flex>
+                            <v-flex xs3>
+                                <v-card outlined>
+                                    <center>
+                                    <v-card-text >
+                                        {{estatisticas.turma.max}}
+                                    </v-card-text>
+                                    </center>
+                                </v-card>
+                            </v-flex>
+                            <v-flex xs3>
+                                <v-card outlined>
+                                    <center>
+                                    <v-card-text >
+                                        {{estatisticas.escola.max}}
+                                    </v-card-text>
+                                    </center>
+                                </v-card>
+                            </v-flex>
+                            <v-flex xs3>
+                                <v-card outlined>
+                                    <center>
+                                    <v-card-text >
+                                        {{estatisticas.hypatia.max}}
+                                    </v-card-text>
+                                    </center>
+                                </v-card>
+                            </v-flex>
+                        </v-layout>
+                        <v-layout row>
+                            <v-flex xs3>
+                                <v-card outlined style="background-color:#134517">
+                                    <center>
+                                    <v-card-text class="white--text">
+                                        MÉDIA
+                                    </v-card-text>
+                                    </center>
+                                </v-card>
+                            </v-flex>
+                            <v-flex xs3>
+                                <v-card outlined>
+                                    <center>
+                                    <v-card-text >
+                                        {{estatisticas.turma.media}}
+                                    </v-card-text>
+                                    </center>
+                                </v-card>
+                            </v-flex>
+                            <v-flex xs3>
+                                <v-card outlined>
+                                    <center>
+                                    <v-card-text >
+                                        {{estatisticas.escola.media}}
+                                    </v-card-text>
+                                    </center>
+                                </v-card>
+                            </v-flex>
+                            <v-flex xs3>
+                                <v-card outlined>
+                                    <center>
+                                    <v-card-text >
+                                        {{estatisticas.hypatia.media}}
+                                    </v-card-text>
+                                    </center>
+                                </v-card>
+                            </v-flex>
+                        </v-layout>
+                        <v-layout row>
+                            <v-flex xs3>
+                                <v-card outlined style="background-color:#134517">
+                                    <center>
+                                    <v-card-text class="white--text">
+                                        #
+                                    </v-card-text>
+                                    </center>
+                                </v-card>
+                            </v-flex>
+                            <v-flex xs3>
+                                <v-card outlined>
+                                    <center>
+                                    <v-card-text >
+                                        {{estatisticas.turma.number}}
+                                    </v-card-text>
+                                    </center>
+                                </v-card>
+                            </v-flex>
+                            <v-flex xs3>
+                                <v-card outlined>
+                                    <center>
+                                    <v-card-text >
+                                        {{estatisticas.escola.number}}
+                                    </v-card-text>
+                                    </center>
+                                </v-card>
+                            </v-flex>
+                            <v-flex xs3>
+                                <v-card outlined>
+                                    <center>
+                                    <v-card-text >
+                                        {{estatisticas.hypatia.number}}
+                                    </v-card-text>
+                                    </center>
+                                </v-card>
+                            </v-flex>
+                        </v-layout>
+                    </v-card>
                     </div>
-                    </v-container>
-                </v-col>
-            </v-layout>
-            <v-dialog
-                v-model="dialogEstatisticas"
-                width="50%"
-            >
-            <div ref="estatisticas">
-            <v-card class="pa-5">
-                <v-card-title class="justify-center" primary-title>
-                    Estatísticas globais ({{jogo}})
-                </v-card-title>
-                <br>
-                <v-layout class="text-xs-center" row justify-center align-center>
-                    <v-flex xs3 outlined>
-                    </v-flex>
-                    <v-flex xs3>
-                        <v-card outlined style="background-color:#f58733">
-                            <center>
-                            <v-card-text>
-                                TURMA
-                            </v-card-text>
-                            </center>
-                        </v-card>
-                    </v-flex>
-                    <v-flex xs3>
-                        <v-card outlined style="background-color:#f58733">
-                            <center>
-                            <v-card-text>
-                                AGRUPAMENTO
-                            </v-card-text>
-                            </center>
-                        </v-card>
-                    </v-flex>
-                    <v-flex xs3>
-                        <v-card outlined style="background-color:#f58733">
-                            <center>
-                            <v-card-text>
-                                HYPATIA
-                            </v-card-text>
-                            </center>
-                        </v-card>
-                    </v-flex>
-                </v-layout>
-                <v-layout row>
-                    <v-flex xs3>
-                        <v-card outlined style="background-color:#134517">
-                            <center>
-                            <v-card-text class="white--text">
-                                MIN
-                            </v-card-text>
-                            </center>
-                        </v-card>
-                    </v-flex>
-                    <v-flex xs3>
-                        <v-card outlined>
-                            <center>
-                            <v-card-text >
-                                {{estatisticas.turma.min}}
-                            </v-card-text>
-                            </center>
-                        </v-card>
-                    </v-flex>
-                    <v-flex xs3>
-                        <v-card outlined>
-                            <center>
-                            <v-card-text >
-                                {{estatisticas.escola.min}}
-                            </v-card-text>
-                            </center>
-                        </v-card>
-                    </v-flex>
-                    <v-flex xs3>
-                        <v-card outlined>
-                            <center>
-                            <v-card-text >
-                                {{estatisticas.hypatia.min}}
-                            </v-card-text>
-                            </center>
-                        </v-card>
-                    </v-flex>
-                </v-layout>
-                <v-layout row>
-                    <v-flex xs3>
-                        <v-card outlined style="background-color:#134517">
-                            <center>
-                            <v-card-text class="white--text">
-                                MAX
-                            </v-card-text>
-                            </center>
-                        </v-card>
-                    </v-flex>
-                    <v-flex xs3>
-                        <v-card outlined>
-                            <center>
-                            <v-card-text >
-                                {{estatisticas.turma.max}}
-                            </v-card-text>
-                            </center>
-                        </v-card>
-                    </v-flex>
-                    <v-flex xs3>
-                        <v-card outlined>
-                            <center>
-                            <v-card-text >
-                                {{estatisticas.escola.max}}
-                            </v-card-text>
-                            </center>
-                        </v-card>
-                    </v-flex>
-                    <v-flex xs3>
-                        <v-card outlined>
-                            <center>
-                            <v-card-text >
-                                {{estatisticas.hypatia.max}}
-                            </v-card-text>
-                            </center>
-                        </v-card>
-                    </v-flex>
-                </v-layout>
-                <v-layout row>
-                    <v-flex xs3>
-                        <v-card outlined style="background-color:#134517">
-                            <center>
-                            <v-card-text class="white--text">
-                                MÉDIA
-                            </v-card-text>
-                            </center>
-                        </v-card>
-                    </v-flex>
-                    <v-flex xs3>
-                        <v-card outlined>
-                            <center>
-                            <v-card-text >
-                                {{estatisticas.turma.media}}
-                            </v-card-text>
-                            </center>
-                        </v-card>
-                    </v-flex>
-                    <v-flex xs3>
-                        <v-card outlined>
-                            <center>
-                            <v-card-text >
-                                {{estatisticas.escola.media}}
-                            </v-card-text>
-                            </center>
-                        </v-card>
-                    </v-flex>
-                    <v-flex xs3>
-                        <v-card outlined>
-                            <center>
-                            <v-card-text >
-                                {{estatisticas.hypatia.media}}
-                            </v-card-text>
-                            </center>
-                        </v-card>
-                    </v-flex>
-                </v-layout>
-                <v-layout row>
-                    <v-flex xs3>
-                        <v-card outlined style="background-color:#134517">
-                            <center>
-                            <v-card-text class="white--text">
-                                #
-                            </v-card-text>
-                            </center>
-                        </v-card>
-                    </v-flex>
-                    <v-flex xs3>
-                        <v-card outlined>
-                            <center>
-                            <v-card-text >
-                                {{estatisticas.turma.number}}
-                            </v-card-text>
-                            </center>
-                        </v-card>
-                    </v-flex>
-                    <v-flex xs3>
-                        <v-card outlined>
-                            <center>
-                            <v-card-text >
-                                {{estatisticas.escola.number}}
-                            </v-card-text>
-                            </center>
-                        </v-card>
-                    </v-flex>
-                    <v-flex xs3>
-                        <v-card outlined>
-                            <center>
-                            <v-card-text >
-                                {{estatisticas.hypatia.number}}
-                            </v-card-text>
-                            </center>
-                        </v-card>
-                    </v-flex>
-                </v-layout>
-            </v-card>
-            </div>
-            </v-dialog>
+                    </v-dialog>
 
-            <v-dialog
-                v-model="dialogGrafico"
-                width="50%"
-            >
-            <v-card class="pa-4">
-                <v-card-title>
-                    Gráfico
-                </v-card-title>
+                    <v-dialog
+                        v-model="dialogGrafico"
+                        width="50%"
+                    >
+                    <v-card class="pa-4">
+                        <v-card-title>
+                            Gráfico
+                        </v-card-title>
+                    </v-card>
+                    </v-dialog>
+                </v-container>
             </v-card>
-            </v-dialog>
         </v-container>
-    </v-card>
     </v-main>
   </v-app> 
 </template>
@@ -390,7 +394,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20, -1],
+            "items-per-page-options": [30, 50, -1],
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",

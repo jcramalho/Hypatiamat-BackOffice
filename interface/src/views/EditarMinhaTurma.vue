@@ -129,7 +129,7 @@ const anoLetivoAtual = require("@/config/hosts").anoAtual
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20],
+            "items-per-page-options": [30, 50, -1],
         },
         token: "",
         turma: {},

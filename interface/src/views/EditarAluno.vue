@@ -1,38 +1,40 @@
 <template>
   <v-app id="inspire justify-center">
     <v-main class="grey lighten-3 justify-center" >
-    <v-card class="justify-center">
-        <v-container class="justify-center">
-            <v-card-title primary-title class="justify-center green--text">
-                Editar Aluno ({{aluno.user}})
-            </v-card-title>
-                     
-          <v-text-field prepend-icon="mdi-numeric-1-box-multiple-outline" label="Número" placeholder="Número" v-model="aluno.numero" color="#009263" type="number" :rules="[number]" required/>           
-          <v-text-field prepend-icon="mdi-account" label="Nome" placeholder="Nome" v-model="aluno.nome" color="#009263" required/>
-          <v-text-field prepend-icon="mdi-calendar" label="Data de Nascimento" placeholder="Data de Nascimento" v-model="aluno.datanascimento" type="date" color="#009263" required/>
-          <v-text-field prepend-icon="mdi-email" label="Email" placeholder="Email" v-model="aluno.email" color="#009263" required/>
-          <v-text-field prepend-icon="mdi-account-check" label="Confirmação (0 ou 1)" placeholder="Confirmação (0 ou 1) " v-model="aluno.confirmacao" :rules="[number0or1]" color="#009263" required/>
+      <v-container>
+        <v-card class="justify-center">
+            <v-container class="justify-center">
+                <v-card-title primary-title class="justify-center green--text">
+                    Editar Aluno ({{aluno.user}})
+                </v-card-title>
+                        
+              <v-text-field prepend-icon="mdi-numeric-1-box-multiple-outline" label="Número" placeholder="Número" v-model="aluno.numero" color="#009263" type="number" :rules="[number]" required/>           
+              <v-text-field prepend-icon="mdi-account" label="Nome" placeholder="Nome" v-model="aluno.nome" color="#009263" required/>
+              <v-text-field prepend-icon="mdi-calendar" label="Data de Nascimento" placeholder="Data de Nascimento" v-model="aluno.datanascimento" type="date" color="#009263" required/>
+              <v-text-field prepend-icon="mdi-email" label="Email" placeholder="Email" v-model="aluno.email" color="#009263" required/>
+              <v-text-field prepend-icon="mdi-account-check" label="Confirmação (0 ou 1)" placeholder="Confirmação (0 ou 1) " v-model="aluno.confirmacao" :rules="[number0or1]" color="#009263" required/>
 
-          <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true"> Alterar password </v-btn></center>
-          <br>
-          <center><v-btn class="white--text" style="background-color: #009263;" @click="editarAluno()"> Confirmar Alterações </v-btn></center>
-          
-           <v-dialog
-            v-model="dialogPassword"
-            width="75%"
-            >
-                <v-card class="pa-5">
-                  <v-card-title primary-title class="justify-center green--text">
-                  Alterar Password
-                  </v-card-title>
-                  <v-text-field label="Password Nova" placeholder="Password nova" v-model="password1" color="#009263" type="password" required />
-                  <v-text-field label="Confirmação Password" placeholder="Confirmação Password" v-model="password2" color="#009263" type="password" required />
-                  <v-btn class="white--text" primary large block style="background-color: #009263;" @click="editarPassword()">Confirmar alteração</v-btn>
-                </v-card>
-          </v-dialog>
+              <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true"> Alterar password </v-btn></center>
+              <br>
+              <center><v-btn class="white--text" style="background-color: #009263;" @click="editarAluno()"> Confirmar Alterações </v-btn></center>
+              
+              <v-dialog
+                v-model="dialogPassword"
+                width="75%"
+                >
+                    <v-card class="pa-5">
+                      <v-card-title primary-title class="justify-center green--text">
+                      Alterar Password
+                      </v-card-title>
+                      <v-text-field label="Password Nova" placeholder="Password nova" v-model="password1" color="#009263" type="password" required />
+                      <v-text-field label="Confirmação Password" placeholder="Confirmação Password" v-model="password2" color="#009263" type="password" required />
+                      <v-btn class="white--text" primary large block style="background-color: #009263;" @click="editarPassword()">Confirmar alteração</v-btn>
+                    </v-card>
+              </v-dialog>
 
-        </v-container>
-    </v-card>
+            </v-container>
+        </v-card>
+      </v-container>
     </v-main>
   </v-app> 
 </template>
@@ -47,16 +49,6 @@ const h = require("@/config/hosts").hostAPI
   export default {
     data(){
       return {
-        header_turmas: [
-            {text: "Id", sortable: true, value: 'id', class: 'subtitle-1'},
-            {text: "Username do professor", value: 'idprofessor', class: 'subtitle-1'},
-            {text: "Turma", value: 'turma', class: 'subtitle-1'}
-        ],
-        footer_props: {
-            "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20, -1],
-            "items-per-page-all-text": "Todos"
-        },
         token: "",
         aluno: {},
         id : 0,

@@ -1,68 +1,70 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card class="pa-5">
         <v-container>
-            <v-card-title primary-title class="justify-center green--text">
-                Monotorização de Apps por Municípios
-            </v-card-title>
-                <center><v-btn v-if="items.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn></center>
-                <br v-if="items.length>0">
-                <center>
-                <v-container style="width:80%">
-                <v-card class="pa-5">
-                    <v-combobox
-                        id="apps"
-                        v-model="app"
-                        label="App"
-                        color="green"
-                        :items="apps"
-                        @change="onAppChange"
-                    ></v-combobox>
-                    <v-combobox
-                        id="anos"
-                        v-model="anoLetivo"
-                        label="Ano Letivo"
-                        color="green"
-                        :items="anosLetivos"
-                        @change="onAnoChange"
-                    ></v-combobox>
-                    <v-layout row class="text-xs-center" justify-center align-center>
-                        <v-col cols="12" xs="12" sm="12" md="12" lg="6" xl="6">
-                        <v-text-field @change="onDataInChange" prepend-icon="mdi-calendar" v-model="dataInicio" label="Data Inicio" type="date" :format="format" required></v-text-field>
-                        </v-col>
-                        <v-col cols="12" xs="12" sm="12" md="12" lg="6" xl="6">
-                            <v-text-field @change="onDataFimChange" prepend-icon="mdi-calendar" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
-                        </v-col>
-                    </v-layout>
-                </v-card>
+            <v-card class="pa-5">
+                <v-container>
+                    <v-card-title primary-title class="justify-center green--text">
+                        Monotorização de Apps por Municípios
+                    </v-card-title>
+                        <center><v-btn v-if="items.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn></center>
+                        <br v-if="items.length>0">
+                        <center>
+                        <v-container style="width:80%">
+                        <v-card class="pa-5">
+                            <v-combobox
+                                id="apps"
+                                v-model="app"
+                                label="App"
+                                color="green"
+                                :items="apps"
+                                @change="onAppChange"
+                            ></v-combobox>
+                            <v-combobox
+                                id="anos"
+                                v-model="anoLetivo"
+                                label="Ano Letivo"
+                                color="green"
+                                :items="anosLetivos"
+                                @change="onAnoChange"
+                            ></v-combobox>
+                            <v-layout row class="text-xs-center" justify-center align-center>
+                                <v-col cols="12" xs="12" sm="12" md="12" lg="6" xl="6">
+                                <v-text-field @change="onDataInChange" prepend-icon="mdi-calendar" v-model="dataInicio" label="Data Inicio" type="date" :format="format" required></v-text-field>
+                                </v-col>
+                                <v-col cols="12" xs="12" sm="12" md="12" lg="6" xl="6">
+                                    <v-text-field @change="onDataFimChange" prepend-icon="mdi-calendar" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
+                                </v-col>
+                            </v-layout>
+                        </v-card>
+                        </v-container>
+                        </center>
+                        <br>
+                <v-container v-if="loading">
+                    <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
                 </v-container>
-                </center>
-                <br>
-        <v-container v-if="loading">
-            <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
+                <v-container v-else>
+                <v-text-field
+                    v-model="filtrar"
+                    label="Filtrar"
+                    prepend-icon="mdi-magnify"
+                    color="#009263"
+                    single-line
+                    ></v-text-field>
+                <v-data-table
+                    class="elevation-4"
+                    :headers="headers"
+                    :items="items"
+                    :footer-props="footer_props"
+                    :search="filtrar"
+                    @click:row="goToEscolas"
+                >
+                    
+                </v-data-table>
+                </v-container>
+                </v-container>
+            </v-card>
         </v-container>
-        <v-container v-else>
-        <v-text-field
-            v-model="filtrar"
-            label="Filtrar"
-            prepend-icon="mdi-magnify"
-            color="#009263"
-            single-line
-            ></v-text-field>
-        <v-data-table
-            class="elevation-4"
-            :headers="headers"
-            :items="items"
-            :footer-props="footer_props"
-            :search="filtrar"
-            @click:row="goToEscolas"
-        >
-            
-        </v-data-table>
-        </v-container>
-        </v-container>
-    </v-card>
     </v-main>
   </v-app> 
 </template>
@@ -95,7 +97,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         alunos:[],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20, -1],
+            "items-per-page-options": [50, 100, 200, -1],
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",

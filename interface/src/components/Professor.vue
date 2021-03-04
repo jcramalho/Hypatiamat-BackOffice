@@ -20,26 +20,25 @@
           <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
             <v-text-field label="Nome" v-model="professor.nome" color="#009263" outlined disabled/>
           </v-col>
-          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="2">
+          <v-col v-if="xl" cols="2" xl="2">
           </v-col>
           <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
-            <v-text-field label="Identificador do Agrupamento" v-model="professor.escola" color="#009263" outlined disabled/>
+            <v-text-field label="Agrupamento" v-model="professor.agrupamento" color="#009263" outlined disabled/>
           </v-col>
           <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
               <v-text-field label="Tipo de Utilizador" v-model="professor.nomeType" color="#009263" outlined disabled/>
           </v-col>
-          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="2">
+          <v-col v-if="xl" cols="2" xl="2">
           </v-col>
           <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
               <v-text-field label="Email"  v-model="professor.email" color="#009263" outlined disabled/>
           </v-col>
-          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="3">
+          <v-col v-if="xl" cols="4" xl="3">
           </v-col>
-          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
+          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="6">
             <v-text-field label="Validade (YYYY-MM-DD)" v-model="professor.validade" color="#009263" outlined disabled/>
           </v-col>
-          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="3">
-          </v-col>
+          
           <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
           <center><v-btn class="white--text" style="background-color: #009263;" @click="editarProfessor()"> Editar dados pessoais </v-btn></center>
           </v-col>
@@ -144,6 +143,12 @@ const h = require("@/config/hosts").hostAPI
         this.professor = response.data
         if(this.type == 50) this.professor.nomeType = "Administrador"
         else this.professor.nomeType = "Professor"
+    },
+    computed: {
+      xl() {
+        if (this.$vuetify.breakpoint.xl) return true
+        return false
+      },
     },
     methods: {
       verTurmas : async function(id){

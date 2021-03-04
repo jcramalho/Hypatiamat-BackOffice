@@ -12,7 +12,7 @@ Rankings.calculaRankingTurmaNTRC = async function(turma, escola, codprofessor, d
                     dataInicio, dataFim, escola,
                     dataInicio, dataFim]
         sql.query(`select a.numero, a.user, a.nome, posicaoturma.posicao as posTurma, 	
-                posicaoescola.posicao as posEscola, posicaoHypatia.posicao as posHypatia, posicaoturma.total
+                posicaoescola.posicao as posEscola, posicaoHypatia.posicao as posHypatia, posicaoturma.total, Round(posicaoturma.params*100, 0) as params
                 from ((SELECT a.*
                     FROM ${bdAplicacoes}.alunos a
                     Where escola=? and turma=?)
@@ -56,7 +56,7 @@ Rankings.calculaRankingTurmaNTRCTema = async function(turma, escola, codprofesso
                     dataInicio, dataFim, codtema, escola,
                     dataInicio, dataFim, codtema]
         sql.query(`select a.numero, a.user, a.nome, posicaoturma.posicao as posTurma, 	
-                posicaoescola.posicao as posEscola, posicaoHypatia.posicao as posHypatia, posicaoturma.total
+                posicaoescola.posicao as posEscola, posicaoHypatia.posicao as posHypatia, posicaoturma.total, Round(posicaoturma.params*100, 0) as params
                 from ((SELECT a.*
                     FROM ${bdAplicacoes}.alunos a
                     Where escola=? and turma=?)
@@ -100,7 +100,7 @@ Rankings.calculaRankingTurmaNTRCSubTema = async function(turma, escola, codprofe
                     dataInicio, dataFim, codtema, codsubtema, escola,
                     dataInicio, dataFim, codtema, codsubtema]
         sql.query(`select a.numero, a.user, a.nome, posicaoturma.posicao as posTurma, 	
-                posicaoescola.posicao as posEscola, posicaoHypatia.posicao as posHypatia, posicaoturma.total
+                posicaoescola.posicao as posEscola, posicaoHypatia.posicao as posHypatia, posicaoturma.total, Round(posicaoturma.params*100, 0) as params
                 from ((SELECT a.*
                     FROM ${bdAplicacoes}.alunos a
                     Where escola=? and turma=?)
@@ -146,7 +146,7 @@ Rankings.calculaRankingTurmaAcerto = async function(turma, escola, codprofessor,
                     dataInicio, dataFim, escola,
                     dataInicio, dataFim]
         sql.query(`select a.numero, a.user, a.nome, posicaoturma.posicao as posTurma, 	
-                posicaoescola.posicao as posEscola, posicaoHypatia.posicao as posHypatia, Round(posicaoturma.total*100, 0) as total
+                posicaoescola.posicao as posEscola, posicaoHypatia.posicao as posHypatia, Round(posicaoturma.total*100, 0) as total, posicaoturma.params
                 from ((SELECT a.*
                     FROM ${bdAplicacoes}.alunos a
                     Where escola=? and turma=?)
@@ -190,7 +190,7 @@ Rankings.calculaRankingTurmaAcertoTema = async function(turma, escola, codprofes
                     dataInicio, dataFim, codtema, escola,
                     dataInicio, dataFim, codtema]
         sql.query(`select a.numero, a.user, a.nome, posicaoturma.posicao as posTurma, 	
-                posicaoescola.posicao as posEscola, posicaoHypatia.posicao as posHypatia, posicaoturma.total
+                posicaoescola.posicao as posEscola, posicaoHypatia.posicao as posHypatia, Round(posicaoturma.total*100, 0) as total, posicaoturma.params
                 from ((SELECT a.*
                     FROM ${bdAplicacoes}.alunos a
                     Where escola=? and turma=?)
@@ -234,7 +234,7 @@ Rankings.calculaRankingTurmaAcertoSubTema = async function(turma, escola, codpro
                     dataInicio, dataFim, codtema, codsubtema, escola,
                     dataInicio, dataFim, codtema, codsubtema]
         sql.query(`select a.numero, a.user, a.nome, posicaoturma.posicao as posTurma, 	
-                posicaoescola.posicao as posEscola, posicaoHypatia.posicao as posHypatia, posicaoturma.total
+                posicaoescola.posicao as posEscola, posicaoHypatia.posicao as posHypatia, Round(posicaoturma.total*100, 0) as total, posicaoturma.params
                 from ((SELECT a.*
                     FROM ${bdAplicacoes}.alunos a
                     Where escola=? and turma=?)

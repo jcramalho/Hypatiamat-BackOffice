@@ -1,5 +1,5 @@
 <template>
- <div id="app">
+ <v-app id="inspire">
   <v-container>
     <v-layout row class="text-xs-center">
         <v-container style="position: relative;top: 15%; width: 60%;" class="text-xs-center">
@@ -36,7 +36,7 @@
         </v-container>
     </v-layout>
   </v-container>
-</div>
+ </v-app>
 </template>
 
 <script>

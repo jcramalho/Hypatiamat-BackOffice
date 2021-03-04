@@ -1,47 +1,49 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card class="pa-5">
-        <v-container>
-          <v-card-title primary-title class="justify-center green--text">
-                Estatísticas Gerais - Agrupamentos de Escolas de {{this.municipio}}
-            </v-card-title>
+      <v-container>
+        <v-card class="pa-5">
+            <v-container>
+              <v-card-title primary-title class="justify-center green--text">
+                    Estatísticas Gerais - Agrupamentos de Escolas de {{this.municipio}}
+                </v-card-title>
 
-                <center><v-btn v-if="!loading && estatisticas.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> 
-                  <v-icon> mdi-pdf-box </v-icon> Exportar 
-                </v-btn></center>
-                <v-combobox
-                  id="anoletivo"
-                  label="Ano Letivo"
-                  prepend-icon="mdi-counter"
-                  v-model="ano"
-                  color="#009263"
-                  :items="anos"
-                  @change="getEstatisticas()" 
-                ></v-combobox>
-                <v-container v-if="loading">
-                  <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
-                </v-container>
-                <v-container v-else>
-                  <v-text-field
-                    v-model="filtrar"
-                    label="Filtrar"
-                    prepend-icon="mdi-magnify"
-                    color="#009263"
-                    single-line
-                  ></v-text-field>
-                    <v-data-table
-                    class="elevation-2"
-                    :headers="header_estatisticas"
-                    :items="estatisticas"
-                    :footer-props="footer_props"
-                    :search="filtrar"
-                    @click:row="goToProfessores"
-                  ></v-data-table>
+                    <center><v-btn v-if="!loading && estatisticas.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> 
+                      <v-icon> mdi-pdf-box </v-icon> Exportar 
+                    </v-btn></center>
+                    <v-combobox
+                      id="anoletivo"
+                      label="Ano Letivo"
+                      prepend-icon="mdi-counter"
+                      v-model="ano"
+                      color="#009263"
+                      :items="anos"
+                      @change="getEstatisticas()" 
+                    ></v-combobox>
+                    <v-container v-if="loading">
+                      <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
+                    </v-container>
+                    <v-container v-else>
+                      <v-text-field
+                        v-model="filtrar"
+                        label="Filtrar"
+                        prepend-icon="mdi-magnify"
+                        color="#009263"
+                        single-line
+                      ></v-text-field>
+                        <v-data-table
+                        class="elevation-2"
+                        :headers="header_estatisticas"
+                        :items="estatisticas"
+                        :footer-props="footer_props"
+                        :search="filtrar"
+                        @click:row="goToProfessores"
+                      ></v-data-table>
 
-                </v-container>
-        </v-container>
-    </v-card>
+                    </v-container>
+            </v-container>
+        </v-card>
+      </v-container>
     </v-main>
   </v-app> 
 </template>
@@ -75,7 +77,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20, -1],
+            "items-per-page-options": [50, 100, 200, -1],
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",

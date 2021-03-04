@@ -1,71 +1,73 @@
 <template>
 <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card class="pa-5">
-        <v-container>
-            <v-card-title primary-title class="justify-center green--text">
-                Gestão de Alunos
-            </v-card-title>
-            <v-combobox
-                id="anoletivo"
-                label="Ano Letivo"
-                prepend-icon="mdi-counter"
-                v-model="anoletivo"
-                color="#009263"
-                :items="anosletivos"
-                @change="getTurmas()"
-            ></v-combobox>
-            <v-text-field
-                v-model="filtrar"
-                label="Filtrar"
-                prepend-icon="mdi-magnify"
-                color="#009263"
-                single-line
-                ></v-text-field>
-                <v-data-table
-                class="elevation-1"
-                :headers="header_turmas"
-                :items="turmas"
-                :footer-props="footer_props"
-                :search="filtrar"
-                >
-                <template v-slot:item="row">
-                <tr>
-                    <td>{{row.item.turma}}</td>
-                    <td>{{row.item.anoletivo}}</td>
-                    <td class="d-flex align-center">
-                    <v-tooltip top>
-                        <template v-slot:activator="{ on, attrs }">
+      <v-container>
+        <v-card class="pa-5">
+            <v-container>
+                <v-card-title primary-title class="justify-center green--text">
+                    Gestão de Alunos
+                </v-card-title>
+                <v-combobox
+                    id="anoletivo"
+                    label="Ano Letivo"
+                    prepend-icon="mdi-counter"
+                    v-model="anoletivo"
+                    color="#009263"
+                    :items="anosletivos"
+                    @change="getTurmas()"
+                ></v-combobox>
+                <v-text-field
+                    v-model="filtrar"
+                    label="Filtrar"
+                    prepend-icon="mdi-magnify"
+                    color="#009263"
+                    single-line
+                    ></v-text-field>
+                    <v-data-table
+                    class="elevation-1"
+                    :headers="header_turmas"
+                    :items="turmas"
+                    :footer-props="footer_props"
+                    :search="filtrar"
+                    >
+                    <template v-slot:item="row">
+                    <tr>
+                        <td>{{row.item.turma}}</td>
+                        <td>{{row.item.anoletivo}}</td>
+                        <td class="d-flex align-center">
+                        <v-tooltip top>
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-btn
+                                icon
+                                v-bind="attrs" 
+                                v-on="on"
+                                >
+                                <v-icon @click="verTurma(row.item.id)"> mdi-eye </v-icon>
+                                </v-btn>
+                            </template>
+                            <span>Visualizar os alunos pertencentes à turma.</span>
+                        </v-tooltip>
+                        </td>
+                        <td class="justify-center">
+                        <v-tooltip top>
+                          <template v-slot:activator="{ on, attrs }">
                             <v-btn
-                            icon
-                            v-bind="attrs" 
-                            v-on="on"
+                              icon
+                              v-bind="attrs" 
+                              v-on="on"
                             >
-                            <v-icon @click="verTurma(row.item.id)"> mdi-eye </v-icon>
+                            <v-icon @click="editarTurma(row.item.id)"> mdi-cog-transfer-outline </v-icon>
                             </v-btn>
-                        </template>
-                        <span>Visualizar os alunos pertencentes à turma.</span>
-                    </v-tooltip>
-                    </td>
-                    <td class="justify-center">
-                    <v-tooltip top>
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          icon
-                          v-bind="attrs" 
-                          v-on="on"
-                        >
-                        <v-icon @click="editarTurma(row.item.id)"> mdi-cog-transfer-outline </v-icon>
-                        </v-btn>
-                      </template>
-                      <span>Efetuar transferências de alunos, no qual envolverá esta turma.</span>
-                    </v-tooltip>
-                    </td>
-                </tr>
-                </template>
-                </v-data-table>
-        </v-container>
-    </v-card>
+                          </template>
+                          <span>Efetuar transferências de alunos, no qual envolverá esta turma.</span>
+                        </v-tooltip>
+                        </td>
+                    </tr>
+                    </template>
+                    </v-data-table>
+            </v-container>
+        </v-card>
+      </v-container>
     </v-main>
 </v-app>
 </template>
@@ -97,7 +99,7 @@ const anosletivos1 = require("@/config/confs").anosletivos
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20, -1],
+            "items-per-page-options": [15, 30, 45, -1],
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",

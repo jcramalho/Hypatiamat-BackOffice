@@ -1,81 +1,84 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-card class="pa-5">
-        <v-container>
-            <v-card-title primary-title class="justify-center green--text">
-                Códigos de Professores
-            </v-card-title>
-            <center><v-btn class="white--text" style="background-color: #009263;" @click="criarCodigo()"><v-icon> mdi-account-plus </v-icon> Criar Código </v-btn></center>
-            <br>
-            <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogGerar = true"><v-icon> mdi-horseshoe </v-icon> Gerar Codigos </v-btn></center>                                         
-            <v-text-field
-                v-model="filtrar"
-                label="Filtrar"
-                prepend-icon="mdi-magnify"
-                color="#009263"
-                single-line
-                ></v-text-field>
-                <v-data-table
-                class="elevation-1"
-                :headers="header_codigos"
-                :items="codigos"
-                :footer-props="footer_props"
-                :search="filtrar"
-                >
-                <template v-slot:item="row">
-                <tr>
-                    <td>{{row.item.codigo}}</td>
-                    <td>
-                    <!--<v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>-->
-                    <v-icon @click="apagarCodigo(row.item.id)"> mdi-delete </v-icon>
-                    </td>
-                </tr>
-                </template>
-                </v-data-table>
-                <v-dialog v-model="dialogCriar" width="70%">
-                    <v-card class="pa-5">
-                        <v-container>
-                            <v-form>
-                                <v-text-field prepend-icon="mdi-card-account-details" color="#009263" type="number"
-                                        v-model="novoCodigo" name="Código Professor" :rules="[existeCodigo, number]" label="Código Professor" 
-                                        required
-                                ></v-text-field>
-                            </v-form>
-                            <v-btn class="white--text" :disabled="disabled" block style="background-color: #009263;" @click="inserirCodigo()">Criar Código</v-btn>
+      <v-container>
+        <v-card class="pa-5">
+            <v-container>
+                <v-card-title primary-title class="justify-center green--text">
+                    Códigos de Professores
+                </v-card-title>
+                <center><v-btn class="white--text" style="background-color: #009263;" @click="criarCodigo()"><v-icon> mdi-account-plus </v-icon> Criar Código </v-btn></center>
+                <br>
+                <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogGerar = true"><v-icon> mdi-horseshoe </v-icon> Gerar Codigos </v-btn></center>                                         
+                <v-text-field
+                    v-model="filtrar"
+                    label="Filtrar"
+                    prepend-icon="mdi-magnify"
+                    color="#009263"
+                    single-line
+                    ></v-text-field>
+                    <v-data-table
+                    class="elevation-1"
+                    :headers="header_codigos"
+                    :items="codigos"
+                    :footer-props="footer_props"
+                    :search="filtrar"
+                    color="#009263"
+                    >
+                    <template v-slot:item="row">
+                    <tr>
+                        <td>{{row.item.codigo}}</td>
+                        <td>
+                        <!--<v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>-->
+                        <v-icon @click="apagarCodigo(row.item.id)"> mdi-delete </v-icon>
+                        </td>
+                    </tr>
+                    </template>
+                    </v-data-table>
+                    <v-dialog v-model="dialogCriar" width="70%">
+                        <v-card class="pa-5">
+                            <v-container>
+                                <v-form>
+                                    <v-text-field prepend-icon="mdi-card-account-details" color="#009263" type="number"
+                                            v-model="novoCodigo" name="Código Professor" :rules="[existeCodigo, number]" label="Código Professor" 
+                                            required
+                                    ></v-text-field>
+                                </v-form>
+                                <v-btn class="white--text" :disabled="disabled" block style="background-color: #009263;" @click="inserirCodigo()">Criar Código</v-btn>
+                            </v-container>
+                        </v-card>
+                    </v-dialog>
+                    <v-dialog v-model="dialogGerar" width="70%">
+                      <v-card class="pa-5">
+                      <v-container >
+                        <center>
+                        <v-form style="width:80%">
+                          <v-text-field color="#009263" type="number"
+                                        v-model="nCodigos" name="Numero de Códigos" :rules="[ruleNCodigos]" label="Número de Códigos" 
+                                            required
+                          ></v-text-field>
+                          <v-btn class="white--text" :disabled="disabledGerar" block style="background-color: #009263;" @click="gerarCodigos()">Gerar e Inserir Códigos</v-btn>
+                          <br>
+                        </v-form>
+                        </center>
+                        <v-container v-if="loading">
+                          <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
                         </v-container>
-                    </v-card>
-                </v-dialog>
-                <v-dialog v-model="dialogGerar" width="70%">
-                  <v-card class="pa-5">
-                  <v-container >
-                    <center>
-                    <v-form style="width:80%">
-                      <v-text-field color="#009263" type="number"
-                                    v-model="nCodigos" name="Numero de Códigos" :rules="[ruleNCodigos]" label="Número de Códigos" 
-                                        required
-                      ></v-text-field>
-                      <v-btn class="white--text" :disabled="disabledGerar" block style="background-color: #009263;" @click="gerarCodigos()">Gerar e Inserir Códigos</v-btn>
-                      <br>
-                    </v-form>
-                    </center>
-                    <v-container v-if="loading">
-                      <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
-                    </v-container>
-                    <v-container v-else>
-                      <v-data-table
-                          class="elevation-4"
-                          :headers="header_codigos_gerados"
-                          :items="codigosGerados"
-                          :footer-props="footer_props"
-                      >
-                      </v-data-table>
-                    </v-container>
-                  </v-container>
-                  </v-card>
-                </v-dialog>
-        </v-container>
-    </v-card>
+                        <v-container v-else>
+                          <v-data-table
+                              class="elevation-4"
+                              :headers="header_codigos_gerados"
+                              :items="codigosGerados"
+                              :footer-props="footer_props"
+                          >
+                          </v-data-table>
+                        </v-container>
+                      </v-container>
+                      </v-card>
+                    </v-dialog>
+            </v-container>
+        </v-card>
+      </v-container>
     </v-main>
   </v-app> 
 </template>
@@ -111,7 +114,7 @@ const h = require("@/config/hosts").hostAPI
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [10, 20, 40, -1],
+            "items-per-page-options": [50, 100, 200, -1],
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
