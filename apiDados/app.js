@@ -26,6 +26,7 @@ var loginRouter = require('./routes/aplicacoes/login')
 var quarentenasRouter = require('./routes/aplicacoes/quarentena')
 var jogosRouter = require('./routes/samd/jogos')
 var appsRouter = require('./routes/testeconhecimentos/apps')
+var campeonatosRouter = require('./routes/testeconhecimentos/campeonatos')
 
 
 
@@ -154,6 +155,7 @@ app.use('/aplicacoes/login', loginRouter)
 app.use('/aplicacoes/quarentenas', quarentenasRouter)
 app.use('/jogos', jogosRouter)
 app.use('/apps', appsRouter)
+app.use('/campeonatos', campeonatosRouter)
 
 
 
@@ -170,7 +172,8 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.send('error');
+  if(err.status == '404') res.send('Error 404: Request not found.')
+  else res.send('error');
 });
 
 module.exports = app;

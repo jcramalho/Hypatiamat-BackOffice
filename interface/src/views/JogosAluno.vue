@@ -3,11 +3,11 @@
     <v-main class="grey lighten-3">
         <v-container>
             <v-card class="pa-5">
-                <v-container style="width:70%">
+                <v-container >
                     <v-card-title primary-title class="justify-center green--text">
                         Desempenho nos Jogos
                     </v-card-title>
-                        <v-container style="width:70%">
+                        <v-container :style="widthParams">
                             <v-combobox
                                 id="jogos"
                                 v-model="jogo"
@@ -25,14 +25,14 @@
                                 @change="onAnoChange"
                             ></v-combobox>
                         
-                            <v-layout row class="text-xs-center" justify-center align-center>
-                                <v-flex xs6>
-                                <v-text-field @change="onDataInChange" prepend-icon="mdi-calendar" color="#009263" v-model="dataInicio" label="Data Inicio" type="date" :format="format" required></v-text-field>
-                                </v-flex>
-                                <v-flex xs6>
-                                    <v-text-field @change="onDataFimChange" prepend-icon="mdi-calendar" color="#009263" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
-                                </v-flex>
-                            </v-layout>
+                            <v-row>
+                                <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="6" >
+                                <v-text-field @change="onDataInChange" color="#009263" v-model="dataInicio" label="Data Inicio" type="date" :format="format" required></v-text-field>
+                                </v-col>
+                                <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="6" >
+                                    <v-text-field @change="onDataFimChange" color="#009263" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
+                                </v-col>
+                            </v-row>
                             </v-container>
                             <v-card class="pa-4 elevation-5">
                                 <v-container v-if="resultadosGlobais.idaluno == undefined">
@@ -43,11 +43,11 @@
                                 <v-container v-else>
                                     <center><v-icon large color="#009263"> mdi-home-analytics </v-icon></center>
                                     <br>
-                                    <v-layout class="text-xs-center" row justify-center align-center>
-                                        <v-flex xs3>
+                                    <v-row>
+                                        <v-col cols="12" xs="12" sm="6" md="4" lg="3" xl="3">
                                             <v-card  style="background-color:#DDAF94">
-                                                <v-card-title  primary-title class="justify-center">
-                                                    Média
+                                                <v-card-title class="justify-center">
+                                                    <span :style="styleP"> Média </span>
                                                 </v-card-title>
                                                 <center>
                                                 <v-card-text class="justify-center">
@@ -55,11 +55,11 @@
                                                 </v-card-text>
                                                 </center>
                                             </v-card>
-                                        </v-flex>
-                                        <v-flex xs3>
+                                        </v-col>
+                                        <v-col cols="12" xs="12" sm="6" md="4" lg="3" xl="3">
                                             <v-card  style="background-color:#E8CEBF">
                                                 <v-card-title  primary-title class="justify-center">
-                                                    Mínimo
+                                                    <span :style="styleP"> Mínimo </span>
                                                 </v-card-title>
                                                 <center>
                                                 <v-card-text class="justify-center">
@@ -67,11 +67,11 @@
                                                 </v-card-text>
                                                 </center>
                                             </v-card>
-                                        </v-flex>
-                                        <v-flex xs3>
+                                        </v-col>
+                                        <v-col cols="12" xs="12" sm="6" md="4" lg="3" xl="3">
                                             <v-card  style="background-color:#DDAF94">
                                                 <v-card-title  primary-title class="justify-center">
-                                                    Máximo
+                                                   <span :style="styleP"> Máximo </span>
                                                 </v-card-title>
                                                 <center>
                                                 <v-card-text class="justify-center">
@@ -79,11 +79,11 @@
                                                 </v-card-text>
                                                 </center>
                                             </v-card>
-                                        </v-flex>
-                                        <v-flex xs3>
+                                        </v-col>
+                                        <v-col cols="12" xs="12" sm="6" md="12" lg="3" xl="3">
                                             <v-card  style="background-color:#E8CEBF">
                                                 <v-card-title  primary-title class="justify-center">
-                                                    Nº de vezes que jogou
+                                                    <span :style="styleP">Nº de vezes que jogou</span>
                                                 </v-card-title>
                                                 <center>
                                                 <v-card-text class="justify-center">
@@ -91,10 +91,14 @@
                                                 </v-card-text>
                                                 </center>
                                             </v-card>
-                                        </v-flex>
-                                    </v-layout>
-                                    <br>
-                                    <center><v-btn class="white--text" color="#009263" @click="verTodos()"> Ver todos estes resultados </v-btn></center>
+                                        </v-col>
+                                        <v-col cols="12"  xs="12" sm="12" md="12" lg="12" xl="12">
+                                            <center>
+                                                <v-btn v-if="!xs" class="white--text" color="#009263" @click="verTodos()">Ver todos estes resultados</v-btn>
+                                                <v-btn v-else class="white--text" color="#009263" @click="verTodos()">Ver todos</v-btn>
+                                            </center>
+                                        </v-col>
+                                    </v-row>                                    
                                 </v-container>
                             </v-card>
                             <v-dialog v-model="verTotal" width="60%">
@@ -152,7 +156,10 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         jogos:[],
         jogosInfo:[], 
         resultadosGlobais:{},
-        resultadosTotal:[]
+        resultadosTotal:[],
+        styleP: 'font-size:20px',
+        styleF: 'font-size:15px',
+        widthParams: 'width:70%'
       }
     },
     created: async function(){
@@ -165,8 +172,31 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             this.jogos.push(this.jogosInfo[i].jogo)
         }
         this.onAnoChange()
+        this.resize()
+    },
+    mounted: function(){
+        window.onresize = () => {
+            this.resize()
+        }
+    },
+    computed:{
+        size(){
+            if (this.$vuetify.breakpoint.xs) return 'x-small'
+            else if(this.$vuetify.breakpoint.sm) return 'small'
+            
+            return 'medium'
+        },
+        xs(){
+            if (this.$vuetify.breakpoint.xs) return true
+            return false
+        }
     },
     methods: {
+      resize(){
+          if (this.$vuetify.breakpoint.xs) {this.styleP='font-size:15px'; this.widthParams = 'width:100%';}
+          else if(this.$vuetify.breakpoint.sm) this.styleP= 'font-size:17px'
+          else this.styleP ='font-size:20px'
+      },
       format(value, event) {
         return moment(value).format('YYYY-MM-DD')
       },
@@ -179,7 +209,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           }
       },
       onJogoChange: async function(item){
-          if(this.jogo != ""){
+          if(this.jogo != "" && this.jogo){
               this.atualizaConteudo()
           }
       },

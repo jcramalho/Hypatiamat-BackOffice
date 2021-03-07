@@ -5,7 +5,7 @@
             <v-card class="ma-auto">
                 <v-container>
                     <v-card-title primary-title class="justify-center green--text">
-                        Monotorização de Jogos do professor ({{this.idprofessor}})
+                        Monitorização de Jogos do professor ({{this.idprofessor}})
                     </v-card-title>
                     <v-layout row class="text-xs-center pa-lg-4" justify-center align-center>
                         <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4" v-if="alunos.length>0">

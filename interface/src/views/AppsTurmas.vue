@@ -5,7 +5,7 @@
             <v-card class="pa-5">
                 <v-container>
                     <v-card-title primary-title class="justify-center green--text">
-                        Monotorização de Apps por turmas do professor ({{this.codProf}})
+                        Monitorização de Apps por turmas do professor ({{this.codProf}})
                     </v-card-title>
                         <center><v-btn v-if="items.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn></center>
                         <br v-if="items.length>0">

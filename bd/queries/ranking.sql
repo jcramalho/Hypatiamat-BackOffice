@@ -35,17 +35,17 @@ select a.numero, a.user, a.nome, posicaoturma.posicao as posTurma,
 				FROM (select * from alunos where escola="150253") a
 				RIGHT JOIN (select * from turmasold where codProfessor="heliafreit" and turma="4M-21-4") aold ON a.user = aold.codAluno)) a,
 			 (select ranking.*, @rownum := @rownum + 1 AS posicao 
-				from (select idaluno, sum(pontuacao) as total 
+				from (select idaluno, max(pontuacao) as total 
 						from hypati67_samd.batalhanaval
 						where idescola="150253" and turma="4M-21-4" and data between '2020-09-01' and '2021-09-01' 
 						group by idaluno order by total desc) ranking, (SELECT @rownum := 0) AS r) posicaoturma,
 				(select @rownumesc := @rownumesc + 1 AS posicao, ranking.*  
-					from (select idaluno, sum(pontuacao) as total
+					from (select idaluno, max(pontuacao) as total
 							from hypati67_samd.batalhanaval
 							where idescola="150253" and data between '2020-09-01' and '2021-09-01'
 							group by idaluno order by total desc) ranking, (SELECT @rownumesc := 0) AS r) posicaoescola,
 				(select @rownumhypatia := @rownumhypatia + 1 AS posicao, ranking.*  
-					from (select idaluno, sum(pontuacao) as total
+					from (select idaluno, max(pontuacao) as total
 							from hypati67_samd.batalhanaval
 							where data between '2020-09-01' and '2021-09-01'
 							group by idaluno order by total desc) ranking, (SELECT @rownumhypatia := 0) AS r) posicaoHypatia

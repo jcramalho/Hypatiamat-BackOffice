@@ -158,6 +158,44 @@ router.get('/turmas/:turma', passport.authenticate('jwt', {session: false}), fun
     }          
 });
 
+// Todas os resultados de uma app ou de todas as apps de uma turma
+router.get('/alunos/:user', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var dataInicio = req.query.dataInicio;
+    var dataFim = req.query.dataFim;
+    var user = req.params.user
+    var codtema = req.query.codtema
+    var codsubtema = req.query.codsubtema
+    /*
+    if(codtema){
+        // é um tema
+        if(codsubtema){
+            // com subtema
+            Apps.getAppFromAlunoSubTema(codtema, codsubtema, user, dataInicio, dataFim)
+                .then(dados =>{
+                    res.jsonp(dados)
+                })
+                .catch(erro => res.status(500).jsonp(erro))
+        }
+        else{
+            // sem subtema
+            Apps.getAppFromAluno(codtema, user, dataInicio, dataFim)
+                .then(dados =>{
+                    res.jsonp(dados)
+                })
+                .catch(erro => res.status(500).jsonp(erro))
+        }
+    }
+    else{
+        Apps.getAllAppsFromAluno(user, dataInicio, dataFim)
+            .then(dados =>{
+                res.jsonp(dados)
+            })
+            .catch(erro => res.status(500).jsonp(erro))
+    } */
+    res.jsonp("Não disponível")         
+});
+
+
 // O ranking de uma app ou de todas as apps de uma turma (critério NTRC)
 router.get('/turmas/:turma/ranking/NTRC', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     var anoletivo = req.query.anoletivo

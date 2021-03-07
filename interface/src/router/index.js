@@ -49,6 +49,8 @@ import RankingJogos from '../views/RankingJogos.vue'
 import RankingApps from '../views/RankingApps.vue'
 import RankingJogosAdmin from '../views/RankingJogosAdmin.vue'
 import RankingAppsAdmin from '../views/RankingAppsAdmin.vue'
+import CampeonatosMunicipios from '../views/CampeonatosMunicipios.vue'
+import CampeonatosAgrupamentos from '../views/CampeonatosAgrupamentos.vue'
 
 
 
@@ -323,6 +325,42 @@ const routes = [
     path: '/apps/municipios',
     name: 'Apps Municipios',
     component: AppsMunicipios,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if((utilizador.type == 50)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/campeonatos/municipios',
+    name: 'Campeonatos Municipios',
+    component: CampeonatosMunicipios,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if((utilizador.type == 50)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/campeonatos/municipios/:municipio',
+    name: 'Campeonatos Agrupamentos',
+    component: CampeonatosAgrupamentos,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50)){

@@ -117,11 +117,12 @@ export default {
         { title: 'Alunos', icon: 'mdi-account-group', href:"/alunos" },
         { title: 'Agrupamentos', icon: 'mdi-school', href:"/escolas" },
         { title: 'Gestão de Turmas', icon: 'mdi-book-account', href:"/turmas" },
-        { title: 'Monotorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/municipios"},
-        { title: 'Monotorização de Apps', icon: 'mdi-apps', href:"/apps/municipios"},
+        { title: 'Monitorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/municipios"},
+        { title: 'Monitorização de Apps', icon: 'mdi-apps', href:"/apps/municipios"},
         { title: 'Ranking Jogos', icon: 'mdi-podium', href:"/classificacoes/jogos/admin"},
         { title: 'Ranking Apps', icon: 'mdi-podium', href:"/classificacoes/apps/admin"},
         { title: 'Outras Estatísticas', icon: 'mdi-home-analytics', href:"/estatisticas/municipios"},
+        { title: 'Campeonatos', icon: 'mdi-trophy', href:"/campeonatos/municipios"},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }
@@ -132,7 +133,7 @@ export default {
         { title: 'Gestão de Turmas', icon: 'mdi-book-account', href:"/gestaoTurmas" },
         { title: 'Gestão de Alunos', icon: 'mdi-account-group', href:"/gestaoAlunos" },
         { title: 'Monitorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/" + utilizador.codigo },
-        { title: 'Monotorização de Apps', icon: 'mdi-apps', href:"/apps/" + utilizador.codigo},
+        { title: 'Monitorização de Apps', icon: 'mdi-apps', href:"/apps/" + utilizador.codigo},
         { title: 'Ranking Jogos', icon: 'mdi-podium', href:"/classificacoes/jogos"},
         { title: 'Ranking Apps', icon: 'mdi-podium', href:"/classificacoes/apps"},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
@@ -143,6 +144,7 @@ export default {
       this.items = [
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
         { title: 'Desempenho nos Jogos', icon: 'mdi-gamepad-variant',href:"/jogosAluno" },
+        { title: 'Desempenho nas Apps', icon: 'mdi-apps', href:"/appsAluno"},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }
@@ -151,8 +153,8 @@ export default {
       this.items =[
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
         { title: 'Meus Agrupamentos', icon: 'mdi-school', href:"/agrupamentos" },
-        { title: 'Monotorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/"+ utilizador.infoEscola.localidade +"/escolas" },
-        { title: 'Monotorização de Apps', icon: 'mdi-apps', href:"/apps/" + utilizador.infoEscola.localidade + "/escolas"},
+        { title: 'Monitorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/"+ utilizador.infoEscola.localidade +"/escolas" },
+        { title: 'Monitorização de Apps', icon: 'mdi-apps', href:"/apps/" + utilizador.infoEscola.localidade + "/escolas"},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }
@@ -161,8 +163,8 @@ export default {
       this.items =[
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
         { title: 'Minhas Turmas', icon: 'mdi-book-account', href:"/minhasturmas" },
-        { title: 'Monotorização de Jogos', icon: 'mdi-gamepad-variant', href:"/escolas/"+ utilizador.escola + "/jogos" },        
-        { title: 'Monotorização de Apps', icon: 'mdi-apps', href:"/escolas/"+ utilizador.escola + "/apps" },
+        { title: 'Monitorização de Jogos', icon: 'mdi-gamepad-variant', href:"/escolas/"+ utilizador.escola + "/jogos" },        
+        { title: 'Monitorização de Apps', icon: 'mdi-apps', href:"/escolas/"+ utilizador.escola + "/apps" },
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }

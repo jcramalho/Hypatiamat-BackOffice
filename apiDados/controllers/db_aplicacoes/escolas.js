@@ -293,4 +293,18 @@ Escola.deleteEscola = function (cod){
     })    
 }
 
+Escola.getMunicipios = async function(){
+    return new Promise(function(resolve, reject) {
+        sql.query(`select distinct localidade from ${bdAplicacoes}.Escolas Order by localidade;`, function (err, res) {
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    })
+}
+
 module.exports = Escola

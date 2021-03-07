@@ -21,7 +21,13 @@ router.get('/', function(req, res, next) {
                  res.jsonp(dados)
                })
                .catch(erro => res.status(500).jsonp(erro))
-  });
+});
+
+router.get('/localidades', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    Escolas.getMunicipios()
+           .then(dados =>res.jsonp(dados))
+           .catch(erro => res.status(500).jsonp(erro))
+});
 
 // Informação de uma escola
 router.get('/:codigo', passport.authenticate('jwt', {session: false}), function(req, res, next) {
