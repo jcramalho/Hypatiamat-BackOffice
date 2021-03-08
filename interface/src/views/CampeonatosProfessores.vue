@@ -5,7 +5,7 @@
             <v-card class="pa-5">
                 <v-container>
                     <v-card-title primary-title class="justify-center green--text">
-                        Monitorização de Campeonatos por Municípios
+                        Monitorização de Campeonatos por Agrupamentos de {{this.municipio}}
                     </v-card-title>
                         <center><v-btn v-if="items.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn></center>
                         <br v-if="items.length>0">
@@ -20,33 +20,14 @@
                                 :items="campeonatos"
                                 @change="onCampeonatoChange"
                             ></v-combobox>
-                            <v-combobox
-                                id="municipios"
-                                v-model="municipio"
-                                label="Município"
-                                color="green"
-                                :items="municipios"
-                                v-if="this.comunidade=='Nenhuma'"
-                                @change="onMunicipioChange"
-                            ></v-combobox>
-                            <v-combobox
-                                id="comunidade"
-                                label="Comunidade"
-                                v-model="comunidade"
-                                color="#009263"
-                                :items="comunidades"
-                                @change="onComunidadeChange" 
-                            ></v-combobox>
                         </v-card>
                         </v-container>
                         </center>
                         <br>
                         <center><span v-if="this.estatisticasGerais"> <b>Neste campeonato:</b></span></center>
                         <EstatisticasGeraisCampeonato v-if="this.estatisticasGerais" :estatisticasGerais="this.estatisticasGerais"/>
-                        <center><span v-if="this.estastisticasMunicipio && this.comunidade == 'Nenhuma'"> <b> Neste campeonato em {{this.municipio}}: </b> </span> 
-                        <span v-else-if="this.estastisticasMunicipio"> <b> Neste campeonato em {{this.comunidade}}: </b> </span> </center>
-                        <CampeonatoMunicipio v-if="this.estastisticasMunicipio && this.comunidade == 'Nenhuma'" :estatisticasGerais="this.estastisticasMunicipio"/>
-                        <EstatisticasGeraisCampeonato v-else-if="this.estastisticasMunicipio" :estatisticasGerais="this.estastisticasMunicipio"/>
+                        <center><span v-if="this.estastisticasMunicipio"> <b> Neste campeonato em {{this.municipio}}: </b> </span> </center>
+                        <CampeonatoMunicipio v-if="this.estastisticasMunicipio" :estatisticasGerais="this.estastisticasMunicipio"/>
                 <v-container v-if="loading">
                     <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
                 </v-container>
@@ -66,8 +47,8 @@
                     :search="filtrar"
                 >
                     <template v-slot:item="row">
-                        <tr @click="goToAgrupamentos(row.item)">
-                            <td>{{row.item.localidade}}</td>
+                        <tr>
+                            <td>{{row.item.nome}}</td>
                             <td v-if="row.item.jogo == 0"> ADD (1.º ano)</td>
                             <td v-else-if="row.item.jogo == 1">ADD (2.º ano)</td>
                             <td v-else-if="row.item.jogo == 2">SAM (2.º ano)</td>
@@ -106,8 +87,6 @@ import CampeonatoMunicipio from '@/components/CampeonatoMunicipio.vue'
 const h = require("@/config/hosts").hostAPI
 const hostCampeonatos = require("@/config/hosts").hostCampeonatos
 const hypatiaImg = require("@/assets/hypatiamat.png")
-const anosletivos2 = require("@/config/confs").anosletivos2
-const anoletivoAtual = require("@/config/confs").anoletivo2
 
   export default {
     components:{
@@ -126,10 +105,8 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
-        anosLetivos: anosletivos2,
-        anoLetivo: anoletivoAtual,
         headers:[
-            {text: "Municipio", value: 'localidade', class: 'subtitle-1'},
+            {text: "Professor", value: 'nome', class: 'subtitle-1'},
             {text: "Jogo", value: 'jogo', class: 'subtitle-1'},
             {text: "Max", value: 'max', class: 'subtitle-1'},
             {text: "Min", value: 'min', class: 'subtitle-1'},
@@ -143,49 +120,60 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         campeonatosInfo:[],
         campeonato:"",
         campeonatoId:"",
-        municipio: "Todos",
-        municipios: ["Todos"],
-        comunidades:["Nenhuma"],
-        comunidade: "Nenhuma",
-        comunidadesId:[],
+        escola: "",
+        nomeEscola:"",
         estatisticasGerais: undefined,
         estastisticasMunicipio: undefined,
+        municipio:""
       }
     },
     created: async function(){
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
+        this.escola = this.$route.params.escola 
         var responseCamp = await axios.get(hostCampeonatos + "?token=" + this.token)
-        this.campeonatosInfo = responseCamp.data
-        this.campeonatos = await this.parseCampeonatos()
-        this.parseMunicipios()        
-        this.parseComunidades()
+        this.campeonatos = await this.parseCampeonatos(responseCamp.data)
+        await this.parseEscolas()
+        if(this.$route.params.campeonato && this.$route.params.municipio){
+            if(this.$route.params.nomeEscola) this.nomeEscola = this.$route.params.nomeEscola
+            this.campeonato = this.$route.params.campeonato
+            this.municipio = this.$route.params.municipio
+            this.onCampeonatoChange()
+        }       
     },
     methods: {
       format(value, event) {
         return moment(value).format('YYYY-MM-DD')
       },
-      parseComunidades: async function(){
-        var response = await axios.get(h + "comunidades?token=" + this.token)
-        this.comunidadesId = response.data
-        var aux = ["Nenhuma"]
-        for(var i = 0; i < this.comunidadesId.length; i++){
-          aux.push(this.comunidadesId[i].nome)
-        }
-        this.comunidades = aux
-      },
-      parseCampeonatos: async function(){
+      parseCampeonatos: async function(campeonatosComp){
           var aux = []
-          for(var i = 0; i < this.campeonatosInfo.length; i++){
-              aux.push(this.campeonatosInfo[i].descricaoBackOffice)
+          var aux2 = []
+          for(var i = 0; i < campeonatosComp.length; i++){
+              if(campeonatosComp[i].municipio != null){
+                  if(campeonatosComp[i].municipio == this.municipio){
+                      aux.push(campeonatosComp[i].descricaoBackOffice)
+                      aux2.push(campeonatosComp[i])
+                  }
+              }
+              else if(campeonatosComp[i].comunidade != null){
+                  var res = await axios.get(h + "comunidades/" + campeonatosComp[i].comunidade + "?token=" + this.token)  
+                  var municipios = res.data
+                  if(municipios.find(e => e.municipio == this.municipio)){
+                      aux.push(campeonatosComp[i].descricaoBackOffice)
+                      aux2.push(campeonatosComp[i])
+                  }
+              }
+              else {aux.push(campeonatosComp[i].descricaoBackOffice); aux2.push(campeonatosComp[i])}
           }
+          this.campeonatosInfo = aux2
           return aux
       },
-      parseMunicipios: async function(){
-          var response = await axios.get(h + "escolas/localidades?token=" + this.token)
-          this.municipios = ["Todos"]
-          for(var i = 0; i < response.data.length; i++){
-              this.municipios.push(response.data[i].localidade)
+      parseEscolas: async function(){
+          var response = await axios.get(h + "escolas/localidades/" + this.municipio + "?token=" + this.token)
+          this.escolas = ["Todos"]
+          this.escolasId = response.data
+          for(var i = 0; i < this.escolasId.length; i++){
+              this.escolas.push(this.escolasId[i].nome)
           }
       },
       onCampeonatoChange: function(item){
@@ -193,85 +181,37 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           if(camp){
               var index = this.campeonatos.indexOf(camp)
               this.campeonatoId = this.campeonatosInfo[index]
-              this.atualizaEstatisticasGerais()
-              if(this.municipio != "Todos" && this.comunidade == "Nenhuma") this.atualizaEstatisticasGeraisMunicipio()
-              if(this.comunidade != "Nenhuma") this.atualizaEstatisticasGeraisComunidade()
+              this.atualizaEstatisticas()
               this.atualizaConteudo()
           }
           else this.campeonatoId = undefined
       },
-      onMunicipioChange: function(item){
-          if(this.municipios.find(e => e == this.municipio)){
-              this.atualizaEstatisticasGeraisMunicipio()
+      onEscolaChange: function(item){
+          if(this.escolas.find(e => e == this.escola)){
               this.atualizaConteudo()
           }
-          else this.municipio="Todos"
       },
-      onComunidadeChange: function(item){
-          var com = this.comunidadesId.find(e => e.nome == this.comunidade)
-          if(com){
-              this.estastisticasMunicipio = undefined
-              this.atualizaEstatisticasGeraisComunidade()
-              this.atualizaConteudoComunidade()
-          }
-          else{
-              if(this.comunidade == 'Nenhuma'){
-                  this.estastisticasMunicipio = undefined
-                  this.onMunicipioChange()
-              }
-          }
-          this.municipio = "Todos"
-      },
-      atualizaEstatisticasGeraisComunidade: async function(){
-          if(this.campeonatoId){
-            if(this.comunidade != "Nenhuma"){
-                var com = this.comunidadesId.find(e => e.nome == this.comunidade)
-                var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/comunidades/"+ com.codigo + "/gerais?token=" + this.token)
-                this.estastisticasMunicipio = response.data
-            }   
-            else this.estastisticasMunicipio = undefined
-          }
+      atualizaEstatisticas: async function(){
+          this.estatisticasGerais = await this.atualizaEstatisticasGerais()
+          this.estastisticasMunicipio = await this.atualizaEstatisticasGeraisMunicipio()
       },
       atualizaEstatisticasGeraisMunicipio: async function(){
-          if(this.campeonatoId){
-            if(this.municipio != "Todos"){
-                var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/municipios/"+ this.municipio + "/gerais?token=" + this.token)
-                this.estastisticasMunicipio = response.data
-            }
-            else this.estastisticasMunicipio = undefined
-          }
+        if(this.campeonatoId){
+            var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/municipios/" + this.municipio +"/gerais?token=" + this.token)
+        }
+        return response.data
       },
       atualizaEstatisticasGerais: async function(){
           var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/municipios/gerais?token=" + this.token)
-          this.estatisticasGerais = response.data
+          return response.data
       },
       atualizaConteudo: async function(){
-          if(this.campeonatoId && this.municipio){
-               if(this.comunidade != "Nenhuma") {this.atualizaConteudoComunidade(); return}
+          if(this.campeonatoId && this.escola){
                this.loading = true
-               if(this.municipio == "Todos"){
-                   var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/municipios/?token=" + this.token)
-                   this.items = response.data
-               }
-               else{
-                   var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/municipios/?municipio=" + this.municipio + "&token=" + this.token)
-                   this.items = response.data
-               }
+               var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/escolas/" + this.escola + "?token=" + this.token)
+               this.items = response.data
                this.loading = false
           }
-      },
-      atualizaConteudoComunidade: async function(){
-          if(this.campeonatoId && this.comunidade && this.comunidade != "Nenhuma"){
-              this.loading = true;
-              var com = this.comunidadesId.find(e => e.nome == this.comunidade)
-              var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/municipios/?comunidade=" + com.codigo + "&token=" + this.token)
-              this.items = response.data
-              this.loading = false;
-          }
-      },
-      goToAgrupamentos: function(item){
-          var params = {municipio: item.localidade, campeonato: this.campeonato}
-          this.$router.push({name: 'Campeonatos Agrupamentos', params:params})
       },
       exportPDF: async function(){
         var doc = new jsPDF({
@@ -280,19 +220,24 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         var xImage = doc.internal.pageSize.getWidth() / 4
         var ytotal = 0
         var pdfName
-        if(this.municipio == "Todos") pdfName = this.campeonato + "-Municípios.pdf"
+        if(this.escola != "Todos"){
+            var esc = this.escolasId.find(e => e.nome == this.escola)
+            pdfName = this.campeonato + "-" + esc.cod + ".pdf"
+        }
         else pdfName = this.campeonato + "-" + this.municipio + ".pdf"
+
         doc.addImage(hypatiaImg, 'PNG', xImage, 4);
         //doc.text("Jogo:")
         //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
         doc.setFontSize(11)
         doc.text(this.campeonato, 15, 50)
-        if(this.municipio != "Todos") doc.text("Municipio: " + this.municipio, 15, 60)
+        doc.text("Municipio: " + this.municipio, 15, 55)
+        if(this.escola != "Todos") doc.text(this.escola, 15, 60)
         var listaRes = []
         //var total = ["Todos", 0, 0, 0, 0, 0, 0]
         for(var i = 0; i<this.items.length; i++){
             var aux = [];
-            aux.push(this.items[i].localidade)
+            aux.push(this.items[i].nome)
             if(this.items[i].jogo == 0) aux.push("ADD (1.º)")
             else if(this.items[i].jogo == 1) aux.push("ADD (2.º)")
             else if(this.items[i].jogo == 2) aux.push("SAM (2.º)")
@@ -312,24 +257,24 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
 
             listaRes.push(aux)
         }
-
+        doc.setFontSize(10)
         doc.autoTable({
-            head: [['Município', 'Jogo', "Max", "Min", "Média", "#Jogos", "#Alunos", '#J/#A']],
+            head: [['Agrupamento', 'Jogo', "Max", "Min", "Média", "#Jogos", "#Alunos", '#J/#A']],
             body: listaRes,
             headStyles: { fillColor: [0, 146, 99] },
-            margin:{top: 65, bottom:30},
             styles:{fontSize:9},
+            margin:{top: 65, bottom:35},
             didDrawPage: function (data) {
                     // Reseting top margin. The change will be reflected only after print the first page.
                     data.settings.margin.top = 10;
                     ytotal = doc.internal.pageSize.getHeight()
                     doc.setFontSize(8)
                     doc.text("Legenda:" , 10, ytotal -26)
-                    doc.text("Max - Máximo de pontuação obtida pelo município no jogo do campeonato", 10, ytotal -22)
-                    doc.text("Min - Mínimo de pontuação obtida pelo município no jogo do campeonato", 10, ytotal -18)
-                    doc.text("#Jogos - Número de vezes que o jogo foi jogado pelo município", 10, ytotal - 14)
-                    doc.text("#Alunos - Número de alunos do município que participaram naquele jogo do campeonato", 10, ytotal -10)
-                    doc.text("#J/#A - Número médio de vezes que um aluno do município jogou", 10, ytotal-6)
+                    doc.text("Max - Máximo de pontuação obtida pelo agrupamento no jogo do campeonato", 10, ytotal -22)
+                    doc.text("Min - Mínimo de pontuação obtida pelo agrupamento no jogo do campeonato", 10, ytotal -18)
+                    doc.text("#Jogos - Número de vezes que o jogo foi jogado pelo agrupamento", 10, ytotal - 14)
+                    doc.text("#Alunos - Número de alunos do agrupamento que participaram naquele jogo do campeonato", 10, ytotal -10)
+                    doc.text("#J/#A - Número médio de vezes que um aluno do agrupamento jogou", 10, ytotal-6)
                 },
             willDrawCell: function (data) {
                 /*

@@ -27,6 +27,8 @@ var quarentenasRouter = require('./routes/aplicacoes/quarentena')
 var jogosRouter = require('./routes/samd/jogos')
 var appsRouter = require('./routes/testeconhecimentos/apps')
 var campeonatosRouter = require('./routes/testeconhecimentos/campeonatos')
+var comunidadesRouter = require('./routes/aplicacoes/comunidades');
+
 
 
 
@@ -156,6 +158,7 @@ app.use('/aplicacoes/quarentenas', quarentenasRouter)
 app.use('/jogos', jogosRouter)
 app.use('/apps', appsRouter)
 app.use('/campeonatos', campeonatosRouter)
+app.use('/aplicacoes/comunidades', comunidadesRouter)
 
 
 

@@ -7,6 +7,28 @@
                 <v-card-title primary-title class="justify-center green--text">
                     Gestão de Alunos
                 </v-card-title>
+                <center>
+                  <v-btn v-if="!show" text @click="show=!show"><span>Mostrar Ajuda</span><v-icon color="#009263"> mdi-help-circle </v-icon> </v-btn>
+                  <v-btn v-else text @click="show=!show">Esconder Ajuda</v-btn> 
+                </center>
+                <v-slide-y-transition>
+                      <v-card v-show="show" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
+                        <v-row >
+                          <v-col cols="12">
+                          <span> 1. Se desejar visualizar as suas turmas antigas, pode fazê-lo através da seleção de um ano letivo diferente ou de todos (<v-icon>mdi-counter</v-icon>). </span>
+                          </v-col>
+                          <v-col cols="12">
+                          <span> 2. Caso deseje visualizar os alunos pertencentes a uma turma e eventualmente editar as informações dos mesmos, clique em  <v-icon> mdi-eye </v-icon>
+                          da respetiva turma. </span>
+                          </v-col>
+                          <v-col cols="12">
+                          <span> 3. Caso deseje efetuar transferências de alunos no qual envolvam uma determinada turma, clicando em 
+                            <v-icon> mdi-cog-transfer-outline </v-icon> da respetiva turma. </span> 
+                          </v-col>
+                        </v-row>
+                      </v-card>
+                  </v-slide-y-transition>
+                  <br v-if="show">
                 <v-combobox
                     id="anoletivo"
                     label="Ano Letivo"
@@ -87,6 +109,7 @@ const anosletivos1 = require("@/config/confs").anosletivos
       return {
         token: "",
         turmas: [],
+        show:false,
         limiteTurmas: 4,
         anosletivos:["Todos"],
         anoletivo:anoletivoAtual,

@@ -61,6 +61,26 @@ module.exports.getAllAppsFromMunicipios = function(dataInicio, dataFim){
     })
 }
 
+module.exports.getAllAppsFromComunidade = function(comunidade, dataInicio, dataFim){
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT esc.localidade, SUM(apps.ncertas) as ncertas, SUM(apps.ntotal) as ntotal, round( sum(apps.ncertas)/sum(apps.ntotal) *100, 0) as acerto, 
+        SUM(apps.onpeak) as onpeak, SUM(apps.offpeak) as offpeak, (SUM(apps.onpeak) + SUM(apps.offpeak)) as frequencia 
+        FROM (select * from ${bdTesteConhecimentos}.appsinfoall where (lastdate between ? and ?)) as apps, ${bdAplicacoes}.professores prof, 
+        (select * from ${bdAplicacoes}.Escolas where localidade in (select municipio from ${bdAplicacoes}.comunidades where codigo=?)) as esc 
+        WHERE  esc.cod = prof.escola and apps.codProf=prof.codigo 
+        GROUP BY esc.localidade Order by frequencia DESC;`,[dataInicio, dataFim, comunidade] ,function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+
 
 module.exports.getAllAppsFromMunicipio = function(municipio, dataInicio, dataFim){
     return new Promise(function(resolve, reject) {
@@ -142,6 +162,44 @@ module.exports.getAppFromMuncipiosSubTema = function(codtema, codsubtema, dataIn
         FROM (select * from ${bdTesteConhecimentos}.appsinfoall where (lastdate between ? and ?) and grupo = ? and appid = ?) as apps, ${bdAplicacoes}.professores prof, 
                ${bdAplicacoes}.Escolas esc WHERE  esc.cod = prof.escola and apps.codProf=prof.codigo 
         GROUP BY esc.localidade Order by frequencia DESC;`,[dataInicio, dataFim, codtema, codsubtema] ,function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+module.exports.getAppFromComunidade = function(codtema, comunidade, dataInicio, dataFim){
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT esc.localidade, SUM(apps.ncertas) as ncertas, SUM(apps.ntotal) as ntotal, round( sum(apps.ncertas)/sum(apps.ntotal) *100, 0) as acerto, 
+        SUM(apps.onpeak) as onpeak, SUM(apps.offpeak) as offpeak, (SUM(apps.onpeak) + SUM(apps.offpeak)) as frequencia 
+        FROM (select * from ${bdTesteConhecimentos}.appsinfoall where (lastdate between ? and ?) and grupo = ?) as apps, ${bdAplicacoes}.professores prof, 
+        (select * from ${bdAplicacoes}.Escolas where localidade in (select municipio from ${bdAplicacoes}.comunidades where codigo=?)) as esc 
+        WHERE  esc.cod = prof.escola and apps.codProf=prof.codigo 
+        GROUP BY esc.localidade Order by frequencia DESC;`,[dataInicio, dataFim, codtema, comunidade] ,function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+module.exports.getAppFromComunidadeSubTema = function(codtema, codsubtema, comunidade, dataInicio, dataFim){
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT esc.localidade, SUM(apps.ncertas) as ncertas, SUM(apps.ntotal) as ntotal, round( sum(apps.ncertas)/sum(apps.ntotal) *100, 0) as acerto, 
+        SUM(apps.onpeak) as onpeak, SUM(apps.offpeak) as offpeak, (SUM(apps.onpeak) + SUM(apps.offpeak)) as frequencia 
+        FROM (select * from ${bdTesteConhecimentos}.appsinfoall where (lastdate between ? and ?) and grupo=? and appid=?) as apps, ${bdAplicacoes}.professores prof, 
+        (select * from ${bdAplicacoes}.Escolas where localidade in (select municipio from ${bdAplicacoes}.comunidades where codigo=?)) as esc 
+        WHERE  esc.cod = prof.escola and apps.codProf=prof.codigo 
+        GROUP BY esc.localidade Order by frequencia DESC;`,[dataInicio, dataFim, codtema, codsubtema, comunidade] ,function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

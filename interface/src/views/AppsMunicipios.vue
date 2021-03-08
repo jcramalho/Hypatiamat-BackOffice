@@ -21,6 +21,14 @@
                                 @change="onAppChange"
                             ></v-combobox>
                             <v-combobox
+                                id="comunidades"
+                                v-model="comunidade"
+                                label="Comunidade"
+                                color="green"
+                                :items="comunidades"
+                                @change="onComunidadeChange"
+                            ></v-combobox>
+                            <v-combobox
                                 id="anos"
                                 v-model="anoLetivo"
                                 label="Ano Letivo"
@@ -92,7 +100,6 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         filtrar:"",
         dataInicio: "2020-09-01",
         dataFim: "2021-09-01",
-        turmaSel: "",
         utilizador : {},
         alunos:[],
         footer_props: {
@@ -114,7 +121,10 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             {text: "FP", value: 'offpeak', class: 'subtitle-1'},
             {text: "Frequência", value:'frequencia', class:"subtitle-1"}
         ],
-        items:[]
+        items:[],
+        comunidade: "Nenhuma",
+        comunidades:[],
+        comunidadesId:[]
       }
     },
     created: async function(){
@@ -123,13 +133,22 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         var response = await axios.get(hostApps + "temas/?token=" + this.token)
         this.appsInfo = response.data
         this.parseApps()
+        this.parseComunidades()
         this.onAnoChange()
-        // ir buscar as apps disponíveis
         
     },
     methods: {
       format(value, event) {
         return moment(value).format('YYYY-MM-DD')
+      },
+      parseComunidades: async function(){
+        var response = await axios.get(h + "comunidades?token=" + this.token)
+        this.comunidadesId = response.data
+        var aux = ["Nenhuma"]
+        for(var i = 0; i < this.comunidadesId.length; i++){
+          aux.push(this.comunidadesId[i].nome)
+        }
+        this.comunidades = aux
       },
       parseApps: async function(){
           var aux = []
@@ -163,19 +182,58 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
               this.atualizaConteudo()
           }
       },
+      onComunidadeChange: async function(item){
+          if(this.comunidades.find(e => e == this.comunidade)){
+              this.atualizaConteudo()
+          }
+      },
+      atualizaConteudoComunidade: async function(){
+          var com = this.comunidadesId.find(e => e.nome == this.comunidade)
+          if(this.app != "" && this.dataFim != "" && this.dataInicio != "" && com){
+                this.loading = true
+                if(this.app == "Todas"){
+                    var response = await axios.get(hostApps + "comunidades/" + com.codigo
+                                            + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                            + "&token=" + this.token)
+            
+                    this.items = response.data
+                }
+                else{
+                    // Fazer para uma app em particular
+                    var appInfo = this.appsInfo.find(element => element.tema == this.app)
+                    if(appInfo){
+                        // é um dos temas
+                        var response = await axios.get(hostApps + "comunidades/" + com.codigo
+                                            + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim + "&codtema=" + appInfo.codtema
+                                            + "&token=" + this.token)
+                        
+                        this.items = response.data
+                    }
+                    else{
+                        // é um subtema
+                        appInfo = this.appsInfo.find(element => element.subtema == this.app)
+                        if(appInfo){
+                            var response = await axios.get(hostApps + "comunidades/" + com.codigo
+                                            + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim + "&codtema=" + appInfo.codtema
+                                            + "&codsubtema=" + appInfo.codsubtema + "&token=" + this.token)
+                        
+                            this.items = response.data
+                        }
+                    }
+                }
+                this.loading = false
+          } 
+      },
       atualizaConteudo: async function(){
+            if(this.comunidade != "Nenhuma") {this.atualizaConteudoComunidade(); return;}
             if(this.app != "" && this.dataFim != "" && this.dataInicio != ""){
                 this.loading = true
                 if(this.app == "Todas"){
-
-                    
                     var response = await axios.get(hostApps + "municipios/"
                                             + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
                                             + "&token=" + this.token)
             
                     this.items = response.data
-                    
-              
                 }
                 else{
                     // Fazer para uma app em particular

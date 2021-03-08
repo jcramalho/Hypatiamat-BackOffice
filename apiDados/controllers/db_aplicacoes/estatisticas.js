@@ -1,4 +1,5 @@
 var sql = require('../../models/db_aplicacoes');
+var Comunidades = require('./comunidades')
 var Jogos = require('../db_samd/jogos')
 let mysql = require('mysql');
 const { bdTesteConhecimentos, bdAplicacoes, bdSAMD } = require('../../models/conf');
@@ -268,12 +269,17 @@ Estatistica.getEstatisticasMunicipioAno = async function(municipio, anoletivo){
         }
 
     }
-    
-    var nalunos = await Estatistica.getNumAlunos(professoresAux, turmasAux)
-    var nalunosTurmasOld = {numalunos: 0}
-    
-    if(anoletivo != "20/21"){
-        nalunosTurmasOld = await Estatistica.getNumAlunosOld(professoresAux, turmasAux)
+    if(turmasAux.length > 0 && professoresAux.length > 0){
+        var nalunos = await Estatistica.getNumAlunos(professoresAux, turmasAux)
+        var nalunosTurmasOld = {numalunos: 0}
+        
+        if(anoletivo != "20/21"){
+            nalunosTurmasOld = await Estatistica.getNumAlunosOld(professoresAux, turmasAux)
+        }
+    }
+    else{
+        var nalunos = {numalunos:0}
+        var nalunosTurmasOld = {numalunos: 0}
     }
 
     return {nturmas: turmas.length, nprofessores: professores.length, 
@@ -514,7 +520,22 @@ Estatistica.getEstatisticasMunicipios = async function (anoletivo){
 }
 */
 
+Estatistica.getEstatisticasComunidade = async function(anoletivo, comunidade){
+    var municipios = await Comunidades.getMunicipiosFromComunidade(comunidade)
+    var resultado = []
+    for(var i = 0; i < municipios.length; i++){
+        var municipio = await Estatistica.getEstatisticasMunicipioAno(municipios[i].municipio, anoletivo)
+        municipio.localidade = municipios[i].municipio
+        resultado.push(municipio)
+    }
+    
+    await resultado.sort(function (a, b) {
+        return (a.nalunos > b.nalunos) ? -1 : 1;
+      });
+    
+    return resultado
 
+}
 
 Estatistica.getEstatisticasMunicipios = async function (anoletivo){
     var municipios = await Estatistica.getMunicipiosAno(anoletivo)

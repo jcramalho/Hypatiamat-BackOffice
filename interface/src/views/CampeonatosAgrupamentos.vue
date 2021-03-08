@@ -55,7 +55,7 @@
                     :search="filtrar"
                 >
                     <template v-slot:item="row">
-                        <tr>
+                        <tr @click="goToProfessores(row.item)">
                             <td>{{row.item.nome}}</td>
                             <td v-if="row.item.jogo == 0"> ADD (1.º ano)</td>
                             <td v-else-if="row.item.jogo == 1">ADD (2.º ano)</td>
@@ -156,15 +156,21 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
           var aux = []
           var aux2 = []
           for(var i = 0; i < campeonatosComp.length; i++){
-              var campeonato = "Campeonato " + (i+1) + " - " + campeonatosComp[i].datains
               if(campeonatosComp[i].municipio != null){
                   if(campeonatosComp[i].municipio == this.municipio){
-                      campeonato += " (" + campeonatosComp[i].municipio +")"
-                      aux.push(campeonato)
+                      aux.push(campeonatosComp[i].descricaoBackOffice)
                       aux2.push(campeonatosComp[i])
                   }
               }
-              else {aux.push(campeonato); aux2.push(campeonatosComp[i])}
+              else if(campeonatosComp[i].comunidade != null){
+                  var res = await axios.get(h + "comunidades/" + campeonatosComp[i].comunidade + "?token=" + this.token)  
+                  var municipios = res.data
+                  if(municipios.find(e => e.municipio == this.municipio)){
+                      aux.push(campeonatosComp[i].descricaoBackOffice)
+                      aux2.push(campeonatosComp[i])
+                  }
+              }
+              else {aux.push(campeonatosComp[i].descricaoBackOffice); aux2.push(campeonatosComp[i])}
           }
           this.campeonatosInfo = aux2
           return aux
@@ -220,6 +226,10 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
                }
                this.loading = false
           }
+      },
+      goToProfessores: function(item){
+          var params = {municipio: this.municipio, campeonato: this.campeonato, escola: item.cod, nomeEscola: item.nome}
+          this.$router.push({name: 'Campeonatos Professores', params:params})
       },
       exportPDF: async function(){
         var doc = new jsPDF({

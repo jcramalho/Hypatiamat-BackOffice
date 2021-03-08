@@ -20,6 +20,15 @@
                       :items="anos"
                       @change="getEstatisticas()" 
                     ></v-combobox>
+                    <v-combobox
+                      id="comunidade"
+                      label="Comunidade"
+                      prepend-icon="mdi-google-circles-communities"
+                      v-model="comunidade"
+                      color="#009263"
+                      :items="comunidades"
+                      @change="getEstatisticas()" 
+                    ></v-combobox>
                     <v-container v-if="loading">
                       <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
                     </v-container>
@@ -66,6 +75,9 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         token: "",
         loading:false,
         ano:anoletivo,
+        comunidades:[],
+        comunidade: "Nenhuma",
+        comunidadesId:[],
         estatisticas:[],
         anos: ["20/21", "19/20", "18/19", "17/18", "16/17", "15/16", "14/15" ],
         escolas: [],
@@ -91,14 +103,33 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         var response = await axios.get(h + "escolas/localidades/estatisticas/?ano=20&token=" + this.token)
         this.estatisticas = response.data
         this.loading = false
+        this.parseComunidades()
     },
     methods: {
+      parseComunidades: async function(){
+        var response = await axios.get(h + "comunidades?token=" + this.token)
+        this.comunidadesId = response.data
+        var aux = ["Nenhuma"]
+        for(var i = 0; i < this.comunidadesId.length; i++){
+          aux.push(this.comunidadesId[i].nome)
+        }
+        this.comunidades = aux
+      },
       getEstatisticas: async function(){
         this.loading = true
         if(this.anos.find(element=> element == this.ano)){
           var aux = this.ano.split("/")[0]
-          var response = await axios.get(h + "escolas/localidades/estatisticas?ano=" + aux + "&token=" + this.token)
-          this.estatisticas = response.data
+          if(this.comunidade == "Nenhuma"){
+            var response = await axios.get(h + "escolas/localidades/estatisticas?ano=" + aux + "&token=" + this.token)
+            this.estatisticas = response.data
+          }
+          else{
+            if(this.comunidade){
+              var comunidadeId = this.comunidadesId.find(e => e.nome == this.comunidade)
+              var response = await axios.get(h + "escolas/localidades/estatisticas?ano=" + aux + "&comunidade="+ comunidadeId.codigo + "&token=" + this.token)
+              this.estatisticas = response.data
+            }
+          }
         }
         this.loading = false
       },

@@ -117,6 +117,7 @@ export default {
         { title: 'Alunos', icon: 'mdi-account-group', href:"/alunos" },
         { title: 'Agrupamentos', icon: 'mdi-school', href:"/escolas" },
         { title: 'Gestão de Turmas', icon: 'mdi-book-account', href:"/turmas" },
+        { title: 'Comunidades', icon: 'mdi-google-circles-communities', href:"/comunidades" },
         { title: 'Monitorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/municipios"},
         { title: 'Monitorização de Apps', icon: 'mdi-apps', href:"/apps/municipios"},
         { title: 'Ranking Jogos', icon: 'mdi-podium', href:"/classificacoes/jogos/admin"},

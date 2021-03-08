@@ -51,6 +51,8 @@ import RankingJogosAdmin from '../views/RankingJogosAdmin.vue'
 import RankingAppsAdmin from '../views/RankingAppsAdmin.vue'
 import CampeonatosMunicipios from '../views/CampeonatosMunicipios.vue'
 import CampeonatosAgrupamentos from '../views/CampeonatosAgrupamentos.vue'
+import CampeonatosProfessores from '../views/CampeonatosProfessores.vue'
+import Comunidades from '../views/Comunidades.vue'
 
 
 
@@ -79,6 +81,20 @@ const routes = [
     path: '/professores',
     name: 'Professores',
     component: Professores,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(utilizador.type == 50){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    }
+  },
+  {
+    path: '/comunidades',
+    name: 'Comunidades',
+    component: Comunidades,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 50){
@@ -361,6 +377,24 @@ const routes = [
     path: '/campeonatos/municipios/:municipio',
     name: 'Campeonatos Agrupamentos',
     component: CampeonatosAgrupamentos,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if((utilizador.type == 50)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/campeonatos/escolas/:escola',
+    name: 'Campeonatos Professores',
+    component: CampeonatosProfessores,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50)){

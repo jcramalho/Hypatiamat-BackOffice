@@ -85,6 +85,42 @@ router.get('/municipios/:municipio', passport.authenticate('jwt', {session: fals
     }          
 });
 
+// Todas os resultados de uma app ou de todas as apps por municipio de uma comunidade
+router.get('/comunidades/:comunidade', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var dataInicio = req.query.dataInicio;
+    var dataFim = req.query.dataFim;
+    var comunidade = req.params.comunidade
+    var codtema = req.query.codtema
+    var codsubtema = req.query.codsubtema
+
+    if(codtema){
+        // É um tema
+        if(codsubtema){
+            // com subtema
+            Apps.getAppFromComunidadeSubTema(codtema, codsubtema, comunidade, dataInicio, dataFim)
+                .then(dados =>{
+                    res.jsonp(dados)
+                })
+                .catch(erro => res.status(500).jsonp(erro))
+        }
+        else{
+            // sem subtema
+            Apps.getAppFromComunidade(codtema, comunidade, dataInicio, dataFim)
+                .then(dados =>{
+                    res.jsonp(dados)
+                })
+                .catch(erro => res.status(500).jsonp(erro))   
+        }
+    }
+    else{
+        Apps.getAllAppsFromComunidade(comunidade, dataInicio, dataFim)
+            .then(dados =>{
+                res.jsonp(dados)
+            })
+            .catch(erro => res.status(500).jsonp(erro))
+    }          
+});
+
 // Todas os resultados de uma app ou de todas as apps por professor de uma escola
 router.get('/escolas/:escola', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     var dataInicio = req.query.dataInicio;
