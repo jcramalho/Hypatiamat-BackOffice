@@ -1,4 +1,5 @@
 var sql = require('../../models/db_aplicacoes');
+var Campeonatos = require('../db_testeconhecimentos/campeonatos')
 
 const Comunidades = module.exports
 
@@ -80,4 +81,19 @@ Comunidades.deleteComunidadeMunicipio = function(codigo, municipio){
                 }
         });   
     })  
+}
+
+Comunidades.apagarComunidade = async function(codigo){
+    var campeonatos = await Campeonatos.getCampeonatosFromComunidade(codigo);
+    if(campeonatos.length == 0){
+        // pode apagar
+        var municipios = await Comunidades.getMunicipiosFromComunidade(codigo)
+        for(var i = 0; i < municipios.length; i++){
+            await Comunidades.deleteComunidadeMunicipio(codigo, municipios[i].municipio)
+        }
+        return {deleted: true, message: 'Comunidade apagada com sucesso.'}
+    }
+    else {
+        return {deleted: false, message: 'Existem campeonatos realizados para esta comunidade.'}
+    }
 }

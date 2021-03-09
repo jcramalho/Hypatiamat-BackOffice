@@ -79,6 +79,19 @@ router.get('/:campeonato/escolas/:escola', passport.authenticate('jwt', {session
                .catch(erro => res.status(500).jsonp(erro))
 });
 
+router.get('/:campeonato/turmas/:turma', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var campeonato = req.params.campeonato;
+    var turma = req.params.turma;
+    var escola = req.query.escola;
+    var codprofessor = req.query.codprofessor
+    if(codprofessor && turma){
+        Campeonatos.getCampeonatoTurma(campeonato, escola, turma, codprofessor)
+                    .then(dados =>res.jsonp(dados))
+                    .catch(erro => res.status(500).jsonp(erro))
+    }
+    else res.status(400).send("Faltam parâmetros (turma ou codprofessor)")
+});
+
 router.get('/:campeonato/municipios/:municipio/gerais', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     var campeonato = req.params.campeonato;
     var municipio = req.params.municipio

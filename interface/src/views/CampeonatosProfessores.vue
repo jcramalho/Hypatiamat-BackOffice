@@ -5,7 +5,7 @@
             <v-card class="pa-5">
                 <v-container>
                     <v-card-title primary-title class="justify-center green--text">
-                        Monitorização de Campeonatos por Agrupamentos de {{this.municipio}}
+                        Monitorização de Campeonatos por Professores de {{this.nomeEscola}}
                     </v-card-title>
                         <center><v-btn v-if="items.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn></center>
                         <br v-if="items.length>0">
@@ -47,7 +47,7 @@
                     :search="filtrar"
                 >
                     <template v-slot:item="row">
-                        <tr>
+                        <tr @click="goToTurmas(row.item)">
                             <td>{{row.item.nome}}</td>
                             <td v-if="row.item.jogo == 0"> ADD (1.º ano)</td>
                             <td v-else-if="row.item.jogo == 1">ADD (2.º ano)</td>
@@ -132,14 +132,19 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
         this.escola = this.$route.params.escola 
         var responseCamp = await axios.get(hostCampeonatos + "?token=" + this.token)
-        this.campeonatos = await this.parseCampeonatos(responseCamp.data)
-        await this.parseEscolas()
+             
         if(this.$route.params.campeonato && this.$route.params.municipio){
             if(this.$route.params.nomeEscola) this.nomeEscola = this.$route.params.nomeEscola
             this.campeonato = this.$route.params.campeonato
             this.municipio = this.$route.params.municipio
-            this.onCampeonatoChange()
-        }       
+        } 
+        else{
+            var res = await axios.get(h + "escolas/" + this.escola + "?token=" + this.token)
+            this.municipio = res.data.localidade
+            this.nomeEscola = res.data.nome
+        } 
+        this.campeonatos = await this.parseCampeonatos(responseCamp.data)
+        this.onCampeonatoChange()
     },
     methods: {
       format(value, event) {
@@ -213,26 +218,24 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
                this.loading = false
           }
       },
+      goToTurmas: function(item){
+          var params = {escola: this.escola, campeonato: this.campeonato, codprofessor: item.codprofessor, municipio: this.municipio}
+          this.$router.push({name: 'Campeonatos Turmas', params:params})
+      },
       exportPDF: async function(){
         var doc = new jsPDF({
         })
 
         var xImage = doc.internal.pageSize.getWidth() / 4
         var ytotal = 0
-        var pdfName
-        if(this.escola != "Todos"){
-            var esc = this.escolasId.find(e => e.nome == this.escola)
-            pdfName = this.campeonato + "-" + esc.cod + ".pdf"
-        }
-        else pdfName = this.campeonato + "-" + this.municipio + ".pdf"
+        var pdfName = this.campeonato + "-" + this.escola + ".pdf"
 
         doc.addImage(hypatiaImg, 'PNG', xImage, 4);
         //doc.text("Jogo:")
         //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
         doc.setFontSize(11)
         doc.text(this.campeonato, 15, 50)
-        doc.text("Municipio: " + this.municipio, 15, 55)
-        if(this.escola != "Todos") doc.text(this.escola, 15, 60)
+        doc.text(this.nomeEscola, 15, 55)
         var listaRes = []
         //var total = ["Todos", 0, 0, 0, 0, 0, 0]
         for(var i = 0; i<this.items.length; i++){
@@ -259,7 +262,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         }
         doc.setFontSize(10)
         doc.autoTable({
-            head: [['Agrupamento', 'Jogo', "Max", "Min", "Média", "#Jogos", "#Alunos", '#J/#A']],
+            head: [['Professor', 'Jogo', "Max", "Min", "Média", "#Jogos", "#Alunos", '#J/#A']],
             body: listaRes,
             headStyles: { fillColor: [0, 146, 99] },
             styles:{fontSize:9},
@@ -270,11 +273,11 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
                     ytotal = doc.internal.pageSize.getHeight()
                     doc.setFontSize(8)
                     doc.text("Legenda:" , 10, ytotal -26)
-                    doc.text("Max - Máximo de pontuação obtida pelo agrupamento no jogo do campeonato", 10, ytotal -22)
-                    doc.text("Min - Mínimo de pontuação obtida pelo agrupamento no jogo do campeonato", 10, ytotal -18)
-                    doc.text("#Jogos - Número de vezes que o jogo foi jogado pelo agrupamento", 10, ytotal - 14)
-                    doc.text("#Alunos - Número de alunos do agrupamento que participaram naquele jogo do campeonato", 10, ytotal -10)
-                    doc.text("#J/#A - Número médio de vezes que um aluno do agrupamento jogou", 10, ytotal-6)
+                    doc.text("Max - Máximo de pontuação obtida pelo professor no jogo do campeonato", 10, ytotal -22)
+                    doc.text("Min - Mínimo de pontuação obtida pelo professor no jogo do campeonato", 10, ytotal -18)
+                    doc.text("#Jogos - Número de vezes que o jogo foi jogado pelo professor", 10, ytotal - 14)
+                    doc.text("#Alunos - Número de alunos do professor que participaram naquele jogo do campeonato", 10, ytotal -10)
+                    doc.text("#J/#A - Número médio de vezes que um aluno do professor jogou", 10, ytotal-6)
                 },
             willDrawCell: function (data) {
                 /*

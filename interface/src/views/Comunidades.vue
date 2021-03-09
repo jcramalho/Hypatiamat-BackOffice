@@ -31,7 +31,7 @@
                         <td>{{row.item.municipios}}</td>
                         <td>
                         <!--<v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>-->
-                        <v-icon @click="editarComunidade(row.item.codigo)"> mdi-pencil </v-icon>
+                        <v-icon @click="editarComunidade(row.item.codigo, row.item.nome)"> mdi-pencil </v-icon>
                         <v-icon @click="apagarComunidade(row.item.codigo)"> mdi-delete </v-icon>
                         </td>
                     </tr>
@@ -42,12 +42,12 @@
                             <v-container>
                                 <v-form>
                                     <v-text-field prepend-icon="mdi-card-account-details" color="#009263"
-                                            v-model="novoCodigo" name="Código da Comunidade" :rules="[existeCodigo]" label="Código da Comunidade" 
-                                            required
+                                        v-model="novoCodigo" name="Código da Comunidade" :rules="[existeCodigo]" label="Código da Comunidade" 
+                                        required
                                     ></v-text-field>
                                     <v-text-field prepend-icon="mdi-card-account-details" color="#009263"
-                                            v-model="novoNome" name="Nome da Comunidade" :rules="[existeNome]" label="Nome da Comunidade" 
-                                            required
+                                        v-model="novoNome" name="Nome da Comunidade" :rules="[existeNome]" label="Nome da Comunidade" 
+                                        required
                                     ></v-text-field>
                                     <v-combobox
                                         id="municipios"
@@ -68,6 +68,10 @@
                             </v-container>
                         </v-card>
                     </v-dialog>
+                    <v-dialog v-model="dialogEditar" width="77%">
+                      <EditarComunidade v-if="dialogEditar" :codigo="this.idEditar" @municipios="(municipios) => atualizaComunidade(municipios)"
+                            :comunidades="this.comunidades" :nomeComunidade="this.nomeEditar"/>
+                    </v-dialog>
                     
             </v-container>
         </v-card>
@@ -81,9 +85,13 @@
 <script>
 import axios from "axios"
 import Swal from 'sweetalert2'
+import EditarComunidade from '@/components/EditarComunidade.vue'
 const h = require("@/config/hosts").hostAPI
 
   export default {
+    components:{
+      EditarComunidade
+    },
     data(){
       return {
         token: "",
@@ -98,8 +106,8 @@ const h = require("@/config/hosts").hostAPI
         disabledMunicipios: false,
         dialogCriar: false,
         dialogEditar: false,
-        codigosExistentes: [],
-
+        idEditar: -1,
+        nomeEditar: "",
         header_comunidades: [
             {text: "Código", sortable: true, value: 'codigo', class: 'subtitle-1'},
             {text: "Nome", sortable: true, value: 'nome', class: 'subtitle-1'},
@@ -113,7 +121,11 @@ const h = require("@/config/hosts").hostAPI
         },
         filtrar : "",
         string15: v =>{
-            if(v.length > 11) return 'Não pode ter mais que 11 digitos'
+            if(v.length > 15) return 'Não pode ter mais que 15 caractéres.'
+            return true
+        },
+        string30: v =>{
+            if(v.length > 30) return 'Não pode ter mais que 30 caractéres.'
             return true
         },
         existeCodigo: v =>{
@@ -133,18 +145,6 @@ const h = require("@/config/hosts").hostAPI
             this.disabledMunicipios = false
             return true
         },
-        number: v  => {
-          //if (!v.trim()) return true;
-          if (!isNaN(parseInt(v))) {this.disabled = false; return true;}
-          this.disabled = true
-          return 'Tem que ser um inteiro';
-        },
-        ruleNCodigos: v  => {
-          //if (!v.trim()) return true;
-          if (!isNaN(parseInt(v)) && v > 0 && v <= 1000) {this.disabledGerar = false; return true;}
-          this.disabledGerar = true
-          return 'Tem que ser um inteiro (Compreendido entre 1 e 1000)';
-        } 
       }
     },
     created: async function(){
@@ -161,6 +161,11 @@ const h = require("@/config/hosts").hostAPI
           for(var i = 0; i < response.data.length; i++){
               this.municipios.push(response.data[i].localidade)
           }
+      },
+      editarComunidade: async function(codigo, nome){
+        this.idEditar = codigo
+        this.nomeEditar = nome
+        this.dialogEditar = true;
       },
       insertComunidade: async function(){
         var comunidade = {
@@ -190,15 +195,35 @@ const h = require("@/config/hosts").hostAPI
           denyButtonText: `Não`,
         }).then(async (result) => {
           if (result.isConfirmed) {
-            await axios.delete(h + "comunidades/" + codigo + "?token=" + this.token)
-            var response = await axios.get(h + "comunidades?token=" + this.token)
-            this.comunidades = response.data
+            var res = (await axios.delete(h + "comunidades/" + codigo + "?token=" + this.token)).data
+            if(res.deleted){
+              Swal.fire({
+                icon: 'success',
+                title: 'Comunidade apagada com sucesso',
+                confirmButtonColor: '#009263'
+              })
+              var response = await axios.get(h + "comunidades?token=" + this.token)
+              this.comunidades = response.data
+            }
+            else {
+              Swal.fire({
+                icon: 'error',
+                title: res.message,
+                confirmButtonColor: '#009263'
+              })
+            }
+        
               
           }
         })
       },
       criarComunidade: async function(){
           this.dialogCriar = true
+      },
+      atualizaComunidade: async function(municipios){
+        console.log(municipios)
+        var com = this.comunidades.find(e => e.codigo == this.idEditar)
+        com.municipios = municipios
       }
     }
   }

@@ -52,6 +52,7 @@ import RankingAppsAdmin from '../views/RankingAppsAdmin.vue'
 import CampeonatosMunicipios from '../views/CampeonatosMunicipios.vue'
 import CampeonatosAgrupamentos from '../views/CampeonatosAgrupamentos.vue'
 import CampeonatosProfessores from '../views/CampeonatosProfessores.vue'
+import CampeonatosTurmas from '../views/CampeonatosTurmas.vue'
 import Comunidades from '../views/Comunidades.vue'
 
 
@@ -398,6 +399,24 @@ const routes = [
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/campeonatos/professores/:codprofessor',
+    name: 'Campeonatos Turmas',
+    component: CampeonatosTurmas,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if((utilizador.type == 50) || (utilizador.type == 20 && utilizador.codigo == to.params.codprofessor)){
         next()
       }
       else{

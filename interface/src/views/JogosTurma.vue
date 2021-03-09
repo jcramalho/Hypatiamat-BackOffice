@@ -480,13 +480,11 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           if(this.turmaSel != "" && this.turmaSel && this.dataInicio && this.dataFim){
             this.loadingJogos = true
             this.escola = this.escolaOriginal
-            console.log(this.escola)
             var responseAlunos = await axios.get(h + "turmas/" + this.turmaSel + 
                                                     "/alunos?codprofessor=" + this.idprofessor
                                                     + "&token=" + this.token)
 
             var escolas = []
-            console.log(responseAlunos.data)
             for(var i = 0; i < responseAlunos.data.length; i++){
                 if(responseAlunos.data[i].escola != this.escola){
                     var auxEscola = escolas.find(a => a.escola == responseAlunos.data[i].escola)
@@ -499,7 +497,6 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             if(escolas.length > 0){
                 var res = Math.max.apply(Math, escolas.map(function(o){return o.numero;}))
                 var escolaAux = escolas.find(function(o){ return o.numero == res; })
-                console.log(escolaAux.escola)
                 if(escolaAux && escolaAux.escola != this.escola) this.escola = escolaAux.escola;
             }
                                                         
