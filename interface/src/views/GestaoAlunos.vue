@@ -22,7 +22,7 @@
                           da respetiva turma. </span>
                           </v-col>
                           <v-col cols="12">
-                          <span> 3. Caso deseje efetuar transferências de alunos no qual envolvam uma determinada turma, clicando em 
+                          <span> 3. Caso deseje efetuar transferências de alunos no qual envolvam uma determinada turma, clique em 
                             <v-icon> mdi-cog-transfer-outline </v-icon> da respetiva turma. </span> 
                           </v-col>
                         </v-row>

@@ -8,7 +8,7 @@
                     Transferência de Alunos ({{turma.turma}})
                 </v-card-title>
                         
-              <v-layout row class="text-xs-center pa-lg-16" justify-center align-center >
+              <v-layout row class="text-xs-center pa-lg-16" justify-center >
           <v-flex xs5>
             <v-card class="pa-4">
                 <v-card-title primary-title class="justify-center">

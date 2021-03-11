@@ -6,6 +6,38 @@
             <v-card-title primary-title class="justify-center green--text">
                 Ranking dos Alunos das suas turmas (Jogos)
             </v-card-title>
+            <center>
+                <v-btn v-if="!show" text @click="show=!show"><span>Mostrar Ajuda</span><v-icon color="#009263"> mdi-help-circle </v-icon> </v-btn>
+                <v-btn v-else text @click="show=!show">Esconder Ajuda</v-btn> 
+            </center>
+            <v-slide-y-transition>
+                <v-card v-show="show" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
+                <v-row class="justify-center">
+                    <v-col cols="12">
+                    <span> 1. Pode escolher uma das suas turmas através da seleção do campo "Turma". </span>
+                    </v-col>
+                    <v-col cols="12">
+                    <span> 2. Pode escolher o ano letivo desejado através do campo "Ano Letivo". </span>
+                    </v-col>
+                    <v-col cols="12">
+                    <span> 3. Os jogos disponibilizados serão aqueles que a turma jogou no ano letivo selecionado. E, por último, poderá selecionar o jogo pretendido. </span> 
+                    </v-col>
+                    <v-col cols="9">
+                        <v-card class="mx-auto" color="grey lighten-4">
+                            <center> <h3 class="green--text"> Legenda da Tabela: </h3> </center>
+                            <ul> 
+                                <li> <span> <b>N.º</b> - Número do aluno; </span> </li>
+                                <li> <span> <b>Posição (Turma)</b> - Posição do aluno na turma; </span> </li>
+                                <li> <span> <b>Posição (Agr. Escolas)</b> - Posição do aluno no seu Agrupamento de Escolas; </span> </li>
+                                <li> <span> <b>Posição (Hypatia)</b> - Posição do aluno em todo o Hypatiamat; </span> </li>
+                                <li> <span> <b>Pontos</b> - Para o jogo calcrapid, é a soma da diferença de pontuação certa e errada. 
+                                Para os restantes jogos, o máximo de pontuação obtida. Esta coluna é também o critério de ordenação do ranking. </span> </li>
+                            </ul>
+                        </v-card>
+                    </v-col>
+                </v-row>
+                </v-card>
+            </v-slide-y-transition>
             <v-container>
               <v-card class="pa-3">
                   <v-combobox
@@ -131,7 +163,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             {text: "Posição (Turma)", value: 'posTurma', class: 'subtitle-1'},
             {text: "Posição (Agr. Escolas)", value: 'posEscola', class: 'subtitle-1'},
             {text: "Posição (Hypatia)", value: 'posHypatia', class: 'subtitle-1'},
-            {text: "#Pontos", value: 'total', class: 'subtitle-1'},
+            {text: "Pontos", value: 'total', class: 'subtitle-1'},
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
@@ -147,6 +179,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         niveisSel:["1","2","3","4","5"],
         tiposCalculusSel:["0 - Todas as combinações"],
         tiposCalculusSelAnterior:["0 - Todas as combinações"],
+        show: false
       }
     },
     created: async function(){

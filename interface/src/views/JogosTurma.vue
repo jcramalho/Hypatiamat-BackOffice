@@ -7,13 +7,57 @@
                     <v-card-title primary-title class="justify-center green--text">
                         Monitorização de Jogos do professor ({{this.idprofessor}})
                     </v-card-title>
+                    <center>
+                        <v-btn v-if="!show" text @click="show=!show"><span>Mostrar Ajuda</span><v-icon color="#009263"> mdi-help-circle </v-icon> </v-btn>
+                        <v-btn v-else text @click="show=!show">Esconder Ajuda</v-btn> 
+                    </center>
+                    <v-slide-y-transition>
+                      <v-card v-show="show" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
+                        <v-row class="justify-center">
+                          <v-col cols="12">
+                          <span> 1. Pode escolher uma das suas turmas através da seleção no campo "Turma". </span>
+                          </v-col>
+                          <v-col cols="12">
+                            <span> 2. Escolher o jogo sobre o qual deseja visualizar dados estatísticos de cada um dos seus alunos que jogou. Os jogos disponibilizados serão 
+                              jogos que foram jogados pela turma selecionada no intervalo de tempo escolhido. </span>
+                          </v-col>
+                          <v-col cols="12">
+                            <span> 3. Pode alterar o intervalo de tempo pretendido, selecionando uma data inicial diferente e/ou uma data final diferente. </span> 
+                          </v-col>
+                          <v-col cols="12">
+                            <span> 4. Caso pretenda uma monitorização sobre um ano letivo específico, pode selecionar o ano letivo pretendido. </span> 
+                          </v-col>
+                          <v-col cols="12">
+                            <span> 5. Tendo os campos referidos escolhidos e tendo os dados apresentados, poderá exportar para pdf através do botão 
+                                <v-btn small class="white--text" style="background-color: #009263;"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn>. Além disso,
+                                poderá visualizar as estatísticas gerais e fazer comparações com o seu agrupamento e todo o Hypatiamat 
+                                (<v-btn small text class="white--text" style="background-color: #009263;"> <v-icon> mdi-home-analytics </v-icon> <span>Estatísticas Globais</span> </v-btn>). 
+                            </span> 
+                          </v-col>
+                          <v-col cols="9">
+                              <v-card class="mx-auto" color="grey lighten-4">
+                                  <center> <h3 class="green--text"> Legenda da Tabela: </h3> </center>
+                                  <ul> 
+                                      <li> <span> <b>N.º</b> - Número do aluno ; </span> </li>
+                                      <li> <span> <b>Max</b> - Máximo de pontuação obtida pelo aluno. </span> </li>
+                                      <li> <span> <b>Min</b> - Mínimo de pontuação obtida pelo aluno. </span> </li>
+                                      <li> <span> <b>Média</b> - Média de pontuação obtida pelo aluno. </span> </li>
+                                      <li> <span> <b>#</b> - Nº de vezes que o aluno jogou. </span> </li>
+                                  </ul>
+                              </v-card>
+                          </v-col>
+                        </v-row>
+                      </v-card>
+                    </v-slide-y-transition>
                     <v-layout row class="text-xs-center pa-lg-4" justify-center align-center>
-                        <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4" v-if="alunos.length>0">
-                            <center><v-btn class="white--text" style="background-color: #009263;" 
-                            @click="estatisticasGlobais()"> <v-icon> mdi-home-analytics </v-icon> Estatísticas Globais 
+                        <v-col v-if="alunos.length>0 && this.jogo && this.jogo.jogo != 'Calculus' && this.jogo.jogo != 'Calcrapid' && this.jogo.jogo != 'Todos'" 
+                            cols="12" xs="12" sm="12" md="4" lg="4" xl="4" >
+                            <center><v-btn  
+                            class="white--text" style="background-color: #009263;" 
+                            @click="getEstatisticas()"> <v-icon> mdi-home-analytics </v-icon> Estatísticas Globais 
                             </v-btn></center>
                         </v-col>
-                        <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4" v-if="alunos.length>0">
+                        <v-col v-if="false" cols="12" xs="12" sm="12" md="4" lg="4" xl="4">
                             <center><v-btn class="white--text" style="background-color: #009263;" @click="verGrafico()"> <v-icon> mdi-chart-bar-stacked </v-icon> Visualizar Gráfico </v-btn></center>
                         </v-col>
                         <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4" v-if="alunos.length>0">
@@ -39,13 +83,14 @@
                                         v-model="jogo"
                                         label="Jogo"
                                         color="green"
-                                        :items="jogos"
+                                        item-text="jogo"
+                                        :items="jogosInfo"
                                         @change="onJogoChange"
                                     ></v-combobox>
                                     <v-combobox
                                         id="tiposCalcRapid"
                                         chips
-                                        v-if="jogo=='Calcrapid' && !loadingJogos"
+                                        v-if="jogo && jogo.jogo=='Calcrapid'"
                                         v-model="tiposCalc"
                                         label="Tipo de Operação"
                                         color="green"
@@ -56,7 +101,7 @@
                                     <v-combobox
                                         id="niveisCalculus"
                                         chips
-                                        v-if="jogo=='Calculus'  && !loadingJogos"
+                                        v-if="jogo && jogo.jogo=='Calculus'"
                                         v-model="niveisSel"
                                         label="Nível"
                                         color="green"
@@ -67,7 +112,7 @@
                                     <v-combobox
                                         id="tiposCalculus"
                                         chips
-                                        v-if="jogo=='Calculus'  && !loadingJogos"
+                                        v-if="jogo && jogo.jogo=='Calculus'"
                                         v-model="tiposCalculusSel"
                                         label="Tipo de Operações"
                                         color="green"
@@ -121,7 +166,7 @@
                     <div ref="estatisticas">
                     <v-card class="pa-5">
                         <v-card-title class="justify-center" primary-title>
-                            Estatísticas globais ({{jogo}})
+                            Estatísticas globais ({{jogo.jogo}})
                         </v-card-title>
                         <br>
                         <v-layout class="text-xs-center" row justify-center align-center>
@@ -356,12 +401,12 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         utilizador : {},
         alunos:[],
         headersTodos:[
-            {text: "Nº", value: 'numero', class: 'subtitle-1'},
+            {text: "N.º", value: 'numero', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
             {text: "#", value: 'count', class: 'subtitle-1'},
         ], 
         headersJogo:[
-            {text: "Nº", value: 'numero', class: 'subtitle-1'},
+            {text: "N.º", value: 'numero', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
             {text: "Max", value: 'maximo', class: 'subtitle-1'},
             {text: "Min", value: 'minimo', class: 'subtitle-1'},
@@ -369,7 +414,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             {text: "#", value: 'count', class: 'subtitle-1'},
         ],
          header_alunos: [
-            {text: "Nº", value: 'numero', class: 'subtitle-1'},
+            {text: "N.º", value: 'numero', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
             {text: "Max", value: 'maximo', class: 'subtitle-1'},
             {text: "Min", value: 'minimo', class: 'subtitle-1'},
@@ -377,7 +422,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             {text: "#", value: 'count', class: 'subtitle-1'},
         ],
         headers_calcrapid:[
-            {text: "Nº", value: 'numero', class: 'subtitle-1'},
+            {text: "N.º", value: 'numero', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
             {text: "P.Certa", value: 'pontcerta', class: 'subtitle-1'},
             {text: "P.Errada", value: 'ponterrada', class: 'subtitle-1'},
@@ -385,7 +430,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             {text: "#", value: 'frequencia', class: 'subtitle-1'},
         ],
         headers_minutenew:[
-            {text: "Nº", value: 'numero', class: 'subtitle-1'},
+            {text: "N.º", value: 'numero', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
             {text: "N.Certas", value: 'numcertas', class: 'subtitle-1'},
             {text: "N.Erradas", value: 'numerradas', class: 'subtitle-1'},
@@ -433,7 +478,8 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         niveisSel:["1","2","3","4","5"],
         tiposCalculusSel:["0 - Todas as combinações"],
         tiposCalculusSelAnterior:["0 - Todas as combinações"],
-        escolaOriginal: ""
+        escolaOriginal: "",
+        show:false
       }
     },
     created: async function(){
@@ -464,13 +510,6 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         else{
             this.onAnoChange()
         }
-        /*
-        var response2 = await axios.get(h + "turmas/"  "?token=" + this.token)
-        this.jogosInfo = response2.data
-        for(i = 0; i < this.jogosInfo.length; i++){
-            this.jogos.push(this.jogosInfo[i].jogo)
-        }
-        */
     },
     methods: {
       format(value, event) {
@@ -503,12 +542,11 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             var response2 = await axios.get(h + "turmas/" + this.turmaSel + "/jogos?escola=" 
                                                 + this.escola + "&dataInicio=" + this.dataInicio 
                                                 + "&dataFim=" + this.dataFim + "&codprofessor=" + this.idprofessor + "&token=" + this.token)
-            this.jogosInfo = response2.data
-            this.jogos = ["Todos"]
+            this.jogosInfo = [{jogo:"Todos"}]
             this.alunos = []
             this.jogo = ""
-            for(var i = 0; i < this.jogosInfo.length; i++){
-                this.jogos.push(this.jogosInfo[i].jogo)
+            for(var i = 0; i < response2.data.length; i++){
+                this.jogosInfo.push(response2.data[i])
             }
             this.loadingJogos = false
             this.atualizaConteudo()
@@ -524,7 +562,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           }
       },
       onJogoChange: async function(item){
-          if(this.jogos.find(element => element == this.jogo)){
+          if(this.jogo && this.jogo != "" && this.jogosInfo.find(e => e.jogo == this.jogo.jogo)){
               this.atualizaConteudo()
           }
       },
@@ -542,24 +580,20 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           if(this.tiposCalculusSel.find(e => e == "0 - Todas as combinações")){
               if(this.niveisSel.length < this.niveisCalculus.length){
                   if(this.niveisSel.length > 0){
-                      console.log("Por níveis")
                       this.atualizaMinuteNewNiveis()
                   }
               }
               else{
-                  console.log("Todos os registos")
                   this.atualizaMinuteNew()
               }
           }
           else{
               if(this.niveisSel.length < this.niveisCalculus.length){
                   if(this.niveisSel.length > 0){
-                      console.log("Por níveis e tipos")
                       this.atualizaMinuteNewTiposNiveis()
                   }
               }
               else{
-                  console.log("Por tipos")
                   this.atualizaMinuteNewTipos()
               }
           }
@@ -569,11 +603,9 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           if(todos && !this.tiposCalculusSelAnterior.find(e => e == "0 - Todas as combinações")){
                 this.tiposCalculusSel = ["0 - Todas as combinações"]
                     if(this.niveisSel.length < this.niveisCalculus.length){
-                        console.log("Por niveis")
                         this.atualizaMinuteNewNiveis()
                     }
                     else{
-                        console.log("Todos os registos")
                         this.atualizaMinuteNew()
                     }       
         }
@@ -583,11 +615,9 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
                 this.tiposCalculusSel.splice(index, index+1)
             }
             if(this.niveisSel.length < this.niveisCalculus.length){
-                console.log("Por niveis e tipos")
                 this.atualizaMinuteNewTiposNiveis()
             }
             else{
-                console.log("Por tipos")
                 this.atualizaMinuteNewTipos()
             }
         }
@@ -684,30 +714,25 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       atualizaConteudo: async function(){
           if(this.jogo && this.jogo != "" && this.dataFim != "" && this.dataInicio != "" && this.turmaSel != "" ){
               this.loading = true
-              if(this.jogo == "Todos"){
+              if(this.jogo.jogo == "Todos"){
                 this.header_alunos = this.headersTodos
                 var idescola = this.escola
-                console.log(this.idprofessor + " - professor")
                 var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/Todos" 
                                                 + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
                                                 + "&codprofessor=" + this.idprofessor
                                                 + "&escola=" + idescola + "&token=" + this.token)
                 this.alunos = response.data
               }
-              else if(this.jogo == "Calcrapid") this.atualizaCalcRapid()
-              else if(this.jogo == "Calculus") this.onNivelChange()
+              else if(this.jogo.jogo == "Calcrapid") this.atualizaCalcRapid()
+              else if(this.jogo.jogo == "Calculus") this.onNivelChange()
               else{
-                var aux = this.jogosInfo.find(element => element.jogo == this.jogo)
-                if(aux){
+                if(this.jogo.jogo){
                     this.header_alunos = this.headersJogo
-                    
-                    var jogoTipo = aux.tipo
-                    var jogoTable = aux.jogotable
                     var idescola = this.escola
 
-                    var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/" + jogoTable 
+                    var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/" + this.jogo.jogotable
                                                         + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                        + "&jogoTipo=" + jogoTipo + "&escola=" + idescola
+                                                        + "&jogoTipo=" + this.jogo.tipo + "&escola=" + idescola
                                                         + "&codprofessor=" + this.idprofessor
                                                         + "&token=" + this.token)
                     this.alunos = response.data
@@ -719,13 +744,10 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       },
       estatisticasGlobais: async function(){
           // turmas/:id/jogos/:tableJogo/estatisticasGlobais
-          var aux = this.jogosInfo.find(element => element.jogo == this.jogo)
-          var jogoTipo = aux.tipo
-          var jogoTable = aux.jogotable
           var idescola = this.escola
-          var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/" + jogoTable + "/estatisticasGlobais"
+          var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/" + this.jogo.jogotable + "/estatisticasGlobais"
                                         + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                        + "&jogoTipo=" + jogoTipo + "&escola=" + idescola
+                                        + "&jogoTipo=" + this.jogo.tipo + "&escola=" + idescola
                                         + "&codprofessor=" + this.idprofessor +
                                         + "&token=" + this.token)
 
@@ -733,31 +755,29 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           this.dialogEstatisticas = true
       },
       getEstatisticas: async function(){
-          if(this.jogo != "" && this.jogo != "Todos"){
-            var aux = this.jogosInfo.find(element => element.jogo == this.jogo)
-            var jogoTipo = aux.tipo
-            var jogoTable = aux.jogotable
+          if(this.jogo != "" && this.jogo.jogo != "Todos" && this.jogo.jogo != "Calculus" && this.jogo.jogo != "Calcrapid"){
             var idescola = this.escola
-            var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/" + jogoTable + "/estatisticasGlobais"
+            var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/" + this.jogo.jogotable + "/estatisticasGlobais"
                                             + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                            + "&jogoTipo=" + jogoTipo + "&escola=" + idescola
+                                            + "&jogoTipo=" + this.jogo.tipo + "&escola=" + idescola
                                             + "&codprofessor=" + this.idprofessor 
                                             + "&token=" + this.token)
-            return response.data
+            this.estatisticas = response.data
+            this.dialogEstatisticas = true
           }
-          else return []
+          else this.estatisticas = []
       },
       exportPDFCalculus: async function(){
           var doc = new jsPDF({
         })
         var xImage = doc.internal.pageSize.getWidth() / 4
         var ytotal = 0
-        var pdfName = this.jogo + "-" + this.turmaSel + ".pdf"
+        var pdfName = this.jogo.jogo + "-" + this.turmaSel + ".pdf"
         doc.addImage(hypatiaImg, 'PNG', xImage, 4);
         //doc.text("Jogo:")
         //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
         doc.setFontSize(11)
-        doc.text("Jogo: " + this.jogo, 15, 50)
+        doc.text("Jogo: " + this.jogo.jogo, 15, 50)
         doc.text("Período: " + this.dataInicio + " a " + this.dataFim, 130, 50)
         doc.text("Tipos de Operações:", 15, 56)
         var ytotal1 = 56
@@ -774,8 +794,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         if(ytotal2 > ytotal1) ytotal = ytotal2;
         else ytotal = ytotal1
         var listaRes = []
-        var header = [['Nº', 'Nome', 'N.Certas', "N.Erradas", "T.Pontos", "#"]]
-        var jogo = this.jogo
+        var header = [['N.º', 'Nome', 'N.Certas', "N.Erradas", "T.Pontos", "#"]]
         
         //var auxTotal = ['Todos', -1, this.items[0].min, 0, 0]
         for(var i = 0; i<this.alunos.length; i++){
@@ -816,12 +835,12 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         })
         var xImage = doc.internal.pageSize.getWidth() / 4
         var ytotal = 0
-        var pdfName = this.jogo + "-" + this.turmaSel + ".pdf"
+        var pdfName = this.jogo.jogo + "-" + this.turmaSel + ".pdf"
         doc.addImage(hypatiaImg, 'PNG', xImage, 4);
         //doc.text("Jogo:")
         //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
         doc.setFontSize(11)
-        doc.text("Jogo: " + this.jogo, 15, 50)
+        doc.text("Jogo: " + this.jogo.jogo, 15, 50)
         doc.text("Período: " + this.dataInicio + " a " + this.dataFim, 130, 50)
         doc.text("Tipos de Operações realizadas:", 15, 56)
         ytotal = 56;
@@ -830,8 +849,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             doc.text(this.tiposCalc[i], 15, ytotal);
         }
         var listaRes = []
-        var header = [['Nº', 'Nome', 'P.Certa', "P.Errada", "#Operações", "#"]]
-        var jogo = this.jogo
+        var header = [['N.º', 'Nome', 'P.Certa', "P.Errada", "#Operações", "#"]]
         
         //var auxTotal = ['Todos', -1, this.items[0].min, 0, 0]
         for(var i = 0; i<this.alunos.length; i++){
@@ -868,25 +886,25 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         doc.save(pdfName)
       },
       exportPDF: async function(){
-        if(this.jogo == "Calcrapid") {this.exportPDFCalcRapid(); return;}
-        else if(this.jogo == "Calculus") {this.exportPDFCalculus(); return;}
+        if(this.jogo.jogo == "Calcrapid") {this.exportPDFCalcRapid(); return;}
+        else if(this.jogo.jogo == "Calculus") {this.exportPDFCalculus(); return;}
         var doc = new jsPDF({
         })
 
         var xImage = doc.internal.pageSize.getWidth() / 4
         var ytotal = 0
-        var pdfName = this.jogo + "-" + this.turmaSel + ".pdf"
+        var pdfName = this.jogo.jogo + "-" + this.turmaSel + ".pdf"
         doc.addImage(hypatiaImg, 'PNG', xImage, 4);
         //doc.text("Jogo:")
         //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
         doc.setFontSize(11)
         doc.text("Professor: " + this.idprofessor, 15, 50)
         doc.text("Turma: " + this.turmaSel, 15, 60)
-        doc.text("Jogo: " + this.jogo, 130, 50)
+        doc.text("Jogo: " + this.jogo.jogo, 130, 50)
         doc.text("Período: " + this.dataInicio + " a " + this.dataFim, 130, 60)
         var listaRes = []
-        var headers = [['Nº', 'Nome', 'Max', "Min", "Média", "#"]]
-        var jogo = this.jogo
+        var headers = [['N.º', 'Nome', 'Max', "Min", "Média", "#"]]
+        var jogo = this.jogo.jogo
         ytotal += 70
         if(jogo != "Todos"){
             var auxTotal = ['Todos', "Todos", -1, this.alunos[0].minimo, 0, 0]
@@ -952,21 +970,6 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
                 
             },
         })
-        /*
-        if(this.jogo != "Todos"){
-            this.estatisticas = await this.getEstatisticas()
-
-            var min = ["Min", this.estatisticas.turma.min, this.estatisticas.escola.min, this.estatisticas.hypatia.min]
-            var max = ["Max", this.estatisticas.turma.max, this.estatisticas.escola.max, this.estatisticas.hypatia.max]
-            var media = ["Média", this.estatisticas.turma.media, this.estatisticas.escola.media, this.estatisticas.hypatia.media]
-            var total = ["Nº de jogos", this.estatisticas.turma.number, this.estatisticas.escola.number, this.estatisticas.hypatia.number]
-            
-            doc.autoTable({
-                head: [['Tipo', 'Turma', 'Agrupamento', "Hypatia"]],
-                body: [min, max, media, total],
-                margin:{ bottom: 60}
-            })
-        }*/
 
         doc.save(pdfName)
        

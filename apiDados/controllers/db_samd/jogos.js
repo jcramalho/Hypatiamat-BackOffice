@@ -25,10 +25,10 @@ return new Promise(function(resolve, reject) {
 
 Jogos.getJogos = async function(){
     var resultado = []
-    var calcrapid = {jogo: 'Calcrapid', jogotable:'calcRapidHypatia', tipos:["Todos", "1 - Adição", "2 - Subtração", "3 - Multiplicação", "4 - Divisão"]}
+    var calcrapid = {jogo: 'Calcrapid', jogotable:'calcRapidHypatia', tipos:["1 - Adição", "2 - Subtração", "3 - Multiplicação", "4 - Divisão"]}
     var minutenew = {jogo: 'Calculus', jogotable: 'minutenew', 
                         niveis:["1", "2", "3", "4", "5"], 
-                        tipos:["Todos", "1 – Adição", "2 – Subtração", "3 – Multiplicação", "4 – Divisão", "12 – Adição e subtração"]}
+                        tipos:["Todos", "1 – Adição", "2 – Subtração", "3 – Multiplicação", "4 – Divisão"]}
     resultado.push(calcrapid)
     resultado.push(minutenew)
     var jogos = await Jogos.getJogosDB();
@@ -36,6 +36,61 @@ Jogos.getJogos = async function(){
         resultado.push(jogos[i])
     }
     return resultado;
+}
+
+Jogos.getAllJogosComunidade = async function(comunidade, dataInicio, dataFim){
+    var jogos = await Jogos.getJogosDB()
+    var res = []
+
+    // jogos em geral
+    for(var i = 0; i < jogos.length; i++){
+        var jogo = await Jogos.getJogoComunidade(comunidade, jogos[i].jogotable, jogos[i].tipo, dataInicio, dataFim)
+        for(var j = 0; j < jogo.length; j++){
+            var aux = res.find(element => element.localidade == jogo[j].localidade)
+            if(aux) aux.number +=jogo[j].number
+            else res.push({localidade: jogo[j].localidade, number: jogo[j].number})
+        }
+    }
+    
+    // calcrapid
+    var calcRapid = await Jogos.getTodosCalcRapidComunidade(dataInicio, dataFim, comunidade)
+    for(var j = 0; j < calcRapid.length; j++){
+        var aux = res.find(element => element.localidade == calcRapid[j].localidade)
+        if(aux) aux.number += calcRapid[j].frequencia
+        else res.push({localidade: calcRapid[j].localidade, number: calcRapid[j].frequencia})
+    }
+    
+    // calculus
+    var calculus = await Jogos.getTodosMinuteNewComunidade(dataInicio, dataFim, comunidade)
+    for(var j = 0; j < calculus.length; j++){
+        var aux = res.find(element => element.localidade == calculus[j].localidade)
+        if(aux) aux.number += calculus[j].frequencia
+        else res.push({localidade: calculus[j].localidade, number: calculus[j].frequencia})
+    }
+
+    await res.sort(function (a, b) {
+        return (a.number > b.number) ? -1 : 1;
+    });
+
+    return res;
+}
+
+Jogos.getJogoComunidade = function(comunidade, jogoTable, tipo, dataInicio, dataFim){
+    var args = [dataInicio, dataFim, tipo, comunidade]
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT esc.localidade, min(jogo.pontuacao) as min, max(jogo.pontuacao) as max, Round(AVG(jogo.pontuacao), 0) as media, count(jogo.pontuacao) as number 
+		FROM (select * from ${bdSAMD}.${jogoTable} where (data BETWEEN ? and ?) and tipo=?) jogo, 
+        (select * from ${bdAplicacoes}.Escolas where localidade in (select municipio from ${bdAplicacoes}.comunidades where codigo=?)) as esc 
+        WHERE jogo.idescola=esc.cod Group by esc.localidade Order by esc.localidade;`, args, function (err, res) {            
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    })  
 }
 
 // por cada município e todos os tipos do calcrapid
@@ -73,6 +128,45 @@ Jogos.getCalcRapidTipoMunicipios = async function(dataInicio, dataFim, tipo){
             });   
     }) 
 }
+
+// por cada município de uma comunidade e todos os tipos do calcrapid
+Jogos.getTodosCalcRapidComunidade = async function(dataInicio, dataFim, comunidade){
+    var args = [dataInicio, dataFim, comunidade]
+    return new Promise(function(resolve, reject) {
+        sql.query(`select esc.localidade, sum(pontcerta) as pontcerta, sum(ponterrada) as ponterrada,  sum(n) as oprealizadas, sum(f) as frequencia 
+		from (select * from ${bdSAMD}.calcRapidHypatia where (data BETWEEN ? and ?)) as jogo, 
+        (select * from ${bdAplicacoes}.Escolas where localidade in (select municipio from ${bdAplicacoes}.comunidades where codigo=?)) as esc 
+        where esc.cod = jogo.idescola Group By esc.localidade;`, args, function (err, res) {            
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    })  
+}
+
+// por cada município de uma comunidade e um determinado tipo do Hypatiamat
+Jogos.getCalcRapidTipoComunidade = async function(dataInicio, dataFim, tipo, comunidade){
+    var args = [dataInicio, dataFim, tipo, comunidade]
+    return new Promise(function(resolve, reject) {
+        sql.query(`select esc.localidade, sum(pontcerta) as pontcerta, sum(ponterrada) as ponterrada,  sum(n) as oprealizadas, sum(f) as frequencia 
+		from (select * from ${bdSAMD}.calcRapidHypatia where (data BETWEEN ? and ?) and tipo in (?)) as jogo, 
+        (select * from ${bdAplicacoes}.Escolas where localidade in (select municipio from ${bdAplicacoes}.comunidades where codigo=?)) as esc 
+        where esc.cod = jogo.idescola Group By esc.localidade;`, args, function (err, res) {            
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    }) 
+}
+
 
 // por cada agrupamento de um municipio e todos os tipos do calcrapid
 Jogos.getTodosCalcRapidAgrupamentos = async function(dataInicio, dataFim, municipio){
@@ -277,6 +371,80 @@ Jogos.getNiveisMinuteNewMunicipios = async function(dataInicio, dataFim, niveis)
             });   
     })  
 }
+
+// por cada municipio de uma comunidade e todos os tipos e niveis do jogo minutenew
+Jogos.getTodosMinuteNewComunidade = async function(dataInicio, dataFim, comunidade){
+    var args = [dataInicio, dataFim, comunidade]
+    return new Promise(function(resolve, reject) {
+        sql.query(`select esc.localidade, sum(jogo.numcertas) as numcertas, sum(jogo.numerradas) as numerradas, sum(jogo.pontos) as pontos, count(jogo.pontos) as frequencia
+		from (select * from ${bdSAMD}.minutenew where (data between ? and ?)) jogo, 
+        (select * from ${bdAplicacoes}.Escolas where localidade in (select municipio from ${bdAplicacoes}.comunidades where codigo=?)) as esc
+        where esc.cod = jogo.escola Group By esc.localidade;`, args, function (err, res) {            
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    })  
+}
+
+Jogos.getTiposNiveisMinuteNewComunidade = async function(dataInicio, dataFim, niveis, tipos, comunidade){
+    var args = [dataInicio, dataFim, niveis, tipos, comunidade]
+    return new Promise(function(resolve, reject) {
+        sql.query(`select esc.localidade, sum(jogo.numcertas) as numcertas, sum(jogo.numerradas) as numerradas, sum(jogo.pontos) as pontos, count(jogo.pontos) as frequencia
+		from (select * from ${bdSAMD}.minutenew where (data between ? and ?) and nivel in (?) and op = ?) jogo, 
+        (select * from ${bdAplicacoes}.Escolas where localidade in (select municipio from ${bdAplicacoes}.comunidades where codigo=?)) as esc
+        where esc.cod = jogo.escola Group By esc.localidade;`, args, function (err, res) {            
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    })  
+}
+
+Jogos.getTiposMinuteNewComunidade = async function(dataInicio, dataFim, tipos, comunidade){
+    var args = [dataInicio, dataFim, tipos, comunidade]
+    return new Promise(function(resolve, reject) {
+        sql.query(`select esc.localidade, sum(jogo.numcertas) as numcertas, sum(jogo.numerradas) as numerradas, sum(jogo.pontos) as pontos, count(jogo.pontos) as frequencia
+		from (select * from ${bdSAMD}.minutenew where (data between ? and ?) and op = ?) jogo, 
+        (select * from ${bdAplicacoes}.Escolas where localidade in (select municipio from ${bdAplicacoes}.comunidades where codigo=?)) as esc
+        where esc.cod = jogo.escola Group By esc.localidade;`, args, function (err, res) {            
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    })  
+}
+
+Jogos.getNiveisMinuteNewComunidade = async function(dataInicio, dataFim, niveis, comunidade){
+    var args = [dataInicio, dataFim, niveis, comunidade]
+    return new Promise(function(resolve, reject) {
+        sql.query(`select esc.localidade, sum(jogo.numcertas) as numcertas, sum(jogo.numerradas) as numerradas, sum(jogo.pontos) as pontos, count(jogo.pontos) as frequencia
+		from (select * from ${bdSAMD}.minutenew where (data between ? and ?) and nivel in (?)) jogo, 
+        (select * from ${bdAplicacoes}.Escolas where localidade in (select municipio from ${bdAplicacoes}.comunidades where codigo=?)) as esc
+        where esc.cod = jogo.escola Group By esc.localidade;`, args, function (err, res) {            
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    })  
+}
+
 
 // por cada agrupamento de um municipio e todos os tipos e niveis do jogo minutenew
 Jogos.getTodosMinuteNewAgrupamentos = async function(municipio,dataInicio, dataFim){

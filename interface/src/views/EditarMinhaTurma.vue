@@ -6,96 +6,126 @@
             <v-card-title primary-title class="justify-center green--text">
                 Transferência de Alunos ({{turma.turma}})
             </v-card-title>
-                     
-           <v-layout row class="text-xs-center pa-lg-16" justify-center align-center >
-      <v-flex xs5>
-        <v-card class="pa-4">
-            <v-card-title primary-title class="justify-center">
-                Alunos da Turma {{turma.turma}}
-            </v-card-title>
-             <v-text-field
-                v-model="filtrar"
-                label="Filtrar"
-                prepend-icon="mdi-magnify"
-                color="#009263"
-                single-line
-                ></v-text-field>
-                <v-data-table
-                class="elevation-1"
-                v-model="selected"
-                :single-select="false"
-                show-select
-                :headers="header_alunos"
-                :items="alunosTurmaAtual"
-                :footer-props="footer_props"
-                :search="filtrar"
-                >
-                </v-data-table>
-        </v-card>
-      </v-flex>
-      <v-flex xs1>
-        <v-container v-if="turmaSel.length != 0">
-          <center>
-            <v-tooltip v-if="this.selected.length>0 && this.anoLetivoTurma1 <= this.anoLetivoTurma2" top>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  icon
-                  v-bind="attrs" 
-                  v-on="on"
-                >
-                <v-icon large color="#009263" @click="alteraTurma"> mdi-arrow-right-box </v-icon>
-                </v-btn>
-              </template>
-              <span>Irá transferir os alunos selecionados da turma {{turma.turma}} para a {{turma2}}</span>
-            </v-tooltip>
+            <center>
+              <v-btn v-if="!show" text @click="show=!show"><span>Mostrar Ajuda</span><v-icon color="#009263"> mdi-help-circle </v-icon> </v-btn>
+              <v-btn v-else text @click="show=!show">Esconder Ajuda</v-btn> 
             </center>
-          <br>
-          <center>
-            <v-tooltip v-if="this.selected2.length>0 && this.anoLetivoTurma2 <= this.anoLetivoTurma1" bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  icon
-                  v-bind="attrs" 
-                  v-on="on"
-                >
-                <v-icon  large color="#009263" @click="alteraTurma2"> mdi-arrow-left-box </v-icon>
-                </v-btn>
-              </template>
-              <span>Irá transferir os alunos selecionados da turma {{turma2}} para a {{turma.turma}}</span>
-            </v-tooltip>
-          </center>
-        </v-container>
-      </v-flex>
-      <v-flex xs5>
-        <v-card class="pa-4">
-        <v-card-title primary-title class="justify-center">
-                Alunos da Turma  <v-spacer/>  <v-combobox
-                id="turma"
-                v-model="turmaSel"
-                :items="turmas"
-                @change="onTurmaChange"
-            ></v-combobox>
-            </v-card-title>
-            <v-text-field
-                v-model="filtrar2"
-                label="Filtrar"
-                prepend-icon="mdi-magnify"
-                color="#009263"
-                single-line
-                ></v-text-field>
-                <v-data-table
-                class="elevation-1"
-                v-model="selected2"
-                :single-select="false"
-                show-select
-                :headers="header_alunos"
-                :items="alunosOutraTurma"
-                :footer-props="footer_props"
-                :search="filtrar2"
-                >
-                </v-data-table>
-        </v-card>        
-      </v-flex>
+            <v-slide-y-transition>
+                  <v-card v-show="show" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
+                    <v-row >
+                      <v-col cols="12">
+                        <span> 1. Na tabela da esquerda, é possível visualizar os alunos pertencentes à turma que selecionou para realizar transferências de alunos ({{turma.turma}}).
+                        </span>
+                      </v-col>
+                      <v-col cols="12">
+                      <span> 2. Inicialmente, a tabela da direita não possuí informação. Para tal, deverá escolher a turma sobre a qual deseja realizar transferências.</span>
+                      </v-col>
+                      <v-col cols="12">
+                      <span> 3. Realizado o passo anterior, poderá selecionar os alunos que pretende transferir de uma ou outra turma. </span> 
+                      </v-col>
+                      <v-col cols="12">
+                      <span> 4. Depois de selecionados os alunos pretendidos, caso deseje uma transferência da turma da esquerda para a turma da direita 
+                        aparecerá um <v-icon color="#009263">mdi-arrow-right-box</v-icon> e caso clique os alunos serão transferidos. Caso queira transferir da turma 
+                        da direita para a turma da esquerda e depois dos alunos estarem selecionados, poderá concluir a transferência clicando em 
+                        <v-icon color="#009263">mdi-arrow-left-box</v-icon>. </span> 
+                      </v-col>
+                      <v-col cols="12">
+                        <span> 5. Não é permitida a transferências de alunos de uma turma de um ano letivo superior para um ano letivo inferior. Por exemplo, não
+                          conseguirá transferir alunos de uma turma de 20/21 para uma turma de 19/20. 
+                        </span> 
+                      </v-col>
+                    </v-row>
+                  </v-card>
+            </v-slide-y-transition>         
+           <v-layout row class="text-xs-center pa-lg-16" justify-center >
+            <v-flex xs5>
+              <v-card class="pa-4">
+                  <v-card-title primary-title class="justify-center">
+                      Alunos da Turma {{turma.turma}}
+                  </v-card-title>
+                  <v-text-field
+                      v-model="filtrar"
+                      label="Filtrar"
+                      prepend-icon="mdi-magnify"
+                      color="#009263"
+                      single-line
+                      ></v-text-field>
+                      <v-data-table
+                      class="elevation-1"
+                      v-model="selected"
+                      :single-select="false"
+                      show-select
+                      :headers="header_alunos"
+                      :items="alunosTurmaAtual"
+                      :footer-props="footer_props"
+                      :search="filtrar"
+                      >
+                      </v-data-table>
+              </v-card>
+            </v-flex>
+            <v-flex xs1>
+              <v-container v-if="turmaSel.length != 0">
+                <center>
+                  <v-tooltip v-if="this.selected.length>0 && this.anoLetivoTurma1 <= this.anoLetivoTurma2" top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        icon
+                        v-bind="attrs" 
+                        v-on="on"
+                      >
+                      <v-icon large color="#009263" @click="alteraTurma"> mdi-arrow-right-box </v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Irá transferir os alunos selecionados da turma {{turma.turma}} para a {{turma2}}</span>
+                  </v-tooltip>
+                  </center>
+                <br>
+                <center>
+                  <v-tooltip v-if="this.selected2.length>0 && this.anoLetivoTurma2 <= this.anoLetivoTurma1" bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        icon
+                        v-bind="attrs" 
+                        v-on="on"
+                      >
+                      <v-icon  large color="#009263" @click="alteraTurma2"> mdi-arrow-left-box </v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Irá transferir os alunos selecionados da turma {{turma2}} para a {{turma.turma}}</span>
+                  </v-tooltip>
+                </center>
+              </v-container>
+            </v-flex>
+            <v-flex xs5>
+              <v-card class="pa-4">
+              <v-card-title primary-title class="justify-center">
+                      Alunos da Turma  <v-spacer/>  <v-combobox
+                      id="turma"
+                      v-model="turmaSel"
+                      :items="turmas"
+                      @change="onTurmaChange"
+                  ></v-combobox>
+                  </v-card-title>
+                  <v-text-field
+                      v-model="filtrar2"
+                      label="Filtrar"
+                      prepend-icon="mdi-magnify"
+                      color="#009263"
+                      single-line
+                      ></v-text-field>
+                      <v-data-table
+                      class="elevation-1"
+                      v-model="selected2"
+                      :single-select="false"
+                      show-select
+                      :headers="header_alunos"
+                      :items="alunosOutraTurma"
+                      :footer-props="footer_props"
+                      :search="filtrar2"
+                      >
+                      </v-data-table>
+              </v-card>        
+            </v-flex>
     </v-layout>
 
 
@@ -142,7 +172,7 @@ const anoLetivoAtual = require("@/config/hosts").anoAtual
         anoLetivoTurma2:"21",
         anoAtual: parseInt(anoLetivoAtual),
         anoLetivoTurma1:"21",
-        
+        show:false
       }
     },
     created: async function(){

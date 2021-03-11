@@ -7,7 +7,48 @@
                     <v-card-title primary-title class="justify-center green--text">
                         Monitorização de Apps por turmas do professor ({{this.codProf}})
                     </v-card-title>
-                        <center><v-btn v-if="items.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn></center>
+                    <center><v-btn v-if="items.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn></center>
+                    <center>
+                        <v-btn v-if="!show" text @click="show=!show"><span>Mostrar Ajuda</span><v-icon color="#009263"> mdi-help-circle </v-icon> </v-btn>
+                        <v-btn v-else text @click="show=!show">Esconder Ajuda</v-btn> 
+                    </center>
+                    <v-slide-y-transition>
+                      <v-card v-show="show" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
+                        <v-row class="justify-center">
+                          <v-col cols="12">
+                          <span> 1. Pode escolher uma das suas turmas através da seleção no campo "Turma". </span>
+                          </v-col>
+                          <v-col cols="12">
+                            <span> 2. Escolher a aplicação de conteúdo sobre o qual deseja visualizar dados estatísticos de cada um dos seus alunos que a fez. </span>
+                          </v-col>
+                          <v-col cols="12">
+                            <span> 3. Pode alterar o intervalo de tempo pretendido, selecionando uma data inicial diferente e/ou uma data final diferente. </span> 
+                          </v-col>
+                          <v-col cols="12">
+                            <span> 4. Caso pretenda uma monitorização sobre um ano letivo específico, pode selecionar o ano letivo pretendido. </span> 
+                          </v-col>
+                          <v-col cols="12">
+                            <span> 5. Tendo os campos referidos escolhidos e tendo os dados apresentados, poderá exportar para pdf através do botão 
+                                <v-btn small class="white--text" style="background-color: #009263;"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn>. 
+                            </span> 
+                          </v-col>
+                          <v-col cols="9">
+                              <v-card class="mx-auto" color="grey lighten-4">
+                                  <center> <h3 class="green--text"> Legenda da Tabela: </h3> </center>
+                                  <ul> 
+                                      <li> <span> <b>N.º</b> - Número do aluno; </span> </li>
+                                      <li> <span> <b>NTRC</b> - Número de tarefas resolvidas corretamente; </span> </li>
+                                      <li> <span> <b>NTR</b> - Número de tarefas resolvidas; </span> </li>
+                                      <li> <span> <b>Acerto(%)</b> - Percentagem de acerto (NTRC/NTR); </span> </li>
+                                      <li> <span> <b>DP</b> - Dentro do período escolar; </span> </li>
+                                      <li> <span> <b>FP</b> - Fora do período escolar; </span> </li>
+                                      <li> <span> <b>#</b> - Frequência. </span> </li>
+                                  </ul>
+                              </v-card>
+                          </v-col>
+                        </v-row>
+                      </v-card>
+                    </v-slide-y-transition>
                         <br v-if="items.length>0">
                         <center>
                         <v-container style="width:80%">
@@ -38,10 +79,10 @@
                             ></v-combobox>
                             <v-layout row class="text-xs-center" justify-center align-center>
                                 <v-col cols="12" xs="12" sm="12" md="12" lg="6" xl="6">
-                                <v-text-field @change="onDataInChange" prepend-icon="mdi-calendar" v-model="dataInicio" label="Data Inicio" type="date" :format="format" required></v-text-field>
+                                <v-text-field @change="onDataInChange" v-model="dataInicio" label="Data Inicio" type="date" :format="format" required></v-text-field>
                                 </v-col>
                                 <v-col cols="12" xs="12" sm="12" md="12" lg="6" xl="6">
-                                    <v-text-field @change="onDataFimChange" prepend-icon="mdi-calendar" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
+                                    <v-text-field @change="onDataFimChange" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
                                 </v-col>
                             </v-layout>
                         </v-card>
@@ -113,7 +154,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         apps:[],
         appsInfo:[],
         headers:[
-            {text: "Nº", value: 'numero', class: 'subtitle-1'},
+            {text: "N.º", value: 'numero', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
             {text: "NTRC", value: 'ncertas', class: 'subtitle-1'},
             {text: "NTR", value: 'ntotal', class: 'subtitle-1'},
@@ -126,6 +167,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         codProf:"",
         turmas:[],
         turmaSel:"",
+        show: false,
       }
     },
     created: async function(){
@@ -274,7 +316,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         total[4] = ((total[2]/total[3]) * 100).toFixed(2)
         listaRes.push(total)
         doc.autoTable({
-            head: [['Nº', "Nome", 'NTRC', "NTR", "Acerto(%)", "DP", "FP", "#"]],
+            head: [['N.º', "Nome", 'NTRC', "NTR", "Acerto(%)", "DP", "FP", "#"]],
             body: listaRes,
             headStyles: { fillColor: [0, 146, 99] },
             margin:{top: 75, bottom: 30},

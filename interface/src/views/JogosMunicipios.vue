@@ -18,14 +18,23 @@
                                 v-model="jogo"
                                 label="Jogo"
                                 color="green"
-                                :items="jogos"
+                                :items="jogosInfo"
+                                item-text="jogo"
                                 @change="onJogoChange"
-                                @click:close="console.log('fechei yoo')"
+                            ></v-combobox>
+                            <v-combobox
+                                id="comunidades"
+                                v-model="comunidade"
+                                label="Comunidade"
+                                color="green"
+                                item-text="nome"
+                                :items="comunidades"
+                                @change="onComunidadeChange"
                             ></v-combobox>
                             <v-combobox
                                 id="tiposCalcRapid"
                                 chips
-                                v-if="jogo=='Calcrapid'"
+                                v-if="jogo && jogo.jogo=='Calcrapid'"
                                 v-model="tiposCalc"
                                 label="Tipo de Operação"
                                 color="green"
@@ -36,7 +45,7 @@
                             <v-combobox
                                 id="niveisCalculus"
                                 chips
-                                v-if="jogo=='Calculus'"
+                                v-if="jogo && jogo.jogo=='Calculus'"
                                 v-model="niveisSel"
                                 label="Nível"
                                 color="green"
@@ -47,7 +56,7 @@
                             <v-combobox
                                 id="tiposCalculus"
                                 chips
-                                v-if="jogo=='Calculus'"
+                                v-if="jogo && jogo.jogo=='Calculus'"
                                 v-model="tiposCalculusSel"
                                 label="Tipo de Operações"
                                 color="green"
@@ -109,9 +118,7 @@
 <script>
 import axios from "axios"
 import jsPDF from 'jspdf' 
-import domtoimage from "dom-to-image";
 import 'jspdf-autotable'
-import html2canvas from "html2canvas";
 const h = require("@/config/hosts").hostAPI
 const hostJogos = require("@/config/hosts").hostJogos
 const hypatiaImg = require("@/assets/hypatiamat.png")
@@ -122,15 +129,11 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
     data(){
       return {
         token: "",
-        dialogEstatisticas: false,
-        dialogGrafico: false,
         jogo:"",
         filtrar:"",
         dataInicio: "2020-09-01",
         dataFim: "2021-01-22",
-        turmaSel: "",
         utilizador : {},
-        alunos:[],
         footer_props: {
             "items-per-page-text": "Mostrar",
             "items-per-page-options": [50, 100, 200, -1],
@@ -139,7 +142,6 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         filtrar : "",
         anosLetivos: anosletivos2,
         anoLetivo: anoletivoAtual,
-        jogos:["Todos"],
         items:[],
         headersTodos:[
             {text: "Municipio", value: 'localidade', class: 'subtitle-1'},
@@ -181,26 +183,38 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         tiposCalculus:["0 - Todas as combinações", "1 – Adição", "2 – Subtração", "3 - Multiplicação", "4 - Divisão"],
         niveisSel:["1","2","3","4","5"],
         tiposCalculusSel:["0 - Todas as combinações"],
-        tiposCalculusSelAnterior:["0 - Todas as combinações"]
+        tiposCalculusSelAnterior:["0 - Todas as combinações"],
+        comunidades:[{nome:"Nenhuma"}],
+        comunidade:{nome:"Nenhuma"}
       }
     },
     created: async function(){
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
         
+        this.parseComunidades()
+        
+
         var response2 = await axios.get(hostJogos +"?token=" + this.token)
-        this.jogosInfo = response2.data
-        for(var i = 0; i < this.jogosInfo.length; i++){
-            this.jogos.push(this.jogosInfo[i].jogo)
+        this.jogosInfo = [{jogo: "Todos"}]
+        for(var i = 0; i < response2.data.length; i++){
+            this.jogosInfo.push(response2.data[i])
         }
+
         this.onAnoChange()
     },
     methods: {
       format(value, event) {
         return moment(value).format('YYYY-MM-DD')
       },
+      parseComunidades: async function(){
+        var response = await axios.get(h + "comunidades/?token=" +this.token)
+        this.comunidades = [{nome:"Nenhuma"}]
+        for(var i = 0; i < response.data.length; i++){
+            this.comunidades.push(response.data[i])
+        }
+      },
       onTipoCalcChange: async function(item){
-          console.log(this.tiposCalc)
           if(this.jogo && this.jogo != "" && this.dataFim != "" && this.dataInicio != "" && this.tiposCalc.length > 0){
               this.atualizaCalcRapid()
           }
@@ -214,8 +228,8 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           }
       },
       onJogoChange: async function(item){
-          if(this.jogo && this.jogo != ""){
-              this.atualizaConteudo()
+          if(this.jogo && this.jogo.jogo != ""){
+            this.atualizaConteudo()
           }
       },
       onDataInChange: async function(item){
@@ -228,28 +242,29 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
               this.atualizaConteudo()
           }
       },
+      onComunidadeChange: async function(item){
+          if(this.comunidade && this.comunidades.find(e => e.nome == this.comunidade.nome)){
+              this.atualizaConteudo()
+          }
+      },
       onNivelChange: async function(item){
           if(this.tiposCalculusSel.find(e => e == "0 - Todas as combinações")){
               if(this.niveisSel.length < this.niveisCalculus.length){
                   if(this.niveisSel.length > 0){
-                      console.log("Por níveis")
-                      this.atualizaMinuteNewNiveis()
+                     this.atualizaMinuteNewNiveis()
                   }
               }
               else{
-                  console.log("Todos os registos")
                   this.atualizaMinuteNew()
               }
           }
           else{
               if(this.niveisSel.length < this.niveisCalculus.length){
                   if(this.niveisSel.length > 0){
-                      console.log("Por níveis e tipos")
                       this.atualizaMinuteNewTiposNiveis()
                   }
               }
               else{
-                  console.log("Por tipos")
                   this.atualizaMinuteNewTipos()
               }
           }
@@ -259,11 +274,9 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           if(todos && !this.tiposCalculusSelAnterior.find(e => e == "0 - Todas as combinações")){
                 this.tiposCalculusSel = ["0 - Todas as combinações"]
                     if(this.niveisSel.length < this.niveisCalculus.length){
-                        console.log("Por niveis")
                         this.atualizaMinuteNewNiveis()
                     }
                     else{
-                        console.log("Todos os registos")
                         this.atualizaMinuteNew()
                     }       
         }
@@ -273,11 +286,9 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
                 this.tiposCalculusSel.splice(index, index+1)
             }
             if(this.niveisSel.length < this.niveisCalculus.length){
-                console.log("Por niveis e tipos")
                 this.atualizaMinuteNewTiposNiveis()
             }
             else{
-                console.log("Por tipos")
                 this.atualizaMinuteNewTipos()
             }
         }
@@ -303,15 +314,29 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           this.headers = this.headers_calcrapid
           if(this.tiposCalc.length < this.tiposCalcRapid.length){
               var tipos = await this.parseTiposCalcRapid()
-              var response = await axios.get(hostJogos + "calcrapid/municipios/"
-                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                    + "&tipo="+ tipos + "&token=" + this.token)
+              if(!this.comunidade || this.comunidade.nome == "Nenhuma"){
+                    var response = await axios.get(hostJogos + "calcrapid/municipios/"
+                                                        + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                        + "&tipo="+ tipos + "&token=" + this.token)
+              }
+              else {
+                    var response = await axios.get(hostJogos + "calcrapid/comunidades/" + this.comunidade.codigo
+                                                        + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                        + "&tipo="+ tipos + "&token=" + this.token)
+              }
               this.items = response.data
           }
           else{
-            var response = await axios.get(hostJogos + "calcrapid/municipios/"
-                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                    +  "&token=" + this.token)
+              if(!this.comunidade || this.comunidade.nome == "Nenhuma"){
+                    var response = await axios.get(hostJogos + "calcrapid/municipios/"
+                                                        + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                        +  "&token=" + this.token)
+              }
+              else{
+                    var response = await axios.get(hostJogos + "calcrapid/comunidades/" + this.comunidade.codigo
+                                                        + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                        +  "&token=" + this.token)
+              }
             this.items = response.data
           }
           return true
@@ -319,9 +344,16 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       atualizaMinuteNew: async function(){
           this.loading = true
           this.headers = this.headers_minutenew
-          var response = await axios.get(hostJogos + "minutenew/municipios/"
+          if(!this.comunidade || this.comunidade.nome == "Nenhuma"){
+                var response = await axios.get(hostJogos + "minutenew/municipios/"
                                                     + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
                                                     +  "&token=" + this.token)
+          }
+          else{
+                var response = await axios.get(hostJogos + "minutenew/comunidades/" + this.comunidade.codigo
+                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                    +  "&token=" + this.token)
+          }
           this.items = response.data
           this.loading = false
           return true
@@ -330,9 +362,16 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           this.loading = true
           var tipos = await this.parseTiposCalculus()
           this.headers = this.headers_minutenew
-          var response = await axios.get(hostJogos + "minutenew/municipios/"
+          if(!this.comunidade || this.comunidade.nome == "Nenhuma"){
+                var response = await axios.get(hostJogos + "minutenew/municipios/"
                                                     + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
                                                     + "&tipos=" + tipos +"&token=" + this.token)
+          }
+          else{
+                var response = await axios.get(hostJogos + "minutenew/comunidades/" + this.comunidade.codigo
+                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                    + "&tipos=" + tipos +"&token=" + this.token)
+          }
           this.items = response.data
           this.loading = false
           return true
@@ -340,9 +379,16 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       atualizaMinuteNewNiveis: async function(){
           this.loading = true
           this.headers = this.headers_minutenew
-          var response = await axios.get(hostJogos + "minutenew/municipios/"
+          if(!this.comunidade || this.comunidade.nome == "Nenhuma"){
+                var response = await axios.get(hostJogos + "minutenew/municipios/"
                                                     + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
                                                     + "&niveis=" + this.niveisSel +"&token=" + this.token)
+          }
+          else{
+                var response = await axios.get(hostJogos + "minutenew/comunidades/" + this.comunidade.codigo
+                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                    + "&niveis=" + this.niveisSel +"&token=" + this.token)
+          }
           this.items = response.data
           this.loading = false
           return true
@@ -351,37 +397,59 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           this.loading = true
           var tipos = await this.parseTiposCalculus()
           this.headers = this.headers_minutenew
-          var response = await axios.get(hostJogos + "minutenew/municipios/"
+          if(!this.comunidade || this.comunidade.nome == "Nenhuma"){
+                var response = await axios.get(hostJogos + "minutenew/municipios/"
                                                     + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
                                                     +  "&niveis=" + this.niveisSel + "&tipos=" + tipos + "&token=" + this.token)
+          }
+          else{
+                var response = await axios.get(hostJogos + "minutenew/comunidades/" + this.comunidade.codigo
+                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                    +  "&niveis=" + this.niveisSel + "&tipos=" + tipos + "&token=" + this.token)
+          }
           this.items = response.data
           this.loading = false
           return true
       },
+      atualizaConteudoTodos: async function(){
+          this.headers = this.headersTodos
+          if(!this.comunidade || this.comunidade.nome == "Nenhuma"){
+                var response = await axios.get(h + "escolas/jogos/" + this.jogo.jogo + "/municipios/"
+                                           + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                            +  "&token=" + this.token)
+          }
+          else{
+                var response = await axios.get(hostJogos + "todos/comunidades/" + this.comunidade.codigo + "?dataInicio=" 
+                                                + this.dataInicio + "&dataFim=" + this.dataFim + "&token=" + this.token)
+          }
+          this.items = response.data
+          return true
+      },
+      atualizaJogo: async function(){
+          this.headers = this.headersJogo
+          if(!this.comunidade || this.comunidade.nome == "Nenhuma"){
+              var response = await axios.get(h + "escolas/jogos/" + this.jogo.jogotable + "/municipios/"
+                                                + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                + "&jogoTipo=" + this.jogo.tipo + "&token=" + this.token)
+          }
+          else{
+              var response = await axios.get(hostJogos + this.jogo.jogotable + "/comunidades/" + this.comunidade.codigo
+                                                + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                + "&tipo=" + this.jogo.tipo + "&token=" + this.token)
+          }
+          this.items = response.data
+          return true
+      },
       atualizaConteudo: async function(){
-            if(this.jogo && this.jogo != "" && this.dataFim != "" && this.dataInicio != ""){
+            if(this.jogo && this.jogo.jogo != "" && this.dataFim != "" && this.dataInicio != ""){
                 this.loading = true
-                if(this.jogo == "Todos"){
-                    this.headers = this.headersTodos
-                    var response = await axios.get(h + "escolas/jogos/" + this.jogo + "/municipios/"
-                                                + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                +  "&token=" + this.token)
-                    this.items = response.data
+                if(this.jogo.jogo == "Todos"){
+                    await this.atualizaConteudoTodos()
                 }
-                else if(this.jogo == "Calcrapid") await this.atualizaCalcRapid()
-                else if(this.jogo == "Calculus") await this.onNivelChange()
-                else{
-                    this.headers = this.headersJogo
-                    var aux = this.jogosInfo.find(element => element.jogo == this.jogo)
-                    var jogoTipo = aux.tipo
-                    var jogoTable = aux.jogotable
-                    // municipios
-                    var response = await axios.get(h + "escolas/jogos/" + jogoTable + "/municipios/"
-                                                + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                + "&jogoTipo=" + jogoTipo + "&token=" + this.token)
-                
-                    this.items = response.data
-              
+                else if(this.jogo.jogo == "Calcrapid") await this.atualizaCalcRapid()
+                else if(this.jogo.jogo == "Calculus") await this.onNivelChange()
+                else{                    
+                   await this.atualizaJogo()
                 }
               this.loading = false
           } 
@@ -389,16 +457,15 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       goToEscolas: function(item){
         var params = {municipio: item.localidade, jogoAtual: this.jogo, 
                       anoLetivo: this.anoLetivo, dataInicio: this.dataInicio, dataFim: this.dataFim}
-        if(this.jogo == 'Calcrapid'){
+        if(this.jogo.jogo == 'Calcrapid'){
             if(this.tiposCalc.length > 0 ) params.tiposCalc = this.tiposCalc     
         }
-        if(this.jogo == 'Calculus'){
+        if(this.jogo.jogo == 'Calculus'){
             if(this.tiposCalculusSel.length > 0 && this.niveisSel.length > 0){
                 params.tiposCalculusSel = this.tiposCalculusSel
                 params.niveisSel = this.niveisSel 
             }
         }
-
         this.$router.push({name: 'Jogos Escolas', params:params})
 
       },
@@ -407,12 +474,12 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         })
         var xImage = doc.internal.pageSize.getWidth() / 4
         var ytotal = 0
-        var pdfName = this.jogo + "-Municipios.pdf"
+        var pdfName = this.jogo.jogo + "-Municipios.pdf"
         doc.addImage(hypatiaImg, 'PNG', xImage, 4);
         //doc.text("Jogo:")
         //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
         doc.setFontSize(11)
-        doc.text("Jogo: " + this.jogo, 15, 50)
+        doc.text("Jogo: " + this.jogo.jogo, 15, 50)
         doc.text("Período: " + this.dataInicio + " a " + this.dataFim, 130, 50)
         doc.text("Tipos de Operações:", 15, 56)
         var ytotal1 = 56
@@ -430,7 +497,6 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         else ytotal = ytotal1
         var listaRes = []
         var header = [['Município', 'N.Certas', "N.Erradas", "T.Pontos", "#"]]
-        var jogo = this.jogo
         
         //var auxTotal = ['Todos', -1, this.items[0].min, 0, 0]
         for(var i = 0; i<this.items.length; i++){
@@ -453,7 +519,6 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
                     data.settings.margin.top = 10;
                     ytotal = doc.internal.pageSize.getHeight()
                     doc.setFontSize(8)
-                    //doc.setFontType('bold'
                     doc.text("Legenda:" , 10, ytotal -22)
                     doc.text("N.Certas - Total de Operações certas", 10, ytotal-18)
                     doc.text("N.Erradas - Total de Operações erradas", 10, ytotal-14)
@@ -470,12 +535,12 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         })
         var xImage = doc.internal.pageSize.getWidth() / 4
         var ytotal = 0
-        var pdfName = this.jogo + "-Municipios.pdf"
+        var pdfName = this.jogo.jogo + "-Municipios.pdf"
         doc.addImage(hypatiaImg, 'PNG', xImage, 4);
         //doc.text("Jogo:")
         //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
         doc.setFontSize(11)
-        doc.text("Jogo: " + this.jogo, 15, 50)
+        doc.text("Jogo: " + this.jogo.jogo, 15, 50)
         doc.text("Período: " + this.dataInicio + " a " + this.dataFim, 130, 50)
         doc.text("Tipos de Operações realizadas:", 15, 56)
         ytotal = 56;
@@ -486,7 +551,6 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         
         var listaRes = []
         var header = [['Município', 'P.Certa', "P.Errada", "#Operações", "#"]]
-        var jogo = this.jogo
         
         //var auxTotal = ['Todos', -1, this.items[0].min, 0, 0]
         for(var i = 0; i<this.items.length; i++){
@@ -522,22 +586,22 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         doc.save(pdfName)
       },
       exportPDF: async function(){
-        if(this.jogo == "Calcrapid") {this.exportPDFCalcRapid(); return;}
-        else if(this.jogo == "Calculus") {this.exportPDFMinuteNew(); return;}
+        if(this.jogo.jogo == "Calcrapid") {this.exportPDFCalcRapid(); return;}
+        else if(this.jogo.jogo == "Calculus") {this.exportPDFMinuteNew(); return;}
         var doc = new jsPDF({
         })
         var xImage = doc.internal.pageSize.getWidth() / 4
         var ytotal = 0
-        var pdfName = this.jogo + "-Municipios.pdf"
+        var pdfName = this.jogo.jogo + "-Municipios.pdf"
         doc.addImage(hypatiaImg, 'PNG', xImage, 4);
         //doc.text("Jogo:")
         //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
         doc.setFontSize(11)
-        doc.text("Jogo: " + this.jogo, 15, 50)
+        doc.text("Jogo: " + this.jogo.jogo, 15, 50)
         doc.text("Período: " + this.dataInicio + " a " + this.dataFim, 130, 50)
         var listaRes = []
         var header = [['Município', 'Max', "Min", "Média", "#"]]
-        var jogo = this.jogo
+        var jogo = this.jogo.jogo
         if(jogo == "Todos"){
             header = [['Município', "#"]]
             var total = 0

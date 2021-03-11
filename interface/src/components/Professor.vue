@@ -12,15 +12,17 @@
             <v-card v-show="show" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
               <v-row >
                 <v-col cols="12">
-                <span> 1. Se desejar visualizar as suas turmas antigas, pode fazê-lo através da seleção de um ano letivo diferente ou de todos (<v-icon>mdi-counter</v-icon>). </span>
+                  <span> 1. Pode visualizar os seus dados pessoais, como o seu <b>Nome</b>, o seu <b>Agrupamento de Escolas</b>, o seu <b>Tipo de Utilizador</b>,
+                  o seu Email e também até quando a sua conta é válida (<b> Validade </b>). </span>
                 </v-col>
                 <v-col cols="12">
-                <span> 2. Caso deseje visualizar os alunos pertencentes a uma turma e eventualmente editar as informações dos mesmos, clique em  <v-icon> mdi-eye </v-icon>
-                da respetiva turma. </span>
+                  <span> 2. Caso deseje alterar alguns dos seus dados pessoais, pode fazê-lo através do clique no botão 
+                  <v-btn small text class="white--text" style="background-color: #009263;" > <span>Editar dados pessoais</span> </v-btn>. </span>
                 </v-col>
                 <v-col cols="12">
-                <span> 3. Caso deseje efetuar transferências de alunos no qual envolvam uma determinada turma, clicando em 
-                  <v-icon> mdi-cog-transfer-outline </v-icon> da respetiva turma. </span> 
+                  <span> 3. Caso deseje alterar a sua password, clique em 
+                  <v-btn small class="white--text" style="background-color: #009263;"> Alterar password </v-btn>.
+                  </span>
                 </v-col>
               </v-row>
             </v-card>
@@ -36,7 +38,7 @@
           <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
             <center>
            <v-list-item-avatar class="elevation-6" color="#009263" size="120">
-                <v-icon size="80" color="white">mdi-account</v-icon>             
+                <v-icon size="80" color="white">mdi-teach</v-icon>             
            </v-list-item-avatar>
             </center>
           </v-col>
@@ -68,9 +70,6 @@
           </v-col>
           <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
           <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true"> Alterar password </v-btn></center>
-          </v-col>
-          <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
-          <center><v-btn v-if="type!=50" class="white--text" style="background-color: #009263;" @click="verTurmas()"> Ver Minhas Turmas </v-btn></center>
           </v-col>
         </v-row>
           

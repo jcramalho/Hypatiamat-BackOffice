@@ -25,14 +25,21 @@
                       <v-card v-show="show" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
                         <v-row >
                           <v-col cols="12">
-                          <span> 1. Se desejar visualizar as suas turmas antigas, pode fazê-lo através da seleção de um ano letivo diferente ou de todos (<v-icon>mdi-counter</v-icon>). </span>
+                            <span> 1. Caso não tenha ultrapassado o limite de turmas deste ano letivo ({{limiteTurmas}}), pode criar uma turma no botão 
+                              <v-btn small text class="white--text" style="background-color: #009263;"> 
+                                <v-icon> mdi-book-plus </v-icon> Criar Turma 
+                             </v-btn> 
+                            </span>
                           </v-col>
                           <v-col cols="12">
-                          <span> 2. Caso queira o passaporte de uma turma, basta clicar em <v-icon> mdi-passport </v-icon> da respetiva turma. 
-                          Além disso, caso sejam credenciais de alunos fornecidas pelo Hypatiamat, poderá selecionar a opção do passaporte vir com a password do aluno. </span>
+                          <span> 2. Se desejar visualizar as suas turmas antigas, pode fazê-lo através da seleção de um ano letivo diferente ou de todos (<v-icon>mdi-counter</v-icon>). </span>
                           </v-col>
                           <v-col cols="12">
-                          <span> 3. Caso deseje eliminar uma turma e esta não possua alunos ou jogos que foram jogados por antigos alunos da turma, 
+                          <span> 3. Caso queira o passaporte de uma turma, basta clicar em <v-icon> mdi-passport </v-icon> da respetiva turma. 
+                          Além disso, caso sejam credenciais de alunos fornecidas pelo Hypatiamat, poderá selecionar a opção do passaporte ter a password de cada aluno. </span>
+                          </v-col>
+                          <v-col cols="12">
+                          <span> 4. Caso deseje eliminar uma turma e esta não possua alunos ou jogos que foram jogados por antigos alunos da turma, 
                             também o poderá fazer, clicando em <v-icon> mdi-delete </v-icon> da respetiva turma. </span> 
                           </v-col>
                         </v-row>

@@ -5,8 +5,37 @@
             <v-card class="pa-5">
                 <v-container>
                     <v-card-title primary-title class="justify-center green--text">
-                        Monitorização de Campeonatos por Turmas ({{this.codprofessor}} - {{this.escola}} - {{this.municipio}})
+                        Monitorização de Campeonatos por Turmas ({{this.codprofessor}})
                     </v-card-title>
+                    <center>
+                        <v-btn v-if="!show" text @click="show=!show"><span>Mostrar Ajuda</span><v-icon color="#009263"> mdi-help-circle </v-icon> </v-btn>
+                        <v-btn v-else text @click="show=!show">Esconder Ajuda</v-btn> 
+                    </center>
+                    <v-slide-y-transition>
+                        <v-card v-show="show" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
+                            <v-row class="justify-center">
+                                <v-col cols="12">
+                                    <span> 1. Selecione o campeonato do qual pretende averiguar o desempenho dos seus alunos através do campo "Campeonato".
+                                    </span>
+                                </v-col>
+                                <v-col cols="12">
+                                <span> 2. Selecione a turma sobre a qual quer ver o desempenho no campeonato.</span>
+                                </v-col>
+                                <v-col cols="12">
+                                <span> 3. Estando os dois primeiros passos realizados, poderá visualizar os dados de cada aluno da turma inscrito no campeonato. </span> 
+                                </v-col>
+                                <v-col cols="9">
+                                    <v-card class="mx-auto" color="grey lighten-4">
+                                        <center> <h3 class="green--text"> Legenda da Tabela: </h3> </center>
+                                        <ul> 
+                                            <li> <span> <b>Pontuação</b> - Melhor pontuação obtida pelo aluno no campeonato. </span> </li>
+                                            <li> <span> <b>#Jogos</b> - Nº de vezes que o aluno jogou no campeonato. </span> </li>
+                                        </ul>
+                                    </v-card>
+                                </v-col>
+                            </v-row>
+                        </v-card>
+                    </v-slide-y-transition>
                         <center><v-btn v-if="items.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn></center>
                         <br v-if="items.length>0">
                         <center>
@@ -109,7 +138,8 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         estastisticasMunicipio: undefined,
         municipio:"",
         turmaSel: "",
-        turmas:[]
+        turmas:[],
+        show:false
       }
     },
     created: async function(){

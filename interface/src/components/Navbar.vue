@@ -137,6 +137,7 @@ export default {
         { title: 'Monitorização de Apps', icon: 'mdi-apps', href:"/apps/" + utilizador.codigo},
         { title: 'Ranking Jogos', icon: 'mdi-podium', href:"/classificacoes/jogos"},
         { title: 'Ranking Apps', icon: 'mdi-podium', href:"/classificacoes/apps"},
+        { title: 'Campeonatos', icon: 'mdi-trophy', href:"/campeonatos/professores/" + utilizador.codigo},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }

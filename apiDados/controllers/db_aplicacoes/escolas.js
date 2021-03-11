@@ -180,10 +180,11 @@ Escola.getAllJogosMunicipios = async function(dataInicio, dataFim){
 
 Escola.getJogosEscolas = async function(jogoTable, jogoTipo, dataInicio, dataFim, municipio){
     return new Promise(function(resolve, reject) {
-        var args = [jogoTipo, municipio, dataInicio, dataFim]
+        var args = [jogoTipo, dataInicio, dataFim, municipio]
         sql.query(`SELECT esc.cod, esc.nome, ROUND(min(jogo.pontuacao),0) as min, Round(max(jogo.pontuacao), 0) as max, Round(AVG(jogo.pontuacao), 0) as media, count(jogo.pontuacao) as number 
-		FROM ${bdSAMD}.${jogoTable} jogo, ${bdAplicacoes}.Escolas esc 
-        WHERE jogo.turma!='99' AND jogo.tipo=? AND jogo.idescola=esc.cod and esc.localidade = ? and (jogo.data BETWEEN ? and ?) Group by jogo.idescola Order by number DESC;`, args, function (err, res) {
+		FROM (select * from ${bdSAMD}.${jogoTable} where tipo=? and (data BETWEEN ? and ?)) jogo, 
+        (select * from ${bdAplicacoes}.Escolas where localidade=?) esc 
+        WHERE jogo.idescola=esc.cod Group by jogo.idescola Order by number DESC;`, args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
                     reject(err);

@@ -146,7 +146,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             {text: "Posição (Turma)", value: 'posTurma', class: 'subtitle-1'},
             {text: "Posição (Agr. Escolas)", value: 'posEscola', class: 'subtitle-1'},
             {text: "Posição (Hypatia)", value: 'posHypatia', class: 'subtitle-1'},
-            {text: "#Pontos", value: 'total', class: 'subtitle-1'},
+            {text: "Pontos", value: 'total', class: 'subtitle-1'},
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",

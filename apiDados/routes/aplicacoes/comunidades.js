@@ -13,7 +13,7 @@ router.get('/', passport.authenticate('jwt', {session: false}), verifyToken.veri
 });
 
 
-router.get('/:codigo', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
+router.get('/:codigo', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     Comunidades.getMunicipiosFromComunidade(req.params.codigo)
                .then(dados => res.jsonp(dados))
                .catch(erro => res.status(500).jsonp(erro))

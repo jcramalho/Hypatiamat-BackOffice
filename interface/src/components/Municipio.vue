@@ -11,7 +11,7 @@
             <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
             <center>
            <v-list-item-avatar class="elevation-6" color="#009263" size="120">
-                <v-icon size="80" color="white">mdi-account</v-icon>             
+                <v-icon size="80" color="white">mdi-city</v-icon>             
            </v-list-item-avatar>
             </center>
           </v-col>

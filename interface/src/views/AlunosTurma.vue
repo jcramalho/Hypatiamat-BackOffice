@@ -7,6 +7,26 @@
                 <v-card-title primary-title class="justify-center green--text">
                     Alunos da Turma {{turma.turma}}
                 </v-card-title>
+                <center>
+                  <v-btn v-if="!show" text @click="show=!show"><span>Mostrar Ajuda</span><v-icon color="#009263"> mdi-help-circle </v-icon> </v-btn>
+                  <v-btn v-else text @click="show=!show">Esconder Ajuda</v-btn> 
+                </center>
+                <v-slide-y-transition>
+                      <v-card v-show="show" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
+                        <v-row >
+                          <v-col cols="12">
+                            <span> 1. Na tabela, é possível visualizar os alunos pertencentes à turma, assim como algumas das suas informações.
+                            </span>
+                          </v-col>
+                          <v-col cols="12">
+                          <span> 2. Caso algum aluno pertença agora a uma turma diferente, mas tenha pertencido à turma, irá possuir uma cor diferente. </span>
+                          </v-col>
+                          <v-col cols="12">
+                          <span> 3. Caso pretenda editar as informações de um aluno ou a sua password, clique em <v-icon>mdi-pencil</v-icon> do aluno pretendido. </span> 
+                          </v-col>
+                        </v-row>
+                      </v-card>
+                </v-slide-y-transition>
                 <v-text-field
                     v-model="filtrar"
                     label="Filtrar"
@@ -94,6 +114,7 @@ const h = require("@/config/hosts").hostAPI
         utilizador:{},
         dialogEditar: false,
         idEditarAluno:-1,
+        show:false
       }
     },
     created: async function(){
