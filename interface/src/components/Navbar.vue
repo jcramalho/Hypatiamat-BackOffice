@@ -107,7 +107,7 @@ export default {
     this.nomeUtilizador = utilizador.nome
     this.$emit("miniEvent", this.mini)
     if(utilizador.type == 50){
-      // Admin    
+      // Admin   
       this.items = [
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
         { title: 'Quarentena', icon: 'mdi-account-clock',href:"/pendentes" },
@@ -118,6 +118,8 @@ export default {
         { title: 'Agrupamentos', icon: 'mdi-school', href:"/escolas" },
         { title: 'Gestão de Turmas', icon: 'mdi-book-account', href:"/turmas" },
         { title: 'Comunidades', icon: 'mdi-google-circles-communities', href:"/comunidades" },
+        { title: 'Gestão de Campeonatos', icon: 'mdi-table-edit', href:"/gestao/campeonatos"},
+        { title: 'Gestão de Novidades', icon: 'mdi-newspaper', href:"/novidades" },
         { title: 'Monitorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/municipios"},
         { title: 'Monitorização de Apps', icon: 'mdi-apps', href:"/apps/municipios"},
         { title: 'Ranking Jogos', icon: 'mdi-podium', href:"/classificacoes/jogos/admin"},

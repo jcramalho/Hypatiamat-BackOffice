@@ -126,21 +126,21 @@ router.get('/distritos/:distrito', passport.authenticate('jwt', {session: false}
                  res.jsonp(dados)
                })
                .catch(erro => res.status(500).jsonp(erro))
-  });
+});
 
 
 
 
-  // Todas as escolas de uma localidade
+// Todas as escolas de uma localidade
 router.get('/localidades/:municipio', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdminEMunicipio(), function(req, res, next) {
     Escolas.getEscolasByLocalidade(req.params.municipio)
                .then(dados =>{
                  res.jsonp(dados)
                })
                .catch(erro => res.status(500).jsonp(erro))
-  });
+});
 
-  // Estatisticas globais de uma localidade (por agrupamento ou totalidade)
+// Estatisticas globais de uma localidade (por agrupamento ou totalidade)
 router.get('/localidades/:municipio/estatisticas',passport.authenticate('jwt', {session: false}), verifyToken.verifyAdminEMunicipio(), function(req, res, next) {
   var ano = req.query.ano
   if(ano) var anoletivo = ano + "/" + ((parseInt(ano) + 1))
@@ -163,51 +163,6 @@ router.get('/localidades/:municipio/estatisticas',passport.authenticate('jwt', {
   }
 });
 
-  // Pontuações de jogos por municipio
-  router.get('/jogos/:jogo/municipios', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
-    var dataInicio = req.query.dataInicio
-    var dataFim = req.query.dataFim
-    var jogoTipo = req.query.jogoTipo
-    var jogoTable = req.params.jogo
-    if(jogoTable == "Todos"){
-      Escolas.getAllJogosMunicipios(dataInicio, dataFim)
-                .then(dados =>{
-                  res.jsonp(dados)
-                })
-                .catch(erro => res.status(500).jsonp(erro))
-    }
-    else{
-      Escolas.getJogosMunicipio(jogoTable, jogoTipo, dataInicio, dataFim)
-                .then(dados =>{
-                  res.jsonp(dados)
-                })
-                .catch(erro => res.status(500).jsonp(erro))
-    }
-  });
-
-  // Devolve estatisticas globais sobre os professores da escola
-router.get('/:codigo/jogos/professores', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Municipio_Agrupamento(), function(req, res){
-  var dataInicio = req.query.dataInicio
-  var dataFim = req.query.dataFim
-  var jogoTipo = req.query.jogoTipo
-  var jogoTable = req.query.jogoTable
-  var escola = req.params.codigo
-  if(jogoTable){
-    Escolas.getJogosProfessores(jogoTable, jogoTipo, dataInicio, dataFim, escola)
-        .then(turmas =>{
-          res.jsonp(turmas)
-        })
-        .catch(erro => res.status(500).jsonp(erro))
-  }
-  else{
-    Escolas.getAllJogosProfessores(dataInicio, dataFim, escola)
-          .then(turmas =>{
-            res.jsonp(turmas)
-          })
-          .catch(erro => res.status(500).jsonp(erro))
-  }
-})
-
 router.get('/:codigo/estatisticas/professores', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Municipio_Agrupamento(), function(req, res){
   var ano = req.query.ano
   if(ano) var anoletivo = ano + "/" + ((parseInt(ano) + 1))
@@ -218,29 +173,6 @@ router.get('/:codigo/estatisticas/professores', passport.authenticate('jwt', {se
               .catch(erro => res.status(500).jsonp("Error"))
 
 })
-
-// Pontuações de jogos por escola de um municipio
-router.get('/jogos/:jogo/municipios/:municipio', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdminEMunicipio(), function(req, res, next) {
-  var dataInicio = req.query.dataInicio
-  var dataFim = req.query.dataFim
-  var jogoTipo = req.query.jogoTipo
-  var jogoTable = req.params.jogo
-  var municipio = req.params.municipio
-  if(jogoTable == 'Todos'){
-    Escolas.getAllJogosEscolas(dataInicio, dataFim, municipio)
-            .then(dados =>{
-              res.jsonp(dados)
-            })
-            .catch(erro => res.status(500).jsonp(erro))
-  }
-  else{
-    Escolas.getJogosEscolas(jogoTable, jogoTipo, dataInicio, dataFim, municipio)
-                .then(dados =>{
-                  res.jsonp(dados)
-                })
-                .catch(erro => res.status(500).jsonp(erro))
-  }
-});
   
 // Altera uma escola
 router.put('/:codigo', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res){

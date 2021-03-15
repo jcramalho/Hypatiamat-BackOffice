@@ -54,9 +54,8 @@ import CampeonatosAgrupamentos from '../views/CampeonatosAgrupamentos.vue'
 import CampeonatosProfessores from '../views/CampeonatosProfessores.vue'
 import CampeonatosTurmas from '../views/CampeonatosTurmas.vue'
 import Comunidades from '../views/Comunidades.vue'
-
-
-
+import GestaoNovidades from '../views/GestaoNovidades.vue'
+import GestaoCampeonatos from '../views/GestaoCampeonatos.vue'
 
 Vue.use(VueRouter)
 
@@ -96,6 +95,20 @@ const routes = [
     path: '/comunidades',
     name: 'Comunidades',
     component: Comunidades,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(utilizador.type == 50){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    }
+  },
+  {
+    path: '/novidades',
+    name: 'Novidades',
+    component: GestaoNovidades,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 50){
@@ -183,6 +196,24 @@ const routes = [
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if( utilizador.type == 20 ){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/gestao/campeonatos',
+    name: 'Gestão Campeonatos',
+    component: GestaoCampeonatos,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if((utilizador.type == 50)){
         next()
       }
       else{

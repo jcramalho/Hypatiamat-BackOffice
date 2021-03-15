@@ -40,6 +40,17 @@ module.exports.getTemas = async function(){
     for(var i = 0; i < subtemas.length; i++){
         result.push(subtemas[i])
     }
+    
+    // ordenação das apps
+    await result.sort(function(a,b){
+        if(a == "Todas") return true
+        else if(b == "Todas") return false
+        else if(a.subtema && b.subtema) return a.subtema.localeCompare(b.subtema)
+        else if(a.subtema && !b.subtema) return a.subtema.localeCompare(b.tema)
+        else if(!a.subtema && b.subtema) return a.tema.localeCompare(b.subtema) 
+        else return a.tema.localeCompare(b.tema)
+    })
+
     return result
 }
 

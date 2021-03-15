@@ -21,8 +21,6 @@ Insert into hypati67_aplicacoes.comunidades (`codigo`, `nome`, `municipio`) Valu
                                                         ('comu_001', 'CIM do Ave', 'Mondim de Basto'), ('comu_001', 'CIM do Ave', 'Póvoa de Lanhoso'), 
                                                         ('comu_001', 'CIM do Ave', 'Vieira do Minho'), ('comu_001', 'CIM do Ave', 'Vizela');
                                                         
--- CIMBAL (ALJUSTREL, ALMODÔVAR, ALVITO, BARRANCOS, BEJA, CASTRO VERDE, CUBA, FERREIRA DO ALENTEJO, MÉRTOLA, MOURA, OURIQUE, SERPA, VIDIGUEIRA)
-
 Insert into hypati67_aplicacoes.comunidades (`codigo`, `nome`, `municipio`) Values ('CIMBAL', 'CIMBAL', 'Aljustrel'), ('CIMBAL', 'CIMBAL', 'Almodôvar'),
 																			('CIMBAL', 'CIMBAL', 'Alvito'), ('CIMBAL', 'CIMBAL', 'Barrancos'), 
                                                                             ('CIMBAL', 'CIMBAL', 'Beja'), ('CIMBAL', 'CIMBAL', 'Castro Verde'),

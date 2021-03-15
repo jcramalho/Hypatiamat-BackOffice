@@ -1,10 +1,13 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
-const Turma = require('../../controllers/db_aplicacoes/turmas');
+var verifyToken = require('../../config/verifyToken')
 
-var Jogos = require('../../controllers/db_samd/jogos');
-var Rankings = require('../../controllers/db_samd/rankings');
+const Jogos = require('../../controllers/db_samd/jogos');
+const Rankings = require('../../controllers/db_samd/rankings');
+const Calcrapid = require('../../controllers/db_samd/calcrapid');
+const Calculus = require('../../controllers/db_samd/calculus');
+const JogosGerais = require('../../controllers/db_samd/jogosGeral');
 
 // Todas os jogos
 router.get('/', passport.authenticate('jwt', {session: false}), function(req, res, next) {
@@ -16,20 +19,19 @@ router.get('/', passport.authenticate('jwt', {session: false}), function(req, re
 });
 
 // Calcrapid por municipios
-router.get('/calcrapid/municipios', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/calcrapid/municipios', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
   var tipo = req.query.tipo
   var dataInicio = req.query.dataInicio
   var dataFim = req.query.dataFim
   if(tipo && tipo.length > 0){
-    Jogos.getCalcRapidTipoMunicipios(dataInicio, dataFim, tipo.split(','))
+    Calcrapid.getCalcRapidTipoMunicipios(dataInicio, dataFim, tipo.split(','))
               .then(dados =>{
                 res.jsonp(dados)
               })
               .catch(erro => res.status(500).jsonp(erro))
   }
   else{
-    
-    Jogos.getTodosCalcRapidMunicipios(dataInicio, dataFim)
+    Calcrapid.getTodosCalcRapidMunicipios(dataInicio, dataFim)
               .then(dados =>{
                 res.jsonp(dados)
               })
@@ -37,28 +39,46 @@ router.get('/calcrapid/municipios', passport.authenticate('jwt', {session: false
   }
 });
 
-router.get('/minutenew/municipios', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/minutenew/municipios', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
   var dataInicio = req.query.dataInicio
   var dataFim = req.query.dataFim
   var niveis = req.query.niveis
   var tipos = req.query.tipos
   if(tipos && niveis){
-    Jogos.getTiposNiveisMinuteNewMunicipios(dataInicio, dataFim, niveis.split(","), tipos)
+    Calculus.getTiposNiveisMinuteNewMunicipios(dataInicio, dataFim, niveis.split(","), tipos)
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp(erro))
   }
   else if(tipos){
-    Jogos.getTiposMinuteNewMunicipios(dataInicio, dataFim, tipos)
+    Calculus.getTiposMinuteNewMunicipios(dataInicio, dataFim, tipos)
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp(erro)) 
   }
   else if(niveis){
-    Jogos.getNiveisMinuteNewMunicipios(dataInicio, dataFim, niveis.split(","))
+    Calculus.getNiveisMinuteNewMunicipios(dataInicio, dataFim, niveis.split(","))
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp(erro)) 
   }
   else{
-    Jogos.getTodosMinuteNewMunicipios(dataInicio, dataFim)
+    Calculus.getTodosMinuteNewMunicipios(dataInicio, dataFim)
+              .then(dados => res.jsonp(dados))
+              .catch(erro => res.status(500).jsonp(erro))
+  }
+});
+
+// Pontuações de jogos gerais ou de todos por municipio
+router.get('/:jogo/municipios', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
+  var dataInicio = req.query.dataInicio
+  var dataFim = req.query.dataFim
+  var jogoTipo = req.query.jogoTipo
+  var jogoTable = req.params.jogo
+  if(jogoTable == "Todos"){
+    Jogos.getAllJogosMunicipios(dataInicio, dataFim)
+              .then(dados => res.jsonp(dados))
+              .catch(erro => res.status(500).jsonp(erro))
+  }
+  else{
+    JogosGerais.getJogoMunicipios(jogoTable, jogoTipo, dataInicio, dataFim)
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp(erro))
   }
@@ -71,14 +91,14 @@ router.get('/calcrapid/comunidades/:comunidade', passport.authenticate('jwt', {s
   var dataFim = req.query.dataFim
   var comunidade = req.params.comunidade
   if(tipo && tipo.length > 0){
-    Jogos.getCalcRapidTipoComunidade(dataInicio, dataFim, tipo.split(','), comunidade)
+    Calcrapid.getCalcRapidTipoComunidade(dataInicio, dataFim, tipo.split(','), comunidade)
               .then(dados =>{
                 res.jsonp(dados)
               })
               .catch(erro => res.status(500).jsonp(erro))
   }
   else{
-    Jogos.getTodosCalcRapidComunidade(dataInicio, dataFim, comunidade)
+    Calcrapid.getTodosCalcRapidComunidade(dataInicio, dataFim, comunidade)
               .then(dados =>{
                 res.jsonp(dados)
               })
@@ -94,22 +114,22 @@ router.get('/minutenew/comunidades/:comunidade', passport.authenticate('jwt', {s
   var tipos = req.query.tipos
   var comunidade = req.params.comunidade
   if(tipos && niveis){
-    Jogos.getTiposNiveisMinuteNewComunidade(dataInicio, dataFim, niveis.split(","), tipos, comunidade)
+    Calculus.getTiposNiveisMinuteNewComunidade(dataInicio, dataFim, niveis.split(","), tipos, comunidade)
           .then(dados => res.jsonp(dados))
           .catch(erro => res.status(500).jsonp(erro))
   }
   else if(tipos){
-    Jogos.getTiposMinuteNewComunidade(dataInicio, dataFim, tipos, comunidade)
+    Calculus.getTiposMinuteNewComunidade(dataInicio, dataFim, tipos, comunidade)
           .then(dados => res.jsonp(dados))
           .catch(erro => res.status(500).jsonp(erro)) 
   }
   else if(niveis){
-    Jogos.getNiveisMinuteNewComunidade(dataInicio, dataFim, niveis.split(","), comunidade)
+    Calculus.getNiveisMinuteNewComunidade(dataInicio, dataFim, niveis.split(","), comunidade)
           .then(dados => res.jsonp(dados))
           .catch(erro => res.status(500).jsonp(erro)) 
   }
   else{
-    Jogos.getTodosMinuteNewComunidade(dataInicio, dataFim, comunidade)
+    Calculus.getTodosMinuteNewComunidade(dataInicio, dataFim, comunidade)
           .then(dados => res.jsonp(dados))
           .catch(erro => res.status(500).jsonp(erro))
   }
@@ -124,7 +144,7 @@ router.get('/:jogo/comunidades/:comunidade', passport.authenticate('jwt', {sessi
   var comunidade = req.params.comunidade
   if(dataInicio && dataFim && comunidade){
     if(jogo && tipo){
-      Jogos.getJogoComunidade(comunidade, jogo, tipo, dataInicio, dataFim)
+      JogosGerais.getJogoComunidade(comunidade, jogo, tipo, dataInicio, dataFim)
           .then(dados => res.jsonp(dados))
           .catch(erro => res.status(500).jsonp(erro))
     }
@@ -147,14 +167,14 @@ router.get('/calcrapid/municipios/:municipio', passport.authenticate('jwt', {ses
   var dataFim = req.query.dataFim
   var municipio = req.params.municipio
   if(tipo && tipo.length > 0){
-    Jogos.getCalcRapidTipoAgrupamentos(dataInicio, dataFim, tipo.split(','), municipio)
+    Calcrapid.getCalcRapidTipoAgrupamentos(dataInicio, dataFim, tipo.split(','), municipio)
               .then(dados =>{
                 res.jsonp(dados)
               })
               .catch(erro => res.status(500).jsonp(erro))
   }
   else{
-    Jogos.getTodosCalcRapidAgrupamentos(dataInicio, dataFim, municipio)
+    Calcrapid.getTodosCalcRapidAgrupamentos(dataInicio, dataFim, municipio)
               .then(dados =>{
                 res.jsonp(dados)
               })
@@ -162,31 +182,50 @@ router.get('/calcrapid/municipios/:municipio', passport.authenticate('jwt', {ses
   }
 });
 
-router.get('/minutenew/municipios/:municipio', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/minutenew/municipios/:municipio', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdminEMunicipio(), function(req, res, next) {
   var dataInicio = req.query.dataInicio
   var dataFim = req.query.dataFim
   var niveis = req.query.niveis
   var tipos = req.query.tipos
   var municipio = req.params.municipio
   if(tipos && niveis){
-    Jogos.getTiposNiveisMinuteNewAgrupamentos(municipio, dataInicio, dataFim, niveis.split(","), tipos)
+    Calculus.getTiposNiveisMinuteNewAgrupamentos(municipio, dataInicio, dataFim, niveis.split(","), tipos)
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp(erro))
   }
   else if(tipos){
-    Jogos.getTiposMinuteNewAgrupamentos(municipio, dataInicio, dataFim, tipos)
+    Calculus.getTiposMinuteNewAgrupamentos(municipio, dataInicio, dataFim, tipos)
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp(erro)) 
   }
   else if(niveis){
-    Jogos.getNiveisMinuteNewAgrupamentos(municipio, dataInicio, dataFim, niveis.split(","))
+    Calculus.getNiveisMinuteNewAgrupamentos(municipio, dataInicio, dataFim, niveis.split(","))
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp(erro)) 
   }
   else{
-    Jogos.getTodosMinuteNewAgrupamentos(municipio, dataInicio, dataFim)
+    Calculus.getTodosMinuteNewAgrupamentos(municipio, dataInicio, dataFim)
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp(erro))
+  }
+});
+
+// Pontuações de jogos por escola de um municipio
+router.get('/:jogo/municipios/:municipio', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdminEMunicipio(), function(req, res, next) {
+  var dataInicio = req.query.dataInicio
+  var dataFim = req.query.dataFim
+  var jogoTipo = req.query.jogoTipo
+  var jogoTable = req.params.jogo
+  var municipio = req.params.municipio
+  if(jogoTable == 'Todos'){
+    Jogos.getAllJogosEscolas(dataInicio, dataFim, municipio)
+            .then(dados =>res.jsonp(dados))
+            .catch(erro => res.status(500).jsonp(erro))
+  }
+  else{
+    JogosGerais.getJogoEscolas(jogoTable, jogoTipo, dataInicio, dataFim, municipio)
+                .then(dados => res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp(erro))
   }
 });
 
@@ -197,12 +236,12 @@ router.get('/calcrapid/escolas/:escola', passport.authenticate('jwt', {session: 
   var dataFim = req.query.dataFim
   var escola = req.params.escola
   if(tipo && tipo.length > 0){
-    Jogos.getTiposCalcRapidProfessores(dataInicio, dataFim, tipo.split(','), escola)
+    Calcrapid.getTiposCalcRapidProfessores(dataInicio, dataFim, tipo.split(','), escola)
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp(erro))
   }
   else{
-    Jogos.getTodosCalcRapidProfessores(dataInicio, dataFim, escola)
+    Calcrapid.getTodosCalcRapidProfessores(dataInicio, dataFim, escola)
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp(erro))
   }
@@ -216,48 +255,66 @@ router.get('/minutenew/escolas/:escola', passport.authenticate('jwt', {session: 
   var tipos = req.query.tipos
   var escola = req.params.escola
   if(tipos && niveis){
-    Jogos.getTiposNiveisMinuteNewProfessores(escola, dataInicio, dataFim, niveis.split(","), tipos)
+    Calculus.getTiposNiveisMinuteNewProfessores(escola, dataInicio, dataFim, niveis.split(","), tipos)
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp(erro))
   }
   else if(tipos){
-    Jogos.getTiposMinuteNewProfessores(escola, dataInicio, dataFim, tipos)
+    Calculus.getTiposMinuteNewProfessores(escola, dataInicio, dataFim, tipos)
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp(erro)) 
   }
   else if(niveis){
-    Jogos.getNiveisMinuteNewProfessores(escola, dataInicio, dataFim, niveis.split(","))
+    Calculus.getNiveisMinuteNewProfessores(escola, dataInicio, dataFim, niveis.split(","))
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp(erro)) 
   }
   else{
-    Jogos.getTodosMinuteNewProfessores(escola, dataInicio, dataFim)
+    Calculus.getTodosMinuteNewProfessores(escola, dataInicio, dataFim)
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp(erro))
   }
 });
 
+// Devolve estatisticas globais sobre os professores da escola
+router.get('/:jogo/escolas/:codigo', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Municipio_Agrupamento(), function(req, res){
+  var dataInicio = req.query.dataInicio
+  var dataFim = req.query.dataFim
+  var jogoTipo = req.query.jogoTipo
+  var jogoTable = req.params.jogo
+  var escola = req.params.codigo
+  if(jogoTable != "Todos"){
+    JogosGerais.getJogoProfessores(jogoTable, jogoTipo, dataInicio, dataFim, escola)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).jsonp(erro))
+  }
+  else{
+    Jogos.getAllJogosProfessores(dataInicio, dataFim, escola)
+          .then(dados => res.jsonp(dados))
+          .catch(erro => res.status(500).jsonp(erro))
+  }
+})
 
 // Calcrapid por aluno de uma turma
-router.get('/calcrapid/turmas/:turma', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/calcrapid/turmas/:turma', passport.authenticate('jwt', {session: false}), verifyToken.verifyTurma3(), function(req, res, next) {
   var tipo = req.query.tipo
   var dataInicio = req.query.dataInicio
   var dataFim = req.query.dataFim
   var turma = req.params.turma
   var escola = req.query.escola
   if(tipo && tipo.length > 0){
-    Jogos.getTiposCalcRapidTurmas(dataInicio, dataFim, tipo.split(','), escola, turma)
+    Calcrapid.getTiposCalcRapidTurmas(dataInicio, dataFim, tipo.split(','), escola, turma)
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp(erro))
   }
   else{
-    Jogos.getTodosCalcRapidTurmas(dataInicio, dataFim, escola, turma)
+    Calcrapid.getTodosCalcRapidTurmas(dataInicio, dataFim, escola, turma)
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp(erro))
   }
 });
 
-router.get('/minutenew/turmas/:turma', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/minutenew/turmas/:turma', passport.authenticate('jwt', {session: false}), verifyToken.verifyTurma3(), function(req, res, next) {
   var dataInicio = req.query.dataInicio
   var dataFim = req.query.dataFim
   var niveis = req.query.niveis
@@ -265,26 +322,49 @@ router.get('/minutenew/turmas/:turma', passport.authenticate('jwt', {session: fa
   var turma = req.params.turma
   var escola = req.query.escola
   if(tipos && niveis){
-    Jogos.getTiposNiveisMinuteNewTurma(turma, escola, dataInicio, dataFim, niveis.split(","), tipos)
+    Calculus.getTiposNiveisMinuteNewTurma(turma, escola, dataInicio, dataFim, niveis.split(","), tipos)
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp(erro))
   }
   else if(tipos){
-    Jogos.getTiposMinuteNewTurma(turma, escola, dataInicio, dataFim, tipos)
+    Calculus.getTiposMinuteNewTurma(turma, escola, dataInicio, dataFim, tipos)
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp(erro)) 
   }
   else if(niveis){
-    Jogos.getNiveisMinuteNewTurma(turma, escola, dataInicio, dataFim, niveis.split(","))
+    Calculus.getNiveisMinuteNewTurma(turma, escola, dataInicio, dataFim, niveis.split(","))
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp(erro)) 
   }
   else{
-    Jogos.getTodosMinuteNewTurma(turma, escola, dataInicio, dataFim)
+    Calculus.getTodosMinuteNewTurma(turma, escola, dataInicio, dataFim)
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp(erro))
   }
 });
+
+// Devolve todos as estatísticas de um jogo de uma turma
+router.get('/:tableJogo/turmas/:turma', passport.authenticate('jwt', {session: false}), verifyToken.verifyTurma3(),  function(req, res){
+  var turma = req.params.turma
+  var tableJogo = req.params.tableJogo
+  var dataInicio = req.query.dataInicio
+  var dataFim = req.query.dataFim
+  var jogoTipo = req.query.jogoTipo
+  var escola = req.query.escola
+  if(dataInicio && dataFim && escola){
+    if(tableJogo != "Todos"){
+      JogosGerais.getJogoFromTurma(dataInicio, dataFim, jogoTipo, tableJogo, turma, escola)
+                .then(dados => res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp(erro))
+    }
+    else{
+      Jogos.getAllJogosTurma(dataInicio, dataFim, turma, escola)
+            .then(dados => res.jsonp(dados))
+            .catch(erro => res.status(500).jsonp(erro))
+    }
+  }
+  else res.status(400).send('Faltam parâmetros...')
+})
 
 router.get('/calcrapid/turmas/:turma/ranking', passport.authenticate('jwt', {session: false}), function(req, res, next) {
   var turma = req.params.turma
@@ -313,6 +393,7 @@ router.get('/calcrapid/turmas/:turma/ranking', passport.authenticate('jwt', {ses
   else res.status(400).jsonp("Faltam parâmetros.")
 
 });
+
 
 router.get('/minutenew/turmas/:turma/ranking', passport.authenticate('jwt', {session: false}), function(req, res, next) {
   var turma = req.params.turma

@@ -29,7 +29,7 @@
                                 label="Tipo de Operação"
                                 color="green"
                                 :multiple="true"
-                                :items="tiposCalcRapid"
+                                :items="jogo.tipos"
                                 @change="onTipoCalcChange"
                             ></v-combobox>
                             <v-combobox
@@ -40,7 +40,7 @@
                                 label="Nível"
                                 color="green"
                                 :multiple="true"
-                                :items="niveisCalculus"
+                                :items="jogo.niveis"
                                 @change="onNivelChange"
                             ></v-combobox>
                             <v-combobox
@@ -51,7 +51,7 @@
                                 label="Tipo de Operações"
                                 color="green"
                                 :multiple="true"
-                                :items="tiposCalculus"
+                                :items="jogo.tipos"
                                 @change="onTipoCalculusChange"
                             ></v-combobox>
                             <v-combobox
@@ -170,10 +170,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         escola: "",
         nomeEscola:"",
         loading:false,
-        tiposCalcRapid:["1 - Adição", "2 - Subtração", "3 - Multiplicação", "4 - Divisão"],
         tiposCalc:["1 - Adição", "2 - Subtração", "3 - Multiplicação", "4 - Divisão"],
-        niveisCalculus:["1","2","3","4","5"],
-        tiposCalculus:["0 - Todas as combinações", "1 – Adição", "2 – Subtração", "3 - Multiplicação", "4 - Divisão"],
         niveisSel:["1","2","3","4","5"],
         tiposCalculusSel:["0 - Todas as combinações"],
         tiposCalculusSelAnterior:["0 - Todas as combinações"]
@@ -204,9 +201,9 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
                 }
                 this.atualizaConteudo()
             }
-            else{
-                this.onAnoChange()
-            }
+        }
+        else{
+            this.onAnoChange()
         }
     },
     methods: {
@@ -238,7 +235,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       },
       onNivelChange: async function(item){
           if(this.tiposCalculusSel.find(e => e == "0 - Todas as combinações")){
-              if(this.niveisSel.length < this.niveisCalculus.length){
+              if(this.niveisSel.length < this.jogo.niveis.length){
                   if(this.niveisSel.length > 0){
                       this.atualizaMinuteNewNiveis()
                   }
@@ -248,7 +245,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
               }
           }
           else{
-              if(this.niveisSel.length < this.niveisCalculus.length){
+              if(this.niveisSel.length < this.jogo.niveis.length){
                   if(this.niveisSel.length > 0){
                       this.atualizaMinuteNewTiposNiveis()
                   }
@@ -262,7 +259,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           var todos = this.tiposCalculusSel.find(e => e == "0 - Todas as combinações")
           if(todos && !this.tiposCalculusSelAnterior.find(e => e == "0 - Todas as combinações")){
                 this.tiposCalculusSel = ["0 - Todas as combinações"]
-                    if(this.niveisSel.length < this.niveisCalculus.length){
+                    if(this.niveisSel.length < this.jogo.niveis.length){
                         this.atualizaMinuteNewNiveis()
                     }
                     else{
@@ -274,7 +271,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
                 var index = this.tiposCalculusSel.indexOf(todos)
                 this.tiposCalculusSel.splice(index, index+1)
             }
-            if(this.niveisSel.length < this.niveisCalculus.length){
+            if(this.niveisSel.length < this.jogo.niveis.length){
                 this.atualizaMinuteNewTiposNiveis()
             }
             else{
@@ -290,8 +287,9 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       },
       parseTiposCalculus: async function(){
           var res = ""
+          this.tiposCalculusSel.sort()
           for(var i = 0; i < this.tiposCalculusSel.length; i++){
-              var aux = this.tiposCalc[i].split(" - ")
+              var aux = this.tiposCalculusSel[i].split(" - ")
               res += aux[0]
           }
           return res
@@ -306,7 +304,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       },
       atualizaCalcRapid: async function(){
           this.headers = this.headers_calcrapid
-          if(this.tiposCalc.length < this.tiposCalcRapid.length){
+          if(this.tiposCalc.length < this.jogo.tipos.length){
               var tipos = await this.parseTiposCalcRapid()
               var response = await axios.get(hostJogos + "calcrapid/escolas/" + this.escola
                                                     + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
@@ -368,7 +366,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
               this.loading = true
               if(this.jogo.jogo == "Todos"){
                   this.headers = this.headersTodos
-                  var response = await axios.get(h + "escolas/" + this.escola + "/jogos/professores/" 
+                  var response = await axios.get(hostJogos + this.jogo.jogo + "/escolas/" + this.escola 
                                                     + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
                                                     + "&token=" + this.token)
 
@@ -378,8 +376,8 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
               else if(this.jogo.jogo == "Calculus") await this.onNivelChange()
               else{
                 this.headers = this.headersJogo
-                var response = await axios.get(h + "escolas/" + this.escola + "/jogos/professores/" + "?jogoTable=" + this.jogo.jogotable
-                                                + "&dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                var response = await axios.get(hostJogos + this.jogo.jogotable + "/escolas/" + this.escola 
+                                                + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
                                                 + "&jogoTipo=" + this.jogo.tipo + "&token=" + this.token)
 
                 this.items = response.data

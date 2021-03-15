@@ -3,6 +3,7 @@ var sqlSAMD = require('../../models/db_samd')
 var Alunos = require('./alunos')
 var Jogos = require('../db_samd/jogos');
 const { bdSAMD, bdAplicacoes } = require('../../models/conf');
+const { minutenewDef, calcrapidDef } = require('../../config/configsJogos');
 
 var Turma = function(turma){
     this.id = turma.id;
@@ -162,50 +163,6 @@ Turma.getTurmasByEscola = function (escola){
 
 }
 
-Turma.getJogosFromTurma  = function (dataInicio, dataFim, jogoTipo, tableJogo, turma, escola){
-    return new Promise(function(resolve, reject) {
-        sql.query(`Select al.numero, jogo.idaluno, al.nome, Round(AVG(jogo.pontuacao), 0) as media, MAX(jogo.pontuacao) as maximo, MIN(jogo.pontuacao) as minimo, count(jogo.pontuacao) as count 
-        from ${bdSAMD}.${tableJogo} jogo, ${bdAplicacoes}.alunos al  
-        where jogo.tipo = ? and jogo.turma = ? and jogo.idescola = ? and al.user = jogo.idaluno and (jogo.data between ? and ?) 
-        Group by idaluno Order by al.numero`, [jogoTipo, turma, escola, dataInicio, dataFim], function(err, res){
-            if(err){
-                console.log("erro: " + err)
-                reject(err)
-            }
-            else{
-                resolve(res)
-            }
-        })
-    })   
-}
-
-Turma.getAllJogosTurma = async function(dataInicio, dataFim, turma, escola){
-    var jogos = await Jogos.getJogosDB()
-    var res = await Turma.getJogosFromTurma(dataInicio, dataFim, jogos[0].tipo, jogos[0].jogotable, turma, escola)
-    for(var i = 1; i < jogos.length; i++){
-        var jogo = await Turma.getJogosFromTurma(dataInicio, dataFim, jogos[i].tipo, jogos[i].jogotable, turma, escola)
-        for(var j = 0; j < jogo.length; j++){
-            var aux = res.find(element => element.idaluno == jogo[j].idaluno)
-            
-            if(aux){
-                aux.count +=jogo[j].count
-            }
-            else{
-                res.push(jogo[j])
-            }
-            
-        }
-    }
-    
-    await res.sort(function (a, b) {
-        return (a.count > b.count) ? -1 : 1;
-      });
-
-    return res;
-
-
-}
-
 Turma.updateTurma = function(id, turma){
     return new Promise(function(resolve, reject) {
         var args = [turma.turma, id]
@@ -270,11 +227,11 @@ Turma.getJogos = async function(turma, escola, dataInicio, dataFim){
     
     //calcrapid
     var turmaCalcRapid = await Turma.jogouCalcRapid(turma, escola, dataInicio, dataFim)
-    if(turmaCalcRapid.length > 0) result.push({jogo: 'Calcrapid'})
+    if(turmaCalcRapid.length > 0) result.push(calcrapidDef)
     
     //calculus
     var turmaCalculus = await Turma.jogouCalculus(turma, escola, dataInicio, dataFim)
-    if(turmaCalculus.length > 0) result.push({jogo: 'Calculus'})
+    if(turmaCalculus.length > 0) result.push(minutenewDef)
 
     for(var i = 0; i < jogos.length; i++){
         var turmaJogou = await Turma.jogou(jogos[i].jogotable, jogos[i].tipo, turma, escola, dataInicio, dataFim)

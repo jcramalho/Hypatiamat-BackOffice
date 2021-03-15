@@ -1,8 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('passport')
+const verifyToken = require('../../config/verifyToken')
 
-var Campeonatos = require('../../controllers/db_testeconhecimentos/campeonatos');
+const Campeonatos = require('../../controllers/db_testeconhecimentos/campeonatos');
+const CampeonatosCRUD = require('../../controllers/db_testeconhecimentos/campeonatosCRUD');
 
 
 // Todos os campeonatos realizados
@@ -18,6 +20,13 @@ router.get('/', passport.authenticate('jwt', {session: false}), function(req, re
                 .then(dados =>res.jsonp(dados))
                 .catch(erro => res.status(500).jsonp(erro))
     }
+});
+
+// Informação de um campeonato
+router.get('/:cod', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    CampeonatosCRUD.getCampeonato(req.params.cod)
+                   .then(dados => res.jsonp(dados))
+                   .catch(erro => res.status(500).jsonp('Error'))
 });
 
 // Estatísticas de um campeonato por todos os municipios ou um só município ou por uma comunidade
@@ -108,5 +117,22 @@ router.get('/:campeonato/comunidades/:comunidade/gerais', passport.authenticate(
                    .catch(erro => res.status(500).jsonp(erro))
 });
 
+router.put('/:codigo', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
+    CampeonatosCRUD.updateCampeonato(req.params.codigo, req.body)
+                   .then(dados =>res.jsonp(dados))
+                   .catch(erro => res.status(500).jsonp(erro))
+});
+
+router.post('/', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
+    CampeonatosCRUD.insertCampeonato(req.body)
+                   .then(dados =>res.jsonp(dados))
+                   .catch(erro => res.status(500).jsonp(erro))
+});
+
+router.delete('/:codigo', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
+    CampeonatosCRUD.apagarCampeonato(req.params.codigo)
+                   .then(dados =>res.jsonp(dados))
+                   .catch(erro => res.status(500).jsonp(erro))
+});
 
 module.exports = router

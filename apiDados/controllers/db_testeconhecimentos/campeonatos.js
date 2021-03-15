@@ -3,7 +3,7 @@ var sql = require('../../models/db_testeconhecimentos');
 
 module.exports.getCampeonatos= function(){
     return new Promise(function(resolve, reject) {
-        sql.query(`SELECT * FROM campeonatosID order by di;`, function(err, res){
+        sql.query(`SELECT * FROM campeonatosID order by di desc;`, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -215,17 +215,10 @@ module.exports.getCampeonatoAgrupamentoProfessores = function(campeonato, escola
 
 module.exports.getCampeonatoTurma = function(campeonato, escola, turma, professor){
     return new Promise(function(resolve, reject) {
-        var args = [campeonato, turma, escola, professor, escola, professor, turma]
+        var args = [campeonato, turma, professor]
         sql.query(`SELECT al.user, al.numero, al.nome, camp.pontuacao, sum(camp.njogos) as njogos
-        FROM (select * from ${bdTesteConhecimentos}.campeonatos where campeonatoID=?) camp, 
-            ((Select a.user, a.nome, a.numero from ${bdAplicacoes}.alunos a 
-                where a.turma=? and (a.escola=? or a.codprofessor=?) )
-                Union ( 
-                select a.user, a.nome, a.numero
-                from (select * from ${bdAplicacoes}.alunos where escola=?) a,
-                    (select * from ${bdAplicacoes}.turmasold where codProfessor=? and turma=?) told
-                    where a.user = told.codAluno
-                )) al
+        FROM (select user, pontuacao, njogos from ${bdTesteConhecimentos}.campeonatos where campeonatoID=? and turma=? and codprofessor=?) camp,
+                ${bdAplicacoes}.alunos al
             where camp.user = al.user
                 group by al.user;`, args, function(err, res){
             if(err){
