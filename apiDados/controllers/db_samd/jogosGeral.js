@@ -169,3 +169,20 @@ JogosGerais.getJogoFromTurmaFreq = function (dataInicio, dataFim, jogoTipo, tabl
         })
     })   
 }
+
+JogosGerais.getAlunoLast = function(tableJogo, tipo, user){
+    return new Promise(function(resolve, reject) {
+        sql.query(`select min(pontuacao) as min, max(pontuacao) as max, Round(avg(pontuacao), 0) as media, 
+		count(pontuacao) as frequencia, max(concat(data, ' ', horario)) as lastdate
+		from ${bdSAMD}.${tableJogo} where tipo=? and idaluno=?;`, [tipo, user], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if(res.length == 0) resolve(undefined)
+                else resolve(res[0])
+            }
+        })
+    })
+}

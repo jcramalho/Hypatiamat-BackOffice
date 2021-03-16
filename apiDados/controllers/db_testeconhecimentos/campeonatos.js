@@ -196,12 +196,12 @@ module.exports.getCampeonatoAgrupamento = function(campeonato, escola){
 
 module.exports.getCampeonatoAgrupamentoProfessores = function(campeonato, escola){
     return new Promise(function(resolve, reject) {
-        sql.query(`SELECT al.codprofessor, (select nome from ${bdAplicacoes}.professores where codigo=al.codprofessor) as nome , camp.jogo, max(camp.pontuacao) as max, min(camp.pontuacao) as min, 
+        sql.query(`SELECT camp.codprofessor, (select nome from ${bdAplicacoes}.professores where codigo=camp.codprofessor) as nome , camp.jogo, max(camp.pontuacao) as max, min(camp.pontuacao) as min, 
         Round(avg(camp.pontuacao), 0) as media, sum(camp.njogos) as njogos, count(distinct camp.user) as nusers, Round(sum(camp.njogos)/count(distinct camp.user), 0) as jogosAluno
                 FROM (select * from ${bdTesteConhecimentos}.campeonatos where campeonatoID=?) camp, 
-                    (select * from ${bdAplicacoes}.alunos where escola=?) al
+                    (select user from ${bdAplicacoes}.alunos where escola=?) al
                     where camp.user = al.user
-					group by al.codprofessor, camp.jogo;`, [campeonato, escola], function(err, res){
+					group by camp.codprofessor, camp.jogo;`, [campeonato, escola], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

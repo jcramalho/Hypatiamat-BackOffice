@@ -30,6 +30,20 @@ getSubTemasFrom100 = function(){
     })
 }
 
+module.exports.getTemasLast10 = async function(){
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT tema,subtema, codtema, codsubtema FROM subtemas GROUP BY codsubtema;` , function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
 module.exports.getTemas = async function(){
     var temas = await getTemas2()
     var subtemas = await getSubTemasFrom100()
@@ -328,5 +342,45 @@ module.exports.getAppFromTurmaSubTema = function(codtema, codsubtema, turma, cod
             }
         })
     })
+}
+
+module.exports.getLast10 = async function(user){
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT grupo, appid, sum(ncertas) as ncertas, sum(ntotal) as ntotal, ROUND((sum(ncertas)/sum(ntotal))*100, 0) as acerto, 
+                max(concat(lastdate, ' ', horario)) as lastdate, sum(onpeak+offpeak) as frequencia
+                    FROM ${bdTesteConhecimentos}.appsinfoall 
+                    WHERE userid=?
+                    group by grupo, appid
+                    Order by lastdate desc
+                    limit 10;`, user,function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+module.exports.getLast10FromAluno = async function(user){
+    var temas = await this.getTemasLast10()
+    var last10 = await this.getLast10(user)
+    for(var i = 0; i < last10.length; i++){
+        var app = last10[i]        
+        var tema = temas.find(e => e.codtema == app.grupo && e.codsubtema == app.appid)
+        var aux = app.lastdate.split(" ")
+        app.lastdate = aux[0]
+        app.horario = aux[1]
+        if(tema){
+            app.nome = tema.subtema
+        }
+        else{
+            tema = temas.find(e => e.codtema == app.grupo)
+            app.nome = tema.tema
+        }
+    }
+    return last10
 }
 

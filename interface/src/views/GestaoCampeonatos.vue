@@ -170,17 +170,11 @@ const hostCampeonatos = require("@/config/hosts").hostCampeonatos
       criarCampeonato: async function(){
           this.dialogCriar = true
       },
-      apagarSubNovidadeCriada: async function(row){
-          this.novaNovidade.subnovidades.splice(row.index, row.index+1)
-      },
       atualizaCampeonato: async function(){
           var response = await axios.get(hostCampeonatos + this.codEditar + "/?token=" + this.token)
           this.$set(this.campeonatos, this.indexEditar, response.data)
           this.dialogEditar = false
       },
-      atualizaSubNovidades: async function(subnovidades){
-        this.novidades[this.indexEditar].subnovidades = subnovidades
-      },  
       goToLink: function(link){
         window.open(link, '_blank')
       }

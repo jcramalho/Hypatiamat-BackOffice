@@ -190,10 +190,48 @@ Jogos.getAllJogosTurma = async function(dataInicio, dataFim, turma, escola){
 
     
     await res.sort(function (a, b) {
-        return (a.count > b.count) ? -1 : 1;
+        return (a.number > b.number) ? -1 : 1;
     });
 
     return res;
+}
 
+Jogos.getLast10FromAluno = async function(user){
+    var jogos = await Jogos.getJogosDB()
+    var aux = [], res = []
+    var n = 10
+    
+    for(var i = 0; i < jogos.length; i++){
+        var jogo = await JogosGerais.getAlunoLast(jogos[i].jogotable, jogos[i].tipo, user)
+        if(jogo.lastdate) {
+            jogo.nome = jogos[i].jogo
+            aux.push(jogo)
+        }
+    }
 
+    // calcrapid
+    var calcrapid = await Calcrapid.getAlunoLast(user)
+    calcrapid.nome = "CalcRapid"
+    calcrapid.min = calcrapid.max = calcrapid.media = '---'
+    aux.push(calcrapid)
+
+    // calculus
+    var calculus = await Calculus.getAlunoLast(user)
+    calculus.nome = "Calculus"
+    calculus.min = calculus.max = calculus.media = '---'
+    aux.push(calculus)
+
+    //console.log(aux)
+    await aux.sort(function(a,b){
+        return b.lastdate.localeCompare(a.lastdate)
+    })
+
+    for(var i = 0; i < n && i < aux.length; i++){
+        var auxDate = aux[i].lastdate.split(" ")
+        aux[i].lastdate = auxDate[0]
+        aux[i].horario = auxDate[1]
+        res.push(aux[i])
+    }
+    
+    return res;
 }

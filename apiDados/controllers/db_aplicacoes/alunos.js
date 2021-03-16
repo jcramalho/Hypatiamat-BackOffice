@@ -121,7 +121,8 @@ Aluno.getJogosFromAluno  = function (dataInicio, dataFim, jogoTipo, tableJogo, u
 
 Aluno.getJogosGlobalFromAluno  = function (dataInicio, dataFim, jogoTipo, tableJogo, user){
     return new Promise(function(resolve, reject) {
-        sql.query(`Select al.numero, jogo.idaluno, al.nome, AVG(jogo.pontuacao) as media, MAX(jogo.pontuacao) as maximo, MIN(jogo.pontuacao) as minimo, count(jogo.pontuacao) as count 
+        sql.query(`Select al.numero, jogo.idaluno, al.nome, Round(AVG(jogo.pontuacao),0) as media, MAX(jogo.pontuacao) as maximo, 
+        MIN(jogo.pontuacao) as minimo, count(jogo.pontuacao) as count 
         from ${bdSAMD}.${tableJogo} jogo, ${bdAplicacoes}.alunos al 
         where jogo.tipo = ? and jogo.idaluno = ? and al.user = jogo.idaluno and (jogo.data between ? and ?) 
         Group by idaluno`, [jogoTipo, user, dataInicio, dataFim], function(err, res){

@@ -231,6 +231,14 @@ router.get('/alunos/:user', passport.authenticate('jwt', {session: false}), func
     res.jsonp("Não disponível")         
 });
 
+router.get('/alunos/:user/last10', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var user = req.params.user
+    Apps.getLast10FromAluno(user)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).jsonp(erro))
+
+})
+
 
 // O ranking de uma app ou de todas as apps de uma turma (critério NTRC)
 router.get('/turmas/:turma/ranking/NTRC', passport.authenticate('jwt', {session: false}), function(req, res, next) {

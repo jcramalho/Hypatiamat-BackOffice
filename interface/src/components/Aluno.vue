@@ -3,59 +3,167 @@
       <v-container>
             <!-- Aluno !-->
             
-          <v-row>
+          <v-row class="align-center justify-center">
             <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
               <v-card-title primary-title class="justify-center green--text">
                   Dados da minha conta ({{aluno.user}})
               </v-card-title>
             </v-col>
-            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
+            <v-col v-if="!small" cols="12" xs="12" sm="3" md="3" lg="3" xl="3">
+              <center><v-btn class="white--text" style="background-color: #009263;" @click="editarAluno()" rounded> Editar dados pessoais </v-btn></center>
+            </v-col>
+            <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="6">
               <center>
                 <v-list-item-avatar class="elevation-6" color="#009263" size="120">
                       <v-icon size="80" color="white">mdi-school</v-icon>             
                 </v-list-item-avatar>
               </center>
             </v-col>
+            <v-col v-if="small" cols="12" xs="12" sm="12" md="3" lg="3" xl="3">
+              <center><v-btn class="white--text" style="background-color: #009263;" @click="editarAluno()" rounded> Editar dados pessoais </v-btn></center>
+            </v-col>
+            <v-col cols="12" xs="12" sm="12" md="3" lg="3" xl="3">
+              <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true" rounded> Alterar password </v-btn></center>
+            </v-col>
           <v-row class="mx-auto">
-            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
-              <v-text-field label="Nome" v-model="aluno.nome" color="#009263" outlined disabled/>
+            <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="4">
+              <v-text-field label="Nome" v-model="aluno.nome" color="#009263" dense rounded outlined readonly/>
             </v-col>
-            <v-col v-if="xl" cols="2" xl="2">
+
+            <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="4">
+              <v-text-field label="Agrupamento" v-model="aluno.agrupamento" color="#009263" dense rounded outlined readonly/>
             </v-col>
-            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
-              <v-text-field label="Agrupamento" v-model="aluno.agrupamento" color="#009263" outlined disabled/>
+
+            <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="4">
+              <v-text-field label="Email"  v-model="aluno.email" color="#009263" dense rounded outlined readonly/>
             </v-col>
-            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
-              <v-text-field label="Tipo de Utilizador" v-model="aluno.nomeType" color="#009263" outlined disabled/>
+            <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="4">
+              <v-text-field label="Data de Nascimento" v-model="aluno.datanascimento" color="#009263" dense rounded outlined readonly/>
             </v-col>
-            <v-col v-if="xl" cols="2" xl="2">
+
+            <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="4">
+              <v-text-field label="Turma"  v-model="aluno.turma" color="#009263" dense rounded outlined readonly/>
             </v-col>
-            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
-              <v-text-field label="Email"  v-model="aluno.email" color="#009263" outlined disabled/>
+            <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="4">
+              <v-text-field label="Professor do Aluno" v-model="aluno.codprofessor" color="#009263" dense rounded outlined readonly/>
             </v-col>
-            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
-              <v-text-field label="Data de Nascimento" v-model="aluno.datanascimento" color="#009263" outlined disabled/>
-            </v-col>
-            <v-col v-if="xl" cols="2" xl="2">
-            </v-col>
-            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
-              <v-text-field label="Turma"  v-model="aluno.turma" color="#009263" outlined disabled/>
-            </v-col>
-            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
-              <v-text-field label="Professor do Aluno" v-model="aluno.codprofessor" color="#009263" outlined disabled/>
-            </v-col>
-            <v-col v-if="xl" cols="2" xl="2">
-            </v-col>
-            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="5">
-              <v-text-field label="País"  v-model="aluno.pais" color="#009263" outlined disabled/>
-            </v-col>
-            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
-              <center><v-btn class="white--text" style="background-color: #009263;" @click="editarAluno()"> Editar dados pessoais </v-btn></center>
-            </v-col>
-            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
-              <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true"> Alterar password </v-btn></center>
-            </v-col>
+            
           </v-row>
+            <v-row class="align-center justify-center">
+              <v-col cols="12">
+              <v-card-title class="justify-center"> Troféus: </v-card-title>
+              </v-col>
+              <v-col cols="12" xs="12" sm="4" md="4" lg="4" xl="4">
+                <center>
+                  <v-container class="d-flex align-center justify-center">
+                    <div class="pr-3"><v-img :src="require('@/assets/estrela.png')" width="50px" heigth="50px"> </v-img></div>
+                    <div><span>{{trofeus.trophy3}}</span></div>
+                  </v-container>
+                </center>
+              </v-col>
+              <v-col cols="12" xs="12" sm="4" md="4" lg="4" xl="4">
+                <center>
+                  <v-container class="d-flex align-center justify-center">
+                    <div class="pr-3"><v-img :src="require('@/assets/diamante_amarelo.png')" width="50px" heigth="50px"> </v-img></div>
+                    <div><span>{{trofeus.trophy5}}</span></div>
+                  </v-container>
+                </center>
+              </v-col>
+              <v-col cols="12" xs="12" sm="4" md="4" lg="4" xl="4">
+                <center>
+                  <v-container class="d-flex align-center justify-center">
+                    <div class="pr-3"><v-img :src="require('@/assets/relampago_azul.png')" width="50px" heigth="50px"> </v-img></div>
+                    <div><span>{{trofeus.trophy10}}</span></div>
+                  </v-container>
+                </center>
+              </v-col>
+            </v-row>
+            <v-col cols="12">
+              <center>
+                <v-btn v-if="!showApps" text @click="showApps=!showApps"><span>Últimas 10 Apps</span><v-icon color="#009263"> mdi-arrow-down </v-icon> </v-btn>
+                <v-btn v-else text @click="showApps=!showApps"><span>Últimas 10 Apps</span><v-icon color="#009263"> mdi-arrow-up </v-icon></v-btn>
+              </center> 
+            </v-col>
+            <v-col cols="12" xs="12" sm="12" md="10" lg="10" xl="10">
+            <v-slide-y-transition>
+                <v-card v-show="showApps" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
+                  <v-text-field
+                    v-model="filtrarApps"
+                    label="Filtrar"
+                    prepend-icon="mdi-magnify"
+                    color="#009263"
+                    single-line
+                  ></v-text-field>
+                  <v-data-table
+                    class="elevation-3"
+                    style="background-color:#EEEEEE"
+                    :headers="header_apps"
+                    :items="lastApps"
+                    :footer-props="footer_props"
+                    :search="filtrarApps"
+                  >
+                  <template v-slot:item="row">
+                    <tr :class="row.item.acerto>50 ? 'style-positivo' : 'style-negativo'">
+                        <td>{{row.item.nome}}</td>
+                        <td>{{row.item.ncertas}}</td>
+                        <td>{{row.item.ntotal}}</td>
+                        <td>{{row.item.acerto}}</td>
+                        <td>{{row.item.lastdate}}</td>
+                        <td>{{row.item.horario}}</td>
+                      </tr>
+                    </template>
+                  </v-data-table>
+                </v-card>
+            </v-slide-y-transition>
+            </v-col>
+            <v-col cols="12">
+              <center>
+                <v-btn v-if="!showJogos" text @click="showJogos=!showJogos"><span>Últimos 10 Jogos</span><v-icon color="#009263"> mdi-arrow-down </v-icon> </v-btn>
+                <v-btn v-else text @click="showJogos=!showJogos"><span>Últimos 10 Jogos</span><v-icon color="#009263"> mdi-arrow-up </v-icon></v-btn>
+              </center> 
+            </v-col>
+            <v-col cols="12" xs="12" sm="12" md="10" lg="10" xl="10">
+            <v-slide-y-transition>
+                <v-card v-show="showJogos" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
+                  <v-text-field
+                    v-model="filtrarJogos"
+                    label="Filtrar"
+                    prepend-icon="mdi-magnify"
+                    color="#009263"
+                    single-line
+                  ></v-text-field>
+                  <v-data-table
+                    class="elevation-3"
+                    style="background-color:#EEEEEE"
+                    :headers="header_jogos"
+                    :items="lastJogos"
+                    :footer-props="footer_props"
+                    :search="filtrarJogos"
+                  >
+                  <template v-slot:item="row">
+                    <tr>
+                        <td>{{row.item.nome}}</td>
+                        <td>{{row.item.min}}</td>
+                        <td>{{row.item.max}}</td>
+                        <td>{{row.item.media}}</td>
+                        <td>{{row.item.lastdate}}</td>
+                        <td>{{row.item.horario}}</td>
+                      </tr>
+                    </template>
+                  </v-data-table>
+                </v-card>
+            </v-slide-y-transition>
+            </v-col>
+            <v-col cols="12">
+              <center>
+              <v-btn class="white--text" style="background-color: #009263;" @click="verJogos()">Ver Jogos</v-btn>
+              </center>
+            </v-col>
+            <v-col cols="12">
+              <center>
+              <v-btn class="white--text" style="background-color: #009263;" @click="verApps()">Ver Apps</v-btn>
+              </center>
+            </v-col>
         </v-row>
       </v-container>
           <v-dialog
@@ -78,6 +186,9 @@
 import axios from "axios"
 import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
+const hostApps =  require("@/config/hosts").hostApps
+const hostJogos =  require("@/config/hosts").hostJogos
+const hostTrofeus =  require("@/config/hosts").hostTrofeus
 
   export default {
     components:{
@@ -91,9 +202,28 @@ const h = require("@/config/hosts").hostAPI
         aluno: {},
         password1: "",
         password2: "",
-        header_turmas: [
-            {text: "Id", sortable: true, value: 'id', class: 'subtitle-1'},
-            {text: "Turma", value: 'turma', class: 'subtitle-1'}
+        showApps: false,
+        showJogos: false,
+        lastApps:[],
+        lastJogos:[],
+        trofeus:{trophy3:0, trophy5:0, trophy10:0},
+        filtrarApps:"",
+        filtrarJogos:"",
+        header_apps: [
+            {text: "App", sortable: true, value: 'nome', class: 'subtitle-1'},
+            {text: "NTRC", value: 'ncertas', class: 'subtitle-1'},
+            {text: "NTR", value: 'ntotal', class: 'subtitle-1'},
+            {text: "Acerto (%)", value: 'acerto', class: 'subtitle-1'},
+            {text: "Data", value: 'lastdate', class: 'subtitle-1'},
+            {text: "Hora", value: 'horario', class: 'subtitle-1'},
+        ],
+        header_jogos: [
+            {text: "Jogo", sortable: true, value: 'nome', class: 'subtitle-1'},
+            {text: "Min", value: 'min', class: 'subtitle-1'},
+            {text: "Max", value: 'max', class: 'subtitle-1'},
+            {text: "Média", value: 'media', class: 'subtitle-1'},
+            {text: "Data", value: 'lastdate', class: 'subtitle-1'},
+            {text: "Hora", value: 'horario', class: 'subtitle-1'},
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
@@ -123,14 +253,34 @@ const h = require("@/config/hosts").hostAPI
         var response = await axios.get(h + "alunos/" + aluno.id + "?token=" + this.token)
         this.aluno = response.data
         this.aluno.nomeType = "Aluno"
+        this.getTrofeus()
+        this.getLastApps()
+        this.getLastJogos()
+        
     },
     computed: {
       xl() {
         if (this.$vuetify.breakpoint.xl) return true
         return false
       },
+      small(){
+        if (this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm) return true
+        return false
+      }
     },
     methods: {
+      getTrofeus: async function(){
+        var response = await axios.get(hostTrofeus + "alunos/" + this.aluno.user + "/?token=" + this.token)
+        this.trofeus = response.data
+      },
+      getLastApps : async function(){
+        var response2 = await axios.get(hostApps + "alunos/" + this.aluno.user + "/last10/?token=" + this.token)
+        this.lastApps = response2.data
+      },
+      getLastJogos: async function(){
+        var response3 = await axios.get(hostJogos + "alunos/" + this.aluno.user + "/last10/?token=" + this.token)
+        this.lastJogos = response3.data 
+      },
       editarAluno : function(){
           this.$router.push({name: "Editar Aluno", params: {id : this.professor.id}})
       },
@@ -165,7 +315,22 @@ const h = require("@/config/hosts").hostAPI
                   confirmButtonColor: '#009263'
                 })
       },
+      verJogos: function(){
+        this.$router.push({name: "Jogos Alunos"})
+      },
+      verApps: function(){
+        this.$router.push({name: "Apps Alunos"})
+      }
 
     }
   }
 </script>
+
+<style>
+.style-negativo {
+  background-color: #f26755
+}
+.style-positivo {
+  background-color: #10de16
+}
+</style>

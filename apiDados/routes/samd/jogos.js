@@ -467,5 +467,44 @@ router.get('/:jogo/turmas/:turma/ranking', passport.authenticate('jwt', {session
 
 });
 
+router.get('/alunos/:user/last10', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  var user = req.params.user
+  Jogos.getLast10FromAluno(user)
+        .then(dados => res.jsonp(dados))
+        .catch(error => { console.log(error); res.status(500).jsonp("Error")})
+});
+
+router.get('/calcrapid/alunos/:user', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  var user = req.params.user
+  var dataInicio = req.query.dataInicio
+  var dataFim = req.query.dataFim
+  var tipos = req.query.tipos
+
+  if(dataInicio && dataFim){
+      if(tipos){
+        Calcrapid.getTiposCalcRapidAluno(dataInicio, dataFim, tipos.split(','), user)
+                 .then(dados => res.jsonp(dados))
+                 .catch(error => { console.log(error); res.status(500).jsonp("Error")})
+      }
+      else{
+        Calcrapid.getTodosCalcRapidAluno(dataInicio, dataFim, user)
+                 .then(dados => res.jsonp(dados))
+                 .catch(error => { console.log(error); res.status(500).jsonp("Error")})
+      }
+  }
+  else res.status(400).jsonp("Faltam parâmetros.")
+});
+
+router.get('/minutenew/alunos/:user', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  var user = req.params.user
+  var dataInicio = req.query.dataInicio
+  var dataFim = req.query.dataFim
+  var tipos = req.query.tipos
+
+  res.jsonp('Não disponível')
+});
+
+
+
 
 module.exports = router

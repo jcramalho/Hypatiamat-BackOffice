@@ -211,3 +211,55 @@ calcRapid.getTiposCalcRapidTurmas = async function(dataInicio, dataFim, tipo, es
             });   
     })  
 }
+
+calcRapid.getTodosCalcRapidAluno = async function(dataInicio, dataFim, user){
+    return new Promise(function(resolve, reject) {
+        var args = [user, dataInicio, dataFim]
+        sql.query(`select idaluno, sum(pontcerta) as pontcerta, sum(ponterrada) as ponterrada,  sum(n) as oprealizadas, sum(f) as frequencia 
+		from ${bdSAMD}.calcRapidHypatia 
+        where idaluno = ? and (data BETWEEN ? and ?)`, args, function (err, res) {            
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    if(res.length == 0) resolve(undefined)
+                    else resolve(res[0]);
+                }
+            });   
+    }) 
+}
+
+calcRapid.getTiposCalcRapidAluno = async function(dataInicio, dataFim, tipos, user){
+    return new Promise(function(resolve, reject) {
+        var args = [user, dataInicio, dataFim, tipos]
+        sql.query(`select idaluno, sum(pontcerta) as pontcerta, sum(ponterrada) as ponterrada,  sum(n) as oprealizadas, sum(f) as frequencia 
+		from ${bdSAMD}.calcRapidHypatia 
+        where idaluno = ? and (data BETWEEN ? and ?) and tipo in (?)`, args, function (err, res) {            
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    if(res.length == 0) resolve(undefined)
+                    else resolve(res[0]);
+                }
+            });   
+    }) 
+}
+
+// última vez que o aluno jogou
+calcRapid.getAlunoLast = function(user){
+    return new Promise(function(resolve, reject) {
+        sql.query(`select max(concat(data, ' ', horario)) as lastdate from ${bdSAMD}.calcRapidHypatia where idaluno=?;`, user, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if(res.length == 0) resolve(undefined)
+                else resolve(res[0])
+            }
+        })
+    })
+}

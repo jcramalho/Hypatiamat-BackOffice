@@ -359,3 +359,19 @@ Calculus.getTiposMinuteNewTurma = async function(turma, escola, dataInicio, data
             });   
     })  
 }
+
+// última vez que o aluno jogou
+Calculus.getAlunoLast = function(user){
+    return new Promise(function(resolve, reject) {
+        sql.query(`select max(concat(data, ' ', horario)) as lastdate from ${bdSAMD}.minutenew where user=?;`, user, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if(res.length == 0) resolve(undefined)
+                else resolve(res[0])
+            }
+        })
+    })
+}
