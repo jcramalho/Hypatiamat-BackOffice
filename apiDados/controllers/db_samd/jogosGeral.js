@@ -170,6 +170,26 @@ JogosGerais.getJogoFromTurmaFreq = function (dataInicio, dataFim, jogoTipo, tabl
     })   
 }
 
+JogosGerais.getJogoPorDia  = function (user, tableJogo, jogoTipo){
+    return new Promise(function(resolve, reject) {
+        sql.query(`Select jogo.idaluno, Round(AVG(jogo.pontuacao),0) as media, MAX(jogo.pontuacao) as maximo, 
+        MIN(jogo.pontuacao) as minimo, count(jogo.pontuacao) as count 
+        from ${bdSAMD}.${tableJogo} jogo 
+        where jogo.idaluno = ? and jogo.tipo = ?
+        Group by jogo.data
+        Order by jogo.data desc`, [user, jogoTipo], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if(res.length > 0) resolve(res[0])
+                else resolve(undefined)
+            }
+        })
+    })   
+}
+
 JogosGerais.getAlunoLast = function(tableJogo, tipo, user){
     return new Promise(function(resolve, reject) {
         sql.query(`select min(pontuacao) as min, max(pontuacao) as max, Round(avg(pontuacao), 0) as media, 
@@ -182,6 +202,21 @@ JogosGerais.getAlunoLast = function(tableJogo, tipo, user){
             else{
                 if(res.length == 0) resolve(undefined)
                 else resolve(res[0])
+            }
+        })
+    })
+}
+
+JogosGerais.alunoJogou = function(user, dataInicio, dataFim, tableJogo, tipo){
+    var args = [user, tipo, dataInicio, dataFim]
+    return new Promise(function(resolve, reject) {
+        sql.query(`Select id from ${bdSAMD}.${tableJogo} where idaluno = ? and tipo=? and (data between ? and ?);`, args, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
             }
         })
     })

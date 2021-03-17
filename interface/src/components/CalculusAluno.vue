@@ -6,71 +6,60 @@
     <v-row>
         <v-col cols="12" xs="12" sm="6" md="4" lg="3" xl="3">
             <v-card style="background-color:#009263">
-                <v-card-title class="justify-center">
-                    <span class="white--text" :style="styleP"> Média </span>
-                </v-card-title>
-                <center>
-                <v-card-text class="justify-center white--text">
-                    {{resultadosGlobais.media}}
-                </v-card-text>
-                </center>
-            </v-card>
-        </v-col>
-        <v-col cols="12" xs="12" sm="6" md="4" lg="3" xl="3">
-            <v-card style="background-color:#3ab040">
                 <v-card-title  primary-title class="justify-center">
-                    <span class="white--text" :style="styleP"> Mínimo </span>
+                    <span class="white--text" :style="styleP">Operações Certas</span>
                 </v-card-title>
                 <center>
-                <v-card-text class="justify-center white--text">
-                    {{resultadosGlobais.minimo}}
+                <v-card-text v-if="resultadosGlobais.numcertas" class="justify-center white--text">
+                    {{resultadosGlobais.numcertas}}
+                </v-card-text>
+                <v-card-text v-else class="justify-center white--text">
+                    0
                 </v-card-text>
                 </center>
             </v-card>
         </v-col>
         <v-col cols="12" xs="12" sm="6" md="4" lg="3" xl="3">
-            <v-card  style="background-color:#009263">
+            <v-card  style="background-color:#3ab040">
+                <v-card-title class="justify-center">
+                    <span class="white--text" :style="styleP"> Operações Erradas </span>
+                </v-card-title>
+                <center>
+                <v-card-text v-if="resultadosGlobais.numerradas" class="justify-center white--text">
+                    {{resultadosGlobais.numerradas}}
+                </v-card-text>
+                <v-card-text v-else class="justify-center white--text">
+                    0
+                </v-card-text>
+                </center>
+            </v-card>
+        </v-col>
+        <v-col cols="12" xs="12" sm="6" md="4" lg="3" xl="3">
+            <v-card style="background-color:#009263">
                 <v-card-title primary-title class="justify-center">
-                    <span class="white--text" :style="styleP"> Máximo </span>
+                    <span class="white--text" :style="styleP"> Tipo de Operações </span>
                 </v-card-title>
                 <center>
                 <v-card-text class="justify-center white--text">
-                    {{resultadosGlobais.maximo}}
+                    {{resultadosGlobais.ops}}
                 </v-card-text>
                 </center>
             </v-card>
         </v-col>
         <v-col cols="12" xs="12" sm="6" md="12" lg="3" xl="3">
             <v-card  style="background-color:#3ab040">
-                <v-card-title  primary-title class="justify-center">
-                    <span class="white--text" :style="styleP">Nº de vezes que jogou</span>
+                <v-card-title class="justify-center">
+                    <span class="white--text" :style="styleP"> Níveis Jogados </span>
                 </v-card-title>
                 <center>
                 <v-card-text class="justify-center white--text">
-                    {{resultadosGlobais.count}}
+                    {{resultadosGlobais.niveis}}
                 </v-card-text>
                 </center>
             </v-card>
         </v-col>
-        <v-col cols="12"  xs="12" sm="12" md="12" lg="12" xl="12">
-            <center>
-                <v-btn v-if="!xs" class="white--text" color="#009263" @click="verTodos()">Ver todos estes resultados</v-btn>
-                <v-btn v-else class="white--text" color="#009263" @click="verTodos()">Ver todos</v-btn>
-            </center>
-        </v-col>
     </v-row>    
-    <v-dialog v-model="verTotal" width="70%">
-        <v-card class="pa-5" >
-        <v-card-title class="justify-center green--text"><span :style="styleP"> Resultados Obtidos </span> </v-card-title>
-        <v-data-table
-        class="elevation-4"
-        :headers="header_resultados"
-        :items="resultadosTotal"
-        :footer-props="footer_props"
-        >
-        </v-data-table>
-        </v-card>
-    </v-dialog>    
+    
 </div> 
 </template>
 
@@ -88,25 +77,10 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         token: "",
         utilizador : {},
         alunos:[],
-        header_resultados: [
-            {text: "Pontuação Obtida", value: 'pontuacao', class: 'subtitle-1'},
-            {text: "Turma", value: 'turma', class: 'subtitle-1'},
-            {text: "Data", value: 'data', class: 'subtitle-1'},
-            {text: "Horário", value: 'horario', class: 'subtitle-1'},
-        ],
-        footer_props: {
-            "items-per-page-text": "Mostrar",
-            "items-per-page-options": [50, 100, 200, -1],
-            "items-per-page-all-text": "Todos"
-        },
-        filtrar : "",
         resultadosGlobais:{},
-        resultadosTotal:[],
         styleP: 'font-size:20px',
         styleF: 'font-size:15px',
-        widthParams: 'width:70%',
-        color1:"#009263",
-        color2:"#3ab040"
+        widthParams: 'width:70%'
       }
     },
     props:["resultados", "dataInicio", "dataFim", "jogo"],
@@ -142,14 +116,6 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       format(value, event) {
         return moment(value).format('YYYY-MM-DD')
       },
-      verTodos: async function(){
-        var response = await axios.get(h + "alunos/" + this.utilizador.user + "/jogos/" + this.jogo.jogotable 
-                                        + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                        + "&jogoTipo=" + this.jogo.tipo
-                                        + "&token=" + this.token)
-        this.resultadosTotal = response.data
-        this.verTotal = true
-      }
     }
   }
 </script>

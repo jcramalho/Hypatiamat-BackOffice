@@ -52,33 +52,12 @@
                 </center>
             </v-card>
         </v-col>
-        <v-col cols="12"  xs="12" sm="12" md="12" lg="12" xl="12">
-            <center>
-                <v-btn v-if="!xs" class="white--text" color="#009263" @click="verTodos()">Ver todos estes resultados</v-btn>
-                <v-btn v-else class="white--text" color="#009263" @click="verTodos()">Ver todos</v-btn>
-            </center>
-        </v-col>
     </v-row>    
-    <v-dialog v-model="verTotal" width="70%">
-        <v-card class="pa-5" >
-        <v-data-table
-        class="elevation-4"
-        :headers="header_resultados"
-        :items="resultadosTotal"
-        :footer-props="footer_props"
-        >
-        </v-data-table>
-        </v-card>
-    </v-dialog>    
+    
 </div> 
 </template>
 
 <script>
-import axios from "axios"
-const h = require("@/config/hosts").hostAPI
-const hostJogos = require("@/config/hosts").hostJogos
-const anosletivos2 = require("@/config/confs").anosletivos2
-const anoletivoAtual = require("@/config/confs").anoletivo2
 
   export default {
     data(){
@@ -87,19 +66,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         token: "",
         utilizador : {},
         alunos:[],
-        header_resultados: [
-            {text: "Pontuação Obtida", value: 'pontuacao', class: 'subtitle-1'},
-            {text: "Data", value: 'data', class: 'subtitle-1'},
-            {text: "Horário", value: 'horario', class: 'subtitle-1'},
-        ],
-        footer_props: {
-            "items-per-page-text": "Mostrar",
-            "items-per-page-options": [50, 100, 200, -1],
-            "items-per-page-all-text": "Todos"
-        },
-        filtrar : "",
         resultadosGlobais:{},
-        resultadosTotal:[],
         styleP: 'font-size:20px',
         styleF: 'font-size:15px',
         widthParams: 'width:70%'
@@ -138,14 +105,6 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       format(value, event) {
         return moment(value).format('YYYY-MM-DD')
       },
-      verTodos: async function(){
-        var response = await axios.get(h + "alunos/" + this.utilizador.user + "/jogos/" + this.jogo.jogotable 
-                                        + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                        + "&jogoTipo=" + this.jogo.tipo
-                                        + "&token=" + this.token)
-        this.resultadosTotal = response.data
-        this.verTotal = true
-      }
     }
   }
 </script>

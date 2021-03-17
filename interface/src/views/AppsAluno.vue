@@ -35,23 +35,24 @@
                             </v-row>
                             </v-container>
                             <v-card class="pa-4 elevation-5">
-                                <v-container v-if="resultadosGlobais.idaluno == undefined">
+                                <v-container v-if="resultadosGlobais == undefined">
                                     <center><v-icon large color="#009263"> mdi-home-analytics </v-icon></center>
                                     <br>
                                 <center> <span :style="styleP"> Ainda não preencheu os campos necessários para ver resultados ou nunca fez esta aplicação.</span> </center>
                                 </v-container>
                                 <v-container v-else>
                                     <center><v-icon large color="#009263"> mdi-home-analytics </v-icon></center>
+                                    <v-card-title class="justify-center"><span :style="styleP"> {{this.app}} </span></v-card-title>
                                     <br>
                                     <v-row>
                                         <v-col cols="12" xs="12" sm="6" md="4" lg="3" xl="3">
                                             <v-card  style="background-color:#DDAF94">
                                                 <v-card-title class="justify-center">
-                                                    <span :style="styleP"> Média </span>
+                                                    <span :style="styleP"> NTRC </span>
                                                 </v-card-title>
                                                 <center>
                                                 <v-card-text class="justify-center">
-                                                    {{resultadosGlobais.media}}
+                                                    {{resultadosGlobais.ncertas}}
                                                 </v-card-text>
                                                 </center>
                                             </v-card>
@@ -59,11 +60,11 @@
                                         <v-col cols="12" xs="12" sm="6" md="4" lg="3" xl="3">
                                             <v-card  style="background-color:#E8CEBF">
                                                 <v-card-title  primary-title class="justify-center">
-                                                    <span :style="styleP"> Mínimo </span>
+                                                    <span :style="styleP"> NTR </span>
                                                 </v-card-title>
                                                 <center>
                                                 <v-card-text class="justify-center">
-                                                    {{resultadosGlobais.minimo}}
+                                                    {{resultadosGlobais.ntotal}}
                                                 </v-card-text>
                                                 </center>
                                             </v-card>
@@ -71,11 +72,11 @@
                                         <v-col cols="12" xs="12" sm="6" md="4" lg="3" xl="3">
                                             <v-card  style="background-color:#DDAF94">
                                                 <v-card-title  primary-title class="justify-center">
-                                                   <span :style="styleP"> Máximo </span>
+                                                   <span :style="styleP"> Acerto </span>
                                                 </v-card-title>
                                                 <center>
                                                 <v-card-text class="justify-center">
-                                                    {{resultadosGlobais.maximo}}
+                                                    {{resultadosGlobais.acerto}}%
                                                 </v-card-text>
                                                 </center>
                                             </v-card>
@@ -83,11 +84,11 @@
                                         <v-col cols="12" xs="12" sm="6" md="12" lg="3" xl="3">
                                             <v-card  style="background-color:#E8CEBF">
                                                 <v-card-title  primary-title class="justify-center">
-                                                    <span :style="styleP">Nº de vezes que jogou</span>
+                                                    <span :style="styleP">Frequência</span>
                                                 </v-card-title>
                                                 <center>
                                                 <v-card-text class="justify-center">
-                                                    {{resultadosGlobais.count}}
+                                                    {{resultadosGlobais.frequencia}}
                                                 </v-card-text>
                                                 </center>
                                             </v-card>
@@ -152,7 +153,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         anoLetivo: anoletivoAtual,
         apps:[],
         appsInfo:[], 
-        resultadosGlobais:{},
+        resultadosGlobais:undefined,
         resultadosTotal:[],
         styleP: 'font-size:20px',
         styleF: 'font-size:15px',
@@ -162,10 +163,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
     created: async function(){
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
-        var response = await axios.get(hostApps + "temas/?token=" + this.token)
-        this.appsInfo = response.data
-        await this.parseApps()
-        this.onAnoChange()
+        await this.onAnoChange()
         this.resize()
     },
     mounted: function(){
@@ -191,6 +189,14 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           else if(this.$vuetify.breakpoint.sm) {this.styleP= 'font-size:17px'; this.widthParams = 'width:85%'}
           else {this.styleP ='font-size:20px'; this.widthParams = 'width:70%';}
       },
+      atualizaApps: async function(){
+          if(this.dataInicio && this.dataFim){
+            var response = await axios.get(hostApps + "alunos/"+ this.utilizador.user + "/jogou" +
+                                            "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim + "&token=" + this.token)
+            this.appsInfo = response.data
+            await this.parseApps()
+          }
+      },
       parseApps: async function(){
           var aux = []
           for(var i = 0; i < this.appsInfo.length; i++){
@@ -208,7 +214,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
              var aux = this.anoLetivo.split("/")
              this.dataInicio = aux[0] + "-09-01"
              this.dataFim = aux[1] + "-09-01"
-             this.atualizaConteudo
+             this.atualizaApps()
           }
       },
       onAppChange: async function(item){
@@ -218,36 +224,41 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       },
       onDataInChange: async function(item){
           if(this.dataInicio && this.dataInicio != ""){
+              this.atualizaApps()
               this.atualizaConteudo()
           }
       },
       onDataFimChange: async function(item){
           if(this.dataFim && this.dataFim != ""){
+              this.atualizaApps()
               this.atualizaConteudo()
           }
       },
       atualizaConteudoSubtema: async function(appInfo){
+        this.resultadosGlobais = undefined
         var response = await axios.get(hostApps + "alunos/" + this.utilizador.user
                                         + "/?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim 
                                         +"&codtema=" + appInfo.codtema + "&codsubtema=" + appInfo.codsubtema + "&token=" + this.token)
                         
-        this.items = response.data
+        this.resultadosGlobais = response.data
       },
       atualizaConteudoTema: async function(appInfo){
+        this.resultadosGlobais = undefined
         var response = await axios.get(hostApps + "alunos/" + this.utilizador.user
                                             + "/?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim 
                                             +"&codtema=" + appInfo.codtema + "&token=" + this.token)
                         
-        this.items = response.data
+        this.resultadosGlobais = response.data
       },
       atualizaConteudo: async function(){
           if(this.jogo != "" && this.dataFim != "" && this.dataInicio != "" ){
             if(this.app == "Todas"){
+                    this.resultadosGlobais = undefined
                     var response = await axios.get(hostApps + "alunos/" + this.utilizador.user
                                             + "/?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
                                             + "&token=" + this.token)
             
-                    this.items = response.data
+                    this.resultadosGlobais = response.data
                 }
                 else{
                     var appInfo = this.appsInfo.find(element => element.tema == this.app)

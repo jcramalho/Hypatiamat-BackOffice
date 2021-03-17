@@ -49,14 +49,14 @@
             </v-col>
             
           </v-row>
-            <v-row class="align-center justify-center">
+            <v-row class="align-center justify-center" no-gutters>
               <v-col cols="12">
               <v-card-title class="justify-center"> Troféus: </v-card-title>
               </v-col>
               <v-col cols="12" xs="12" sm="4" md="4" lg="4" xl="4">
                 <center>
                   <v-container class="d-flex align-center justify-center">
-                    <div class="pr-3"><v-img :src="require('@/assets/estrela.png')" width="50px" heigth="50px"> </v-img></div>
+                    <div class="pr-3"><v-img :src="require('@/assets/star.png')" width="50px" heigth="50px"> </v-img></div>
                     <div><span>{{trofeus.trophy3}}</span></div>
                   </v-container>
                 </center>
@@ -64,7 +64,7 @@
               <v-col cols="12" xs="12" sm="4" md="4" lg="4" xl="4">
                 <center>
                   <v-container class="d-flex align-center justify-center">
-                    <div class="pr-3"><v-img :src="require('@/assets/diamante_amarelo.png')" width="50px" heigth="50px"> </v-img></div>
+                    <div class="pr-3"><v-img :src="require('@/assets/diamante.png')" width="50px" heigth="50px"> </v-img></div>
                     <div><span>{{trofeus.trophy5}}</span></div>
                   </v-container>
                 </center>
@@ -72,7 +72,7 @@
               <v-col cols="12" xs="12" sm="4" md="4" lg="4" xl="4">
                 <center>
                   <v-container class="d-flex align-center justify-center">
-                    <div class="pr-3"><v-img :src="require('@/assets/relampago_azul.png')" width="50px" heigth="50px"> </v-img></div>
+                    <div class="pr-3"><v-img :src="require('@/assets/relampago.png')" width="50px" heigth="50px"> </v-img></div>
                     <div><span>{{trofeus.trophy10}}</span></div>
                   </v-container>
                 </center>
@@ -80,8 +80,8 @@
             </v-row>
             <v-col cols="12">
               <center>
-                <v-btn v-if="!showApps" text @click="showApps=!showApps"><span>Últimas 10 Apps</span><v-icon color="#009263"> mdi-arrow-down </v-icon> </v-btn>
-                <v-btn v-else text @click="showApps=!showApps"><span>Últimas 10 Apps</span><v-icon color="#009263"> mdi-arrow-up </v-icon></v-btn>
+                <v-btn v-if="!showApps" text @click="showApps=!showApps"><span><v-icon color="#009263">mdi-apps</v-icon>Últimas 10 Apps</span><v-icon color="#009263"> mdi-arrow-down </v-icon> </v-btn>
+                <v-btn v-else text @click="showApps=!showApps"><v-icon color="#009263">mdi-apps</v-icon><span>Últimas 10 Apps</span><v-icon color="#009263"> mdi-arrow-up </v-icon></v-btn>
               </center> 
             </v-col>
             <v-col cols="12" xs="12" sm="12" md="10" lg="10" xl="10">
@@ -103,7 +103,7 @@
                     :search="filtrarApps"
                   >
                   <template v-slot:item="row">
-                    <tr :class="row.item.acerto>50 ? 'style-positivo' : 'style-negativo'">
+                    <tr :class="row.item.acerto>50 ? 'style-positivo' : 'style-negativo'" @click="showAppPorDia(row.item)">
                         <td>{{row.item.nome}}</td>
                         <td>{{row.item.ncertas}}</td>
                         <td>{{row.item.ntotal}}</td>
@@ -118,8 +118,8 @@
             </v-col>
             <v-col cols="12">
               <center>
-                <v-btn v-if="!showJogos" text @click="showJogos=!showJogos"><span>Últimos 10 Jogos</span><v-icon color="#009263"> mdi-arrow-down </v-icon> </v-btn>
-                <v-btn v-else text @click="showJogos=!showJogos"><span>Últimos 10 Jogos</span><v-icon color="#009263"> mdi-arrow-up </v-icon></v-btn>
+                <v-btn v-if="!showJogos" text @click="showJogos=!showJogos"><v-icon color="#009263">mdi-gamepad-variant</v-icon><span>Últimos 10 Jogos</span><v-icon color="#009263"> mdi-arrow-down </v-icon> </v-btn>
+                <v-btn v-else text @click="showJogos=!showJogos"><v-icon color="#009263">mdi-gamepad-variant</v-icon><span>Últimos 10 Jogos</span><v-icon color="#009263"> mdi-arrow-up </v-icon></v-btn>
               </center> 
             </v-col>
             <v-col cols="12" xs="12" sm="12" md="10" lg="10" xl="10">
@@ -141,7 +141,7 @@
                     :search="filtrarJogos"
                   >
                   <template v-slot:item="row">
-                    <tr>
+                    <tr @click="showJogoPorDia(row.item)">
                         <td>{{row.item.nome}}</td>
                         <td>{{row.item.min}}</td>
                         <td>{{row.item.max}}</td>
@@ -179,6 +179,12 @@
                   <v-btn class="white--text" primary large block style="background-color: #009263;" @click="editarPassword()">Confirmar alteração</v-btn>
                 </v-card>
           </v-dialog>
+          <v-dialog v-model="dialogDia">
+            <AppDiaAluno v-if="dialogDia" :resultados="appPorDia" :app="appAtual" />
+          </v-dialog>
+          <v-dialog v-model="dialogDia">
+
+          </v-dialog>
     </v-card>
 </template>
 
@@ -189,16 +195,18 @@ const h = require("@/config/hosts").hostAPI
 const hostApps =  require("@/config/hosts").hostApps
 const hostJogos =  require("@/config/hosts").hostJogos
 const hostTrofeus =  require("@/config/hosts").hostTrofeus
+import AppDiaAluno from "@/components/AppDiaAluno.vue"
 
   export default {
     components:{
-
+      AppDiaAluno
     },
     data(){
       return {
         turmas: [],
         dialogTurmas: false,
         dialogPassword: false,
+        dialogDia: false,
         aluno: {},
         password1: "",
         password2: "",
@@ -234,6 +242,10 @@ const hostTrofeus =  require("@/config/hosts").hostTrofeus
         id : 0,
         type: 0,
         filtrar:"",
+        appPorDia:[],
+        appAtual:"",
+        jogoPorDia:[],
+        jogoAtual:"",
         number0or1: v  => {
           if (!v.trim()) return true;
           if (!isNaN(parseInt(v)) && (v == 0 || v == 1)) return true;
@@ -283,6 +295,28 @@ const hostTrofeus =  require("@/config/hosts").hostTrofeus
       },
       editarAluno : function(){
           this.$router.push({name: "Editar Aluno", params: {id : this.professor.id}})
+      },
+      showAppPorDia : async function(app){
+        var response = await axios.get(hostApps + "alunos/" + this.aluno.user + "/dias?codtema=" + app.grupo
+                                        + "&codsubtema=" + app.appid + "&token=" + this.token)
+        this.appPorDia = response.data
+        this.appAtual = app.nome
+        this.dialogDia = true
+      },
+      showJogoPorDia: async function(jogo){
+        if(jogo.nome != 'CalcRapid'){
+          if(jogo.nome == 'Calculus'){
+            var response = await axios.get(hostJogos + jogo.jogotable + "alunos/" + this.aluno.user + "/dias?tipo="
+                                          + jogo.tipo + "&token=" + this.token)
+          }
+          else{
+            var response = await axios.get(hostJogos + jogo.jogotable + "alunos/" + this.aluno.user + "/dias?tipo="
+                                          + jogo.tipo + "&token=" + this.token)
+          }
+          this.jogoPorDia = response.data
+          this.jogoAtual = jogo.nome
+          this.dialogJogoDia = true
+        }
       },
       editarPassword : async function(){
           if(this.password1 != "" && this.password2 != ""){

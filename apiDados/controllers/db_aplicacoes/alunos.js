@@ -104,7 +104,7 @@ Aluno.getAluno = function(id){
 
 Aluno.getJogosFromAluno  = function (dataInicio, dataFim, jogoTipo, tableJogo, user){
     return new Promise(function(resolve, reject) {
-        sql.query(`Select al.numero, jogo.idaluno, al.nome, jogo.pontuacao, jogo.data, jogo.horario 
+        sql.query(`Select al.numero, jogo.idaluno, al.nome, jogo.turma, jogo.pontuacao, jogo.data, jogo.horario 
         from ${bdSAMD}.${tableJogo} jogo, ${bdAplicacoes}.alunos al  
         where jogo.tipo = ? and jogo.idaluno = ? and al.user = jogo.idaluno and (jogo.data between ? and ?) Order by jogo.data DESC;`
         , [jogoTipo, user, dataInicio, dataFim], function(err, res){

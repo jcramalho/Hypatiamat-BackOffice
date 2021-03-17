@@ -360,6 +360,109 @@ Calculus.getTiposMinuteNewTurma = async function(turma, escola, dataInicio, data
     })  
 }
 
+// por um aluno 
+Calculus.getTodosMinuteNewAluno = async function(user, dataInicio, dataFim){
+    var args = [user, dataInicio, dataFim]
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT sum(numcertas) as numcertas, sum(numerradas) as numerradas, count(distinct nivel) as niveis, count(distinct op) as ops 
+		            FROM ${bdSAMD}.minutenew where user=? and (data between ? and ?);`, args, function (err, res) {            
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    if(res.length == 0) resolve(undefined)
+                    else resolve(res[0]);
+                }
+            });   
+    })  
+}
+
+Calculus.getTiposNiveisMinuteNewAluno = async function(user, dataInicio, dataFim, niveis, tipos){
+    var args = [user, dataInicio, dataFim, niveis, tipos]
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT sum(numcertas) as numcertas, sum(numerradas) as numerradas, count(distinct nivel) as niveis, count(distinct op) as ops 
+        FROM ${bdSAMD}.minutenew where user=? and (data between ? and ?) and nivel in (?) and op=?;`, args, function (err, res) {            
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    if(res.length == 0) resolve(undefined)
+                    else resolve(res[0]);
+                }
+            });   
+    })  
+}
+
+Calculus.getNiveisMinuteNewAluno = async function(user, dataInicio, dataFim, niveis){
+    var args = [user, dataInicio, dataFim, niveis]
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT sum(numcertas) as numcertas, sum(numerradas) as numerradas, count(distinct nivel) as niveis, count(distinct op) as ops 
+        FROM ${bdSAMD}.minutenew where user=? and (data between ? and ?) and nivel in (?);`, args, function (err, res) {            
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    console.log(res)
+                    if(res.length == 0) resolve(undefined)
+                    else resolve(res[0]);
+                }
+            });   
+    })  
+}
+
+Calculus.getTiposMinuteNewAluno = async function(user, dataInicio, dataFim, tipos){
+    var args = [user, dataInicio, dataFim, tipos]
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT sum(numcertas) as numcertas, sum(numerradas) as numerradas, count(distinct nivel) as niveis, count(distinct op) as ops 
+        FROM ${bdSAMD}.minutenew where user=? and (data between ? and ?) and op=?;`, args, function (err, res) {            
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    if(res.length == 0) resolve(undefined)
+                    else resolve(res[0]);
+                }
+            });   
+    })    
+}
+
+Calculus.alunoPorDia = function(user){
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT data, sum(numcertas) as numcertas, sum(numerradas) as numerradas, count(distinct nivel) as niveis, count(distinct op) as ops 
+                FROM ${bdSAMD}.minutenew where user=?
+                group by data
+                order by data desc;`, user, function (err, res) {            
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res)
+                }
+            });   
+    })
+}
+
+Calculus.alunoJogouMinuteNew = async function(user, dataInicio, dataFim){
+    var args = [user, dataInicio, dataFim]
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT user 
+                    FROM ${bdSAMD}.minutenew where user=? and (data between ? and ?);`, args, function (err, res) {            
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res)
+                }
+            });   
+    })    
+}
+
 // última vez que o aluno jogou
 Calculus.getAlunoLast = function(user){
     return new Promise(function(resolve, reject) {

@@ -344,6 +344,81 @@ module.exports.getAppFromTurmaSubTema = function(codtema, codsubtema, turma, cod
     })
 }
 
+module.exports.getAllAppsFromAluno = function(user, dataInicio, dataFim){
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT userid, SUM(ncertas) as ncertas, SUM(ntotal) as ntotal, round( sum(ncertas)/sum(ntotal) *100, 0) as acerto, 
+        SUM(onpeak) as onpeak, SUM(offpeak) as offpeak, (SUM(onpeak) + SUM(offpeak)) as frequencia FROM 
+        ${bdTesteConhecimentos}.appsinfoall WHERE userid=? AND (lastdate between ? and ?);`, 
+        [user, dataInicio, dataFim] ,function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if(res.length == 0) resolve(undefined)
+                else resolve(res[0])
+            }
+        })
+    })
+}
+
+
+module.exports.getAppFromAluno = function(codtema, user, dataInicio, dataFim){
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT userid,  SUM(ncertas) as ncertas, SUM(ntotal) as ntotal, round( sum(ncertas)/sum(ntotal) *100, 0) as acerto, 
+        SUM(onpeak) as onpeak, SUM(offpeak) as offpeak, (SUM(onpeak) + SUM(offpeak)) as frequencia FROM 
+        ${bdTesteConhecimentos}.appsinfoall WHERE userid=? AND (lastdate between ? and ?) and grupo=?;`, 
+        [user, dataInicio, dataFim, codtema] ,function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if(res.length == 0) resolve(undefined)
+                else resolve(res[0])
+            }
+        })
+    })
+}
+
+module.exports.getAppFromAlunoSubTema = function(codtema, codsubtema, user, dataInicio, dataFim){
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT userid,  SUM(ncertas) as ncertas, SUM(ntotal) as ntotal, round( sum(ncertas)/sum(ntotal) *100, 0) as acerto, 
+        SUM(onpeak) as onpeak, SUM(offpeak) as offpeak, (SUM(onpeak) + SUM(offpeak)) as frequencia FROM 
+        ${bdTesteConhecimentos}.appsinfoall WHERE userid=? AND (lastdate between ? and ?) and grupo=? and appid=?;`, 
+        [user, dataInicio, dataFim, codtema, codsubtema] ,function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if(res.length == 0) resolve(undefined)
+                else resolve(res[0])
+            }
+        })
+    })
+}
+
+module.exports.getAppFromAlunoPorDia = function(user, codtema, codsubtema){
+    var args = [user, codtema, codsubtema]
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT lastdate, SUM(ncertas) as ncertas, SUM(ntotal) as ntotal, round( sum(ncertas)/sum(ntotal) *100, 0) as acerto, 
+                SUM(onpeak) as onpeak, SUM(offpeak) as offpeak, (SUM(onpeak) + SUM(offpeak)) as frequencia 
+                FROM ${bdTesteConhecimentos}.appsinfoall 
+                WHERE userid=? and grupo=? and appid=?
+                group by lastdate
+                order by lastdate desc;;`, args,function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
 module.exports.getLast10 = async function(user){
     return new Promise(function(resolve, reject) {
         sql.query(`SELECT grupo, appid, sum(ncertas) as ncertas, sum(ntotal) as ntotal, ROUND((sum(ncertas)/sum(ntotal))*100, 0) as acerto, 
@@ -382,5 +457,41 @@ module.exports.getLast10FromAluno = async function(user){
         }
     }
     return last10
+}
+
+module.exports.getAppsFromAlunoAux = function(user, dataInicio, dataFim){
+    var args = [user, dataInicio, dataFim]
+    return new Promise(function(resolve, reject) {
+        sql.query(`select distinct grupo, appid 
+                    from hypati67_testeconhecimentos.appsinfoall 
+                    where userid=? and (lastdate between ? and ?);`, args, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+module.exports.getAppsFromAluno = async function(user, dataInicio, dataFim){
+    var appsJogadas = await this.getAppsFromAlunoAux(user, dataInicio, dataFim)
+    var appsTodas = await this.getTemas()
+    var res = ["Todas"]
+    for(var i = 1; i < appsTodas.length; i++){
+        var tema = appsTodas[i]
+        if(tema.codsubtema){
+            var app = appsJogadas.find(e => e.grupo == tema.codtema && e.appid == tema.codsubtema)
+            if(app) res.push(tema)
+        }
+        else{
+            var app = appsJogadas.find(e => e.grupo == tema.codtema)
+            if(app) res.push(tema)
+        }
+    }
+
+    return res
 }
 

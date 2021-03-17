@@ -68,7 +68,7 @@
                             </v-row>
                             </v-container>
                             <v-card class="pa-4 elevation-5">
-                                <v-container v-if="resultadosGlobais == undefined || resultadosGlobais.idaluno == undefined">
+                                <v-container v-if="resultadosGlobais == undefined">
                                     <center><v-icon large color="#009263"> mdi-home-analytics </v-icon></center>
                                     <br>
                                 <center> Ainda não preencheu os campos necessários para ver resultados ou nunca jogou este jogo. </center>
@@ -78,7 +78,8 @@
                                                 :resultados="resultadosGlobais" :dataInicio="dataInicio" :dataFim="dataFim" :jogo="jogo"/>
                                 </v-container>
                                 <v-container v-else-if="this.jogo.jogo=='Calculus'">
-                                    Undefined
+                                    <CalculusAluno v-if="resultadosGlobais != undefined || resultadosGlobais.idaluno == undefined" 
+                                                :resultados="resultadosGlobais" :dataInicio="dataInicio" :dataFim="dataFim" :jogo="jogo"/>
                                 </v-container>
                                 <v-container v-else>
                                     <JogoGeralAluno v-if="resultadosGlobais != undefined || resultadosGlobais.idaluno == undefined" 
@@ -102,10 +103,12 @@ const anosletivos2 = require("@/config/confs").anosletivos2
 const anoletivoAtual = require("@/config/confs").anoletivo2
 import JogoGeralAluno from "@/components/JogoGeralAluno.vue"
 import CalcRapidAluno from "@/components/CalcRapidAluno.vue"
+import CalculusAluno from "@/components/CalculusAluno.vue"
 
   export default {
     components:{
-        JogoGeralAluno, CalcRapidAluno
+        JogoGeralAluno, CalcRapidAluno,
+        CalculusAluno
     },
     data(){
       return {
@@ -133,7 +136,7 @@ import CalcRapidAluno from "@/components/CalcRapidAluno.vue"
         anoLetivo: anoletivoAtual,
         jogos:[],
         jogosInfo:[], 
-        resultadosGlobais:{},
+        resultadosGlobais:undefined,
         resultadosTotal:[],
         tiposCalc: ["1 - Adição", "2 - Subtração", "3 - Multiplicação", "4 - Divisão"],
         niveisSel:["1","2","3","4","5"],
@@ -147,13 +150,7 @@ import CalcRapidAluno from "@/components/CalcRapidAluno.vue"
     created: async function(){
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
-        var response2 = await axios.get(hostJogos + "?token=" + this.token)
-        var i
-        this.jogosInfo = response2.data
-        /*
-        for(i = 0; i < this.jogosInfo.length; i++){
-            this.jogos.push(this.jogosInfo[i].jogo)
-        }*/
+        
         this.onAnoChange()
         this.resize()
     },
@@ -175,6 +172,11 @@ import CalcRapidAluno from "@/components/CalcRapidAluno.vue"
         }
     },
     methods: {
+      atualizaJogos: async function(){
+        var response2 = await axios.get(hostJogos + "alunos/"+ this.utilizador.user + "/jogou?dataInicio=" 
+                                        + this.dataInicio + "&dataFim=" + this.dataFim + "&token=" + this.token)
+        this.jogosInfo = response2.data
+      },
       resize(){
           if (this.$vuetify.breakpoint.xs) {this.styleP='font-size:15px'; this.widthParams = 'width:100%';}
           else if(this.$vuetify.breakpoint.sm) this.styleP= 'font-size:17px'
@@ -188,7 +190,8 @@ import CalcRapidAluno from "@/components/CalcRapidAluno.vue"
              var aux = this.anoLetivo.split("/")
              this.dataInicio = aux[0] + "-09-01"
              this.dataFim = aux[1] + "-09-01"
-             this.atualizaConteudo
+             this.atualizaJogos()
+             this.atualizaConteudo()
           }
       },
       onJogoChange: async function(item){
@@ -198,11 +201,13 @@ import CalcRapidAluno from "@/components/CalcRapidAluno.vue"
       },
       onDataInChange: async function(item){
           if(this.dataInicio){
+              this.atualizaJogos()
               this.atualizaConteudo()
           }
       },
       onDataFimChange: async function(item){
           if(this.dataFim){
+              this.atualizaJogos()
               this.atualizaConteudo()
           }
       },
@@ -295,7 +300,7 @@ import CalcRapidAluno from "@/components/CalcRapidAluno.vue"
       atualizaConteudo: async function(){
           if(this.jogo && this.jogo.jogo != "" && this.dataFim != "" && this.dataInicio != "" ){
               if(this.jogo.jogo == "Calcrapid") this.atualizaCalcRapid()
-              else if(this.jogo.jogo == "Calculus") alert("Indisponivel")
+              else if(this.jogo.jogo == "Calculus") this.onNivelChange()
               else{
                 this.resultadosGlobais = undefined
                 var response = await axios.get(h + "alunos/" + this.utilizador.user + "/jogosGlobal/" + this.jogo.jogotable 
@@ -306,89 +311,41 @@ import CalcRapidAluno from "@/components/CalcRapidAluno.vue"
               }
           } 
       },
-      verTodos: async function(){
-          if(this.jogo && this.jogo.jogo != "" && this.dataFim != "" && this.dataInicio != "" ){
-              if(this.jogo.jogo == "Calcrapid") alert("Indisponivel")
-              else if(this.jogo.jogo == "Calculus") alert("Indisponivel")
-              else{
-                var response = await axios.get(h + "alunos/" + this.utilizador.user + "/jogos/" + this.jogo.jogotable 
-                                                + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                + "&jogoTipo=" + this.jogo.tipo
-                                                + "&token=" + this.token)
-                this.resultadosTotal = response.data
-                this.verTotal = true
-              }
-          } 
-
-      },
       atualizaMinuteNew: async function(){
-          this.loading = true
-          this.headers = this.headers_minutenew
-          if(!this.comunidade || this.comunidade.nome == "Nenhuma"){
-                var response = await axios.get(hostJogos + "minutenew/municipios/"
-                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                    +  "&token=" + this.token)
-          }
-          else{
-                var response = await axios.get(hostJogos + "minutenew/comunidades/" + this.comunidade.codigo
-                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                    +  "&token=" + this.token)
-          }
-          this.items = response.data
-          this.loading = false
+          this.resultadosGlobais = undefined
+          var response = await axios.get(hostJogos + "minutenew/alunos/" + this.utilizador.user
+                                            + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                            +  "&token=" + this.token)
+          this.resultadosGlobais = response.data
           return true
       },
       atualizaMinuteNewTipos: async function(){
-          this.loading = true
           var tipos = await this.parseTiposCalculus()
-          this.headers = this.headers_minutenew
-          if(!this.comunidade || this.comunidade.nome == "Nenhuma"){
-                var response = await axios.get(hostJogos + "minutenew/municipios/"
-                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                    + "&tipos=" + tipos +"&token=" + this.token)
-          }
-          else{
-                var response = await axios.get(hostJogos + "minutenew/comunidades/" + this.comunidade.codigo
-                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                    + "&tipos=" + tipos +"&token=" + this.token)
-          }
-          this.items = response.data
-          this.loading = false
+          this.resultadosGlobais = undefined
+          var response = await axios.get(hostJogos + "minutenew/alunos/" + this.utilizador.user
+                                                + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                + "&tipos=" + tipos +"&token=" + this.token)
+        
+          this.resultadosGlobais = response.data
           return true
       },
       atualizaMinuteNewNiveis: async function(){
-          this.loading = true
-          this.headers = this.headers_minutenew
-          if(!this.comunidade || this.comunidade.nome == "Nenhuma"){
-                var response = await axios.get(hostJogos + "minutenew/municipios/"
-                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                    + "&niveis=" + this.niveisSel +"&token=" + this.token)
-          }
-          else{
-                var response = await axios.get(hostJogos + "minutenew/comunidades/" + this.comunidade.codigo
-                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                    + "&niveis=" + this.niveisSel +"&token=" + this.token)
-          }
-          this.items = response.data
-          this.loading = false
+          this.resultadosGlobais = undefined
+          var response = await axios.get(hostJogos + "minutenew/alunos/" + this.utilizador.user
+                                                + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                                + "&niveis=" + this.niveisSel +"&token=" + this.token)
+          
+          this.resultadosGlobais = response.data
           return true
       },
       atualizaMinuteNewTiposNiveis: async function(){
-          this.loading = true
           var tipos = await this.parseTiposCalculus()
-          this.headers = this.headers_minutenew
-          if(!this.comunidade || this.comunidade.nome == "Nenhuma"){
-                var response = await axios.get(hostJogos + "minutenew/municipios/"
-                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                    +  "&niveis=" + this.niveisSel + "&tipos=" + tipos + "&token=" + this.token)
-          }
-          else{
-                var response = await axios.get(hostJogos + "minutenew/comunidades/" + this.comunidade.codigo
-                                                    + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                    +  "&niveis=" + this.niveisSel + "&tipos=" + tipos + "&token=" + this.token)
-          }
-          this.items = response.data
-          this.loading = false
+          this.resultadosGlobais = undefined
+          var response = await axios.get(hostJogos + "minutenew/alunos/" + this.utilizador.user
+                                            + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                            +  "&niveis=" + this.niveisSel + "&tipos=" + tipos + "&token=" + this.token)
+          
+          this.resultadosGlobais = response.data
           return true
       },
     }

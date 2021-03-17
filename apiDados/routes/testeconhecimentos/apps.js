@@ -201,34 +201,56 @@ router.get('/alunos/:user', passport.authenticate('jwt', {session: false}), func
     var user = req.params.user
     var codtema = req.query.codtema
     var codsubtema = req.query.codsubtema
-    /*
     if(codtema){
         // é um tema
         if(codsubtema){
             // com subtema
             Apps.getAppFromAlunoSubTema(codtema, codsubtema, user, dataInicio, dataFim)
-                .then(dados =>{
-                    res.jsonp(dados)
-                })
+                .then(dados => res.jsonp(dados))
                 .catch(erro => res.status(500).jsonp(erro))
         }
         else{
             // sem subtema
             Apps.getAppFromAluno(codtema, user, dataInicio, dataFim)
-                .then(dados =>{
-                    res.jsonp(dados)
-                })
+                .then(dados => res.jsonp(dados))
                 .catch(erro => res.status(500).jsonp(erro))
         }
     }
     else{
         Apps.getAllAppsFromAluno(user, dataInicio, dataFim)
-            .then(dados =>{
-                res.jsonp(dados)
-            })
+            .then(dados => res.jsonp(dados))
             .catch(erro => res.status(500).jsonp(erro))
-    } */
-    res.jsonp("Não disponível")         
+    } 
+});
+
+// Todas as apps que um aluno jogou num intervalo de tempo
+router.get('/alunos/:user/jogou', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var dataInicio = req.query.dataInicio;
+    var dataFim = req.query.dataFim;
+    var user = req.params.user
+   
+    if(dataInicio && dataFim){
+        Apps.getAppsFromAluno(user, dataInicio, dataFim)
+            .then(dados => res.jsonp(dados))
+            .catch(erro => res.status(500).jsonp(erro))
+    }
+    else res.status(400).jsonp('Faltam parâmetros')
+});
+
+// por dia de um aluno
+router.get('/alunos/:user/dias', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var user = req.params.user
+    var codtema = req.query.codtema
+    var codsubtema = req.query.codsubtema
+
+    if(codtema && codsubtema){
+        Apps.getAppFromAlunoPorDia(user, codtema, codsubtema)
+            .then(dados => res.jsonp(dados))
+            .catch(erro => res.status(500).jsonp(erro))
+    }
+    else{
+        res.status(500).jsonp('Faltam parâmetros.')
+    }
 });
 
 router.get('/alunos/:user/last10', passport.authenticate('jwt', {session: false}), function(req, res, next) {
@@ -236,7 +258,6 @@ router.get('/alunos/:user/last10', passport.authenticate('jwt', {session: false}
     Apps.getLast10FromAluno(user)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).jsonp(erro))
-
 })
 
 

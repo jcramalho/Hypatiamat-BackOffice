@@ -474,6 +474,18 @@ router.get('/alunos/:user/last10', passport.authenticate('jwt', {session: false}
         .catch(error => { console.log(error); res.status(500).jsonp("Error")})
 });
 
+router.get('/alunos/:user/jogou', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  var user = req.params.user
+  var dataInicio = req.query.dataInicio
+  var dataFim = req.query.dataFim
+  if(dataInicio && dataFim){
+    Jogos.getJogosFromAluno(user, dataInicio, dataFim)
+          .then(dados => res.jsonp(dados))
+          .catch(error => { console.log(error); res.status(500).jsonp("Error")})
+  }
+  else res.status(400).jsonp("Faltam parâmetros (dataInicio ou dataFim).")
+});
+
 router.get('/calcrapid/alunos/:user', passport.authenticate('jwt', {session: false}), function(req, res, next) {
   var user = req.params.user
   var dataInicio = req.query.dataInicio
@@ -500,10 +512,49 @@ router.get('/minutenew/alunos/:user', passport.authenticate('jwt', {session: fal
   var dataInicio = req.query.dataInicio
   var dataFim = req.query.dataFim
   var tipos = req.query.tipos
+  var niveis = req.query.niveis
 
-  res.jsonp('Não disponível')
+  if(tipos && niveis){
+    Calculus.getTiposNiveisMinuteNewAluno(user, dataInicio, dataFim, niveis.split(","), tipos)
+              .then(dados => res.jsonp(dados))
+              .catch(erro => res.status(500).jsonp(erro))
+  }
+  else if(tipos){
+    Calculus.getTiposMinuteNewAluno(user, dataInicio, dataFim, tipos)
+              .then(dados => res.jsonp(dados))
+              .catch(erro => res.status(500).jsonp(erro)) 
+  }
+  else if(niveis){
+    Calculus.getNiveisMinuteNewAluno(user, dataInicio, dataFim, niveis.split(","))
+              .then(dados => res.jsonp(dados))
+              .catch(erro => res.status(500).jsonp(erro)) 
+  }
+  else{
+    Calculus.getTodosMinuteNewAluno(user, dataInicio, dataFim)
+              .then(dados => res.jsonp(dados))
+              .catch(erro => res.status(500).jsonp(erro))
+  }
 });
 
+router.get('/minutenew/alunos/:user/dias', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  var user = req.params.user
+  Calculus.alunoPorDia(user)
+            .then(dados => res.jsonp(dados))
+            .catch(erro => res.status(500).jsonp(erro))
+  
+});
+
+router.get('/:jogo/alunos/:user/dias', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  var user = req.params.user
+  var jogo = req.params.jogo
+  var tipo = req.query.tipo
+  if(jogo && tipo){
+    JogosGerais.getJogoPorDia(user, jogo, tipo)
+            .then(dados => res.jsonp(dados))
+            .catch(erro => res.status(500).jsonp(erro))
+  }
+  else res.status(400).jsonp("Faltam parâmetros (jogo ou tipo)")
+});
 
 
 

@@ -196,6 +196,25 @@ Jogos.getAllJogosTurma = async function(dataInicio, dataFim, turma, escola){
     return res;
 }
 
+Jogos.getJogosFromAluno = async function(user, dataInicio, dataFim){
+    var jogos = await Jogos.getJogosDB()
+    var res = []
+    
+    var alunoJogouCalculus = await Calculus.alunoJogouMinuteNew(user, dataInicio, dataFim)
+    if(alunoJogouCalculus.length > 0) res.push(minutenewDef)
+
+    var alunoJogouCalcRapid = await Calcrapid.alunoJogou(user, dataInicio, dataFim)
+    if(alunoJogouCalcRapid.length > 0) res.push(calcrapidDef)
+
+    for(var i = 0; i < jogos.length; i++){
+        var jogo = jogos[i]
+        var alunoJogou = await JogosGerais.alunoJogou(user, dataInicio, dataFim, jogo.jogotable, jogo.tipo)
+        if(alunoJogou.length > 0) res.push(jogo)
+    }
+
+    return res;
+}
+
 Jogos.getLast10FromAluno = async function(user){
     var jogos = await Jogos.getJogosDB()
     var aux = [], res = []
@@ -205,6 +224,8 @@ Jogos.getLast10FromAluno = async function(user){
         var jogo = await JogosGerais.getAlunoLast(jogos[i].jogotable, jogos[i].tipo, user)
         if(jogo.lastdate) {
             jogo.nome = jogos[i].jogo
+            jogo.jogotable = jogos[i].jogotable
+            jogo.tipo = jogos[i].tipo
             aux.push(jogo)
         }
     }

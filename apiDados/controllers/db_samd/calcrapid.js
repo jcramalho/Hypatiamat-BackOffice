@@ -248,6 +248,24 @@ calcRapid.getTiposCalcRapidAluno = async function(dataInicio, dataFim, tipos, us
     }) 
 }
 
+calcRapid.alunoJogou = async function(user, dataInicio, dataFim){
+    return new Promise(function(resolve, reject) {
+        var args = [user, dataInicio, dataFim]
+        sql.query(`select idaluno
+                    from ${bdSAMD}.calcRapidHypatia 
+                    where idaluno = ? and (data BETWEEN ? and ?)`, args, function (err, res) {            
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res)
+                }
+            });   
+    }) 
+}
+
+
 // última vez que o aluno jogou
 calcRapid.getAlunoLast = function(user){
     return new Promise(function(resolve, reject) {
