@@ -50,6 +50,25 @@ module.exports.getCampeonatoMunicipios = function(campeonato){
                 FROM (select * from ${bdTesteConhecimentos}.campeonatos where campeonatoID=?) camp, ${bdAplicacoes}.alunos al,
                     ${bdAplicacoes}.Escolas esc where camp.user = al.user and al.escola = esc.cod
                     group by esc.localidade, camp.jogo
+                    Order by esc.localidade, camp.jogo;`, [campeonato], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+module.exports.getCampeonatoMunicipiosTotais = function(campeonato){
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT esc.localidade, max(camp.pontuacao) as max, min(camp.pontuacao) as min, 
+        Round(avg(camp.pontuacao), 0) as media, sum(camp.njogos) as njogos, count(distinct camp.user) as nusers, Round(sum(camp.njogos)/count(distinct camp.user), 0) as jogosAluno
+                FROM (select * from ${bdTesteConhecimentos}.campeonatos where campeonatoID=?) camp, ${bdAplicacoes}.alunos al,
+                    ${bdAplicacoes}.Escolas esc where camp.user = al.user and al.escola = esc.cod
+                    group by esc.localidade
                     Order by esc.localidade;`, [campeonato], function(err, res){
             if(err){
                 console.log("erro: " + err)
@@ -87,7 +106,8 @@ module.exports.getCampeonatoMunicipio = function(campeonato, municipio){
         Round(avg(camp.pontuacao), 0) as media, sum(camp.njogos) as njogos, count(distinct camp.user) as nusers, Round(sum(camp.njogos)/count(distinct camp.user), 0) as jogosAluno
                 FROM (select * from ${bdTesteConhecimentos}.campeonatos where campeonatoID=?) camp, ${bdAplicacoes}.alunos al,
                     (select * from ${bdAplicacoes}.Escolas where localidade=?) esc where camp.user = al.user and al.escola = esc.cod
-                    group by camp.jogo;`, [campeonato, municipio], function(err, res){
+                    group by camp.jogo
+                    Order by camp.jogo;`, [campeonato, municipio], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -106,7 +126,27 @@ module.exports.getCampeonatoComunidade = function(campeonato, comunidade){
                 FROM (select * from ${bdTesteConhecimentos}.campeonatos where campeonatoID=?) camp, ${bdAplicacoes}.alunos al,
                     (select * from ${bdAplicacoes}.Escolas where localidade in (select municipio from ${bdAplicacoes}.comunidades where codigo=?)) esc 
                     where camp.user = al.user and al.escola = esc.cod
-                    group by esc.localidade, camp.jogo;`, [campeonato, comunidade], function(err, res){
+                    group by esc.localidade, camp.jogo
+                    Order by esc.localidade, camp.jogo;`, [campeonato, comunidade], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+module.exports.getCampeonatoComunidadeTotais = function(campeonato, comunidade){
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT esc.localidade, max(camp.pontuacao) as max, min(camp.pontuacao) as min, 
+        Round(avg(camp.pontuacao), 0) as media, sum(camp.njogos) as njogos, count(distinct camp.user) as nusers, Round(sum(camp.njogos)/count(distinct camp.user), 0) as jogosAluno
+                FROM (select * from ${bdTesteConhecimentos}.campeonatos where campeonatoID=?) camp, ${bdAplicacoes}.alunos al,
+                    (select * from ${bdAplicacoes}.Escolas where localidade in (select municipio from ${bdAplicacoes}.comunidades where codigo=?)) esc 
+                    where camp.user = al.user and al.escola = esc.cod
+                    group by esc.localidade
+                    Order by esc.localidade;`, [campeonato, comunidade], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -163,7 +203,8 @@ module.exports.getCampeonatoMunicipioAgrupamentos = function(campeonato, municip
         Round(avg(camp.pontuacao), 0) as media, sum(camp.njogos) as njogos, count(distinct camp.user) as nusers, Round(sum(camp.njogos)/count(distinct camp.user), 0) as jogosAluno
                 FROM (select * from ${bdTesteConhecimentos}.campeonatos where campeonatoID=?) camp, ${bdAplicacoes}.alunos al,
                     (select * from ${bdAplicacoes}.Escolas where localidade=?) esc where camp.user = al.user and al.escola = esc.cod
-                    group by esc.cod, camp.jogo;`, [campeonato, municipio], function(err, res){
+                    group by esc.cod, camp.jogo
+                    Order by esc.cod, camp.jogo;`, [campeonato, municipio], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -181,7 +222,8 @@ module.exports.getCampeonatoAgrupamento = function(campeonato, escola){
         Round(avg(camp.pontuacao), 0) as media, sum(camp.njogos) as njogos, count(distinct camp.user) as nusers, Round(sum(camp.njogos)/count(distinct camp.user), 0) as jogosAluno
                 FROM (select * from ${bdTesteConhecimentos}.campeonatos where campeonatoID=?) camp, (select * from ${bdAplicacoes}.alunos where escola=?) al,
                     (select * from ${bdAplicacoes}.Escolas where cod=?) esc where camp.user = al.user and al.escola = esc.cod
-                    group by camp.jogo;`, [campeonato, escola, escola], function(err, res){
+                    group by camp.jogo
+                    Order by camp.jogo;`, [campeonato, escola, escola], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -201,7 +243,8 @@ module.exports.getCampeonatoAgrupamentoProfessores = function(campeonato, escola
                 FROM (select * from ${bdTesteConhecimentos}.campeonatos where campeonatoID=?) camp, 
                     (select user from ${bdAplicacoes}.alunos where escola=?) al
                     where camp.user = al.user
-					group by camp.codprofessor, camp.jogo;`, [campeonato, escola], function(err, res){
+					group by camp.codprofessor, camp.jogo
+                    Order by camp.codprofessor, camp.jogo;`, [campeonato, escola], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

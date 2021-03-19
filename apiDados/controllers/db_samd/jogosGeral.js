@@ -172,7 +172,7 @@ JogosGerais.getJogoFromTurmaFreq = function (dataInicio, dataFim, jogoTipo, tabl
 
 JogosGerais.getJogoPorDia  = function (user, tableJogo, jogoTipo){
     return new Promise(function(resolve, reject) {
-        sql.query(`Select jogo.idaluno, Round(AVG(jogo.pontuacao),0) as media, MAX(jogo.pontuacao) as maximo, 
+        sql.query(`Select jogo.data, Round(AVG(jogo.pontuacao),0) as media, MAX(jogo.pontuacao) as maximo, 
         MIN(jogo.pontuacao) as minimo, count(jogo.pontuacao) as count 
         from ${bdSAMD}.${tableJogo} jogo 
         where jogo.idaluno = ? and jogo.tipo = ?
@@ -183,8 +183,7 @@ JogosGerais.getJogoPorDia  = function (user, tableJogo, jogoTipo){
                 reject(err)
             }
             else{
-                if(res.length > 0) resolve(res[0])
-                else resolve(undefined)
+                resolve(res)
             }
         })
     })   

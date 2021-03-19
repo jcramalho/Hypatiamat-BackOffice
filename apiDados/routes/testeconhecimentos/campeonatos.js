@@ -54,6 +54,25 @@ router.get('/:campeonato/municipios', passport.authenticate('jwt', {session: fal
     }
 });
 
+
+// Estatísticas totais (sem o jogo) de um campeonato por todos os municipios ou um só município ou por uma comunidade
+router.get('/:campeonato/municipios/totais', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var campeonato = req.params.campeonato;
+    var comunidade = req.query.comunidade;
+    if(comunidade){
+        // por uma comunidade
+        Campeonatos.getCampeonatoComunidadeTotais(campeonato, comunidade)
+                   .then(dados =>res.jsonp(dados))
+                   .catch(erro => res.status(500).jsonp(erro))
+    }
+    else{
+        // por todos os municipios
+        Campeonatos.getCampeonatoMunicipiosTotais(campeonato)
+                   .then(dados =>res.jsonp(dados))
+                   .catch(erro => res.status(500).jsonp(erro))
+    }
+});
+
 // Estatísticas de um campeonato por todos os municipios ou um só município
 router.get('/:campeonato/municipios/gerais', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     var campeonato = req.params.campeonato;

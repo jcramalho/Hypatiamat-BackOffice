@@ -110,7 +110,7 @@ Professor.getProfessorById = function (id) {
 
 Professor.getProfessorByCodigo = function (codigo) {
     return new Promise(function(resolve, reject) {
-        sql.query("Select id, codigo, nome, escola, email, confirmacao, premium, validade, socionum, projeto from professores where codigo=?", codigo, function(err, res){
+        sql.query("Select id, codigo, nome, escola, email, confirmacao, premium, (now()<=validade) as valido, validade, socionum, projeto from professores where codigo=?", codigo, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

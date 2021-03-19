@@ -26,6 +26,8 @@ module.exports.login = async function(user, password){
   if (aluno != undefined){
       if(md5Password == aluno.password){
           var utilizadorAux = await Alunos.getAlunoByUser(user)
+          var prof = await Professores.getProfessorByCodigo(utilizadorAux.codprofessor)
+          if(!prof.valido || prof.premium != 1) return {authentication:false}
           var utilizador = {
               agrupamento: await Escolas.getEscola(utilizadorAux.escola).nome,
               id : utilizadorAux.id,

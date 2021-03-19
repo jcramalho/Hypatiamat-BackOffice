@@ -1,0 +1,18 @@
+summary: Devolve todos os municípios distintos.
+description: |
+  Devolve todos municípios distintos aos quais as escolas pertencem, por ordem alfabética.
+tags:
+  - Escolas
+security:
+  - tokenQuery: []
+responses:
+  200:
+    description: Lista de todos os municípios.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/LocalidadeGET'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  500:
+    description: Erro.

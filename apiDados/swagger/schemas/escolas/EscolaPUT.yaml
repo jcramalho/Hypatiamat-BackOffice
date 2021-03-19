@@ -1,7 +1,5 @@
 type: object
 properties:
-  id:
-    type: integer
   nome:
     type: string
   localidade:
@@ -11,7 +9,6 @@ properties:
   pais:
     type: string
 required:
-  - id
   - nome
   - localidade
   - distrito

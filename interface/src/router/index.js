@@ -4,58 +4,79 @@ import axios from 'axios'
 const h = require("@/config/hosts").hostAPI
 
 import AuthApp from '../views/AuthApp.vue'
-import MyProfile from '../views/MyProfile.vue'
-import Professores from '../views/Professores.vue'
-import CodigosProfessores from '../views/CodigosProfessores.vue'
-import Alunos from '../views/Alunos.vue'
-import Escolas from '../views/Escolas.vue'
-import Turmas from '../views/Turmas.vue'
-import Professor from '../views/Professor.vue'
-import Aluno from '../views/Aluno.vue'
-import EditarProfessor from '../views/EditarProfessor.vue'
-import EditarAluno from '../views/EditarAluno.vue'
-import EditarEscola from '../views/EditarEscola.vue'
-import EditarTurma from '../views/EditarTurma.vue'
-import EditarMinhaTurma from '../views/EditarMinhaTurma.vue'
-import MinhasTurmas from '../views/MinhasTurmas.vue'
-import CriarTurma from '../views/CriarTurma.vue'
-import CriarAluno from '../views/CriarAluno.vue'
-import CriarEscola from '../views/CriarEscola.vue'
-import CriarProfessor from '../views/CriarProfessor.vue'
-import Pendentes from '../views/Pendentes.vue'
-import Jogos from '../views/Jogos.vue'
-import JogosTurma from '../views/JogosTurma.vue'
-import JogosAluno from '../views/JogosAluno.vue'
-import JogosMunicipios from '../views/JogosMunicipios.vue'
-import JogosEscolas from '../views/JogosEscolas.vue'
-import JogosProfessores from '../views/JogosProfessores.vue'
-import AppsMunicipios from '../views/AppsMunicipios.vue'
-import AppsEscolas from '../views/AppsEscolas.vue'
-import AppsProfessores from '../views/AppsProfessores.vue'
-import AppsTurmas from '../views/AppsTurmas.vue'
-import Apps from '../views/Apps.vue'
-import AppsAluno from '../views/AppsAluno.vue'
-import AlunosTurma from '../views/AlunosTurma.vue'
-import MonotorizacaoJogos from '../views/MonotorizacaoJogos.vue'
-import Agrupamentos from '../views/Agrupamentos.vue'
-import AgrupamentoProfessores from '../views/AgrupamentoProfessores.vue'
-import EstatisticasMunicipios from '../views/EstatisticasMunicipios.vue'
-import EstatisticasAgrupamentos from '../views/EstatisticasAgrupamentos.vue'
-import EstatisticasProfessores from '../views/EstatisticasProfessores.vue'
-import Pendentes2 from '../views/Pendentes2.vue'
-import GestaoTurmas from '../views/GestaoTurmas.vue'
-import GestaoAlunos from '../views/GestaoAlunos.vue'
-import RankingJogos from '../views/RankingJogos.vue'
-import RankingApps from '../views/RankingApps.vue'
-import RankingJogosAdmin from '../views/RankingJogosAdmin.vue'
-import RankingAppsAdmin from '../views/RankingAppsAdmin.vue'
-import CampeonatosMunicipios from '../views/CampeonatosMunicipios.vue'
-import CampeonatosAgrupamentos from '../views/CampeonatosAgrupamentos.vue'
-import CampeonatosProfessores from '../views/CampeonatosProfessores.vue'
-import CampeonatosTurmas from '../views/CampeonatosTurmas.vue'
-import Comunidades from '../views/Comunidades.vue'
-import GestaoNovidades from '../views/GestaoNovidades.vue'
-import GestaoCampeonatos from '../views/GestaoCampeonatos.vue'
+import Perfil from '../views/Perfil.vue'
+
+
+import Pendentes from '../views/Pendentes/Pendentes.vue'
+import Pendentes2 from '../views/Pendentes/Pendentes2.vue'
+
+import EditarTurma from '../views/Turmas/EditarTurma.vue'
+import EditarMinhaTurma from '../views/Turmas/EditarMinhaTurma.vue'
+import MinhasTurmas from '../views/Turmas/MinhasTurmas.vue'
+import CriarTurma from '../views/Turmas/CriarTurma.vue'
+import Turmas from '../views/Turmas/Turmas.vue'
+import AlunosTurma from '../views/Turmas/AlunosTurma.vue'
+import GestaoTurmas from '../views/Turmas/GestaoTurmas.vue'
+import GestaoAlunos from '../views/Turmas/GestaoAlunos.vue'
+
+import CriarProfessor from '../views/Professores/CriarProfessor.vue'
+import CodigosProfessores from '../views/Professores/CodigosProfessores.vue'
+import EditarProfessor from '../views/Professores/EditarProfessor.vue'
+import Professores from '../views/Professores/Professores.vue'
+
+
+import CriarAluno from '../views/Alunos/CriarAluno.vue'
+import EditarAluno from '../views/Alunos/EditarAluno.vue'
+import Alunos from '../views/Alunos/Alunos.vue'
+
+
+import CriarEscola from '../views/Escolas/CriarEscola.vue'
+import Escolas from '../views/Escolas/Escolas.vue'
+import EditarEscola from '../views/Escolas/EditarEscola.vue'
+import Agrupamentos from '../views/Escolas/Agrupamentos.vue'
+import AgrupamentoProfessores from '../views/Escolas/AgrupamentoProfessores.vue'
+
+
+import Jogos from '../views/Jogos/Jogos.vue'
+import JogosTurma from '../views/Jogos/JogosTurma.vue'
+import JogosAluno from '../views/Jogos/JogosAluno.vue'
+import JogosMunicipios from '../views/Jogos/JogosMunicipios.vue'
+import JogosEscolas from '../views/Jogos/JogosEscolas.vue'
+import JogosProfessores from '../views/Jogos/JogosProfessores.vue'
+import MonotorizacaoJogos from '../views/Jogos/MonotorizacaoJogos.vue'
+
+
+import AppsMunicipios from '../views/Apps/AppsMunicipios.vue'
+import AppsEscolas from '../views/Apps/AppsEscolas.vue'
+import AppsProfessores from '../views/Apps/AppsProfessores.vue'
+import AppsTurmas from '../views/Apps/AppsTurmas.vue'
+import Apps from '../views/Apps/Apps.vue'
+import AppsAluno from '../views/Apps/AppsAluno.vue'
+
+
+import EstatisticasMunicipios from '../views/OutrasEstatisticas/EstatisticasMunicipios.vue'
+import EstatisticasAgrupamentos from '../views/OutrasEstatisticas/EstatisticasAgrupamentos.vue'
+import EstatisticasProfessores from '../views/OutrasEstatisticas/EstatisticasProfessores.vue'
+
+
+import CampeonatosMunicipios from '../views/Campeonatos/CampeonatosMunicipios.vue'
+import CampeonatosAgrupamentos from '../views/Campeonatos/CampeonatosAgrupamentos.vue'
+import CampeonatosProfessores from '../views/Campeonatos/CampeonatosProfessores.vue'
+import CampeonatosTurmas from '../views/Campeonatos/CampeonatosTurmas.vue'
+import GestaoCampeonatos from '../views/Campeonatos/GestaoCampeonatos.vue'
+
+
+import RankingJogos from '../views/Rankings/RankingJogos.vue'
+import RankingApps from '../views/Rankings/RankingApps.vue'
+import RankingJogosAdmin from '../views/Rankings/RankingJogosAdmin.vue'
+import RankingAppsAdmin from '../views/Rankings/RankingAppsAdmin.vue'
+
+
+import GestaoNovidades from '../views/Novidades/GestaoNovidades.vue'
+
+
+import Comunidades from '../views/Comunidades/Comunidades.vue'
+
 
 Vue.use(VueRouter)
 
@@ -69,14 +90,6 @@ function pertence(turmas, idTurma){
 }
 
 const routes = [
-  {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  },
   {
     path: '/professores',
     name: 'Professores',
@@ -711,35 +724,7 @@ const routes = [
   {
     path: '/',
     name: 'Meu Perfil',
-    component: MyProfile
-  },
-  {
-    path: '/professores/:id',
-    name: 'Ver Professor',
-    component: Professor,
-    beforeEnter: (to, from, next) => {
-      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if(utilizador.type == 50){
-        next()
-      }
-      else{
-        next({name: "Meu Perfil"})
-      }
-    }
-  },
-  {
-    path: '/editarProfessor/:id',
-    name: 'Editar Professor',
-    component: EditarProfessor,
-    beforeEnter: (to, from, next) => {
-      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if(utilizador.type == 50 || utilizador.id == to.params.id){
-        next()
-      }
-      else{
-        next({name: "Meu Perfil"})
-      }
-    }
+    component: Perfil
   },
   {
     path: '/editarAluno/:id',
@@ -816,20 +801,6 @@ const routes = [
       var response = await axios.get(h + "professores/" + utilizador.codigo + "/turmas?token=" + token)
       //console.log(response.data)
       if(utilizador.type == 50 || (utilizador.type == 20 && (pertence(response.data, to.params.id)))){
-        next()
-      }
-      else{
-        next({name: "Meu Perfil"})
-      }
-    }
-  },
-  {
-    path: '/alunos/:id',
-    name: 'Aluno',
-    component: Aluno,
-    beforeEnter: (to, from, next) => {
-      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if(utilizador.type == 50){
         next()
       }
       else{

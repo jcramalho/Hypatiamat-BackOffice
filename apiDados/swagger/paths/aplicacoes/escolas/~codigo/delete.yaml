@@ -1,0 +1,25 @@
+summary: Apaga um Agrupamento de Escolas, caso não tenha dependências.
+description: |
+  Devolve a informação à cerca de um Agrupamento com um determinado código (Autorizada a utilizadores autenticados).
+tags:
+  - Escolas
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: codigo
+    schema:
+      type: string
+    description: "Código do Agrupamento a ser apagado."
+    required: true
+responses:
+  200:
+    description: Objeto que indica se a escola foi apagada do sistema ou não.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ObjectDeleted'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  500:
+    description: Erro.

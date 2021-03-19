@@ -11,4 +11,5 @@ module.exports.hostAPI = "https://api.hypatiamat.com/aplicacoes/"
 module.exports.hostJogos = "https://api.hypatiamat.com/jogos/"
 module.exports.hostApps = "https://api.hypatiamat.com/apps/"
 module.exports.hostCampeonatos = "https://api.hypatiamat.com/campeonatos/"
+module.exports.hostTrofeus = "https://api.hypatiamat.com/trofeus/"
 */

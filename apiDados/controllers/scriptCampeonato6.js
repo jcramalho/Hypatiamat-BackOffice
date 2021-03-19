@@ -5,7 +5,7 @@ var sql = require('../models/db_aplicacoes')
 
 getAlunosCampeonato6and7= function(){
     return new Promise(function(resolve, reject) {
-        sql.query(`Select user, campeonatoID from ${bdTesteConhecimentos}.campeonatos where (campeonatoID='camhy006' or campeonatoID='camhy007')`, function(err, res){
+        sql.query(`Select user, campeonatoID from ${bdTesteConhecimentos}.campeonatos where (campeonatoID='camhy006' or campeonatoID='camhy008')`, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
