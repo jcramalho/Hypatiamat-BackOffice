@@ -63,9 +63,9 @@ router.get('/:turma/alunos', passport.authenticate('jwt', {session: false}), ver
           res.jsonp(alunosAtuais)
         }
       }
-      else res.status(400).jsonp(erro)
+      else res.status(400).jsonp("Faltam parametros.")
     }
-    else res.status(400).jsonp(erro)
+    else res.status(400).jsonp("Faltam parametros.")
 })
 
 // Devolve todos os jogos uma determinada turma jogou
@@ -74,11 +74,14 @@ router.get('/:turma/jogos', passport.authenticate('jwt', {session: false}), veri
   var escola = req.query.escola
   var dataInicio = req.query.dataInicio
   var dataFim = req.query.dataFim
-  Turmas.getJogos(turma, escola, dataInicio, dataFim)
-             .then(jogos =>{
-              res.jsonp(jogos)
-             })
-             .catch(erro => res.status(500).jsonp(erro))
+  if(escola && dataInicio && dataFim){
+    Turmas.getJogos(turma, escola, dataInicio, dataFim)
+              .then(jogos =>{
+                res.jsonp(jogos)
+              })
+              .catch(erro => res.status(500).jsonp(erro))
+  }
+  else res.status(400).jsonp("Faltam parametros.")
 })
 
 // Devolve todos os resultados de um jogo de uma turma
@@ -89,12 +92,12 @@ router.get('/:turma/jogos/:tableJogo/estatisticasGlobais',passport.authenticate(
   var dataFim = req.query.dataFim
   var jogoTipo = req.query.jogoTipo
   var escola = req.query.escola
-  Turmas.getEstatisticasGlobais(dataInicio, dataFim, jogoTipo, tableJogo, turma, escola)
-             .then(alunosAtuais =>{
-              
-              res.jsonp(alunosAtuais)
-             })
-             .catch(erro => res.status(500).jsonp(erro))
+  if(dataInicio && dataFim && jogoTipo && escola){
+    Turmas.getEstatisticasGlobais(dataInicio, dataFim, jogoTipo, tableJogo, turma, escola)
+              .then(dados => res.jsonp(dados))
+              .catch(erro => res.status(500).jsonp(erro))
+  }
+  else res.status(400).jsonp("Faltam parâmetros.")
 })
 
 //Insere uma nova turma
@@ -118,11 +121,13 @@ router.put('/:id', passport.authenticate('jwt', {session: false}), verifyToken.v
 
 // Apaga uma determinado turma
 router.delete('/:turma', passport.authenticate('jwt', {session: false}), verifyToken.verifyTurma4(), function(req, res){
-    Turmas.apagar(req.params.turma, req.query.codprofessor)
-               .then(dados =>{
-                 res.jsonp(dados)
-               })
+  var codprofessor = req.query.codprofessor
+  if(codprofessor){
+    Turmas.apagar(req.params.turma, codprofessor)
+               .then(dados => res.jsonp(dados))
                .catch(erro => res.status(500).jsonp(erro))
+  }
+  else res.status(400).jsonp("Faltam parâmetros.")
 })
 
 

@@ -29,6 +29,35 @@ router.get('/:cod', passport.authenticate('jwt', {session: false}), function(req
                    .catch(erro => res.status(500).jsonp('Error'))
 });
 
+router.get('/alunos/:user/ultimocampeonato', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var user = req.params.user
+    if(user){
+        CampeonatosCRUD.getUltimoCampeonato(user)
+                    .then(dados =>res.jsonp(dados))
+                    .catch(erro => res.status(500).jsonp(erro))
+    }
+    else res.status(400).send("Faltam parâmetros.")
+});
+
+router.get('/alunos/:user/campeonatos', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var user = req.params.user
+    Campeonatos.getCampeonatoInfoAluno(user)
+                .then(dados =>res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp(erro))
+});
+
+router.get('/turmas/:turma/campeonatos', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var turma = req.params.turma
+    var codprofessor = req.query.codprofessor
+    if(codprofessor){
+        Campeonatos.getCampeonatoInfoTurma(turma, codprofessor)
+                    .then(dados =>res.jsonp(dados))
+                    .catch(erro => res.status(500).jsonp(erro))
+    }
+    else res.status(400).send("Faltam parâmetros.")
+});
+
+
 // Estatísticas de um campeonato por todos os municipios ou um só município ou por uma comunidade
 router.get('/:campeonato/municipios', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     var campeonato = req.params.campeonato;
@@ -112,13 +141,30 @@ router.get('/:campeonato/turmas/:turma', passport.authenticate('jwt', {session: 
     var turma = req.params.turma;
     var escola = req.query.escola;
     var codprofessor = req.query.codprofessor
-    if(codprofessor && turma){
-        Campeonatos.getCampeonatoTurma(campeonato, escola, turma, codprofessor)
+    var jogo = req.query.jogo
+    if(codprofessor && turma && jogo && escola){
+        Campeonatos.getCampeonatoTurma(campeonato, escola, turma, codprofessor, jogo)
                     .then(dados =>res.jsonp(dados))
                     .catch(erro => res.status(500).jsonp(erro))
     }
     else res.status(400).send("Faltam parâmetros (turma ou codprofessor)")
 });
+
+router.get('/:campeonato/alunos/:user', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var campeonato = req.params.campeonato;
+    var user = req.params.user
+    var turma = req.query.turma;
+    var escola = req.query.escola;
+    var codprofessor = req.query.codprofessor
+    var jogo = req.query.jogo
+    if(turma && escola && codprofessor && jogo){
+        Campeonatos.getDesempenhoAlunoCampeonato(campeonato, jogo, escola, codprofessor, turma, user)
+                    .then(dados =>res.jsonp(dados))
+                    .catch(erro => res.status(500).jsonp(erro))
+    }
+    else res.status(400).send("Faltam parâmetros.")
+});
+
 
 router.get('/:campeonato/municipios/:municipio/gerais', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     var campeonato = req.params.campeonato;

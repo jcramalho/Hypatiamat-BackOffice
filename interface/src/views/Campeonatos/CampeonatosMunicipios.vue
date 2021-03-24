@@ -71,7 +71,7 @@
                     :search="filtrar"
                 >
                     <template v-slot:item="row">
-                        <tr @click="goToAgrupamentos(row.item)" v-if="!totaisMunicipio">
+                        <tr @click="goToAgrupamentos(row.item)" v-if="!totaisMunicipio || (comunidade == 'Nenhuma' && municipio!='Todos')">
                             <td>{{row.item.localidade}}</td>
                             <td v-if="row.item.jogo == 0"> ADD (1.º ano)</td>
                             <td v-else-if="row.item.jogo == 1">ADD (2.º ano)</td>
@@ -257,7 +257,6 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           this.municipio = "Todos"
       },
       onTotaisMunicipioChange: function(){
-          console.log(this.totaisMunicipio)
           this.atualizaConteudo()
       },
       atualizaEstatisticasGeraisComunidade: async function(){
@@ -311,11 +310,17 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           if(this.campeonatoId && this.comunidade && this.comunidade != "Nenhuma"){
               this.loading = true;
               var com = this.comunidadesId.find(e => e.nome == this.comunidade)
-              if(!this.totaisMunicipio) var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/municipios/?comunidade=" + com.codigo + 
-                                                                            "&token=" + this.token)
-              
-              else var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/municipios/totais?comunidade=" + com.codigo + 
-                                                                            "&token=" + this.token)
+              if(!this.totaisMunicipio) {
+                  this.headers = this.headers_jogo
+                  var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/municipios/?comunidade=" 
+                                                    + com.codigo + "&token=" + this.token)
+              }
+              else {
+                  this.headers = this.headers_totais
+                  var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/municipios/totais?comunidade=" 
+                                                    + com.codigo + "&token=" + this.token)
+                
+              }
               this.items = response.data
               this.loading = false;
           }

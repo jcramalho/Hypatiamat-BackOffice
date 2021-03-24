@@ -1,0 +1,29 @@
+summary: Apaga um aluno.
+description: |+
+  Caso não existam dependências, elimina um aluno.
+  
+  Apenas o administrador pode executar este pedido.
+tags:
+  - Alunos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: codigo
+    schema:
+      type: string
+    description: "Código do Aluno a ser eliminado."
+    required: true
+responses:
+  200:
+    description: Informação à cerca do insucesso/sucesso da eliminação do aluno.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ObjectDeleted'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

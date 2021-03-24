@@ -1,0 +1,43 @@
+summary: Devolve todas as escolas de um município.
+description: |
+  Devolve estatísticas de quantas turmas, professores e alunos pertencem a um determinado município num determinado ano letivo (por defeito, ano letivo atual).
+  Opcionalmente, pode se pretender a monitorização desta estatísticas por cada agrupamento de um município.
+  Apenas pode ser executada pelo administrador ou pelo respetivo município.
+tags:
+  - Escolas
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: municipio
+    schema:
+      type: string
+    description: "Município ao qual as escolas pertencem."
+    required: true
+  - in: query
+    name: ano
+    schema:
+      type: integer
+    description: "Ano Letivo desejado."
+    required: false
+  - in: query
+    name: agrupamentos
+    schema:
+      type: boolean
+    description: "Verdadeiro, caso se pretenda as estatísticas por cada escola de um município."
+    required: false
+responses:
+  200:
+    description: Lista de Escolas pertencentes ao município.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/EstatisticasEscolas'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

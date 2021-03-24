@@ -1,0 +1,38 @@
+summary: Devolve as estatísticas gerais dos professores de uma determinada escola.
+description: |+
+  Devolve informações de quantas turmas, alunos, professores possuí cada professor pertencente a uma escola num ano letivo (por defeito, ano letivo atual).
+
+  Pode ser passada um ano letivo por query string opcionalmente. 
+  
+  Apenas o administrador, o município pertencente à escola e a própria escola têm permissão para executar esta rota.
+tags:
+  - Escolas
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: codigo
+    schema:
+      type: string
+    description: "Código do Agrupamento a ser consultado."
+    required: true
+  - in: query
+    name: ano
+    schema:
+      type: integer
+    required: false
+responses:
+  200:
+    description: Lista de estatísticas gerais de uma escola.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/EstatisticasProfessores'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

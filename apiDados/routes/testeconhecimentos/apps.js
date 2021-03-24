@@ -194,6 +194,19 @@ router.get('/turmas/:turma', passport.authenticate('jwt', {session: false}), fun
     }          
 });
 
+router.get('/turmas/:turma/jogou', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var turma = req.params.turma
+    var codprofessor = req.query.codprofessor
+    var dataInicio = req.query.dataInicio
+    var dataFim = req.query.dataFim
+    if(turma && codprofessor && dataInicio && dataFim){
+        Apps.getAppsFromTurma(turma, codprofessor, dataInicio, dataFim)
+            .then(dados => res.jsonp(dados))
+            .catch(erro => res.status(500).jsonp(erro))
+    }
+    else res.status(400).jsonp('Faltam parâmetros')
+})
+
 // Todas os resultados de uma app ou de todas as apps de uma turma
 router.get('/alunos/:user', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     var dataInicio = req.query.dataInicio;
@@ -252,6 +265,15 @@ router.get('/alunos/:user/dias', passport.authenticate('jwt', {session: false}),
         res.status(500).jsonp('Faltam parâmetros.')
     }
 });
+
+router.get('/alunos/:user/acerto', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var user = req.params.user
+
+    Apps.getAllAcertoFromAluno(user)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).jsonp(erro))
+});
+
 
 router.get('/alunos/:user/last10', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     var user = req.params.user

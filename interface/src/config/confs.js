@@ -22,7 +22,10 @@ var intAno = parseInt(anoAtual)
 module.exports.anoletivo = (intAno-1) + "/" + intAno
 
 // ano letivo 2 (ex: 2020/2021)
-module.exports.anoletivo2 = (anoTotal-1) + "/" + anoTotal
+module.exports.anoletivo2 = (parseInt(ano) -1) + "/" + parseInt(ano)
+
+module.exports.dataInicio1 = (parseInt(ano) -1) + "-09-01"
+module.exports.dataFim1 = (parseInt(ano)) + "-09-01"
 
 // nº dos últimos anos letivos a serem selecionados possivelmente 
 var N = 7
@@ -46,3 +49,7 @@ for(var i = 0; i < N; i++){
 }
 
 module.exports.anosletivos2 = anosletivos2
+
+module.exports.campeonatosAnos = [{ano:1, jogos:[0, 8]}, {ano:2, jogos:[1, 2, 9]}, {ano:3, jogos:[3, 4]},
+                                    {ano:4, jogos:[5]}, {ano:5, jogos:[6]}, {ano:6, jogos:[6]},
+                                    {ano:7, jogos:[7]}, {ano:8, jogos:[7]}, {ano:9, jogos:[7]}]

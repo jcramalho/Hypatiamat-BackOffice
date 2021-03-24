@@ -2,6 +2,7 @@ var Escolas = require('../controllers/db_aplicacoes/escolas')
 var Alunos = require('../controllers/db_aplicacoes/alunos')
 var Turmas = require('../controllers/db_aplicacoes/turmas')
 var Professores = require('../controllers/db_aplicacoes/professor')
+const { updateTurma } = require('../controllers/db_aplicacoes/alunos')
 
 module.exports.verifyAdmin = function(){
     
@@ -32,7 +33,8 @@ module.exports.verifyAdmin_Municipio_Agrupamento = function(){
         else if(u.type == 40 && escola == u.escola) next()
         // municipio
         else if(u.type == 30 && u.escolas.find(e => e.cod == escola)) next()
-            //var escolasMun = await Escolas.getEscolasByLocalidade(u.infoEscola.localidade)
+        // professor
+        else if(u.type == 20 && u.escola == escola) next()
         else res.status(403).jsonp("Não tem permissão.")
     }
 }

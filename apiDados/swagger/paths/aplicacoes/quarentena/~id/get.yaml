@@ -1,0 +1,29 @@
+summary: Devolve a informação de um pedido de inscrição.
+description: |+
+  Dado o identificador de um pedido de inscrição, devolve as informações do respetivo pedido.
+  
+  Apenas o administrador pode executar este pedido.
+tags:
+  - Quarentena
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: id
+    schema:
+      type: string
+    description: "Identificador do pedido a ser consultado."
+    required: true
+responses:
+  200:
+    description: Informação à cerca do pedido.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/QuarentenaGET'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

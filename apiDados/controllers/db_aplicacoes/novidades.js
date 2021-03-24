@@ -47,7 +47,7 @@ Novidades.getNovidades = function(){
     return new Promise(function(resolve, reject) {
         sql.query(`Select nov.id, nov.titulo, nov.data, nov.link,
             (select count(sub.id) from subnovidades sub where sub.idNovidade=nov.id) as subnovidades 
-            from novidades nov Order by nov.data desc`, function(err, res){
+            from novidades nov Order by nov.id desc`, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

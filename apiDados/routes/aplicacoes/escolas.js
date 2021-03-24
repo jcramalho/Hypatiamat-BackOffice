@@ -30,7 +30,7 @@ router.get('/localidades', passport.authenticate('jwt', {session: false}), funct
 });
 
 // Informação de uma escola
-router.get('/:codigo', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/:codigo', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Municipio_Agrupamento(), function(req, res, next) {
     Escolas.getEscola(req.params.codigo)
                .then(dados =>{
                  res.jsonp(dados)
@@ -39,7 +39,7 @@ router.get('/:codigo', passport.authenticate('jwt', {session: false}), function(
   });
 
 // Devolve todos os alunos de uma determinada escola
-router.get('/:codigo/alunos', passport.authenticate('jwt', {session: false}), function(req, res){
+router.get('/:codigo/alunos', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Municipio_Agrupamento(), function(req, res){
   Alunos.getAlunosFromEscola(req.params.codigo)
              .then(alunosAtuais =>{
               res.jsonp(alunosAtuais)
@@ -48,7 +48,7 @@ router.get('/:codigo/alunos', passport.authenticate('jwt', {session: false}), fu
 })
 
 // Devolve todos os professores de uma determinada escola
-router.get('/:codigo/professores', passport.authenticate('jwt', {session: false}), function(req, res){
+router.get('/:codigo/professores', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Municipio_Agrupamento(), function(req, res){
   Professores.getProfessoresByEscola(req.params.codigo)
              .then(alunosAtuais =>{
               res.jsonp(alunosAtuais)
@@ -57,7 +57,7 @@ router.get('/:codigo/professores', passport.authenticate('jwt', {session: false}
 })
 
 // Devolve todos as turmas de uma determinada escola (pode eventualmente escolher o ano das turmas a pesquisar)
-router.get('/:codigo/turmas', passport.authenticate('jwt', {session: false}), function(req, res){
+router.get('/:codigo/turmas', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Municipio_Agrupamento(), function(req, res){
   var ano = req.query.ano
   if(ano){
     var anoletivo = ano + "/" + (parseInt(ano) + 1)

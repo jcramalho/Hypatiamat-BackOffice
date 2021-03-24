@@ -36,6 +36,23 @@ Campeonatos.getCampeonato = function(cod){
     })
 }
 
+Campeonatos.getUltimoCampeonato = function(user){
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT distinct campeonatoID, jogo, (select anoletivo from campeonatosid where cod=campeonatoID) as di, turma, codprofessor
+             FROM campeonatos where user=? Order by campeonatoID desc limit 1;`, user, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if(res.length == 0) resolve(undefined)
+                else resolve(res[0])
+            }
+        })
+    })
+}
+
+
 Campeonatos.updateCampeonato = function(cod, campeonato){
     return new Promise(function(resolve, reject) {
         var args = [campeonato.datains, campeonato.di, campeonato.df, campeonato.horai, 

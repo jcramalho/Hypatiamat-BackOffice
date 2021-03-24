@@ -1,0 +1,23 @@
+type: object
+properties:
+  id:
+    type: integer
+  user:
+    type: string
+  nome:
+    type: string
+  numero:
+    type: integer
+  datanascimento:
+    type: string
+    format: date
+  escola:
+    type: string
+  turma:
+    type: string
+  email:
+    type: string
+  confirmacao:
+    type: boolean
+  codprofessor:
+    type: string

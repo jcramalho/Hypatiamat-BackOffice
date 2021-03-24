@@ -20,7 +20,8 @@
                           <span> 1. Pode escolher uma das suas turmas através da seleção no campo "Turma". </span>
                           </v-col>
                           <v-col cols="12">
-                            <span> 2. Escolher a aplicação de conteúdo sobre o qual deseja visualizar dados estatísticos de cada um dos seus alunos que a fez. </span>
+                            <span> 2. Escolher a aplicação de conteúdo sobre o qual deseja visualizar dados estatísticos de cada um dos seus alunos que a fez. As aplicações disponíveis
+                            para a monitorização são aquelas que a turma selecionada fez no intervalo de tempo definido. </span>
                           </v-col>
                           <v-col cols="12">
                             <span> 3. Pode alterar o intervalo de tempo pretendido, selecionando uma data inicial diferente e/ou uma data final diferente. </span> 
@@ -63,6 +64,7 @@
                                 @change="onTurmaChange"
                             ></v-combobox>
                             <v-combobox
+                                v-if="apps"
                                 id="apps"
                                 v-model="app"
                                 label="App"
@@ -177,7 +179,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         this.codProf = this.$route.params.idprofessor
         var response = await axios.get(hostApps + "temas/?token=" + this.token)
         this.appsInfo = response.data
-        await this.parseApps()
+        this.parseApps()
 
         var response = await axios.get(h + "professores/" + this.codProf + "/turmas?token=" + this.token)
         var i = 0
@@ -200,6 +202,15 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       format(value, event) {
         return moment(value).format('YYYY-MM-DD')
       },
+      atualizaApps: async function(){
+          if(this.turmaSel && this.turmaSel != ""){
+            this.apps = undefined
+            var response = await axios.get(hostApps + "turmas/" + this.turmaSel + "/jogou?codprofessor=" + this.codProf
+                                                + "&dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim + "&token=" + this.token)
+            this.appsInfo = response.data
+            this.parseApps()
+          }
+      },
       parseApps: async function(){
           var aux = []
           for(var i = 0; i < this.appsInfo.length; i++){
@@ -210,8 +221,9 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           this.apps = aux
       },
       onTurmaChange: async function(item){
-          if(this.turmaSel != ""){
-              this.atualizaConteudo()
+          if(this.turmaSel && this.turmaSel != ""){
+              this.atualizaApps()
+              //this.atualizaConteudo()
           }
 
       },
@@ -220,21 +232,24 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
              var aux = this.anoLetivo.split("/")
              this.dataInicio = aux[0] + "-09-01"
              this.dataFim = aux[1] + "-09-01"
+             this.atualizaApps()
              this.atualizaConteudo()
           }
       },
       onAppChange: async function(item){
-          if(this.app){
+          if(this.app && this.app != ''){
             this.atualizaConteudo()
           }
       },
       onDataInChange: async function(item){
           if(this.dataInicio){
+              this.atualizaApps()
               this.atualizaConteudo()
           }
       },
       onDataFimChange: async function(item){
           if(this.dataFim){
+              this.atualizaApps()
               this.atualizaConteudo()
           }
       },

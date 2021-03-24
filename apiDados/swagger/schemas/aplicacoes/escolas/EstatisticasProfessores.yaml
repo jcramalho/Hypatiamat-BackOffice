@@ -1,0 +1,14 @@
+type: object
+properties:
+  codigo:
+    type: string
+  nome:
+    type: string
+  nturmas:
+    type: integer
+  nprofessores:
+    type: integer
+  nalunos:
+    type: integer
+  turmasmistas:
+    type: integer

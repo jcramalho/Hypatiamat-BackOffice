@@ -141,6 +141,82 @@ select a.numero, a.user, a.nome, posicaoturma.posicao as posTurma,
 					where posicaoescola.userid = a.user and posicaoturma.userid = a.user and posicaoHypatia.userid = a.user
                     Order by a.numero;
 
+select a.numero, a.user, a.nome, posicaoturma.posicao as posTurma, 	
+		posicaoescola.posicao as posEscola, posicaoHypatia.posicao as posHypatia, Round(posicaoturma.total*100, 0) as total
+		from ((SELECT a.*
+                    FROM hypati67_aplicacoes.alunos a
+                    Where escola='150253' and turma='4M-21-4')
+                UNION
+                (SELECT a.*
+                    FROM (select * from hypati67_aplicacoes.alunos where escola='150253') a
+                    RIGHT JOIN (select * from hypati67_aplicacoes.turmasold where codProfessor='heliafreit' and turma='4M-21-4') aold ON a.user = aold.codAluno)) a,
+			 (select ranking.*, @rownum := @rownum + 1 AS posicao 
+				from (select userid, sum(ncertas) as params, (sum(ncertas)/sum(ntotal)) as total 
+						from hypati67_testeconhecimentos.appsinfoall 
+						where codProf='heliafreit' and turma='4M-21-4' and lastdate between '2020-09-01' and '2021-09-01'
+						group by userid order by total desc, params desc) ranking, (SELECT @rownum := 0) AS r) posicaoturma,
+				(select @rownumesc := @rownumesc + 1 AS posicao, ranking.*  
+					from (select apps.userid, sum(apps.ncertas) as params, (sum(apps.ncertas)/sum(apps.ntotal)) as total 
+							from (select * from hypati67_testeconhecimentos.appsinfoall where lastdate between '2020-09-01' and '2021-09-01') apps,
+								(select * from hypati67_aplicacoes.professores where escola = '150253') profs
+							where profs.codigo = apps.codProf
+							group by apps.userid order by total desc, params desc) ranking, (SELECT @rownumesc := 0) AS r) posicaoescola,
+				(select @rownumhypatia := @rownumhypatia + 1 AS posicao, ranking.*  
+					from (select userid, sum(ncertas) as params, (sum(ncertas)/sum(ntotal)) as total 
+							from hypati67_testeconhecimentos.appsinfoall
+							where lastdate between '2020-09-01' and '2021-09-01'
+							group by userid order by total desc, params desc) ranking, (SELECT @rownumhypatia := 0) AS r) posicaoHypatia
+					where posicaoescola.userid = a.user and posicaoturma.userid = a.user and posicaoHypatia.userid = a.user
+                    Order by a.numero;
+
+-- ranking para os campeonatos
+select a.numero, a.user, a.nome, posicaoturma.posicao as posTurma, 	
+		posicaoescola.posicao as posEscola, posicaoHypatia.posicao as posHypatia, posicaoturma.pontuacao, posicaoturma.njogos
+		from ((SELECT a.*
+                    FROM hypati67_aplicacoes.alunos a
+                    Where escola='150800' and turma='3B-21-1')
+                UNION
+                (SELECT a.*
+                    FROM (select * from hypati67_aplicacoes.alunos where escola='150800') a
+                    RIGHT JOIN (select * from hypati67_aplicacoes.turmasold where codProfessor='anamaria1' and turma='3B-21-1') aold ON a.user = aold.codAluno)) a,
+			 (select ranking.*, @rownum := @rownum + 1 AS posicao 
+				from (select user, pontuacao, njogos
+						from hypati67_testeconhecimentos.campeonatos
+						where campeonatoID='camhy006' and jogo=4 and codprofessor='anamaria1' and turma='3B-21-1'
+                        order by pontuacao desc, njogos desc) ranking, (SELECT @rownum := 0) AS r) posicaoturma,
+				(select @rownumesc := @rownumesc + 1 AS posicao, ranking.*  
+					from (select camp.user, camp.pontuacao, camp.njogos
+							from (select * from hypati67_testeconhecimentos.campeonatos where campeonatoID = 'camhy006' and jogo=4) camp, 
+                            (select * from hypati67_aplicacoes.professores where escola='150800') profs
+							where profs.codigo = camp.codprofessor
+							order by pontuacao desc, njogos desc) ranking, (SELECT @rownumesc := 0) AS r) posicaoescola,
+				(select @rownumhypatia := @rownumhypatia + 1 AS posicao, ranking.*  
+					from (select user, pontuacao, njogos
+							from hypati67_testeconhecimentos.campeonatos
+							where campeonatoID = 'camhy006' and jogo=4
+							order by pontuacao desc, njogos desc) ranking, (SELECT @rownumhypatia := 0) AS r) posicaoHypatia
+					where posicaoescola.user = a.user and posicaoturma.user = a.user and posicaoHypatia.user = a.user
+                    Order by a.numero;
+                    
+select posicaoturma.posicao as posTurma, posicaoescola.posicao as posEscola, 
+        posicaoHypatia.posicao as posHypatia, posicaoturma.pontuacao, posicaoturma.njogos
+		from ( (select ranking.*, @rownum := @rownum + 1 AS posicao 
+				from (select user, pontuacao, njogos
+						from hypati67_testeconhecimentos.campeonatos
+						where campeonatoID='camhy006' and jogo=4 and codprofessor='anamaria1' and turma='3B-21-1'
+                        order by pontuacao desc, njogos desc) ranking, (SELECT @rownum := 0) AS r) posicaoturma,
+				(select @rownumesc := @rownumesc + 1 AS posicao, ranking.*  
+					from (select camp.user, camp.pontuacao, camp.njogos
+							from (select * from hypati67_testeconhecimentos.campeonatos where campeonatoID = 'camhy006' and jogo=4) camp, 
+                            (select * from hypati67_aplicacoes.professores where escola='150800') profs
+							where profs.codigo = camp.codprofessor
+							order by pontuacao desc, njogos desc) ranking, (SELECT @rownumesc := 0) AS r) posicaoescola,
+				(select @rownumhypatia := @rownumhypatia + 1 AS posicao, ranking.*  
+					from (select user, pontuacao, njogos
+							from hypati67_testeconhecimentos.campeonatos
+							where campeonatoID = 'camhy006' and jogo=4
+							order by pontuacao desc, njogos desc) ranking, (SELECT @rownumhypatia := 0) AS r) posicaoHypatia)
+					where posicaoescola.user = 'vn200742b103' and posicaoturma.user = 'vn200742b103' and posicaoHypatia.user = 'vn200742b103';
 
 -- alunos old e alunos
 (SELECT a.*

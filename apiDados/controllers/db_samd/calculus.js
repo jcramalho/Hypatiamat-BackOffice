@@ -478,3 +478,19 @@ Calculus.getAlunoLast = function(user){
         })
     })
 }
+
+Calculus.getAlunoFrequencia = function(user){
+    var args = [user]
+    return new Promise(function(resolve, reject) {
+        sql.query(`Select count(pontos) as frequencia from ${bdSAMD}.minutenew where user = ?;`, args, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if(res.length > 0) resolve(res[0])
+                else resolve(undefined)
+            }
+        })
+    })
+}

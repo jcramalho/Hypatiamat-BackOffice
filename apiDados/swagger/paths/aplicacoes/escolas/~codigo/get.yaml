@@ -1,6 +1,8 @@
 summary: Devolve a informação à cerca de um Agrupamento de Escolas
-description: |
+description: |+
   Devolve a informação à cerca de um Agrupamento com um determinado código (Autorizada a utilizadores autenticados).
+  
+  Apenas o administrador, o município pertencente à escola e a respetiva escola podem executar este pedido.
 tags:
   - Escolas
 security:
@@ -21,5 +23,7 @@ responses:
           $ref: '#/components/schemas/EscolaGET'
   401:
     $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro.

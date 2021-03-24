@@ -1,0 +1,25 @@
+summary: Aceita um determinado pedido de inscrição.
+description: |+
+  Dado o identificador de um pedido de inscrição, aceita esse pedido de inscrição.
+  
+  Apenas o administrador pode executar este pedido.
+tags:
+  - Quarentena
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: id
+    schema:
+      type: string
+    description: "Identificador do pedido a ser aceite."
+    required: true
+responses:
+  200:
+    description: Pedido aceite com sucesso.
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

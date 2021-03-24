@@ -1,6 +1,10 @@
-summary: Devolve todos os alunos pertencentes a uma escola.
-description: |
-  Devolve todos os alunos que pertencem a uma determinada escola.
+summary: Devolve todos as turmas pertencentes a uma escola.
+description: |+
+  Devolve todos as turmas que pertencem a uma determinada escola através de um código de escola recebido por parâmetro.
+
+  Pode receber também um ano letivo opcionalmente por query string.
+  
+  Apenas o administrador, o município pertencente à escola e a respetiva escola podem executar este pedido.
 tags:
   - Escolas
 security:
@@ -12,14 +16,23 @@ parameters:
       type: string
     description: "Código do Agrupamento a ser consultado."
     required: true
+  - in: query
+    name: ano
+    schema:
+      type: integer
+    required: false
 responses:
   200:
     description: Lista de todos os alunos de uma escola.
     content:
       application/json:
         schema:
-          $ref: '#/components/schemas/EscolaAlunosGET'
+          type: array
+          items:
+            $ref: '#/components/schemas/EscolaTurmas'
   401:
     $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro.

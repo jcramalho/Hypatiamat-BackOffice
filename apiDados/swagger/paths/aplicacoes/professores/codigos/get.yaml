@@ -1,0 +1,22 @@
+summary: Lista todos os emails e códigos de professores.
+description: |+
+  Devolve todos os emails e códigos dos professores.
+tags:
+  - Professores
+security:
+  - tokenQuery: []
+responses:
+  200:
+    description: Lista todos os códigos e emails dos professores.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfessoresCodigos'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

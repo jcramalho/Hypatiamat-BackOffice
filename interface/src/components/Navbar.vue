@@ -19,21 +19,22 @@
             class="py-0"
           >
             <v-list-item two-line :class="miniVariant && 'px-0'">
-              <v-list-item-avatar>
+              <v-list-item-icon >
                 <v-icon style="color:#F5F5F5">mdi-account</v-icon>
-              </v-list-item-avatar>
+              </v-list-item-icon>
                 
               <v-list-item-content>
                 <v-list-item-title >{{this.idUtilizador}}</v-list-item-title>
                 <v-list-item-subtitle>Autenticado</v-list-item-subtitle>
               </v-list-item-content>
-
+              <v-list-item-action>
               <v-btn
-          icon
-          @click.stop="mini = !mini"
-        >
-          <v-icon>mdi-chevron-left</v-icon>
-        </v-btn>
+                icon
+                @click.stop="mini = !mini"
+              >
+                <v-icon>mdi-chevron-left</v-icon>
+              </v-btn>
+              </v-list-item-action>
             </v-list-item>
             
   
@@ -45,13 +46,18 @@
               :to="item.href"
             >
               <v-list-item-icon>
-                <v-icon v-if=" item.title != 'Terminar Sessão' " >{{ item.icon }} </v-icon>
-                <v-icon v-else @click="logout()" style="cursor: pointer;">{{ item.icon }}</v-icon>
+                <v-icon v-if="item.title != 'Terminar Sessão' && item.title != 'Mensagens'" >{{ item.icon }} </v-icon>
+                <v-icon v-else-if="item.title == 'Terminar Sessão'" @click="logout()" style="cursor: pointer;">{{ item.icon }}</v-icon>
+                <v-icon v-else-if="item.title == 'Mensagens'">{{ item.icon }}</v-icon>
               </v-list-item-icon>
   
               <v-list-item-content>
-                <v-list-item-title v-if=" item.title != 'Terminar Sessão' " >{{ item.title }}</v-list-item-title>
-                <v-list-item-title v-else @click="logout()" style="cursor: pointer;">{{ item.title }}</v-list-item-title>
+                <v-list-item-title v-if=" item.title != 'Terminar Sessão' && item.title != 'Mensagens' " >{{ item.title }}</v-list-item-title>
+                <v-list-item-title v-else-if="item.title == 'Terminar Sessão'" @click="logout()" style="cursor: pointer;">{{ item.title }}</v-list-item-title>
+                <v-list-item-title v-else-if="item.title == 'Mensagens'">{{ item.title }} 
+                  <v-icon v-if="mensagensLer > 0 && mensagensLer < 9"> mdi-numeric-{{mensagensLer}}-circle-outline </v-icon>
+                  <v-icon class="pr-0" v-else-if="mensagensLer > 0">mdi-numeric-9-plus-circle-outline</v-icon>
+                </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -67,7 +73,7 @@ import Swal from 'sweetalert2'
 const host = require("@/config/hosts").host
 export default {
   props:[
-    'logged',
+    'logged', 'mensagensLer'
   ],
   data () {
     return {
@@ -106,6 +112,7 @@ export default {
     else this.idUtilizador = utilizador.codigo
     this.nomeUtilizador = utilizador.nome
     this.$emit("miniEvent", this.mini)
+    console.log(this.mensagensLer)
     if(utilizador.type == 50){
       // Admin   
       this.items = [
@@ -133,8 +140,10 @@ export default {
       // Professor
       this.items = [
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
+        { title: 'Enviar Mensagem', icon: 'mdi-message-reply-text-outline', href:"/professores/mensagens"},
         { title: 'Gestão de Turmas', icon: 'mdi-book-account', href:"/gestaoTurmas" },
         { title: 'Gestão de Alunos', icon: 'mdi-account-group', href:"/gestaoAlunos" },
+        { title: 'Desempenho de Alunos', icon: 'mdi-star-face', href:"/desempenho/" + utilizador.codigo + "/turmas" },
         { title: 'Monitorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/" + utilizador.codigo },
         { title: 'Monitorização de Apps', icon: 'mdi-apps', href:"/apps/" + utilizador.codigo},
         { title: 'Ranking Jogos', icon: 'mdi-podium', href:"/classificacoes/jogos"},
@@ -149,6 +158,8 @@ export default {
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
         { title: 'Desempenho nos Jogos', icon: 'mdi-gamepad-variant',href:"/jogosAluno" },
         { title: 'Desempenho nas Apps', icon: 'mdi-apps', href:"/appsAluno"},
+        { title: 'Campeonatos', icon: 'mdi-podium', href:"/campeonatos/alunos/" + utilizador.user},
+        { title: 'Mensagens', icon: 'mdi-message-reply-text-outline', href:"/alunos/mensagens"},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }

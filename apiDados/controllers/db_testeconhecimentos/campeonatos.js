@@ -43,6 +43,21 @@ module.exports.getCampeonatosComMunicipio= function(municipio){
     })
 }
 
+module.exports.getCampeonatosAlunoParticipou= function(user){
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT * FROM campeonatosID where cod in (select campeonatoID from campeonatos where user=?) order by di desc;`, user,
+         function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
 module.exports.getCampeonatoMunicipios = function(campeonato){
     return new Promise(function(resolve, reject) {
         sql.query(`SELECT esc.localidade, camp.jogo, max(camp.pontuacao) as max, min(camp.pontuacao) as min, 
@@ -256,14 +271,39 @@ module.exports.getCampeonatoAgrupamentoProfessores = function(campeonato, escola
     })
 }
 
-module.exports.getCampeonatoTurma = function(campeonato, escola, turma, professor){
+module.exports.getCampeonatoTurma = function(campeonato, escola, turma, codprofessor, jogo){
     return new Promise(function(resolve, reject) {
-        var args = [campeonato, turma, professor]
-        sql.query(`SELECT al.user, al.numero, al.nome, camp.pontuacao, sum(camp.njogos) as njogos
-        FROM (select user, pontuacao, njogos from ${bdTesteConhecimentos}.campeonatos where campeonatoID=? and turma=? and codprofessor=?) camp,
-                ${bdAplicacoes}.alunos al
-            where camp.user = al.user
-                group by al.user;`, args, function(err, res){
+        var args = [escola, turma, escola, codprofessor, turma,
+                    campeonato, jogo, codprofessor, turma,
+                    campeonato, jogo, escola,
+                    campeonato, jogo]
+        sql.query(`select a.numero, a.user, a.nome, posicaoturma.posicao as posTurma, 	
+		posicaoescola.posicao as posEscola, posicaoHypatia.posicao as posHypatia, posicaoturma.pontuacao, posicaoturma.njogos
+		from ((SELECT a.*
+                    FROM ${bdAplicacoes}.alunos a
+                    Where escola=? and turma=?)
+                UNION
+                (SELECT a.*
+                    FROM (select * from ${bdAplicacoes}.alunos where escola=?) a
+                    RIGHT JOIN (select * from ${bdAplicacoes}.turmasold where codProfessor=? and turma=?) aold ON a.user = aold.codAluno)) a,
+			 (select ranking.*, @rownum := @rownum + 1 AS posicao 
+				from (select user, pontuacao, njogos
+						from ${bdTesteConhecimentos}.campeonatos
+						where campeonatoID=? and jogo=? and codprofessor=? and turma=?
+                        order by pontuacao desc, njogos desc) ranking, (SELECT @rownum := 0) AS r) posicaoturma,
+				(select @rownumesc := @rownumesc + 1 AS posicao, ranking.*  
+					from (select camp.user, camp.pontuacao, camp.njogos
+							from (select * from ${bdTesteConhecimentos}.campeonatos where campeonatoID = ? and jogo=?) camp, 
+                            (select * from ${bdAplicacoes}.professores where escola=?) profs
+							where profs.codigo = camp.codprofessor
+							order by pontuacao desc, njogos desc) ranking, (SELECT @rownumesc := 0) AS r) posicaoescola,
+				(select @rownumhypatia := @rownumhypatia + 1 AS posicao, ranking.*  
+					from (select user, pontuacao, njogos
+							from ${bdTesteConhecimentos}.campeonatos
+							where campeonatoID = ? and jogo=?
+							order by pontuacao desc, njogos desc) ranking, (SELECT @rownumhypatia := 0) AS r) posicaoHypatia
+					where posicaoescola.user = a.user and posicaoturma.user = a.user and posicaoHypatia.user = a.user
+                    Order by a.numero`, args, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -275,3 +315,79 @@ module.exports.getCampeonatoTurma = function(campeonato, escola, turma, professo
     })
 }
 
+module.exports.getCampeonatoInfoAluno = function(user){
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT distinct campeonatoID, jogo, (select descricaoBackOffice from campeonatosID where cod=campeonatoID) as descricaoBackOffice, turma, codprofessor
+             FROM campeonatos where user=? Order by campeonatoID desc;`, user, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+module.exports.getCampeonatoInfoTurma = function(turma, codprofessor){
+    var args = [turma, codprofessor]
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT distinct campeonatoID, jogo, (select descricaoBackOffice from campeonatosID where cod=campeonatoID) as descricaoBackOffice, turma, codprofessor
+             FROM campeonatos where turma=? and codprofessor=? Order by campeonatoID desc;`, args, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+
+module.exports.getDesempenhoAlunoCampeonato = function(campeonato, jogo, escola, codprofessor, turma, user){
+    return new Promise(function(resolve, reject) {
+        var args = [escola, turma, escola, codprofessor, turma,
+                    campeonato, jogo, codprofessor, turma,
+                    campeonato, jogo, escola,
+                    campeonato, jogo]
+        sql.query(`select a.numero, a.user, a.nome, posicaoturma.posicao as posTurma, 	
+		posicaoescola.posicao as posEscola, posicaoHypatia.posicao as posHypatia, posicaoturma.pontuacao, posicaoturma.njogos
+		from ((SELECT a.*
+                    FROM ${bdAplicacoes}.alunos a
+                    Where escola=? and turma=?)
+                UNION
+                (SELECT a.*
+                    FROM (select * from ${bdAplicacoes}.alunos where escola=?) a
+                    RIGHT JOIN (select * from ${bdAplicacoes}.turmasold where codProfessor=? and turma=?) aold ON a.user = aold.codAluno)) a,
+			 (select ranking.*, @rownum := @rownum + 1 AS posicao 
+				from (select user, pontuacao, njogos
+						from ${bdTesteConhecimentos}.campeonatos
+						where campeonatoID=? and jogo=? and codprofessor=? and turma=?
+                        order by pontuacao desc, njogos desc) ranking, (SELECT @rownum := 0) AS r) posicaoturma,
+				(select @rownumesc := @rownumesc + 1 AS posicao, ranking.*  
+					from (select camp.user, camp.pontuacao, camp.njogos
+							from (select * from ${bdTesteConhecimentos}.campeonatos where campeonatoID = ? and jogo=?) camp, 
+                            (select * from ${bdAplicacoes}.professores where escola=?) profs
+							where profs.codigo = camp.codprofessor
+							order by pontuacao desc, njogos desc) ranking, (SELECT @rownumesc := 0) AS r) posicaoescola,
+				(select @rownumhypatia := @rownumhypatia + 1 AS posicao, ranking.*  
+					from (select user, pontuacao, njogos
+							from ${bdTesteConhecimentos}.campeonatos
+							where campeonatoID = ? and jogo=?
+							order by pontuacao desc, njogos desc) ranking, (SELECT @rownumhypatia := 0) AS r) posicaoHypatia
+					where posicaoescola.user = a.user and posicaoturma.user = a.user and posicaoHypatia.user = a.user`, args, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                var result = res.find(e => e.user == user)
+                if(result) resolve(result)
+                else resolve(undefined)
+            }
+        })
+    })
+}

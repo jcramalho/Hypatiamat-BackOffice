@@ -1,0 +1,7 @@
+type: object
+properties:
+  codigo:
+    type: integer
+    description: Código de confirmação.
+required:
+  - codigo

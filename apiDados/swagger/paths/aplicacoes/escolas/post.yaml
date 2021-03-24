@@ -1,6 +1,8 @@
 summary: Insere um novo Agrupamento de Escolas.
-description: |
-  Insere um novo Agrupamento de Escolas (Apenas os utilizadores autenticados).
+description: |+
+  Insere um novo Agrupamento de Escolas.
+  
+  Apenas o administrador pode executar este pedido.
 tags:
   - Escolas
 security:
@@ -17,8 +19,10 @@ requestBody:
         $ref: '#/components/schemas/EscolaPOST'
 responses:
   200:
-    description: Agrupamento inserido com suecesso.
+    description: Agrupamento inserido com sucesso.
   401:
     $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro.

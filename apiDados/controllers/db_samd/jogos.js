@@ -232,20 +232,26 @@ Jogos.getLast10FromAluno = async function(user){
 
     // calcrapid
     var calcrapid = await Calcrapid.getAlunoLast(user)
-    calcrapid.nome = "CalcRapid"
-    calcrapid.min = calcrapid.max = calcrapid.media = '---'
-    aux.push(calcrapid)
+    if(calcrapid.lastdate){
+        calcrapid.nome = "CalcRapid"
+        calcrapid.min = calcrapid.max = calcrapid.media = '---'
+        aux.push(calcrapid)
+    }
 
     // calculus
     var calculus = await Calculus.getAlunoLast(user)
-    calculus.nome = "Calculus"
-    calculus.min = calculus.max = calculus.media = '---'
-    aux.push(calculus)
+    if(calculus.lastdate){
+        calculus.nome = "Calculus"
+        calculus.min = calculus.max = calculus.media = '---'
+        aux.push(calculus)
+    }
 
     //console.log(aux)
-    await aux.sort(function(a,b){
-        return b.lastdate.localeCompare(a.lastdate)
-    })
+    if(aux.length > 0){
+        await aux.sort(function(a,b){
+            return b.lastdate.localeCompare(a.lastdate)
+        })
+    }
 
     for(var i = 0; i < n && i < aux.length; i++){
         var auxDate = aux[i].lastdate.split(" ")
@@ -255,4 +261,24 @@ Jogos.getLast10FromAluno = async function(user){
     }
     
     return res;
+}
+
+
+Jogos.getFrequenciaTotalAluno = async function(user){
+    var jogos = await Jogos.getJogosDB()
+    var frequencia = 0
+    
+    var aux = await Calculus.getAlunoFrequencia(user)
+    if(aux) frequencia += aux.frequencia
+
+    aux = await Calcrapid.getAlunoFrequencia(user)
+    if(aux) frequencia += aux.frequencia
+
+    for(var i = 0; i < jogos.length; i++){
+        var jogo = jogos[i]
+        aux = await JogosGerais.getAlunoFrequencia(user, jogo.jogotable, jogo.tipo)
+        if(aux) frequencia += aux.frequencia
+    }
+
+    return frequencia;
 }

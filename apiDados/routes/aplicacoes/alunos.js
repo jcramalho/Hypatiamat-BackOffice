@@ -36,9 +36,7 @@ async function verifyAluno(aluno){
 
 router.get('/', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
     Alunos.getAlunos()
-               .then(dados =>{
-                 res.jsonp(dados)
-               })
+               .then(dados =>res.jsonp(dados))
                .catch(erro => res.status(500).jsonp(erro))
 });
 
@@ -61,46 +59,61 @@ router.get('/:id', passport.authenticate('jwt', {session: false}), verifyToken.v
 
 /* GET devolve todos os registos de um jogo de um aluno. */
 router.get('/:user/jogos/:jogoTable', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2(), function(req, res, next) {
-  Alunos.getJogosFromAluno(req.query.dataInicio, req.query.dataFim, req.query.jogoTipo, req.params.jogoTable, req.params.user)
-             .then(dados =>{
-               res.jsonp(dados)
-             })
-             .catch(erro => res.status(500).jsonp(erro))
+  var dataInicio = req.query.dataInicio
+  var dataFim = req.query.dataFim
+  var jogoTipo = req.query.jogoTipo
+  var jogoTable = req.params.jogoTable
+
+  if(dataInicio && dataFim && jogoTipo && jogoTable){
+    Alunos.getJogosFromAluno(dataInicio, dataFim, jogoTipo, jogoTable, req.params.user)
+              .then(dados => res.jsonp(dados))
+              .catch(erro => res.status(500).jsonp(erro))
+  }
+  else res.status(400).send('Faltam parâmetros.')
 });
 
 /* GET devolve as estatisticas gerais de um jogo de um aluno. */
 router.get('/:user/jogosGlobal/:jogoTable', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2(), function(req, res, next) {
-  Alunos.getJogosGlobalFromAluno(req.query.dataInicio, req.query.dataFim, req.query.jogoTipo, req.params.jogoTable, req.params.user)
-             .then(dados =>{
-               res.jsonp(dados)
-             })
-             .catch(erro => res.status(500).jsonp(erro))
+  var dataInicio = req.query.dataInicio
+  var dataFim = req.query.dataFim
+  var jogoTipo = req.query.jogoTipo
+  var jogoTable = req.params.jogoTable
+
+  if(dataInicio && dataFim && jogoTipo && jogoTable){
+    Alunos.getJogosGlobalFromAluno(dataInicio, dataFim, jogoTipo, jogoTable, req.params.user)
+              .then(dados => res.jsonp(dados))
+              .catch(erro => res.status(500).jsonp(erro))
+  }
 });
 
 /* PUT altera a informação de um aluno. */
 router.put('/:id', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno(), function(req, res, next) {
     Alunos.updateAluno(req.params.id, req.body)
-               .then(dados =>{
-                 res.jsonp(dados)
-               })
+               .then(dados => res.jsonp(dados))
                .catch(erro => res.status(500).jsonp(erro))
 });
 
 
 /* PUT altera a escola de um aluno. */
-router.put('/:id/escola', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno(), function(req, res, next) {
-  Alunos.updateTurma(req.params.id, req.body.turma)
-             .then(dados =>{
-                  //TurmaOld.insertTurmaOld()
-                  res.jsonp(dados)
-             })
-             .catch(erro => res.status(500).jsonp(erro))
+router.put('/:id/escola', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno(), async function(req, res, next) {
+  var escola = req.body.escola
+  if(escola){
+    var escola2 = await Escolas.getEscola(escola)
+    if(escola2){
+      Alunos.updateEscola(req.params.id, req.body.escola)
+                .then(dados =>{
+                      res.jsonp(dados)
+                })
+                .catch(erro => res.status(500).jsonp(erro))
+    }
+    else res.status(400).jsonp({response: 'Código de escola inválido.'})
+  }
+  else res.status(400).jsonp({response: 'Existem campos que devem ser fornecidos em falta.'})
 });
 
 /* PUT altera a turma de uma lista de alunos. */
 router.put('/turmas/:turma', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor(), async function(req, res, next) {
     var alunos = req.body.alunos;
-    
     var codTurmaOld = req.body.turmaOld;
     var codTurmaNova = req.params.turma;
     var codprofessor = req.body.codprofessor;
@@ -109,13 +122,12 @@ router.put('/turmas/:turma', passport.authenticate('jwt', {session: false}), ver
     // caso exista uma mudança de professor
     if(req.body.codprofessorNovo) codprofessorNovo = req.body.codprofessorNovo;
     else codprofessorNovo = codprofessor
-
-    if(alunos && codTurmaOld && codTurmaNova && codprofessor){ 
+    if(Array.isArray(alunos) && alunos.length > 0 && codTurmaOld && codTurmaNova && codprofessor){ 
       // validacao das turmas
       var turmaAntiga = await Turmas.getTurmaByNomeProfessor(codTurmaOld, codprofessor)
       var turmaNova = await Turmas.getTurmaByNomeProfessor(codTurmaNova, codprofessorNovo)
       if(!turmaAntiga) {res.status(400).jsonp({response: "Turma Antiga Inválida."}) ; return;}
-      if(!turmaNova.anoletivo) {res.status(400).jsonp({response: "Turma Nova Inválida."}); return; } 
+      if(!turmaNova) {res.status(400).jsonp({response: "Turma Nova Inválida."}); return; } 
 
       var erros = []
 
@@ -155,86 +167,100 @@ router.put('/turmas/:turma', passport.authenticate('jwt', {session: false}), ver
       }
       res.jsonp({response: response})
   }
-  else res.status(400).jsonp({response: 'Existem campos que devem ser fornecidos em falta.'})
+  else res.status(400).jsonp({response: 'Existem campos que devem ser fornecidos em falta ou campos inválidos.'})
 });
 
 /* PUT altera a password de um aluno. */
 router.put('/:id/password', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno(), function(req, res, next) {
-  Alunos.updatePassword(req.params.id, req.body.password)
-             .then(dados =>{
-                  res.jsonp(dados)
-             })
-             .catch(erro => res.status(500).jsonp(erro))
+  if(req.body.password){
+    Alunos.updatePassword(req.params.id, req.body.password)
+              .then(dados => res.jsonp(dados))
+              .catch(erro => res.status(500).jsonp(erro))
+  }
+  else res.status(400).jsonp({response: 'Existem campos que devem ser fornecidos em falta ou campos inválidos.'})
 });
 
 /* POST insere um novo aluno. */
-router.post('/', function(req, res, next) {
-    Alunos.insertAluno(req.body)
-               .then(dados =>{
-                 res.jsonp(dados)
-               })
-               .catch(erro => res.status(500).jsonp(erro))
+router.post('/', async function(req, res, next) {
+  var aluno = req.body
+  if(aluno.user && aluno.numero && aluno.nome && aluno.datanascimento && aluno.escola 
+      && aluno.codprofessor && aluno.turma && aluno.email && aluno.password && aluno.pais){
+        var verificacao = await verifyAluno(aluno)
+        if(verificacao.response){
+          Alunos.insertAluno(aluno)
+                .then(dados =>{ res.jsonp(dados)})
+                .catch(erro => res.status(500).jsonp(erro))
+        }
+        else res.status(400).jsonp(verificacao)
+  }
+  else res.status(400).jsonp({response: 'Existem campos que devem ser fornecidos em falta ou campos inválidos.'})
 });
 
 /* POST insere um csv de alunos. */
 router.post('/csv', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), upload.single('ficheiro'),  function(req, res, next) {
-    let path = __dirname + '/../../'+req.file.path    
-    let alunos = []
-    let erros = []
-    let i = 1;
-    var stringfile = fs.readFileSync(path).toString()
-    //console.log(stringfile)
-    var delimiter = CSV.detect(stringfile)
+    let path = __dirname + '/../../'+req.file.path  
+    var mimetype = req.file.mimetype   
+    if(mimetype != 'text/csv' && mimetype != "application/vnd.ms-excel") {
+      fs.unlinkSync(path);
+      res.status(400).send('Não é um ficheiro csv.')
+    }
+    else{
+      let alunos = []
+      let erros = []
+      let i = 1;
+      var stringfile = fs.readFileSync(path).toString()
+      var delimiter = CSV.detect(stringfile)
 
-    fs.createReadStream(path, {encoding:'binary'})
-      .pipe(fastcsv.parse({ headers: ['user', 'numero', 'nome', 'datanascimento', 'escola', 'turma', 'email', 'password', 'codprofessor', 'pais'], delimiter:delimiter, encoding:'utf8' }))
-      .on('error', error => console.error(error))
-      .on('data', row => {
-          if(row.user && row.numero && row.nome && row.datanascimento && row.escola && row.turma && row.email && row.password && row.codprofessor && row.pais){
-            let aluno = row
-            aluno.confirmacao = 1
-            alunos.push(aluno)
+      fs.createReadStream(path, {encoding:'binary'})
+        .pipe(fastcsv.parse({ headers: ['user', 'numero', 'nome', 'datanascimento', 'escola', 'turma', 'email', 'password', 'codprofessor', 'pais'], 
+                              delimiter:delimiter, encoding:'utf8' }))
+        .on('error', error => console.error(error))
+        .on('data', row => {
+            if(row.user && row.numero && row.nome && row.datanascimento && row.escola && row.turma && row.email && row.password && row.codprofessor && row.pais){
+              let aluno = row
+              aluno.confirmacao = 1
+              alunos.push(aluno)
+            }
+            else{
+              erros.push(i++)
+            }
+        })
+        .on('end', async rowCount => {
+          var errosCodigos = []
+          for(var i = 1; i < alunos.length; i++){
+            
+            var aluno = alunos[i]
+            var verificacao = await verifyAluno(aluno)
+            if(verificacao.response){
+              Alunos.insertAluno(aluno)
+            }
+            else{
+              errosCodigos.push({
+                linha: i,
+                erros: verificacao.erros
+              })
+            }
           }
-          else{
-            erros.push(i++)
+          fs.unlinkSync(path);
+          var message = 'Foram inseridos ' + (alunos.length-1-errosCodigos.length) + ' alunos.\nHouve ' + erros.length + ' erros por faltarem colunas por preencher.\n\n'
+          for(var i = 0; i < errosCodigos.length; i++){
+            message += '>> Linha ' + errosCodigos[i].linha + " (" + errosCodigos[i].erros.length +" erros): " + "\n";
+            for(var j = 0; j < errosCodigos[i].erros.length; j++){
+              message += "-" + errosCodigos[i].erros[j] + "\n"
+            }
+            message += "\n"
           }
-      })
-      .on('end', async rowCount => {
-        var errosCodigos = []
-        for(var i = 1; i < alunos.length; i++){
+          res.jsonp(message)
           
-          var aluno = alunos[i]
-          var verificacao = await verifyAluno(aluno)
-          if(verificacao.response){
-            Alunos.insertAluno(aluno)
-          }
-          else{
-            errosCodigos.push({
-              linha: i,
-              erros: verificacao.erros
-            })
-          }
-        }
-        var message = 'Foram inseridos ' + (alunos.length-1-errosCodigos.length) + ' alunos.\nHouve ' + erros.length + ' erros por faltarem colunas por preencher.\n\n'
-        for(var i = 0; i < errosCodigos.length; i++){
-          message += '>> Linha ' + errosCodigos[i].linha + " (" + errosCodigos[i].erros.length +" erros): " + "\n";
-          for(var j = 0; j < errosCodigos[i].erros.length; j++){
-            message += "-" + errosCodigos[i].erros[j] + "\n"
-          }
-          message += "\n"
-        }
-        res.jsonp(message)
-        
-      });
+        });
+      }
   
 });
 
 /* DELETE apaga um aluno. */
 router.delete('/:codigo', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
     Alunos.apagar(req.params.codigo)
-               .then(dados =>{
-                 res.jsonp(dados)
-               })
+               .then(dados => res.jsonp(dados))
                .catch(erro => res.status(500).jsonp(erro))
 });
 

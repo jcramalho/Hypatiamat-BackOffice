@@ -1,6 +1,8 @@
 summary: Devolve todos os alunos pertencentes a uma escola.
-description: |
+description: |+
   Devolve todos os alunos que pertencem a uma determinada escola.
+  
+  Apenas o administrador, o município pertencente à escola e a respetiva escola podem executar este pedido.
 tags:
   - Escolas
 security:
@@ -18,8 +20,12 @@ responses:
     content:
       application/json:
         schema:
-          $ref: '#/components/schemas/EscolaAlunosGET'
+          type: array
+          items:
+            $ref: '#/components/schemas/EscolaAlunosGET'
   401:
     $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro.

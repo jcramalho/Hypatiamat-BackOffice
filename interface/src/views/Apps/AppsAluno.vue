@@ -48,7 +48,7 @@
                                     <br>
                                     <v-row>
                                         <v-col cols="12" xs="12" sm="6" md="4" lg="3" xl="3">
-                                            <v-card  style="background-color:#DDAF94">
+                                            <v-card  style="background-color:#009263">
                                                 <v-card-title class="justify-center">
                                                     <span :style="styleP"> NTRC </span>
                                                 </v-card-title>
@@ -60,7 +60,7 @@
                                             </v-card>
                                         </v-col>
                                         <v-col cols="12" xs="12" sm="6" md="4" lg="3" xl="3">
-                                            <v-card  style="background-color:#E8CEBF">
+                                            <v-card  style="background-color:#3ab040">
                                                 <v-card-title  primary-title class="justify-center">
                                                     <span :style="styleP"> NTR </span>
                                                 </v-card-title>
@@ -72,7 +72,7 @@
                                             </v-card>
                                         </v-col>
                                         <v-col cols="12" xs="12" sm="6" md="4" lg="3" xl="3">
-                                            <v-card  style="background-color:#DDAF94">
+                                            <v-card  style="background-color:#009263">
                                                 <v-card-title  primary-title class="justify-center">
                                                    <span :style="styleP"> Acerto </span>
                                                 </v-card-title>
@@ -84,7 +84,7 @@
                                             </v-card>
                                         </v-col>
                                         <v-col cols="12" xs="12" sm="6" md="12" lg="3" xl="3">
-                                            <v-card  style="background-color:#E8CEBF">
+                                            <v-card  style="background-color:#3ab040">
                                                 <v-card-title  primary-title class="justify-center">
                                                     <span :style="styleP">Frequência</span>
                                                 </v-card-title>

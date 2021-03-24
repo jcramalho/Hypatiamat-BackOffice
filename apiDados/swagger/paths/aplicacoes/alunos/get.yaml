@@ -1,0 +1,24 @@
+summary: Lista todos os alunos do Hypatiamat.
+description: |+
+  Devolve a informação geral acerca de todos os alunos do sistema.
+  
+  Apenas o administrador pode executar este pedido.
+tags:
+  - Alunos
+security:
+  - tokenQuery: []
+responses:
+  200:
+    description: Lista de todos os alunos da BD.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/AlunosGET'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

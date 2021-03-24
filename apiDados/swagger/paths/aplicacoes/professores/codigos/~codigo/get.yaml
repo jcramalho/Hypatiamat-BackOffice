@@ -1,0 +1,29 @@
+summary: Devolve a informação à cerca de um professor.
+description: |+
+  Devolve a informação à cerca de um professor com um determinado código.
+  
+  Apenas o administrador ou o respetivo professor podem executar este pedido.
+tags:
+  - Professores
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: codigo
+    schema:
+      type: string
+    description: "Código do Professor a ser consultado."
+    required: true
+responses:
+  200:
+    description: Informação do professor a ser devolvido.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ProfessorGET'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

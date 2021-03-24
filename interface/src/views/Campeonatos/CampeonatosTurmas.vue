@@ -15,11 +15,12 @@
                         <v-card v-show="show" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
                             <v-row class="justify-center">
                                 <v-col cols="12">
-                                    <span> 1. Selecione o campeonato do qual pretende averiguar o desempenho dos seus alunos através do campo "Campeonato".
-                                    </span>
+                                <span> 1. Selecione a turma sobre a qual quer ver o desempenho.</span>
                                 </v-col>
                                 <v-col cols="12">
-                                <span> 2. Selecione a turma sobre a qual quer ver o desempenho no campeonato.</span>
+                                    <span> 2. Selecione o campeonato do qual pretende averiguar o desempenho dos seus alunos através do campo "Campeonato". 
+                                        Apenas serão disponibilizados os campeonatos em que a sua turma participou.
+                                    </span>
                                 </v-col>
                                 <v-col cols="12">
                                 <span> 3. Estando os dois primeiros passos realizados, poderá visualizar os dados de cada aluno da turma inscrito no campeonato. </span> 
@@ -28,6 +29,9 @@
                                     <v-card class="mx-auto" color="grey lighten-4">
                                         <center> <h3 class="green--text"> Legenda da Tabela: </h3> </center>
                                         <ul> 
+                                            <li> <span> <b>Posição (Turma)</b> - Posição do aluno na turma. </span> </li>
+                                            <li> <span> <b>Posição (Agr. Escolas)</b> - Posição do aluno no Agrupamento de Escolas. </span> </li>
+                                            <li> <span> <b>Posição (Hypatia)</b> - Posição do aluno em todo o campeonato Hypatiamat. </span> </li>
                                             <li> <span> <b>Pontuação</b> - Melhor pontuação obtida pelo aluno no campeonato. </span> </li>
                                             <li> <span> <b>#Jogos</b> - Nº de vezes que o aluno jogou no campeonato. </span> </li>
                                         </ul>
@@ -42,20 +46,21 @@
                         <v-container style="width:80%">
                         <v-card class="pa-5">
                             <v-combobox
-                                id="campeonatos"
-                                v-model="campeonato"
-                                label="Campeonato"
-                                color="green"
-                                :items="campeonatos"
-                                @change="onCampeonatoChange"
-                            ></v-combobox>
-                            <v-combobox
                                 id="turmas"
                                 v-model="turmaSel"
                                 label="Turma"
                                 color="green"
                                 :items="turmas"
                                 @change="onTurmaChange"
+                            ></v-combobox>
+                            <v-combobox
+                                id="campeonatos"
+                                v-model="campeonato"
+                                label="Campeonato"
+                                item-text="descricaoBackOffice"
+                                color="green"
+                                :items="campeonatos"
+                                @change="onCampeonatoChange"
                             ></v-combobox>
                         </v-card>
                         </v-container>
@@ -124,14 +129,15 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         headers:[
             {text: "Número", value: 'numero', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
+            {text: "Posição (Turma)", value: 'posTurma', class: 'subtitle-1'},
+            {text: "Posição (Agr. Escolas)", value: 'posEscola', class: 'subtitle-1'},
+            {text: "Posição (Hypatia)", value: 'posHypatia', class: 'subtitle-1'},
             {text: "Pontuação", value: 'pontuacao', class: 'subtitle-1'},
             {text: "#Jogos", value: 'njogos', class: 'subtitle-1'},
         ],
         items:[],
         campeonatos:[],
-        campeonatosInfo:[],
         campeonato:"",
-        campeonatoId:"",
         escola: "",
         escolaOriginal: "",
         estatisticasGerais: undefined,
@@ -146,7 +152,6 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
         this.codprofessor = this.$route.params.codprofessor 
-        var responseCamp = await axios.get(hostCampeonatos + "?token=" + this.token)
         if(this.$route.params.campeonato && this.$route.params.municipio && this.$route.params.escola){
             this.campeonato = this.$route.params.campeonato
             this.municipio = this.$route.params.municipio
@@ -168,45 +173,29 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         for(i = 0; i < response.data.length; i++){
           this.turmas.push(response.data[i].turma)
         }
-        this.campeonatos = await this.parseCampeonatos(responseCamp.data)   
+        this.atualizaCampeonatos()
         this.onCampeonatoChange()  
     },
     methods: {
       format(value, event) {
         return moment(value).format('YYYY-MM-DD')
       },
-      parseCampeonatos: async function(campeonatosComp){
-          var aux = []
-          var aux2 = []
-          for(var i = 0; i < campeonatosComp.length; i++){
-              if(campeonatosComp[i].municipio != null){
-                  if(campeonatosComp[i].municipio == this.municipio){
-                      aux.push(campeonatosComp[i].descricaoBackOffice)
-                      aux2.push(campeonatosComp[i])
-                  }
-              }
-              else if(campeonatosComp[i].comunidade != null){
-                  var res = await axios.get(h + "comunidades/" + campeonatosComp[i].comunidade + "?token=" + this.token)  
-                  var municipios = res.data
-                  if(municipios.find(e => e.municipio == this.municipio)){
-                      aux.push(campeonatosComp[i].descricaoBackOffice)
-                      aux2.push(campeonatosComp[i])
-                  }
-              }
-              else {aux.push(campeonatosComp[i].descricaoBackOffice); aux2.push(campeonatosComp[i])}
+      atualizaCampeonatos: async function(){
+          if(this.turmaSel && this.turmaSel != ''){
+            var response = await axios.get(hostCampeonatos + "turmas/" + this.turmaSel + "/campeonatos/?codprofessor=" + this.codprofessor + "&token=" + this.token)
+            this.campeonatos = response.data
+            this.onCampeonatoChange()
           }
-          this.campeonatosInfo = aux2
-          return aux
       },
       onCampeonatoChange: function(item){
-          var camp = this.campeonatos.find(e => e == this.campeonato)
-          if(camp){
-              var index = this.campeonatos.indexOf(camp)
-              this.campeonatoId = this.campeonatosInfo[index]
-              this.atualizaEstatisticas()
-              this.atualizaConteudo()
+          if(this.campeonato){
+            var camp = this.campeonatos.find(e => e.campeonatoID == this.campeonato.campeonatoID)
+            if(camp){
+                this.atualizaEstatisticas()
+                this.atualizaConteudo()
+            }
+            else this.campeonato = undefined
           }
-          else this.campeonatoId = undefined
       },
       onTurmaChange: async function(item){
           if(this.turmaSel != "" && this.turmaSel){
@@ -233,8 +222,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
                                                         
             this.items = []
 
-            this.atualizaConteudo()
-
+            await this.atualizaCampeonatos()
           }
       },
       atualizaEstatisticas: async function(){
@@ -242,20 +230,23 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
           this.estastisticasMunicipio = await this.atualizaEstatisticasGeraisMunicipio()
       },
       atualizaEstatisticasGeraisMunicipio: async function(){
-        if(this.campeonatoId){
-            var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/municipios/" + this.municipio +"/gerais?token=" + this.token)
+        if(this.campeonato){
+            var response = await axios.get(hostCampeonatos + this.campeonato.campeonatoID + "/municipios/" + this.municipio +"/gerais?token=" + this.token)
         }
         return response.data
       },
       atualizaEstatisticasGerais: async function(){
-          var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/municipios/gerais?token=" + this.token)
-          return response.data
+          if(this.campeonato){
+            var response = await axios.get(hostCampeonatos + this.campeonato.campeonatoID + "/municipios/gerais?token=" + this.token)
+            return response.data
+          }
       },
       atualizaConteudo: async function(){
-          if(this.campeonatoId && this.escola && this.turmaSel && this.codprofessor){
+          if(this.campeonato && this.escola && this.turmaSel && this.codprofessor){
                this.loading = true
-               var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/turmas/" + this.turmaSel 
-                                                + "?codprofessor=" + this.codprofessor + "&escola=" + this.escola + "&token=" + this.token)
+               var response = await axios.get(hostCampeonatos + this.campeonato.campeonatoID + "/turmas/" + this.turmaSel 
+                                                + "?codprofessor=" + this.codprofessor + "&escola=" + this.escola 
+                                                + "&jogo=" + this.campeonato.jogo + "&token=" + this.token)
                this.items = response.data
                this.loading = false
           }
@@ -266,41 +257,30 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
 
         var xImage = doc.internal.pageSize.getWidth() / 4
         var ytotal = 0
-        var pdfName = this.campeonato + "-" + this.escola + ".pdf"
+        var pdfName = this.campeonato.campeonatoID + "-" + this.escola + ".pdf"
 
         doc.addImage(hypatiaImg, 'PNG', xImage, 4);
         //doc.text("Jogo:")
         //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
         doc.setFontSize(11)
-        doc.text(this.campeonato, 15, 50)
-        doc.text(this.nomeEscola, 15, 55)
+        doc.text(this.campeonato.descricaoBackOffice, 15, 50)
         var listaRes = []
         //var total = ["Todos", 0, 0, 0, 0, 0, 0]
         for(var i = 0; i<this.items.length; i++){
             var aux = [];
+            aux.push(this.items[i].numero)
             aux.push(this.items[i].nome)
-            if(this.items[i].jogo == 0) aux.push("ADD (1.º)")
-            else if(this.items[i].jogo == 1) aux.push("ADD (2.º)")
-            else if(this.items[i].jogo == 2) aux.push("SAM (2.º)")
-            else if(this.items[i].jogo == 3) aux.push("SAM (3.º)")
-            else if(this.items[i].jogo == 4) aux.push("SAMD (3.º)")
-            else if(this.items[i].jogo == 5) aux.push("SAMD (4.º)")
-            else if(this.items[i].jogo == 6) aux.push("SAMD (5/6.º)")
-            else if(this.items[i].jogo == 7) aux.push("SAMD (7/8/9.º)")
-            else if(this.items[i].jogo == 8) aux.push("SUBADD (1.º)")
-            else aux.push("SUBADD (2.º)")
-            aux.push(this.items[i].max)
-            aux.push(this.items[i].min)
-            aux.push(this.items[i].media)
+            aux.push(this.items[i].posTurma)
+            aux.push(this.items[i].posEscola)
+            aux.push(this.items[i].posHypatia)
+            aux.push(this.items[i].pontuacao)
             aux.push(this.items[i].njogos)
-            aux.push(this.items[i].nusers)
-            aux.push(this.items[i].jogosAluno)
 
             listaRes.push(aux)
         }
         doc.setFontSize(10)
         doc.autoTable({
-            head: [['Professor', 'Jogo', "Max", "Min", "Média", "#Jogos", "#Alunos", '#J/#A']],
+            head: [['N.º', 'Nome', "Posição (Turma)", "Posição (Escola)", "Posição (Hypatia)", "Pontuação", "#Jogos"]],
             body: listaRes,
             headStyles: { fillColor: [0, 146, 99] },
             styles:{fontSize:9},
@@ -311,11 +291,8 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
                     ytotal = doc.internal.pageSize.getHeight()
                     doc.setFontSize(8)
                     doc.text("Legenda:" , 10, ytotal -26)
-                    doc.text("Max - Máximo de pontuação obtida pelo professor no jogo do campeonato", 10, ytotal -22)
-                    doc.text("Min - Mínimo de pontuação obtida pelo professor no jogo do campeonato", 10, ytotal -18)
-                    doc.text("#Jogos - Número de vezes que o jogo foi jogado pelo professor", 10, ytotal - 14)
-                    doc.text("#Alunos - Número de alunos do professor que participaram naquele jogo do campeonato", 10, ytotal -10)
-                    doc.text("#J/#A - Número médio de vezes que um aluno do professor jogou", 10, ytotal-6)
+                    doc.text("Nº - Número do Aluno", 10, ytotal -22)
+                    doc.text("#Jogos - Número de vezes que o jogo foi jogado pelo professor", 10, ytotal - 18)
                 },
             willDrawCell: function (data) {
                 /*

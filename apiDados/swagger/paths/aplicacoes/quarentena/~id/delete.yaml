@@ -1,0 +1,25 @@
+summary: Rejeita um determinado pedido de inscrição.
+description: |+
+  Dado o identificador de um pedido de inscrição, rejeita esse pedido de inscrição.
+  
+  Apenas o administrador pode executar este pedido.
+tags:
+  - Quarentena
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: id
+    schema:
+      type: string
+    description: "Identificador do pedido a ser rejeitado."
+    required: true
+responses:
+  200:
+    description: Pedido rejeitado com sucesso.
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

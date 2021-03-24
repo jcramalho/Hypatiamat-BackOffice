@@ -1,5 +1,5 @@
 summary: Devolve todos os municípios distintos.
-description: |
+description: |+
   Devolve todos municípios distintos aos quais as escolas pertencem, por ordem alfabética.
 tags:
   - Escolas

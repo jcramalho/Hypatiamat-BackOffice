@@ -1,0 +1,31 @@
+summary: Devolve todas as escolas de um distrito.
+description: |+
+  Devolve a informação das escolas pertencentes a um determinado distrito.
+  
+  Apenas pode ser executada pelo administrador.
+tags:
+  - Escolas
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: distrito
+    schema:
+      type: string
+    description: "Distrito ao qual as escolas pertencem."
+    required: true
+responses:
+  200:
+    description: Lista de Escolas pertencentes ao país.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/EscolaGET'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

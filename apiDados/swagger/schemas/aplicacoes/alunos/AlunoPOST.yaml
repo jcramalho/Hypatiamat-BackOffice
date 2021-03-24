@@ -1,0 +1,45 @@
+type: object
+properties:
+  user:
+    type: string
+    description: Código do aluno (único).
+  numero:
+    type: integer
+    description: Número do aluno.
+  nome:
+    type: string
+    description: Nome do aluno.
+  datanascimento:
+    type: string
+    format: date
+    description: Data de Nascimento do aluno (DD-MM-YYYY).
+  escola:
+    type: string
+    description: Código do Agrupamento a que pertence.
+  turma:
+    type: string
+    description: Código da turma a que pertence.
+  email:
+    type: string
+    description: Email do aluno (único).
+  password:
+    type: string
+    format: password
+    description: Password do Aluno.
+  codprofessor:
+    type: string
+    description: Código do professor a que pertence.
+  pais: 
+    type: string
+    description: País do Aluno
+required:
+  - user
+  - numero
+  - nome
+  - datanascimento
+  - escola
+  - turma
+  - email
+  - password
+  - codprofessor
+  - pais

@@ -9,25 +9,18 @@ var verifyToken = require('../../config/verifyToken')
 /* GET Todos os pedidos. */
 router.get('/', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
     Quarentena.getPedidos()
-         .then(response =>{
-             res.jsonp(response)
-         }) 
-         .catch(erro =>{
-             console.log(erro)
-             res.status(500).jsonp(erro)
-         })
+         .then(response => res.jsonp(response)) 
+         .catch(erro => res.status(500).jsonp('Error'))
      
  });
 
  /* GET Pedido com determinado id. */
 router.get('/:id', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
     Quarentena.getPedido(req.params.id)
-         .then(response =>{
-             res.jsonp(response)
-         }) 
+         .then(response => res.jsonp(response)) 
          .catch(erro =>{
              console.log(erro)
-             res.status(500).jsonp(erro)
+             res.status(500).jsonp('Error')
          })
      
  });
@@ -36,26 +29,25 @@ router.get('/:id', passport.authenticate('jwt', {session: false}), verifyToken.v
 
 /* POST Inserção de um pedido de inscrição. */
 router.post('/', function(req, res, next) {
-   Quarentena.insertPedido(req.body)
-        .then(response =>{
-            res.jsonp(response)
-        }) 
-        .catch(erro =>{
-            console.log(erro)
-            res.status(500).jsonp(erro)
-        })
-    
+   var pedido = req.body
+   if(pedido.codigo && pedido.nome && pedido.escola && pedido.email && pedido.password){
+    Quarentena.insertPedido(pedido)
+            .then(response => res.jsonp(response)) 
+            .catch(erro =>{
+                console.log(erro)
+                res.status(500).jsonp('Error')
+            })
+   }
+   else res.status(400).send('Faltam parâmetros.')
 });
 
 /* POST Pedido aceite e inserção de um professor. */
 router.post('/:id', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
     Quarentena.aceitaPedido(req.params.id)
-         .then(response =>{
-             res.jsonp(response)
-         }) 
+         .then(response => res.jsonp(response)) 
          .catch(erro =>{
              console.log(erro)
-             res.status(500).jsonp(erro)
+             res.status(500).jsonp('Error')
          })
      
  });
@@ -63,12 +55,10 @@ router.post('/:id', passport.authenticate('jwt', {session: false}), verifyToken.
 /* DELETE Remoção de um pedido de inscrição. */
 router.delete('/:id', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
     Quarentena.deletePedido(req.params.id)
-         .then(response =>{
-             res.jsonp(response)
-         }) 
+         .then(response => res.jsonp(response)) 
          .catch(erro =>{
              console.log(erro)
-             res.status(500).jsonp(erro)
+             res.status(500).jsonp('Error')
          })
      
  });

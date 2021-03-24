@@ -1,0 +1,12 @@
+type: object
+properties:
+  turma:
+    type: string
+  idprofessor:
+    type: string
+  id:
+    type: integer
+  nome:
+    type: string
+  anoletivo:
+    type: string

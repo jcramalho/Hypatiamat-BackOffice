@@ -1,0 +1,29 @@
+summary: Lista a informação de um determinado código.
+description: |+
+  Devolve a informação geral acerca de um código de confirmação com um determinado identificador.
+  
+  Apenas o administrador pode executar este pedido.
+tags:
+  - Códigos de Professor
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: id
+    schema:
+      type: string
+    description: "Identificador do código a ser consultado."
+    required: true
+responses:
+  200:
+    description: Informação à cerca do código.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/CodigosProfGET'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

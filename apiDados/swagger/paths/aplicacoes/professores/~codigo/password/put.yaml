@@ -1,0 +1,35 @@
+summary: Edita a password de um professor.
+description: |+
+  Edita a password de um professor com um determinado código.
+  
+  Apenas o administrador ou o próprio professor pode executar este pedido.
+tags:
+  - Professores
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: codigo
+    schema:
+      type: string
+    description: "Código do Professor a ser alterado."
+    required: true
+requestBody:
+  description: 'Password do professor a alterar.'
+  required: true
+  content:
+    application/x-www-form-urlencoded:
+      schema:
+        $ref: '#/components/schemas/ProfPassword'
+    application/json:
+      schema:
+        $ref: '#/components/schemas/ProfPassword'
+responses:
+  200:
+    description: Password alterada com sucesso.
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

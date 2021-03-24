@@ -1,0 +1,6 @@
+type: object
+properties:
+  escola:
+    type: string
+required:
+  - escola

@@ -1,0 +1,22 @@
+summary: Lista todos os códigos e emails alunos do Hypatiamat.
+description: |+
+  Devolve o email e código de todos os alunos do sistema.
+tags:
+  - Alunos
+security:
+  - tokenQuery: []
+responses:
+  200:
+    description: Lista de todos os códigos e emails de alunos da BD.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/AlunosCodigos'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

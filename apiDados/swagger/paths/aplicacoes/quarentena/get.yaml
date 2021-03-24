@@ -1,0 +1,24 @@
+summary: Lista todos os pedidos de inscrição.
+description: |+
+  Devolve todos os pedidos de inscrição de professores existentes.
+  
+  Apenas o administrador pode executar este pedido.
+tags:
+  - Quarentena
+security:
+  - tokenQuery: []
+responses:
+  200:
+    description: Lista de todos os pedidos de inscrição.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuarentenaGET'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

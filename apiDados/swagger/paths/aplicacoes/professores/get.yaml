@@ -1,0 +1,24 @@
+summary: Lista todos os professores ativos.
+description: |+
+  Devolve a informação à cerca dos professores ativos, isto é, cujo a validade não se encontra expirada, possua premium e esteja confirmado na plataforma.
+  
+  Apenas o administrador pode executar este pedido.
+tags:
+  - Professores
+security:
+  - tokenQuery: []
+responses:
+  200:
+    description: Lista todas os professores ativos.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfessoresGET'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

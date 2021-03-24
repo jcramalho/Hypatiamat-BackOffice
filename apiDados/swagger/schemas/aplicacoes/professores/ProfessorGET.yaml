@@ -1,0 +1,29 @@
+type: object
+properties:
+  id:
+    type: integer
+  codigo:
+    type: string
+  nome:
+    type: string
+  escola:
+    type: string
+  email:
+    type: string
+  confirmacao:
+    type: boolean
+  localidade:
+    type: string
+  premium:
+    type: integer
+  valido:
+    type: boolean
+  agrupamento:
+    type: string
+  validade:
+    type: string
+    format: date
+  socionum:
+    type: integer  
+  projeto:
+    type: integer

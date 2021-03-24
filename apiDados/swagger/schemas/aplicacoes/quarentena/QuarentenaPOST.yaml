@@ -1,0 +1,24 @@
+type: object
+properties:
+  codigo:
+    type: string
+    description: Código do professor.
+  nome:
+    type: string
+    description: Nome do professor.
+  escola:
+    type: string
+    description: Código da escola pertencente.
+  email:
+    type: string
+    description: Email do professor.
+  password: 
+    type: string
+    format: password
+    description: Password do professor.
+required:
+  - codigo
+  - nome
+  - escola
+  - email
+  - password

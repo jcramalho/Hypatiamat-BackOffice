@@ -3,29 +3,29 @@
       <v-container>
             <!-- Aluno !-->
             
-          <v-row class="align-center justify-center">
-            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
+          <v-row class="align-center justify-center" >
+            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12" v-if="!this.idAluno">
               <v-card-title primary-title class="justify-center green--text">
                   Dados da minha conta ({{aluno.user}})
               </v-card-title>
             </v-col>
-            <v-col v-if="!small" cols="12" xs="12" sm="3" md="3" lg="3" xl="3">
+            <v-col v-if="!small && !this.idAluno" cols="12" xs="12" sm="3" md="3" lg="3" xl="3" >
               <center><v-btn class="white--text" style="background-color: #009263;" @click="editarAluno=true" rounded> Editar dados pessoais </v-btn></center>
             </v-col>
-            <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="6">
+            <v-col v-if="!this.idAluno" cols="12" xs="12" sm="12" md="6" lg="6" xl="6">
               <center>
                 <v-list-item-avatar class="elevation-6" color="#009263" size="120">
                       <v-icon size="80" color="white">mdi-school</v-icon>             
                 </v-list-item-avatar>
               </center>
             </v-col>
-            <v-col v-if="small" cols="12" xs="12" sm="12" md="3" lg="3" xl="3">
-              <center><v-btn class="white--text" style="background-color: #009263;" @click="editarAluno()" rounded> Editar dados pessoais </v-btn></center>
+            <v-col v-if="small && !this.idAluno" cols="12" xs="12" sm="12" md="3" lg="3" xl="3">
+              <center><v-btn class="white--text" style="background-color: #009263;" @click="editarAluno = true" rounded> Editar dados pessoais </v-btn></center>
             </v-col>
-            <v-col cols="12" xs="12" sm="12" md="3" lg="3" xl="3">
+            <v-col v-if="!this.idAluno" cols="12" xs="12" sm="12" md="3" lg="3" xl="3">
               <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true" rounded> Alterar password </v-btn></center>
             </v-col>
-          <v-row class="mx-auto">
+          <v-row class="mx-auto" v-if="!this.idAluno">
             <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="4">
               <v-text-field label="Nome" v-model="aluno.nome" color="#009263" dense rounded outlined readonly/>
             </v-col>
@@ -54,7 +54,7 @@
               <v-col cols="12">
               <v-card-title class="justify-center green--text"> Troféus: </v-card-title>
               </v-col>
-              <v-col cols="12" xs="12" sm="3" md="3" lg="3" xl="3">
+              <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4">
                 <center>
                   <v-container class="d-flex align-center justify-center">
                     <div class="pr-3"><v-img :src="require('@/assets/star.png')" width="50px" heigth="50px"> </v-img></div>
@@ -62,7 +62,7 @@
                   </v-container>
                 </center>
               </v-col>
-              <v-col cols="12" xs="12" sm="3" md="3" lg="3" xl="3">
+              <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4">
                 <center>
                   <v-container class="d-flex align-center justify-center">
                     <div class="pr-3"><v-img :src="require('@/assets/diamante.png')" width="50px" heigth="50px"> </v-img></div>
@@ -70,7 +70,7 @@
                   </v-container>
                 </center>
               </v-col>
-              <v-col cols="12" xs="12" sm="3" md="3" lg="3" xl="3">
+              <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4">
                 <center>
                   <v-container class="d-flex align-center justify-center">
                     <div class="pr-3"><v-img :src="require('@/assets/relampago.png')" width="50px" heigth="50px"> </v-img></div>
@@ -78,8 +78,30 @@
                   </v-container>
                 </center>
               </v-col>
+              <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4">
+                <center>
+                  <v-container class="d-flex align-center justify-center">
+                    <div class="pr-3"><v-img :src="require('@/assets/apps.png')" width="50px" heigth="50px"> </v-img></div>
+                    <div><span>{{acertoApps}}%</span></div>
+                  </v-container>
+                </center>
+              </v-col>
+              <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4">
+                <center>
+                  <v-container class="d-flex align-center justify-center">
+                    <div class="pr-3"><v-icon size="50" color="blue">mdi-gamepad-variant</v-icon></div>
+                    <div><span>{{frequenciaJogos}}</span></div>
+                  </v-container>
+                </center>
+              </v-col>
             </v-row>
             </v-card>
+
+            <v-col cols="12">
+            </v-col>
+            <v-col cols="8">
+              <ClassificacaoAluno v-if="desempenhoUltimo" :posicoes="desempenhoUltimo"/>
+            </v-col>
             <v-col cols="12">
             </v-col>
             <v-col cols="12">
@@ -106,8 +128,8 @@
                     :footer-props="footer_props"
                     :search="filtrarApps"
                   >
-                  <template v-slot:item="row">
-                    <tr :class="row.item.acerto>50 ? 'style-positivo' : 'style-negativo'" @click="showAppPorDia(row.item)">
+                    <template v-slot:item="row">
+                      <tr :class="row.item.acerto>50 ? 'style-positivo' : 'style-negativo'" @click="showAppPorDia(row.item)">
                         <td>{{row.item.nome}}</td>
                         <td>{{row.item.ncertas}}</td>
                         <td>{{row.item.ntotal}}</td>
@@ -159,12 +181,12 @@
                 </v-card>
             </v-slide-y-transition>
             </v-col>
-            <v-col cols="12">
+            <v-col cols="12" v-if="!this.idAluno">
               <center>
               <v-btn class="white--text" style="background-color: #009263;" @click="verJogos()">Ver Jogos</v-btn>
               </center>
             </v-col>
-            <v-col cols="12">
+            <v-col cols="12" v-if="!this.idAluno">
               <center>
               <v-btn class="white--text" style="background-color: #009263;" @click="verApps()">Ver Apps</v-btn>
               </center>
@@ -204,18 +226,23 @@ const h = require("@/config/hosts").hostAPI
 const hostApps =  require("@/config/hosts").hostApps
 const hostJogos =  require("@/config/hosts").hostJogos
 const hostTrofeus =  require("@/config/hosts").hostTrofeus
+const hostCampeonatos = require("@/config/hosts").hostCampeonatos
 import AppDiaAluno from "@/components/Apps/AppDiaAluno.vue"
 import JogoDiaAluno from "@/components/Jogos/JogoDiaAluno.vue"
 import CalculusDiaAluno from "@/components/Jogos/CalculusDiaAluno.vue"
 import EditarAlunoAluno from "@/components/Alunos/EditarAlunoAluno.vue"
+import ClassificacaoAluno from '@/components/Campeonatos/ClassificacaoAluno.vue'
+
 
   export default {
     components:{
       AppDiaAluno,
       JogoDiaAluno,
       CalculusDiaAluno,
-      EditarAlunoAluno
+      EditarAlunoAluno,
+      ClassificacaoAluno
     },
+    props:["idAluno"],
     data(){
       return {
         turmas: [],
@@ -263,6 +290,10 @@ import EditarAlunoAluno from "@/components/Alunos/EditarAlunoAluno.vue"
         jogoPorDia:[],
         jogoAtual:"",
         editarAluno:false,
+        frequenciaJogos:0,
+        ultimoCampeonato:{},
+        acertoApps:0,
+        desempenhoUltimo:{posTurma: "-", posEscola: "-", posHypatia: "-", pontuacao: 0},
         number0or1: v  => {
           if (!v.trim()) return true;
           if (!isNaN(parseInt(v)) && (v == 0 || v == 1)) return true;
@@ -278,14 +309,27 @@ import EditarAlunoAluno from "@/components/Alunos/EditarAlunoAluno.vue"
     },
     created: async function(){
         this.token = localStorage.getItem("token")
-        var aluno = JSON.parse(localStorage.getItem("utilizador"))
-        var response = await axios.get(h + "alunos/" + aluno.id + "?token=" + this.token)
-        this.aluno = response.data
-        this.aluno.id = aluno.id
-        this.aluno.nomeType = "Aluno"
+        if(!this.idAluno){
+          var aluno = JSON.parse(localStorage.getItem("utilizador"))
+          var response = await axios.get(h + "alunos/" + aluno.id + "?token=" + this.token)
+          this.aluno = response.data
+          this.aluno.id = aluno.id
+          this.aluno.nomeType = "Aluno"
+        }
+        else{
+          var response = await axios.get(h + "alunos/" + this.idAluno + "?token=" + this.token)
+          this.aluno = response.data
+          this.aluno.id = this.idAluno
+          this.aluno.nomeType = "Aluno"
+        }
         this.getTrofeus()
         this.getLastApps()
         this.getLastJogos()
+        this.getAcertoApps()
+        this.getFrequenciaJogos()
+        var ultimo = await axios.get(hostCampeonatos + "alunos/" + this.aluno.user + "/ultimocampeonato?token=" + this.token)
+        this.ultimoCampeonato = ultimo.data
+        this.calculaUltimoCampeonato()
         
     },
     computed: {
@@ -299,9 +343,27 @@ import EditarAlunoAluno from "@/components/Alunos/EditarAlunoAluno.vue"
       }
     },
     methods: {
+      getFrequenciaJogos: async function(){
+        var response = await axios.get(hostJogos + "alunos/" + this.aluno.user + "/frequencia?token=" + this.token)
+        this.frequenciaJogos = response.data
+      },
+      getAcertoApps: async function(){
+        var response = await axios.get(hostApps + "alunos/" + this.aluno.user + "/acerto?token=" + this.token)
+        if(response.data) this.acertoApps = response.data.acerto
+      },
       getTrofeus: async function(){
         var response = await axios.get(hostTrofeus + "alunos/" + this.aluno.user + "/?token=" + this.token)
-        this.trofeus = response.data
+        if(response.data) this.trofeus = response.data
+      },
+      calculaUltimoCampeonato: async function(){
+        if(this.ultimoCampeonato){
+            var response = await axios.get(hostCampeonatos + this.ultimoCampeonato.campeonatoID + "/alunos/" + this.aluno.user
+                                        + "?jogo=" + this.ultimoCampeonato.jogo + "&codprofessor=" + this.ultimoCampeonato.codprofessor
+                                        + "&turma=" + this.ultimoCampeonato.turma + "&escola=" + this.aluno.escola + "&token=" + this.token)
+            if(response.data) {
+                this.desempenhoUltimo = response.data
+            }
+        } 
       },
       getLastApps : async function(){
         var response2 = await axios.get(hostApps + "alunos/" + this.aluno.user + "/last10/?token=" + this.token)
@@ -311,7 +373,7 @@ import EditarAlunoAluno from "@/components/Alunos/EditarAlunoAluno.vue"
         var response3 = await axios.get(hostJogos + "alunos/" + this.aluno.user + "/last10/?token=" + this.token)
         this.lastJogos = response3.data 
       },
-      editarAluno : function(){
+      editarAlunoF : function(){
           //this.$router.push({name: "Editar Aluno", params: {id : this.professor.id}})
           this.editarAluno = true
       },

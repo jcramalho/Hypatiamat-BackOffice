@@ -1,0 +1,23 @@
+type: object
+properties:
+  nome:
+    type: string
+    description: Nome do Agrupamento.
+  localidade:
+    type: string
+    description: Município do Agrupamento.
+  distrito:
+    type: string
+    description: Distrito do Agrupamento.
+  pais:
+    type: string
+    description: País do Agrupamento.
+  cod:
+    type: string
+    description: Código do Agrupamento (tem que ser único).
+required:
+  - nome
+  - localidade
+  - distrito
+  - pais
+  - cod

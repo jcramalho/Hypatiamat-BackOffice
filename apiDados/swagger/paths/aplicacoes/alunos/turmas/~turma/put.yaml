@@ -1,0 +1,36 @@
+summary: Edita a turma de um conjunto de alunos.
+description: |+
+  Dada um conjuntos de alunos, uma nova turma e, eventualmente, um novo professor e escola, atualiza a nova turma de cada aluno.
+  
+  Utilizadores que podem utilizar a rota:
+  - Administrador do sistema;
+  - Professor dos alunos;
+tags:
+  - Alunos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: turma
+    schema:
+      type: string
+    description: "Nova turma dos alunos."
+    required: true
+requestBody:
+  description: 'Objeto com as alterações a serem feitas.'
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/TurmaAlunoPUT'
+responses:
+  200:
+    description: Turmas dos alunos alterada com sucesso.
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

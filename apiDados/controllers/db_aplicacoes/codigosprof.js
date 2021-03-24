@@ -43,7 +43,23 @@ CodigoProf.getCodigo = function (id) {
                     reject(err);
                 }
                 else{
-                    resolve(res);
+                    if(res.length > 0) resolve(res[0])
+                    else resolve(undefined)
+                }
+        });   
+    })       
+};
+
+CodigoProf.getCodigo2 = function (codigo) {    
+    return new Promise(function(resolve, reject) {
+        sql.query("Select * from codigosprof where codigo=?", codigo, function (err, res) {
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    if(res.length > 0) resolve(res[0])
+                    else resolve(undefined)
                 }
         });   
     })       

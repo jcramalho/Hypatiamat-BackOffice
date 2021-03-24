@@ -1,0 +1,20 @@
+type: object
+properties:
+  numero:
+    type: integer
+  nome:
+    type: string
+  datanascimento:
+    type: string
+    format: date
+  email:
+    type: string
+  confirmacao:
+    type: boolean
+required:
+  - numero
+  - nome
+  - email
+  - datanascimento
+  - email
+  - confirmacao

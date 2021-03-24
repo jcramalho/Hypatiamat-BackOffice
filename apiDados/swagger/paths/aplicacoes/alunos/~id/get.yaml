@@ -1,0 +1,32 @@
+summary: Lista a informação de um determinado aluno.
+description: |+
+  Devolve a informação geral acerca de um aluno com um determinado identificador.
+  
+  Utilizadores que podem executar esta rota:
+    - O próprio aluno;
+    - O professor do aluno;
+    - O administrador do sistema.
+tags:
+  - Alunos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: id
+    schema:
+      type: string
+    description: "Identificador do Aluno a ser consultado."
+    required: true
+responses:
+  200:
+    description: Informação à cerca do aluno.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/AlunoGET'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

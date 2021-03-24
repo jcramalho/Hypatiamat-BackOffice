@@ -486,6 +486,14 @@ router.get('/alunos/:user/jogou', passport.authenticate('jwt', {session: false})
   else res.status(400).jsonp("Faltam parâmetros (dataInicio ou dataFim).")
 });
 
+router.get('/alunos/:user/frequencia', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  var user = req.params.user
+ 
+  Jogos.getFrequenciaTotalAluno(user)
+        .then(dados => res.jsonp(dados))
+        .catch(error => { console.log(error); res.status(500).jsonp("Error")})
+});
+
 router.get('/calcrapid/alunos/:user', passport.authenticate('jwt', {session: false}), function(req, res, next) {
   var user = req.params.user
   var dataInicio = req.query.dataInicio

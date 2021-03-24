@@ -1,0 +1,37 @@
+summary: Devolve as estatísticas gerais por cada município.
+description: |+
+  Devolve informações de quantas turmas, alunos, professores possuí cada município num ano letivo (por defeito, ano letivo atual).
+
+  Pode ser passada uma comunidade intermunicipal por query string ou também o ano letivo. 
+  
+  Apenas o administrador tem permissão para executar esta rota.
+tags:
+  - Escolas
+security:
+  - tokenQuery: []
+parameters:
+  - in: query
+    name: ano
+    schema:
+      type: integer
+    required: false
+  - in: query
+    name: comunidade
+    schema:
+      type: string
+    required: false
+responses:
+  200:
+    description: Lista de estatísticas gerais por cada município.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/EstatisticasMunicipios'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

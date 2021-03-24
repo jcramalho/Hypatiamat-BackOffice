@@ -1,0 +1,40 @@
+summary: Edita a password de um aluno.
+description: |+
+  Dado o identificador de um aluno, altera password desse aluno.
+  
+  Utilizadores que podem utilizar a rota:
+  - Administrador do sistema;
+  - Professor do aluno;
+  - Próprio aluno.
+tags:
+  - Alunos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: id
+    schema:
+      type: string
+    description: "Identificador do aluno que se pretende alterar."
+    required: true
+requestBody:
+  description: 'Nova password do aluno.'
+  required: true
+  content:
+    application/x-www-form-urlencoded:
+      schema:
+        $ref: '#/components/schemas/ProfPassword'
+    application/json:
+      schema:
+        $ref: '#/components/schemas/ProfPassword'
+responses:
+  200:
+    description: Password alterada com sucesso.
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

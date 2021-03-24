@@ -495,3 +495,55 @@ module.exports.getAppsFromAluno = async function(user, dataInicio, dataFim){
     return res
 }
 
+module.exports.getAppsFromTurmaAux = function(turma, codprofessor, dataInicio, dataFim){
+    var args = [turma, codprofessor, dataInicio, dataFim]
+    return new Promise(function(resolve, reject) {
+        sql.query(`select distinct grupo, appid 
+                    from hypati67_testeconhecimentos.appsinfoall 
+                    where turma=? and codProf=? and (lastdate between ? and ?);`, args, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+module.exports.getAppsFromTurma = async function(turma, codprofessor, dataInicio, dataFim){
+    var appsJogadas = await this.getAppsFromTurmaAux(turma, codprofessor, dataInicio, dataFim)
+    var appsTodas = await this.getTemas()
+    var res = ["Todas"]
+    for(var i = 1; i < appsTodas.length; i++){
+        var tema = appsTodas[i]
+        if(tema.codsubtema){
+            var app = appsJogadas.find(e => e.grupo == tema.codtema && e.appid == tema.codsubtema)
+            if(app) res.push(tema)
+        }
+        else{
+            var app = appsJogadas.find(e => e.grupo == tema.codtema)
+            if(app) res.push(tema)
+        }
+    }
+
+    return res
+}
+
+module.exports.getAllAcertoFromAluno = async function(user){   
+    return new Promise(function(resolve, reject) {
+        sql.query(`select ROUND((sum(ncertas)/sum(ntotal))*100, 0) as acerto 
+                from ${bdTesteConhecimentos}.appsinfoall where userid=?;`, user, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if(res.length > 0) resolve(res[0])
+                else resolve(undefined)
+            }
+        })
+    })
+}
+

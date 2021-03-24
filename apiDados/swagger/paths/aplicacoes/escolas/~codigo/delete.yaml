@@ -1,6 +1,8 @@
 summary: Apaga um Agrupamento de Escolas, caso não tenha dependências.
-description: |
-  Devolve a informação à cerca de um Agrupamento com um determinado código (Autorizada a utilizadores autenticados).
+description: |+
+  Devolve a informação à cerca de um Agrupamento com um determinado código.
+
+  Apenas o administrador pode executar este pedido.
 tags:
   - Escolas
 security:
@@ -21,5 +23,7 @@ responses:
           $ref: '#/components/schemas/ObjectDeleted'
   401:
     $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro.

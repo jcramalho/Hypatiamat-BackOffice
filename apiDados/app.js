@@ -30,6 +30,9 @@ var campeonatosRouter = require('./routes/testeconhecimentos/campeonatos')
 var comunidadesRouter = require('./routes/aplicacoes/comunidades');
 var novidadesRouter = require('./routes/aplicacoes/novidades');
 var trofeusRouter = require('./routes/testeconhecimentos/trofeus');
+var mensagensRouter = require('./routes/aplicacoes/mensagens');
+
+
 
 
 var extractFromQS = function(req){
@@ -98,13 +101,26 @@ var src = fs.readFileSync(yamlinc.basefile, 'utf8');
 
 var swaggerDocument = yaml.load(src, { schema: yamlinc.YAML_INCLUDE_SCHEMA, filename: yamlinc.basefile })
 
+var optionsSwagger = {
+  explorer: true,
+  swaggerOptions: {
+    validatorUrl: null
+  },
+  customCss: '.swagger-ui .models { display: none }'
+};
+
 app.use(
-  "/api-docs",
+  "/temp-api-docs",
   swaggerUi.serve,
-  swaggerUi.setup(swaggerDocument)
+  swaggerUi.setup(swaggerDocument, optionsSwagger)
 );
 
 app.use(passport.initialize());
+
+const apiDocsRedirectPath = "/temp-api-docs/";
+app.get('/api-docs', function(req, res) {
+    res.redirect(apiDocsRedirectPath);
+});
 
 var cors = require('cors')
 const corsOpts = {
@@ -159,6 +175,8 @@ app.use('/campeonatos', campeonatosRouter)
 app.use('/trofeus', trofeusRouter)
 app.use('/aplicacoes/comunidades', comunidadesRouter)
 app.use('/aplicacoes/novidades', novidadesRouter)
+app.use('/aplicacoes/mensagens', mensagensRouter)
+
 
 
 // catch 404 and forward to error handler

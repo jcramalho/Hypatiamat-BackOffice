@@ -1,0 +1,12 @@
+type: object
+properties:
+  localidade:
+    type: string
+  nturmas:
+    type: integer
+  nprofessores:
+    type: integer
+  nalunos:
+    type: integer
+  turmasmistas:
+    type: integer

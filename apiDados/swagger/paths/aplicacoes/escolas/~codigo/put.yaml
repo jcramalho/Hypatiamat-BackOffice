@@ -1,7 +1,8 @@
 summary: Altera a informação de uma escola.
-description: |
+description: |+
   Altera a informação de uma escola. 
-  Apenas o administrador pode realizar esta alteração. 
+
+  Apenas o administrador ou o próprio professor podem realizar esta alteração. 
 tags:
   - Escolas
 security:
@@ -11,22 +12,24 @@ parameters:
     name: codigo
     schema:
       type: string
-    description: "Código do Agrupamento a ser alterado."
+    description: "Código do professor a ser alterado."
     required: true
 requestBody:
-  description: 'Agrupamento de Escolas a ser alterado.'
+  description: 'Informações a serem alteradas.'
   required: true
   content:
     application/x-www-form-urlencoded:
       schema:
-        $ref: '#/components/schemas/EscolaPUT'
+        $ref: '#/components/schemas/ProfessorPUT'
     application/json:
       schema:
-        $ref: '#/components/schemas/EscolaPUT'
+        $ref: '#/components/schemas/ProfessorPUT'
 responses:
   200:
-    description: Agrupamento alterado com sucesso.
+    description: Professor alterado com sucesso.
   401:
     $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro.

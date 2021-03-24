@@ -20,7 +20,8 @@
                     <span> 2. Pode selecionar a turma desejada através da seleção do campo "Turma". </span>
                     </v-col>
                     <v-col cols="12">
-                    <span> 3. Pode escolher a aplicação de conteúdo pretendida através da seleção do campo "Aplicação" </span>
+                    <span> 3. Pode escolher a aplicação de conteúdo pretendida através da seleção do campo "Aplicação". De referir que este campo apenas contém
+                      as aplicações de conteúdo que a turma selecionada realizou. </span>
                     </v-col>
                     <v-col cols="12">
                     <span> 4. Pode escolher o ano letivo desejado através do campo "Ano Letivo". </span>
@@ -66,6 +67,7 @@
                         @change="onTurmaChange"
                     ></v-combobox>
                     <v-combobox
+                        v-if="apps"
                         id="apps"
                         v-model="app"
                         label="Aplicação"
@@ -170,6 +172,8 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         codProf:"",
         turmas:[],
         turmaSel:"",
+        dataInicio:"",
+        dataFim:"",
         app:"",
         escola: "",
         escolaOriginal:"",
@@ -186,6 +190,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         var response = await axios.get(hostApps + "temas/?token=" + this.token)
         this.appsInfo = response.data
         await this.parseApps()
+        this.onAnoChange()
 
         var response = await axios.get(h + "professores/" + this.codProf + "/turmas?token=" + this.token)
         var i = 0
@@ -196,6 +201,15 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
 
     },
     methods: {
+      atualizaApps: async function(){
+          if(this.turmaSel && this.turmaSel != ""){
+            this.apps = undefined
+            var response = await axios.get(hostApps + "turmas/" + this.turmaSel + "/jogou?codprofessor=" + this.codProf
+                                                + "&dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim + "&token=" + this.token)
+            this.appsInfo = response.data
+            this.parseApps()
+          }
+      },
       parseApps: async function(){
           var aux = []
           for(var i = 0; i < this.appsInfo.length; i++){
@@ -213,6 +227,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
                                                       + "&token=" + this.token)
 
               var escolas = []
+              this.atualizaApps()
               for(var i = 0; i < responseAlunos.data.length; i++){
                   if(responseAlunos.data[i].escola != this.escola){
                       var auxEscola = escolas.find(a => a.escola == responseAlunos.data[i].escola)
@@ -225,12 +240,14 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
                   var escolaAux = escolas.find(function(o){ return o.numero == res; })
                   if(escolaAux && escolaAux.escola != this.escola) this.escola = escolaAux.escola;
               }
-              this.atualizaConteudo()
           }
       },
       onAnoChange: async function(item){
           if(this.anoLetivo != "" && this.anoLetivo){
-             this.atualizaConteudo()
+             var aux = this.anoLetivo.split("/")
+             this.dataInicio = aux[0] + "-09-01"
+             this.dataFim = aux[1] + "-09-01"
+             this.atualizaApps()
           }
       },
       onAppChange: async function(item){

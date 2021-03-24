@@ -24,6 +24,16 @@ tags:
     description: Rotas disponibilizadas sobre as aplicações de conteúdo.
   - name: Quarentena
     description: Rotas disponibilizadas sobre os pedidos de inscrição.
+  - name: Campeonatos
+    description: Rotas disponibilizadas sobre os campeonatos.
+  - name: Novidades
+    description: Rotas disponibilizadas sobre as novidades.
+  - name: Comunidades
+    description: Rotas disponibilizadas sobre as comunidades.
+  - name: Códigos de Professor
+    description: Rotas disponibilizadas sobre os códigos de professor.
+  - name: Troféus
+    description: Rotas disponibilizadas sobre os troféus.
 paths: !!inc/dir [ 'paths' ] 
 components:
   schemas: !!inc/dir [ 'schemas', { excludeTopLevelDirSeparator: true, recursive: false }]
@@ -36,4 +46,8 @@ components:
   responses:
     UnauthorizedToken:
       description: Para realizar este pedido, necessita de estar autenticado ou possuir um token. O seu token expirou?
+    PermissionsUser:
+      description: Não tem permissões suficientes para realizar o pedido.
+    InvalidParameters:
+      description: Algum campo obrigatório está em falta ou não é válido.
   examples: !!inc/dir [ 'examples', { excludeTopLevelDirSeparator: true, recursive: false }]

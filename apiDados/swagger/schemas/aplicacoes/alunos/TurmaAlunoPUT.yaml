@@ -1,0 +1,20 @@
+type: object
+properties:
+  alunos:
+    type: array
+    items:
+      type: string
+  turmaOld:
+    type: string
+    description: Antiga turma dos alunos.
+  codprofessor:
+    type: string
+    description: Antigo professor e, caso não seja passado um novo, atual professor.
+  codescola:
+    type: string
+    description: Nova escola dos alunos, caso seja necessária a mudança.
+  codprofessorNovo:
+    type: string
+required:
+  - turmaOld
+  - codprofessor

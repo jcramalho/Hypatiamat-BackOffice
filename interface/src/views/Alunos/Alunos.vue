@@ -138,7 +138,7 @@ const h = require("@/config/hosts").hostAPI
       checkFile: async function(){
         console.log(this.file)
         if(this.file != undefined){
-          if(this.file.type != "application/vnd.ms-excel"){
+          if(this.file.type != "application/vnd.ms-excel" && this.file.type != "text/csv"){
             Swal.fire({
                   icon: 'error',
                   text: "O ficheiro tem que ser do tipo csv!",

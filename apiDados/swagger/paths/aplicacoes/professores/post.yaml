@@ -1,0 +1,30 @@
+summary: Insere um novo professor.
+description: |+
+  Insere um novo professor com as informações pretendidas.
+  
+  Apenas o administrador pode executar este pedido.
+tags:
+  - Professores
+security:
+  - tokenQuery: []
+requestBody:
+  description: 'Informação do professor a alterar.'
+  required: true
+  content:
+    application/x-www-form-urlencoded:
+      schema:
+        $ref: '#/components/schemas/ProfessorPOST'
+    application/json:
+      schema:
+        $ref: '#/components/schemas/ProfessorPOST'
+responses:
+  200:
+    description: Informação do professor alterada com sucesso.
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

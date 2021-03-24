@@ -1,0 +1,43 @@
+summary: Devolve todas as turmas de um professor.
+description: |+
+  Devolve todas as turmas pertencentes a um professor com um determinado código. Opcionalmente, pode-se filtrar pelo ano letivo.
+  
+  Quem pode executar este pedido:
+
+    - Administrador;
+
+    - Município ao qual o professor pertence;
+
+    - Agrupamento ao qual o professor pertence;
+    
+    - Respetivo professor.
+tags:
+  - Professores
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: codigo
+    schema:
+      type: string
+    description: "Código do Professor a ser consultado."
+    required: true
+  - in: query
+    name: ano
+    schema:
+      type: integer
+    description: "Ano Letivo desejado."
+    required: false
+responses:
+  200:
+    description: Lista das turmas do professor.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ProfessorGET'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

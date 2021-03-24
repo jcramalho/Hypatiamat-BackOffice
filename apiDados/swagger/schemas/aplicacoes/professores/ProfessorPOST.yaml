@@ -1,0 +1,35 @@
+type: object
+properties:
+  codigo:
+    type: string
+  nome:
+    type: string
+  escola:
+    type: string
+  email:
+    type: string
+  confirmacao:
+    type: string
+  premium:
+    type: integer
+  validade:
+    type: string
+    format: date
+  socionum:
+    type: integer
+  projeto:
+    type: integer
+  password:
+    type: string
+    format: password
+required:
+  - codigo
+  - nome
+  - escola
+  - email
+  - confirmacao
+  - premium
+  - validade
+  - socionum
+  - projeto
+  - password

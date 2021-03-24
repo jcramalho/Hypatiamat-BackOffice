@@ -220,3 +220,19 @@ JogosGerais.alunoJogou = function(user, dataInicio, dataFim, tableJogo, tipo){
         })
     })
 }
+
+JogosGerais.getAlunoFrequencia = function(user, tableJogo, tipo){
+    var args = [user, tipo]
+    return new Promise(function(resolve, reject) {
+        sql.query(`Select count(pontuacao) as frequencia from ${bdSAMD}.${tableJogo} where idaluno = ? and tipo=?;`, args, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if(res.length > 0) resolve(res[0])
+                else resolve(undefined)
+            }
+        })
+    })
+}

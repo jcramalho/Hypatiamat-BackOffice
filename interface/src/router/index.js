@@ -10,6 +10,7 @@ import Perfil from '../views/Perfil.vue'
 import Pendentes from '../views/Pendentes/Pendentes.vue'
 import Pendentes2 from '../views/Pendentes/Pendentes2.vue'
 
+
 import EditarTurma from '../views/Turmas/EditarTurma.vue'
 import EditarMinhaTurma from '../views/Turmas/EditarMinhaTurma.vue'
 import MinhasTurmas from '../views/Turmas/MinhasTurmas.vue'
@@ -18,16 +19,21 @@ import Turmas from '../views/Turmas/Turmas.vue'
 import AlunosTurma from '../views/Turmas/AlunosTurma.vue'
 import GestaoTurmas from '../views/Turmas/GestaoTurmas.vue'
 import GestaoAlunos from '../views/Turmas/GestaoAlunos.vue'
+import DesempenhoTurmas from '../views/Turmas/DesempenhoTurmas.vue'
+
 
 import CriarProfessor from '../views/Professores/CriarProfessor.vue'
 import CodigosProfessores from '../views/Professores/CodigosProfessores.vue'
 import EditarProfessor from '../views/Professores/EditarProfessor.vue'
 import Professores from '../views/Professores/Professores.vue'
+import EnviarMensagem from '../views/Professores/EnviarMensagem.vue'
 
 
 import CriarAluno from '../views/Alunos/CriarAluno.vue'
 import EditarAluno from '../views/Alunos/EditarAluno.vue'
 import Alunos from '../views/Alunos/Alunos.vue'
+import MensagensAluno from '../views/Alunos/MensagensAluno.vue'
+
 
 
 import CriarEscola from '../views/Escolas/CriarEscola.vue'
@@ -63,6 +69,7 @@ import CampeonatosMunicipios from '../views/Campeonatos/CampeonatosMunicipios.vu
 import CampeonatosAgrupamentos from '../views/Campeonatos/CampeonatosAgrupamentos.vue'
 import CampeonatosProfessores from '../views/Campeonatos/CampeonatosProfessores.vue'
 import CampeonatosTurmas from '../views/Campeonatos/CampeonatosTurmas.vue'
+import DesempenhoAluno from '../views/Campeonatos/DesempenhoAluno.vue'
 import GestaoCampeonatos from '../views/Campeonatos/GestaoCampeonatos.vue'
 
 
@@ -419,6 +426,42 @@ const routes = [
     }
   },
   {
+    path: '/professores/mensagens',
+    name: 'Enviar Mensagens',
+    component: EnviarMensagem,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if((utilizador.type == 20)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/alunos/mensagens',
+    name: 'Mensagens',
+    component: MensagensAluno,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if((utilizador.type == 10)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
     path: '/campeonatos/municipios/:municipio',
     name: 'Campeonatos Agrupamentos',
     component: CampeonatosAgrupamentos,
@@ -461,6 +504,24 @@ const routes = [
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50) || (utilizador.type == 20 && utilizador.codigo == to.params.codprofessor)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/campeonatos/alunos/:user',
+    name: 'Campeonatos Alunos',
+    component: DesempenhoAluno,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(utilizador.type == 10 && utilizador.user == to.params.user){
         next()
       }
       else{
@@ -891,7 +952,21 @@ const routes = [
         next({name: "Meu Perfil"})
       }
     }
-  }
+  },
+  {
+    path: '/desempenho/:codprofessor/turmas',
+    name: 'Desempenho Geral',
+    component: DesempenhoTurmas,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(utilizador.type == 20 && utilizador.codigo == to.params.codprofessor){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    }
+  },
 
 
 ]

@@ -1,0 +1,29 @@
+summary: Apaga um professor.
+description: |+
+  Caso não existam dependências, elimina um professor.
+  
+  Apenas o administrador pode executar este pedido.
+tags:
+  - Professores
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: codigo
+    schema:
+      type: string
+    description: "Código do Professor a ser eliminado."
+    required: true
+responses:
+  200:
+    description: Informação à cerca do insucesso/sucesso da eliminação do professor.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ObjectDeleted'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

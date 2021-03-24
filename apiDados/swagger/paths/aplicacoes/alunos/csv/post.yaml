@@ -1,0 +1,37 @@
+summary: Inserção de alunos por CSV.
+description: |+
+  Insere uma lista de alunos presente num ficheiro CSV.
+  
+  Utilizadores que podem utilizar a rota:
+  - Administrador do sistema.
+tags:
+  - Alunos
+security:
+  - tokenQuery: []
+consumes:
+  - multipart/form-data
+requestBody:
+  description: 'Ficheiro CSV com a lista de alunos.'
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          ficheiro:
+            type: string
+            format: binary
+      encoding:
+        ficheiro:
+          contentType: application/csv; charset=utf-8
+responses:
+  200:
+    description: Indicará o número de alunos inseridos com sucesso, assim como os erros obtidos e respetivas linhas.
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

@@ -1,0 +1,30 @@
+summary: Insere um novo código de confirmação.
+description: |+
+  Insere um novo código de confirmação.
+  
+  Apenas o administrador pode executar este pedido.
+tags:
+  - Códigos de Professor
+security:
+  - tokenQuery: []
+requestBody:
+  description: 'Código a ser registado.'
+  required: true
+  content:
+    application/x-www-form-urlencoded:
+      schema:
+        $ref: '#/components/schemas/CodigosProfPOST'
+    application/json:
+      schema:
+        $ref: '#/components/schemas/CodigosProfPOST'
+responses:
+  200:
+    description: Código de confirmação registado com sucesso.
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.
