@@ -164,8 +164,7 @@ const h = require("@/config/hosts").hostAPI
           this.dialogTurmas = true
       },
       editarTurma : async function(turma){
-        var id = turma.id
-        this.$router.push({name: "Editar Turma", params: { id : id } })
+        this.$router.push( {name: "Editar Turma", params: { turma : turma.id, idprofessor: turma.idprofessor }} )
       },
       editarProfessor : function(){
           this.professor.premium = this.premiumAtual.split(" - ")[0]

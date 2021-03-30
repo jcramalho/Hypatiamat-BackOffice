@@ -20,15 +20,18 @@ router.get('/:codigo', passport.authenticate('jwt', {session: false}), function(
 });
 
 router.post('/', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), async function(req, res, next) {
-    var municipios = await Comunidades.getMunicipiosFromComunidade(req.body.codigo)
-    if(municipios.length == 0){
-        Comunidades.criarComunidade(req.body.codigo, req.body.nome, req.body.municipios)
-               .then(dados => res.jsonp(dados) )
-               .catch(erro => res.status(500).jsonp(erro))
+    if(req.body.codigo && req.body.nome && req.body.municipios && Array.isArray(req.body.municipios)){
+        var municipios = await Comunidades.getMunicipiosFromComunidade(req.body.codigo)
+        if(municipios.length == 0){
+            Comunidades.criarComunidade(req.body.codigo, req.body.nome, req.body.municipios)
+                .then(dados => res.jsonp(dados) )
+                .catch(erro => res.status(500).jsonp(erro))
+        }
+        else{
+            res.jsonp({message: 'Comunidade já existente.'})
+        }
     }
-    else{
-        res.jsonp({message: 'Comunidade já existente.'})
-    }
+    else res.status(400).send('Faltam parâmetros.')
 });
 
 router.post('/:codigo', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), async function(req, res, next) {
@@ -36,16 +39,19 @@ router.post('/:codigo', passport.authenticate('jwt', {session: false}), verifyTo
     var nome = req.body.nome
     var municipios = req.body.municipios
     var inseridos = 0;
-    for(var i = 0; i < municipios.length; i++){
-        var comunidadeMunicipio = await Comunidades.getMunicipioComunidade(codigo, municipios[i])
-                                                   .catch(error => console.log(error))
-        if(!comunidadeMunicipio){
-            await Comunidades.insertComunidadeMunicipio(codigo, nome, municipios[i])
-                             .catch(error => console.log(error))
-            inseridos++
+    if(nome && municipios && Array.isArray(municipios)){
+        for(var i = 0; i < municipios.length; i++){
+            var comunidadeMunicipio = await Comunidades.getMunicipioComunidade(codigo, municipios[i])
+                                                    .catch(error => console.log(error))
+            if(!comunidadeMunicipio){
+                await Comunidades.insertComunidadeMunicipio(codigo, nome, municipios[i])
+                                .catch(error => console.log(error))
+                inseridos++
+            }
         }
+        res.jsonp({message: 'Foram inseridos ' + inseridos + " municípios à comunidade."})
     }
-    res.jsonp({message: 'Foram inseridos ' + inseridos + " municípios à comunidade."})
+    else res.status(400).send('Faltam parâmetros.') 
 });
 
 router.delete('/:codigo', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), async function(req, res, next) {

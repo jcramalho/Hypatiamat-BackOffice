@@ -2,8 +2,8 @@ var sql = require('../../models/db_aplicacoes');
 var sqlSamd = require('../../models/db_samd')
 var Jogos = require('../db_samd/jogos')
 var md5 = require('md5')
-var bdSAMD = require('../../models/conf').bdSAMD
-var bdAplicacoes = require('../../models/conf').bdAplicacoes
+const bdSAMD = require('../../models/conf').bdSAMD
+const bdAplicacoes = require('../../models/conf').bdAplicacoes
 
 var Aluno = function(aluno){
     this.id = aluno.id;

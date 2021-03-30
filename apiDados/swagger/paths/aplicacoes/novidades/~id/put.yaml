@@ -1,0 +1,37 @@
+summary: Editar uma novidade.
+description: |+
+  Edita uma novidade com um determinado identificador.
+  
+  Apenas o administrador pode executar esta rota.
+tags:
+  - Novidades
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: id
+    schema:
+      type: string
+    description: "Identificador da Novidade a ser editada."
+    required: true
+requestBody:
+  description: 'Objeto com as alterações a serem feitas.'
+  required: true
+  content:
+    application/x-www-form-urlencoded:
+      schema:
+        $ref: '#/components/schemas/NovidadesPOST'
+    application/json:
+      schema:
+        $ref: '#/components/schemas/NovidadesPOST'
+responses:
+  200:
+    description: Novidade editada com sucesso.
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

@@ -10,53 +10,72 @@
 
                 <v-container>
                     <v-card class="pa-3 elevation-5" outlined>
-                        <v-combobox
-                            v-if="!mobile"
-                            v-model="turmaSel"
-                            :items="turmas"
-                            item-text="turma"
-                            prepend-icon="mdi-book-account"
-                            label="Turmas"
-                            color="#009263"
-                            @change="changeTurma"
-                        >
-                        </v-combobox>
+                        <v-row no-gutters>
+                        <v-col cols="12">
+                            <v-combobox
+                                v-if="!mobile"
+                                v-model="turmaSel"
+                                :items="turmas"
+                                item-text="turma"
+                                prepend-icon="mdi-book-account"
+                                label="Turmas"
+                                color="#009263"
+                                @change="changeTurma"
+                            >
+                            </v-combobox>
+                            <v-combobox
+                                v-else
+                                v-model="turmaSel"
+                                :items="turmas"
+                                item-text="turma"
+                                label="Turmas"
+                                color="#009263"
+                                @change="changeTurma"
+                            >
+                            </v-combobox>
+                        </v-col>
 
-                        <v-combobox
-                            v-else
-                            v-model="turmaSel"
-                            :items="turmas"
-                            item-text="turma"
-                            label="Turmas"
-                            color="#009263"
-                            @change="changeTurma"
-                        >
-                        </v-combobox>
-
-                        <v-combobox
-                            v-if="alunos.length > 0 && !mobile"
-                            v-model="novaMensagem.alunos"
-                            :items="alunos"
-                            item-text="nome"
-                            prepend-icon="mdi-account-group"
-                            label="Alunos"
-                            color="#009263"
-                            multiple
-                            chips
-                        >
-                        </v-combobox>
-                        <v-combobox
-                            v-else-if="alunos.length > 0"
-                            v-model="novaMensagem.alunos"
-                            :items="alunos"
-                            item-text="nome"
-                            label="Alunos"
-                            color="#009263"
-                            multiple
-                            chips
-                        >
-                        </v-combobox>
-                        
+                        <v-col v-if="alunos.length > 0" class="d-flex" cols="12">
+                            <v-combobox
+                                v-if="!mobile"
+                                v-model="novaMensagem.alunos"
+                                @change="checkAllAlunosSel"
+                                :items="alunos"
+                                item-text="nome"
+                                prepend-icon="mdi-account-group"
+                                label="Alunos"
+                                color="#009263"
+                                multiple
+                                chips
+                            >
+                            </v-combobox>
+                            <v-combobox
+                                v-else
+                                v-model="novaMensagem.alunos"
+                                @change="checkAllAlunosSel"
+                                :items="alunos"
+                                item-text="nome"
+                                label="Alunos"
+                                color="#009263"
+                                multiple
+                                chips
+                            >
+                            </v-combobox>
+                            <v-tooltip top>
+                            <template v-slot:activator="{ on, attrs }">
+                            <v-simple-checkbox
+                                v-model="todosAlunosSel"
+                                color="#009263"
+                                v-bind="attrs" 
+                                v-on="on"
+                                :ripple="false"
+                                @input="atualizaAlunosSel()"
+                            ></v-simple-checkbox>
+                            </template>
+                            <span>Para selecionar todos os alunos da turma.</span>
+                          </v-tooltip>
+                        </v-col>
+                        </v-row>
                         <v-textarea v-if="!mobile" class="pa-0" prepend-icon="mdi-message" color="#009263" outlined rounded
                                 v-model="novaMensagem.text" name="Mensagem" label="Mensagem"
                         ></v-textarea>
@@ -185,7 +204,8 @@ const anoletivo = require("@/config/confs").anoletivo
         anoletivo: anoletivo,
         alunos: [], 
         mensagensShow: [],
-        vistos:[]
+        vistos:[],
+        todosAlunosSel: false
       }
     },
     computed:{
@@ -218,11 +238,18 @@ const anoletivo = require("@/config/confs").anoletivo
                 this.alunos = []
                 var response = await axios.get(h + "turmas/" + this.turmaSel.turma + "/alunos?codprofessor="+ this.utilizador.codigo + "&token=" + this.token)
                 this.alunos = response.data
+                this.checkAllAlunosSel()
           }
+      },
+      checkAllAlunosSel : function(){
+          var teste = true
+          for(var i = 0; i < this.alunos.length && teste; i++){
+              if(!this.novaMensagem.alunos.find(e => e.user == this.alunos[i].user)) teste = false
+          }
+          this.todosAlunosSel = teste
       },
       enviaMensagem: async function(){
           this.novaMensagem.codprofessor = this.utilizador.codigo
-          console.log(this.novaMensagem)
           await axios.post(h + "mensagens?token=" + this.token, this.novaMensagem)
           Swal.fire({
             icon: 'success',
@@ -234,11 +261,30 @@ const anoletivo = require("@/config/confs").anoletivo
           this.mensagens = responseM.data
           this.pagination.total = Math.ceil(this.mensagens.length/5)
           this.parseMessages()
+          this.atualizaAlunosSel()
       },
       showVistos: async function(idMensagem){
           var response = await axios.get(h + "mensagens/" + idMensagem + "/vistos?token=" + this.token)
           this.vistos = response.data
           this.dialogVistos = true
+      },
+      atualizaAlunosSel: function(){
+          if(!this.todosAlunosSel){
+              for(var i = 0; i < this.alunos.length; i++){
+                  var al = this.novaMensagem.alunos.find(e => e.user == this.alunos[i].user) 
+                  if(al){
+                      var index = this.novaMensagem.alunos.indexOf(al)
+                      this.novaMensagem.alunos.splice(index, 1)
+                  }
+              }
+          }
+          else{
+            for(var i = 0; i < this.alunos.length; i++){  
+                  if(!this.novaMensagem.alunos.find(e => e.user == this.alunos[i].user))   
+                        this.novaMensagem.alunos.push(this.alunos[i])
+              }
+          }
+          
       }
     }
   }

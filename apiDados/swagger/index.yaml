@@ -1,12 +1,21 @@
 openapi: 3.0.0
 info: 
-  description: |
+  description: |+
     Esta é a API de dados do Hypatiamat.
+    
+    Cada tipo de utilizador tem autorização a executar determinadas rotas com determinados parâmetros. Existem 5 tipos de utilizadores:
+      - Aluno;
+      - Professor;
+      - Agrupamento;
+      - Município;
+      - Administrador.
   version: 1.0.0
   title: API de Dados do Hypatiamat
 servers:
   - url : http://localhost:3050/
-    description : Servidor em desenvolvimento
+    description : Servidor em desenvolvimento.
+  - url: https://api.hypatiamat.com/
+    description: Servidor da API. 
 tags:
   - name: Login
     description: Responsável pela autenticação no sistema.
@@ -34,6 +43,8 @@ tags:
     description: Rotas disponibilizadas sobre os códigos de professor.
   - name: Troféus
     description: Rotas disponibilizadas sobre os troféus.
+  - name: Mensagens
+    description: Rotas disponibilizadas sobre as mensagens.
 paths: !!inc/dir [ 'paths' ] 
 components:
   schemas: !!inc/dir [ 'schemas', { excludeTopLevelDirSeparator: true, recursive: false }]

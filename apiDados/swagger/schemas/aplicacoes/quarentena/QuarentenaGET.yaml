@@ -1,5 +1,7 @@
 type: object
 properties:
+  id: 
+    type: integer
   codigo:
     type: string
   nome:

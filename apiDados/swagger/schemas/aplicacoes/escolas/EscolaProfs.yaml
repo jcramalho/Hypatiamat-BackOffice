@@ -15,7 +15,8 @@ properties:
   premium:
     type: integer
   validade:
-    type: date
+    type: string
+    format: date
   socionum:
     type: integer
   projeto:

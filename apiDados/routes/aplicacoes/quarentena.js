@@ -3,6 +3,7 @@ var router = express.Router();
 var passport = require('passport')
 
 var Quarentena = require('../../controllers/db_aplicacoes/quarentena');
+var Escolas = require('../../controllers/db_aplicacoes/escolas');
 var verifyToken = require('../../config/verifyToken')
 
 
@@ -28,15 +29,19 @@ router.get('/:id', passport.authenticate('jwt', {session: false}), verifyToken.v
 
 
 /* POST Inserção de um pedido de inscrição. */
-router.post('/', function(req, res, next) {
+router.post('/', async function(req, res, next) {
    var pedido = req.body
    if(pedido.codigo && pedido.nome && pedido.escola && pedido.email && pedido.password){
-    Quarentena.insertPedido(pedido)
-            .then(response => res.jsonp(response)) 
-            .catch(erro =>{
-                console.log(erro)
-                res.status(500).jsonp('Error')
-            })
+    var escola = await Escolas.getEscola(pedido.escola)
+    if(escola){
+        Quarentena.insertPedido(pedido)
+                .then(response => res.jsonp(response)) 
+                .catch(erro =>{
+                    console.log(erro)
+                    res.status(500).jsonp('Error')
+                })
+    }
+    else res.status(400).send('Código de escola inexistente.')
    }
    else res.status(400).send('Faltam parâmetros.')
 });

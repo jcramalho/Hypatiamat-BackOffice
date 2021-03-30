@@ -34,16 +34,19 @@ router.post('/', passport.authenticate('jwt', {session: false}), verifyToken.ver
 
 router.post('/lista', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), async function(req, res, next) {
     var codigos = req.body.codigos;
-    var inseridos = 0
-    for(var i = 0; i < codigos.length; i++){
-      var codigo = await Codigos.getCodigo2(codigos[i].codigo)
-      if(!codigo){
-        inseridos++;
-        await Codigos.insertCodigo(codigos[i])
-                     .catch(erro =>{ console.log(erro) ; res.status(500).jsonp('Erro')})
+    if(codigos && Array.isArray(codigo)){
+      var inseridos = 0
+      for(var i = 0; i < codigos.length; i++){
+        var codigo = await Codigos.getCodigo2(codigos[i].codigo)
+        if(!codigo){
+          inseridos++;
+          await Codigos.insertCodigo(codigos[i])
+                      .catch(erro =>{ console.log(erro) ; res.status(500).jsonp('Erro')})
+        }
       }
+      res.jsonp('Foram inseridos ' + inseridos + ' códigos.')
     }
-    res.jsonp('Foram inseridos ' + inseridos + ' códigos.')
+    else res.status(400).send('Falta o campo codigos ou este não é um array de códigos.')
 });
 
 router.delete('/:id', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {

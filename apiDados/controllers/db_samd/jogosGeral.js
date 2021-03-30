@@ -1,5 +1,7 @@
 const { bdSAMD, bdAplicacoes } = require('../../models/conf');
 var sql = require('../../models/db_samd');
+var dataInicioAno = require('../../config/confs').dataInicio1
+var dataFimAno = require('../../config/confs').dataFim1
 const Comunidades = require('../db_aplicacoes/comunidades')
 
 const JogosGerais = module.exports
@@ -170,7 +172,7 @@ JogosGerais.getJogoFromTurmaFreq = function (dataInicio, dataFim, jogoTipo, tabl
     })   
 }
 
-JogosGerais.getJogoPorDia  = function (user, tableJogo, jogoTipo){
+JogosGerais.getJogoPorDia = function (user, tableJogo, jogoTipo){
     return new Promise(function(resolve, reject) {
         sql.query(`Select jogo.data, Round(AVG(jogo.pontuacao),0) as media, MAX(jogo.pontuacao) as maximo, 
         MIN(jogo.pontuacao) as minimo, count(jogo.pontuacao) as count 
@@ -178,6 +180,25 @@ JogosGerais.getJogoPorDia  = function (user, tableJogo, jogoTipo){
         where jogo.idaluno = ? and jogo.tipo = ?
         Group by jogo.data
         Order by jogo.data desc`, [user, jogoTipo], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })   
+}
+
+JogosGerais.getFrequenciaAlunoPorDia = function (user, tableJogo, jogoTipo){
+    var args = [user, jogoTipo, dataInicioAno, dataFimAno]
+    return new Promise(function(resolve, reject) {
+        sql.query(`Select jogo.data, count(jogo.pontuacao) as frequencia 
+        from ${bdSAMD}.${tableJogo} jogo 
+        where jogo.idaluno = ? and jogo.tipo = ? and (jogo.data between ? and ?)
+        Group by jogo.data
+        Order by jogo.data asc`, args, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -222,9 +243,9 @@ JogosGerais.alunoJogou = function(user, dataInicio, dataFim, tableJogo, tipo){
 }
 
 JogosGerais.getAlunoFrequencia = function(user, tableJogo, tipo){
-    var args = [user, tipo]
+    var args = [user, tipo, dataInicioAno, dataFimAno]
     return new Promise(function(resolve, reject) {
-        sql.query(`Select count(pontuacao) as frequencia from ${bdSAMD}.${tableJogo} where idaluno = ? and tipo=?;`, args, function(err, res){
+        sql.query(`Select count(pontuacao) as frequencia from ${bdSAMD}.${tableJogo} where idaluno = ? and tipo=? and (data between ? and ?);`, args, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

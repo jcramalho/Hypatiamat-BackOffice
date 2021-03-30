@@ -1,0 +1,35 @@
+summary: Apaga um município de uma comunidade.
+description: |+
+  Caso não existam dependências, elimina um município de uma comunidade.
+  
+  Apenas o administrador pode executar este pedido.
+tags:
+  - Comunidades
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: codigo
+    schema:
+      type: string
+    description: "Código da comunidade."
+    required: true
+  - in: path
+    name: municipio
+    schema:
+      type: string
+    description: "Município a ser eliminada."
+    required: true
+responses:
+  200:
+    description: Informação à cerca do insucesso/sucesso da eliminação do município.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ObjectDeleted'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

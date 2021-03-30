@@ -1,0 +1,7 @@
+type: object
+properties:
+  subnovidade: 
+    type: string
+    description: Subnovidade associada à novidade a ser inserida.
+required:
+  - subnovidade

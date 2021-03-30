@@ -33,6 +33,8 @@ import CriarAluno from '../views/Alunos/CriarAluno.vue'
 import EditarAluno from '../views/Alunos/EditarAluno.vue'
 import Alunos from '../views/Alunos/Alunos.vue'
 import MensagensAluno from '../views/Alunos/MensagensAluno.vue'
+import Cromos from '../views/Alunos/Cromos.vue'
+
 
 
 
@@ -447,6 +449,24 @@ const routes = [
     path: '/alunos/mensagens',
     name: 'Mensagens',
     component: MensagensAluno,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if((utilizador.type == 10)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/alunos/cromos',
+    name: 'Caderneta',
+    component: Cromos,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 10)){

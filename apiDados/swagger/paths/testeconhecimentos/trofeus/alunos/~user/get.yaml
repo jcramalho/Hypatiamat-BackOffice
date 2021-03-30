@@ -1,0 +1,34 @@
+summary: Devolve os troféus de um aluno.
+description: |+
+  Dado um código de aluno, devolve os troféus desse aluno.
+  
+  Utilizadores que podem executar este pedido:
+  - Aministrador;
+  - Professor do aluno;
+  - Próprio aluno.
+tags:
+  - Troféus
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: user
+    schema:
+      type: string
+    description: "Código do Aluno a ser consultado."
+    required: true
+responses:
+  200:
+    description: Informação à cerca do insucesso/sucesso da eliminação do aluno.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/trofeusGET'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

@@ -1,0 +1,11 @@
+type: object
+properties:
+  codigos:
+    type: array
+    items:
+      type: object
+      properties:
+        codigo:
+          type: integer
+required:
+  - codigos

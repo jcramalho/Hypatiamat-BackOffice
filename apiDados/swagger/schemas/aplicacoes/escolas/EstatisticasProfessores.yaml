@@ -6,8 +6,6 @@ properties:
     type: string
   nturmas:
     type: integer
-  nprofessores:
-    type: integer
   nalunos:
     type: integer
   turmasmistas:

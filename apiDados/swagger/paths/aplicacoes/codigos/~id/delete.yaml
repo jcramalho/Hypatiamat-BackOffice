@@ -1,0 +1,25 @@
+summary: Elimina um determinado código.
+description: |+
+  Dado um identificador, elimina o respetivo código.
+  
+  Apenas o administrador pode executar este pedido.
+tags:
+  - Códigos de Professor
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: id
+    schema:
+      type: string
+    description: "Identificador do código a ser eliminado."
+    required: true
+responses:
+  200:
+    description: Código eliminado com sucesso.
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

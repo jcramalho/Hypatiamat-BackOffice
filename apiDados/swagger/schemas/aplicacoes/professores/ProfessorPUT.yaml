@@ -7,7 +7,7 @@ properties:
   email:
     type: string
   confirmacao:
-    type: string
+    type: integer
   premium:
     type: integer
   validade:

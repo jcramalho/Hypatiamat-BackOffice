@@ -1,0 +1,27 @@
+summary: Elimina uma subnovidade.
+description: |+
+  Elimina uma subnovidade com um determinado identificador.
+  
+  Apenas o administrador pode executar esta rota.
+tags:
+  - Novidades
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: id
+    schema:
+      type: string
+    description: "Identificador da Subnovidade a ser eliminada."
+    required: true
+responses:
+  200:
+    description: Subnovidade eliminada com sucesso.
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

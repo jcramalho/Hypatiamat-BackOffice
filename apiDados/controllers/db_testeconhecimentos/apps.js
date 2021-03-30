@@ -1,6 +1,7 @@
 const { bdTesteConhecimentos, bdAplicacoes } = require('../../models/conf');
 var sql = require('../../models/db_testeconhecimentos');
-
+var dataInicioAno = require('../../config/confs').dataInicio1
+var dataFimAno = require('../../config/confs').dataFim1
 
 getTemas2 = function(){
     return new Promise(function(resolve, reject) {
@@ -407,7 +408,44 @@ module.exports.getAppFromAlunoPorDia = function(user, codtema, codsubtema){
                 FROM ${bdTesteConhecimentos}.appsinfoall 
                 WHERE userid=? and grupo=? and appid=?
                 group by lastdate
-                order by lastdate desc;;`, args,function(err, res){
+                order by lastdate desc;`, args,function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+module.exports.getInfoGeralFromAluno = function (user){
+    var args = [user, dataInicioAno, dataFimAno]
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT count(distinct appid, grupo) as napps, SUM(ncertas) as ncertas
+                FROM ${bdTesteConhecimentos}.appsinfoall 
+                WHERE userid=? and (lastdate between ? and ?);`, args,function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if(res[0].ncertas) resolve(res[0])
+                else resolve({napps: 0, ncertas: 0})
+            }
+        })
+    })
+}
+
+module.exports.getFreqAppsFromAlunoPorDia = async function(user){
+    var args = [user, dataInicioAno, dataFimAno]
+    return new Promise(async function(resolve, reject) {
+        sql.query(`SELECT lastdate, SUM(ncertas) as ncertas, (SUM(onpeak) + SUM(offpeak)) as frequencia
+                FROM ${bdTesteConhecimentos}.appsinfoall 
+                WHERE userid=? and (lastdate between ? and ?)
+                group by lastdate
+                order by lastdate asc;`, args,function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

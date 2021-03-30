@@ -74,7 +74,7 @@
                         <td>{{row.item.turma}}</td>
                         <td>{{row.item.anoletivo}}</td>
                         <td class="d-flex align-center">
-                            <v-tooltip top>
+                          <v-tooltip top>
                             <template v-slot:activator="{ on, attrs }">
                             <v-simple-checkbox
                                 v-model="row.item.passportPassword"

@@ -1,0 +1,13 @@
+type: object
+properties:
+  nome: 
+    type: string
+    description: Nome da comunidade.
+  municipios:
+    type: array
+    description: Lista de municípios a serem adicionados.
+    items:
+      type: string
+required:
+  - municipios
+  - nome

@@ -61,9 +61,9 @@ router.get('/:codigo/turmas', passport.authenticate('jwt', {session: false}), ve
 /* PUT Alterar um professor. */
 router.put('/:codigo', passport.authenticate('jwt', {session: false}), verifyToken.verifyUserProf2(), async function(req, res, next) {
   var professor = req.body
-  if(professor.nome && professor.escola && professor.email && professor.confirmacao && professor.password 
-    && professor.premium && professor.socionum && professor.projeto){
-
+  if(professor.nome && professor.escola && professor.email && (professor.confirmacao != undefined || professor.confirmacao != null) 
+    && (professor.premium != undefined || professor.premium != null) && (professor.socionum != undefined || professor.socionum != null) 
+      && (professor.projeto != undefined || professor.projeto != null) && professor.validade){
     var escola = await Escolas.getEscola(professor.escola)
     if(escola){
       Professores.alteraProfessor(req.params.codigo, professor)
@@ -90,7 +90,8 @@ router.post('/', passport.authenticate('jwt', {session: false}), verifyToken.ver
   var professor = req.body
 
   if(professor.codigo && professor.nome && professor.escola && professor.email && professor.password 
-    && professor.premium && professor.socionum && professor.projeto){
+    && (professor.premium != undefined || professor.premium != null) && (professor.socionum != undefined || professor.socionum != null) && 
+    (professor.projeto != undefined || professor.projeto != null)){
       var escola = await Escolas.getEscola(professor.escola)
       if(escola){
         Professores.insertProfessor(professor)

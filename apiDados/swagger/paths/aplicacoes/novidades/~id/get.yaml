@@ -1,0 +1,27 @@
+summary: Lista a informação de uma determinada novidade.
+description: |+
+  Devolve a informação geral acerca de uma novidade com um determinado identificador.
+  
+  Todos podem executar esta rota.
+tags:
+  - Novidades
+parameters:
+  - in: path
+    name: id
+    schema:
+      type: string
+    description: "Identificador da Novidade a ser consultada."
+    required: true
+responses:
+  200:
+    description: Informação à cerca da novidade.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/NovidadesInfo'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

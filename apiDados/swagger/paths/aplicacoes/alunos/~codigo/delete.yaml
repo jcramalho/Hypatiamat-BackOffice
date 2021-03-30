@@ -21,6 +21,8 @@ responses:
       application/json:
         schema:
           $ref: '#/components/schemas/ObjectDeleted'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
   401:
     $ref: '#/components/responses/UnauthorizedToken'
   403:

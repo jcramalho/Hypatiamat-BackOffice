@@ -30,7 +30,7 @@
                             <span> Não recebeu nenhuma mensagem nas semanas anteriores. </span>
                         </v-card>
                     <v-list-item
-                        v-for="mensagem in mensagens"
+                        v-for="mensagem in mensagensShow"
                         :key="mensagem.id"
                     >
                         <v-list-item-avatar>
@@ -61,6 +61,12 @@
                     </v-list-item>
                     </v-col>
                     </v-row>
+                    <v-pagination
+                        v-model="pagination.page"
+                        :length="pagination.total"
+                        color="#009263"
+                        @input="this.parseMessages"
+                    ></v-pagination>
                 </v-list>
             </v-container>
         </v-card>
@@ -86,9 +92,14 @@ const anoletivo = require("@/config/confs").anoletivo
       return {
         token: "",
         filtrar : "",
-        turmaSel: undefined,
-        mensagens: [{id: 0, mensagem:'Boa tarde! Tudo a jogar o Calcrapid.', numberUsers:20, vistos:4, data:'2020-01-01 18:48:30'},
-                    {id: 1, mensagem:'Boa tarde! Tudo a jogar o jogo dos ângulos.', numberUsers:10, vistos:8, data:'2020-01-01 17:48:30'}],
+        pagination: {
+            page: 1,
+            total: 0,
+            perPage: 5,
+            visible: 5
+        },
+        mensagens: [],
+        mensagensShow: [],
         anoletivo: anoletivo,
         naovistas: true
       }
@@ -102,8 +113,16 @@ const anoletivo = require("@/config/confs").anoletivo
         this.mensagens = response.data
         this.$emit("refreshVistas")
         this.atualizaVistas()
+        this.pagination.total = Math.ceil(this.mensagens.length/5)
+        this.parseMessages()
     },
     methods: {
+      parseMessages: function(){
+          this.mensagensShow = []
+          for(var i = (this.pagination.page-1)*this.pagination.perPage; i < this.mensagens.length && i < this.pagination.page*this.pagination.perPage; i++){
+              this.mensagensShow.push(this.mensagens[i])
+          }
+      },
       atualizaVistas: function(){
           for(var i = 0; i < this.mensagens.length; i++){
               if(!this.mensagens[i].visto) axios.put(h + "mensagens/" + this.mensagens[i].id + "/vista?token=" + this.token)
@@ -115,6 +134,8 @@ const anoletivo = require("@/config/confs").anoletivo
          this.naovistas = !this.naovistas
          this.$emit("refreshVistas")
          this.atualizaVistas()
+         this.pagination.total = Math.ceil(this.mensagens.length/5)
+         this.parseMessages()
       },
       showOutras: async function(){
          var response = await axios.get(h + "mensagens/alunos/" + this.utilizador.user + "/antigas?token=" + this.token)
@@ -122,6 +143,8 @@ const anoletivo = require("@/config/confs").anoletivo
          this.naovistas = !this.naovistas
          this.$emit("refreshVistas")
          this.atualizaVistas()
+         this.pagination.total = Math.ceil(this.mensagens.length/5)
+         this.parseMessages()
       },
       enviaMensagem: async function(){
           this.novaMensagem.codprofessor = this.utilizador.codigo

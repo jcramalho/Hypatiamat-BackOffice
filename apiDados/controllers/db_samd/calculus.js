@@ -1,6 +1,8 @@
 const Calculus = module.exports
 const { bdSAMD, bdAplicacoes } = require('../../models/conf');
 var sql = require('../../models/db_samd');
+var dataInicioAno = require('../../config/confs').dataInicio1
+var dataFimAno = require('../../config/confs').dataFim1
 
 // por cada municipio e todos os tipos e niveis do jogo minutenew
 Calculus.getTodosMinuteNewMunicipios = async function(dataInicio, dataFim){
@@ -447,6 +449,26 @@ Calculus.alunoPorDia = function(user){
     })
 }
 
+Calculus.getFreqAlunoPorDia = function(user){
+    var args = [user, dataInicioAno, dataFimAno]
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT data, count(pontos) as frequencia
+                FROM ${bdSAMD}.minutenew 
+                where user=? and (data between ? and ?)
+                group by data
+                order by data asc;`, args, function (err, res) {            
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res)
+                }
+            });   
+    })
+}
+
+
 Calculus.alunoJogouMinuteNew = async function(user, dataInicio, dataFim){
     var args = [user, dataInicio, dataFim]
     return new Promise(function(resolve, reject) {
@@ -480,9 +502,9 @@ Calculus.getAlunoLast = function(user){
 }
 
 Calculus.getAlunoFrequencia = function(user){
-    var args = [user]
+    var args = [user, dataInicioAno, dataFimAno]
     return new Promise(function(resolve, reject) {
-        sql.query(`Select count(pontos) as frequencia from ${bdSAMD}.minutenew where user = ?;`, args, function(err, res){
+        sql.query(`Select count(pontos) as frequencia from ${bdSAMD}.minutenew where user = ? and (data between ? and ?);`, args, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

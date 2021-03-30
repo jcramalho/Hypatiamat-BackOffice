@@ -1,0 +1,22 @@
+summary: Lista a informação de todas as novidades do sistema.
+description: |+
+  Devolve a informação acerca de todas as novidades.
+  
+  Todos podem executar esta rota.
+tags:
+  - Novidades
+responses:
+  200:
+    description: Lista de novidades.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/NovidadesInfo'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

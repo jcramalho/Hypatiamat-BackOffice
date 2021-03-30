@@ -76,7 +76,7 @@ Novidades.getNovidadeInfo = function(id){
 
 Novidades.getNovidade = async function(id){
     var novidade = await Novidades.getNovidadeInfo(id)
-    novidade.subnovidades = await Novidades.getSubNovidades(id)
+    if(novidade) novidade.subnovidades = await Novidades.getSubNovidades(id)
     
     return novidade
 }

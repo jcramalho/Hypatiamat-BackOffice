@@ -1,0 +1,10 @@
+type: object
+properties:
+  titulo: 
+    type: string
+    description: Título da novidade.
+  link: 
+    type: string
+    description: Link associado à novidade.
+required:
+  - titulo

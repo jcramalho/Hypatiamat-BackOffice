@@ -10,7 +10,7 @@
           <v-text-field prepend-icon="mdi-account" label="Nome" placeholder="Nome" v-model="aluno.nome" color="#009263" required/>
           <v-text-field prepend-icon="mdi-calendar" label="Data de Nascimento" placeholder="Data de Nascimento" v-model="aluno.datanascimento" type="date" color="#009263" required/>
           <v-text-field prepend-icon="mdi-email" label="Email" placeholder="Email" v-model="aluno.email" color="#009263" required/>
-          <v-text-field prepend-icon="mdi-account-check" label="Confirmação (0 ou 1)" placeholder="Confirmação (0 ou 1) " v-model="aluno.confirmacao" :rules="[number0or1]" color="#009263" required/>
+          <v-text-field v-if="utilizador.type!=10" prepend-icon="mdi-account-check" label="Confirmação (0 ou 1)" placeholder="Confirmação (0 ou 1) " v-model="aluno.confirmacao" :rules="[number0or1]" color="#009263" required/>
 
           <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true"> Alterar password </v-btn></center>
           <br>
@@ -47,6 +47,7 @@ const h = require("@/config/hosts").hostAPI
       return {
         token: "",
         aluno: {},
+        utilizador:{},
         id : 0,
         dialogPassword: false,
         password1:"",
@@ -66,6 +67,7 @@ const h = require("@/config/hosts").hostAPI
     props:["idProp"],
     created: async function(){
         this.token = localStorage.getItem("token")
+        this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
         // caso seja passado o id por prpo
         this.id = this.idProp
         var response = await axios.get(h + "alunos/" + this.id + "?token=" + this.token)

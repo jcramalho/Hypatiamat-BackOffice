@@ -247,7 +247,7 @@ Jogos.getLast10FromAluno = async function(user){
     }
 
     //console.log(aux)
-    if(aux.length > 0){
+    if(aux.length > 1){
         await aux.sort(function(a,b){
             return b.lastdate.localeCompare(a.lastdate)
         })
@@ -263,7 +263,7 @@ Jogos.getLast10FromAluno = async function(user){
     return res;
 }
 
-
+/*
 Jogos.getFrequenciaTotalAluno = async function(user){
     var jogos = await Jogos.getJogosDB()
     var frequencia = 0
@@ -281,4 +281,94 @@ Jogos.getFrequenciaTotalAluno = async function(user){
     }
 
     return frequencia;
+}*/
+
+
+Jogos.getFrequenciaTotalAluno = async function(user){
+    var jogos = await Jogos.getJogosDB()
+    var promises = []
+    
+    var aux = Calculus.getAlunoFrequencia(user)
+    promises.push(aux)
+
+    aux = Calcrapid.getAlunoFrequencia(user)
+    promises.push(aux)
+
+    for(var i = 0; i < jogos.length; i++){
+        aux = JogosGerais.getAlunoFrequencia(user, jogos[i].jogotable, jogos[i].tipo)
+        promises.push(aux)
+    }
+
+    return Promise.all(promises)
+                  .then(data => {
+                    var frequencia = 0;
+                    for(var i = 0; i < data.length; i++){
+                        if(data[i]) frequencia += data[i].frequencia
+                    }
+                    return frequencia;
+                  })
+                  .catch(erro => {console.log(erro); return erro;})
+}
+
+Jogos.getFrequenciaTotalAluno2 = async function(user){
+    var jogos = await Jogos.getJogosDB()
+    var promises = []
+    
+    var aux = Calculus.getAlunoFrequencia(user)
+    promises.push(aux)
+
+    aux = Calcrapid.getAlunoFrequencia(user)
+    promises.push(aux)
+
+    for(var i = 0; i < jogos.length; i++){
+        aux = JogosGerais.getAlunoFrequencia(user, jogos[i].jogotable, jogos[i].tipo)
+        promises.push(aux)
+    }
+
+    return Promise.all(promises)
+                  .then(data => {
+                    var frequencia = 0, njogos = 0;
+                    for(var i = 0; i < data.length; i++){
+                        if(data[i]) {
+                            frequencia += data[i].frequencia
+                            njogos++
+                        }
+                    }
+                    return {frequencia: frequencia, njogos: njogos}
+                  })
+                  .catch(erro => {console.log(erro); return erro;})
+}
+
+Jogos.getAllJogosPorDiaAluno = async function(user){
+    var jogos = await Jogos.getJogosDB()
+    var promises = []
+    
+    var aux = Calculus.getFreqAlunoPorDia(user)
+    promises.push(aux)
+
+    for(var i = 0; i < jogos.length; i++){
+        aux = JogosGerais.getFrequenciaAlunoPorDia(user, jogos[i].jogotable, jogos[i].tipo)
+        promises.push(aux)
+    }
+
+    return Promise.all(promises)
+                  .then(async data => {
+                    var res = []
+                    for(var i = 0; i < data.length; i++){
+                        for(var j = 0; j < data[i].length; j++){
+                            var auxRes = data[i][j]
+                            var auxRes2 = res.find(e => e.data == auxRes.data)
+                            if(auxRes2) auxRes2.frequencia = auxRes.frequencia
+                            else res.push(auxRes)
+                        }
+                    }
+                    if(res.length > 1){
+                        await res.sort(function(a,b){
+                            return a.data.localeCompare(b.data)
+                        })
+                    }
+                    return res
+                  })
+                  .catch(error => {console.log(error); return error})
+
 }

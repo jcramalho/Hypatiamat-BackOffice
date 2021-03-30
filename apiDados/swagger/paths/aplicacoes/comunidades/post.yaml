@@ -1,0 +1,28 @@
+summary: Insere uma nova comunidade.
+description: |+
+  Insere uma nova comunidade, caso não exista nenhuma com o código pretendido.
+  
+  Apenas o administrador do sistema pode executar esta rota.
+tags:
+  - Comunidades
+security:
+  - tokenQuery: []
+
+requestBody:
+  description: 'Comunidade a ser inserida.'
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/ComunidadePOST'
+responses:
+  200:
+    description: Comunidade inserida com sucesso ou caso o código da comunidade já exista, a resposta avisará.
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

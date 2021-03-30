@@ -18,27 +18,37 @@ router.get('/info', function(req, res, next) {
 
 router.get('/:id', function(req, res, next) {
     Novidades.getNovidade(req.params.id)
-               .then(dados => res.jsonp(dados))
+               .then(dados =>{ if(dados) res.jsonp(dados) 
+                                else res.status(400).send('Novidade inexistente.')})
                .catch(erro => res.status(500).jsonp(erro))
 });
 
 
 router.post('/', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
-    Novidades.insertNovidade(req.body)
-               .then(dados => res.jsonp(dados))
-               .catch(erro => res.status(500).jsonp(erro))
+    if(req.body.titulo){
+        Novidades.insertNovidade(req.body)
+                .then(dados => res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp(erro))
+    }
+    else res.status(400).send("Tem que fornecer, pelo menos, um título para a novidade.")
 });
 
 router.post('/:id/subnovidade', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
-    Novidades.insertSubNovidade(req.params.id, req.body.subnovidade)
-               .then(dados => res.jsonp(dados))
-               .catch(erro => res.status(500).jsonp(erro))
+    if(req.body.subnovidade){
+        Novidades.insertSubNovidade(req.params.id, req.body.subnovidade)
+                .then(dados => res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp(erro))
+    }
+    else res.status(400).send("Tem que fornecer a subnovidade associada.")
 });
 
 router.put('/:id', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
-    Novidades.updateNovidade(req.params.id, req.body)
-               .then(dados => res.jsonp(dados))
-               .catch(erro => res.status(500).jsonp(erro))
+    if(req.body.titulo){
+        Novidades.updateNovidade(req.params.id, req.body)
+                .then(dados => res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp(erro))
+    }
+    else res.status(400).send("Tem que fornecer, pelo menos, um título para a novidade (igual, caso pretenda manter o mesmo título).")
 });
 
 router.delete('/:id', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {

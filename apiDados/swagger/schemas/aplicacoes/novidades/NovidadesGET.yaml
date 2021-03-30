@@ -1,0 +1,13 @@
+type: object
+properties:
+  id:
+    type: integer
+  titulo:
+    type: string
+  data:
+    type: string
+    format: date
+  link:
+    type: string
+  subnovidades:
+    type: integer

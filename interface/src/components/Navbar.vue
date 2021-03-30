@@ -160,6 +160,7 @@ export default {
         { title: 'Desempenho nas Apps', icon: 'mdi-apps', href:"/appsAluno"},
         { title: 'Campeonatos', icon: 'mdi-podium', href:"/campeonatos/alunos/" + utilizador.user},
         { title: 'Mensagens', icon: 'mdi-message-reply-text-outline', href:"/alunos/mensagens"},
+        { title: 'Caderneta de Cromos', icon: 'mdi-book-open-page-variant-outline', href:"/alunos/cromos"},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }

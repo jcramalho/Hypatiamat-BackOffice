@@ -1,0 +1,37 @@
+summary: Insere uma novidade.
+description: |+
+  Insere uma novidade no sistema.
+  
+  Apenas o administrador pode executar esta rota.
+tags:
+  - Novidades
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: id
+    schema:
+      type: string
+    description: "Identificador da Novidade à qual pertence a subnovidade."
+    required: true
+requestBody:
+  description: 'Objeto com a informação da subnovidade a ser criada.'
+  required: true
+  content:
+    application/x-www-form-urlencoded:
+      schema:
+        $ref: '#/components/schemas/SubNovidadePOST'
+    application/json:
+      schema:
+        $ref: '#/components/schemas/SubNovidadePOST'
+responses:
+  200:
+    description: Novidade inserida com sucesso.
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

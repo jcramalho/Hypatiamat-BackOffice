@@ -81,8 +81,11 @@
               <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4">
                 <center>
                   <v-container class="d-flex align-center justify-center">
-                    <div class="pr-3"><v-img :src="require('@/assets/apps.png')" width="50px" heigth="50px"> </v-img></div>
-                    <div><span>{{acertoApps}}%</span></div>
+                    <div class="pr-3"><v-img :src="require('@/assets/apps.png')" width="40px" heigth="40px"> </v-img></div>
+                    <div>
+                      <span v-if="acertoApps">{{acertoApps}}%</span>
+                      <span v-else>--%</span>
+                    </div>
                   </v-container>
                 </center>
               </v-col>
@@ -214,7 +217,7 @@
             <CalculusDiaAluno v-else-if="dialogJogoDia" :resultados="jogoPorDia" :jogo="jogoAtual"/>
           </v-dialog>
           <v-dialog v-model="editarAluno" width="75%">
-            <EditarAlunoAluno v-if="editarAluno" :idProp="aluno.id"/>
+            <EditarAlunoAluno v-if="editarAluno" :idProp="aluno.id" @alteracao="atualizaInfo"/>
           </v-dialog>
     </v-card>
 </template>
@@ -230,7 +233,7 @@ const hostCampeonatos = require("@/config/hosts").hostCampeonatos
 import AppDiaAluno from "@/components/Apps/AppDiaAluno.vue"
 import JogoDiaAluno from "@/components/Jogos/JogoDiaAluno.vue"
 import CalculusDiaAluno from "@/components/Jogos/CalculusDiaAluno.vue"
-import EditarAlunoAluno from "@/components/Alunos/EditarAlunoAluno.vue"
+import EditarAlunoAluno from "@/components/Alunos/EditarAluno.vue"
 import ClassificacaoAluno from '@/components/Campeonatos/ClassificacaoAluno.vue'
 
 
@@ -343,6 +346,14 @@ import ClassificacaoAluno from '@/components/Campeonatos/ClassificacaoAluno.vue'
       }
     },
     methods: {
+      atualizaInfo: async function(){
+          var id = this.aluno.id
+          var response = await axios.get(h + "alunos/" + id + "?token=" + this.token)
+          this.aluno = response.data
+          this.aluno.id = id
+          this.aluno.nomeType = "Aluno"
+          this.editarAluno = false
+      },
       getFrequenciaJogos: async function(){
         var response = await axios.get(hostJogos + "alunos/" + this.aluno.user + "/frequencia?token=" + this.token)
         this.frequenciaJogos = response.data
@@ -402,18 +413,26 @@ import ClassificacaoAluno from '@/components/Campeonatos/ClassificacaoAluno.vue'
       editarPassword : async function(){
           if(this.password1 != "" && this.password2 != ""){
             if(this.password1 == this.password2){
-              if(confirm("Tem a certeza que pretende alterar a sua password?")){
-                axios.put(h + "alunos/" + this.aluno.id + "/password", {password: this.password1})
-                     .then(() => {
-                       Swal.fire({
-                          icon: 'error',
-                          text: "As palavra passe de confirmação não coincide com a palavra passe primeiramente definida!",
-                          confirmButtonColor: '#009263'
-                        })
-                        this.dialogPassword = false
-                     })
-                     .catch(erro => console.log(erro))
-              }
+              Swal.fire({
+                title: "Tem a certeza que pretende alterar a sua password?",
+                showDenyButton: true,
+                confirmButtonColor: '#009263',
+                confirmButtonText: `Sim`,
+                denyButtonText: `Não`,
+              }).then(async (result) => {
+                if(result.isConfirmed){
+                  axios.put(h + "alunos/" + this.aluno.id + "/password?token=" + this.token, {password: this.password1})
+                      .then(() => {
+                        Swal.fire({
+                            icon: 'success',
+                            text: "Palavra passe alterada com sucesso.",
+                            confirmButtonColor: '#009263'
+                          })
+                          this.dialogPassword = false
+                      })
+                      .catch(erro => console.log(erro))
+                }
+              })
             }
             else{
               this.password2 = ""

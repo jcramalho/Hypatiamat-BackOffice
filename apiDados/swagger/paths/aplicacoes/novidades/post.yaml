@@ -1,25 +1,25 @@
-summary: Insere um novo pedido de inscrição.
+summary: Insere uma novidade.
 description: |+
-  Insere um novo pedido de inscrição.
+  Insere uma novidade no sistema.
   
-  Apenas o administrador pode executar este pedido.
+  Apenas o administrador pode executar esta rota.
 tags:
-  - Alunos
+  - Novidades
 security:
   - tokenQuery: []
 requestBody:
-  description: 'Informação do pedido de inscrição a inserir.'
+  description: 'Objeto com a informação da novidade a ser criada.'
   required: true
   content:
     application/x-www-form-urlencoded:
       schema:
-        $ref: '#/components/schemas/QuarentenaPOST'
+        $ref: '#/components/schemas/NovidadesPOST'
     application/json:
       schema:
-        $ref: '#/components/schemas/QuarentenaPOST'
+        $ref: '#/components/schemas/NovidadesPOST'
 responses:
   200:
-    description: Pedido de inscrição registado com sucesso.
+    description: Novidade inserida com sucesso.
   400:
     $ref: '#/components/responses/InvalidParameters'
   401:

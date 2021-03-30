@@ -1,0 +1,29 @@
+summary: Lista a informação de uma determinada comunidade.
+description: |+
+  Devolve os municípos pertencente a uma comunidade com um determinado código.
+  
+  Apenas o administrador do sistema pode executar esta rota.
+tags:
+  - Comunidades
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: codigo
+    schema:
+      type: string
+    description: "Código da comunidade a ser consultada."
+    required: true
+responses:
+  200:
+    description: Lista de municípios da comunidade.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ComunidadeGET'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

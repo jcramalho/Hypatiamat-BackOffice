@@ -7,6 +7,7 @@ var passport = require('passport')
 var JWTStrategy= require('passport-jwt').Strategy
 var ExtractJWT = require('passport-jwt').ExtractJwt
 var swaggerJsdoc = require("swagger-jsdoc")
+var cors = require('cors')
 var swaggerUi = require("swagger-ui-express");
 var yaml = require('js-yaml')
 var fs = require('fs')
@@ -27,6 +28,7 @@ var quarentenasRouter = require('./routes/aplicacoes/quarentena')
 var jogosRouter = require('./routes/samd/jogos')
 var appsRouter = require('./routes/testeconhecimentos/apps')
 var campeonatosRouter = require('./routes/testeconhecimentos/campeonatos')
+var cromosRouter = require('./routes/testeconhecimentos/cromos')
 var comunidadesRouter = require('./routes/aplicacoes/comunidades');
 var novidadesRouter = require('./routes/aplicacoes/novidades');
 var trofeusRouter = require('./routes/testeconhecimentos/trofeus');
@@ -63,66 +65,6 @@ passport.use(new JWTStrategy({
 
 var app = express();
 
-/*
-const options = {
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "Hypatiamat - API de Dados",
-      version: "0.1.0",
-      description:
-        "This is a simple CRUD API application made with Express and documented with Swagger",
-      license: {
-        name: "MIT",
-        url: "https://spdx.org/licenses/MIT.html",
-      },
-      contact: {
-        name: "LogRocket",
-        url: "https://logrocket.com",
-        email: "info@email.com",
-      },
-    },
-    servers: [
-      {
-        url: "http://localhost:3050",
-      },
-    ],
-  },
-  apis: ["./routes/aplicacoes/alunos.js"],
-};
-
-//const opts = { ...options, swaggerDefinition: options };
-
-
-var specs = swaggerJsdoc(options);*/
-yamlinc.setBaseFile(path.join(__dirname, 'swagger', 'index.yaml'));
-
-var src = fs.readFileSync(yamlinc.basefile, 'utf8');
-
-var swaggerDocument = yaml.load(src, { schema: yamlinc.YAML_INCLUDE_SCHEMA, filename: yamlinc.basefile })
-
-var optionsSwagger = {
-  explorer: true,
-  swaggerOptions: {
-    validatorUrl: null
-  },
-  customCss: '.swagger-ui .models { display: none }'
-};
-
-app.use(
-  "/temp-api-docs",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerDocument, optionsSwagger)
-);
-
-app.use(passport.initialize());
-
-const apiDocsRedirectPath = "/temp-api-docs/";
-app.get('/api-docs', function(req, res) {
-    res.redirect(apiDocsRedirectPath);
-});
-
-var cors = require('cors')
 const corsOpts = {
     origin: '*',
     credentials: true,
@@ -131,35 +73,35 @@ const corsOpts = {
 }
 app.use(cors(corsOpts))
 
+
+yamlinc.setBaseFile(path.join(__dirname, 'swagger', 'index.yaml'));
+
+var src = fs.readFileSync(yamlinc.basefile, 'utf8');
+
+var swaggerDocument = yaml.load(src, { schema: yamlinc.YAML_INCLUDE_SCHEMA, filename: yamlinc.basefile })
+
+/*
+var optionsSwagger = {
+  explorer: true,
+  customCss: '.swagger-ui .models { display: none }'
+};
+*/
+
+
+
+app.use(passport.initialize());
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// swagger definition
-
-
-/*
-// options for the swagger docs
-var options = {
-  // import swaggerDefinitions
-  swaggerDefinition: swaggerDefinition,
-  // path to the API docs
-  apis: ['./routes/aplicacoes/*.js'],
-};*/
-
-// initialize swagger-jsdoc
-//var swaggerSpec = swaggerJSDoc(options);
-
-//var swaggerDocument = require('./swagger.json');
-
-/*
 app.use(
   "/api-docs",
   swaggerUi.serve,
   swaggerUi.setup(swaggerDocument)
-);*/
+);
 
 app.use('/aplicacoes/professores', professoresRouter);
 app.use('/aplicacoes/codigos', codigosRouter);
@@ -173,6 +115,7 @@ app.use('/jogos', jogosRouter)
 app.use('/apps', appsRouter)
 app.use('/campeonatos', campeonatosRouter)
 app.use('/trofeus', trofeusRouter)
+app.use('/cromos', cromosRouter)
 app.use('/aplicacoes/comunidades', comunidadesRouter)
 app.use('/aplicacoes/novidades', novidadesRouter)
 app.use('/aplicacoes/mensagens', mensagensRouter)

@@ -1,6 +1,8 @@
 const calcRapid = module.exports
 const { bdSAMD, bdAplicacoes } = require('../../models/conf');
 var sql = require('../../models/db_samd');
+var dataInicioAno = require('../../config/confs').dataInicio1
+var dataFimAno = require('../../config/confs').dataFim1
 
 // por cada município e todos os tipos do calcrapid
 calcRapid.getTodosCalcRapidMunicipios = async function(dataInicio, dataFim){
@@ -283,9 +285,9 @@ calcRapid.getAlunoLast = function(user){
 }
 
 calcRapid.getAlunoFrequencia = function(user){
-    var args = [user]
+    var args = [user, dataInicioAno, dataFimAno]
     return new Promise(function(resolve, reject) {
-        sql.query(`Select sum(f) as frequencia from ${bdSAMD}.calcRapidHypatia where idaluno = ?;`, args, function(err, res){
+        sql.query(`Select sum(f) as frequencia from ${bdSAMD}.calcRapidHypatia where idaluno = ? and (data between ? and ?);`, args, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

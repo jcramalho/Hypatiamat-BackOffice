@@ -1,0 +1,8 @@
+type: object
+properties:
+  codigo:
+    type: string
+  nome:
+    type: string
+  municipios:
+    type: integer

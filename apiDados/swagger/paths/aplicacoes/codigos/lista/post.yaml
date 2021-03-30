@@ -1,6 +1,6 @@
-summary: Insere um novo código de confirmação.
+summary: Insere uma lista de códigos de confirmação.
 description: |+
-  Insere um novo código de confirmação.
+  Regista um novo conjunto de novos código ou, pelo menos, aqueles que forem válidos.
   
   Apenas o administrador pode executar este pedido.
 tags:
@@ -8,18 +8,15 @@ tags:
 security:
   - tokenQuery: []
 requestBody:
-  description: 'Código a ser registado.'
+  description: 'Lista de códigos a serem inseridos.'
   required: true
   content:
-    application/x-www-form-urlencoded:
-      schema:
-        $ref: '#/components/schemas/CodigosProfPOST'
     application/json:
       schema:
-        $ref: '#/components/schemas/CodigosProfPOST'
+        $ref: '#/components/schemas/CodigosListaPOST'
 responses:
   200:
-    description: Código de confirmação registado com sucesso.
+    description: Códigos de confirmação registados com sucesso.
   400:
     $ref: '#/components/responses/InvalidParameters'
   401:
