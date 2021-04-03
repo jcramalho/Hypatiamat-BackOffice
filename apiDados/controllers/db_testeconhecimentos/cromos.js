@@ -1,6 +1,8 @@
 const Cromos = module.exports
 const Apps = require('./apps')
 const Jogos = require('../db_samd/jogos')
+const Campeonatos = require('./campeonatos')
+const CromosAlunos = require('./cromos_alunos')
 const sql = require('../../models/db_testeconhecimentos');
 const anoletivo = require('../../config/confs').anoletivo
 const maxFreq = 6
@@ -38,6 +40,20 @@ Cromos.getAppsCromos = function(){
 Cromos.getJogosCromos = function(){
     return new Promise(function(resolve, reject) {
         sql.query(`SELECT id, numero, nome, descricao, imagem, jogos, dias, diferentes, estrelas FROM cromosdb where anoletivo=? and not(isnull(jogos));`, anoletivo, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+Cromos.getCampeonatosCromos = function(){
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT id, numero, nome, descricao, imagem, campeonatos, estrelas FROM cromosdb where anoletivo=? and not(isnull(campeonatos));`, anoletivo, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -146,7 +162,12 @@ Cromos.getCromosAppsFromAluno = function(user){
                         }
                         else{
                             var resultCromo = await this.checkCromoAppAluno(cromo, infoDias, infoGeral)
-                            if(resultCromo) res.push(resultCromo)
+                            if(resultCromo) {
+                                if(resultCromo.freq) CromosAlunos.insertComFreq({user: user, idcromo: resultCromo.idcromo, oldfrequencia:0, 
+                                                                          frequencia: resultCromo.freq, lastdate: resultCromo.lastdate, virado: false, anoletivo: anoletivo})
+                                else CromosAlunos.insertSemFreq({user: user, idcromo: resultCromo.idcromo, virado: false, anoletivo: anoletivo})
+                                res.push(resultCromo)
+                            }
                         }
                     }
                     return res
@@ -198,20 +219,33 @@ Cromos.checkCromoJogoAluno = async function(cromo, infoDias, infoGeral){
 
 Cromos.getCromosJogosFromAluno = function(user){
     var jogosCromos = this.getJogosCromos()
+    var jogosCromosCompletados = CromosAlunos.getCromosJogosCompletadosFromAluno(user) 
     var infoDias = Jogos.getAllJogosPorDiaAluno(user)
     var infoGeral = Jogos.getFrequenciaTotalAluno2(user)
     
-    return Promise.all([jogosCromos, infoDias, infoGeral])
+    return Promise.all([jogosCromos, infoDias, infoGeral, jogosCromosCompletados])
             .then(async values =>{
                 var jogosCromos = values[0]
                 var infoDias = values[1]
                 var infoGeral = values[2]
+                var jogosCromosCompletados = values[3]
                 var res = []
 
                 for(var i = 0; i < jogosCromos.length; i++){
                     var cromo = jogosCromos[i]
-                    var resultCromo = await this.checkCromoJogoAluno(cromo, infoDias, infoGeral)
-                    if(resultCromo) res.push(resultCromo)
+                    var cromoGanho = jogosCromosCompletados.find(e => e.idcromo == cromo.id)
+                    if(cromoGanho){
+
+                    }
+                    else{
+                        var resultCromo = await this.checkCromoJogoAluno(cromo, infoDias, infoGeral)
+                        if(resultCromo){
+                            if(resultCromo.freq) CromosAlunos.insertComFreq({user: user, idcromo: resultCromo.idcromo, oldfrequencia:0, 
+                                frequencia: resultCromo.freq, lastdate: resultCromo.lastdate, virado: false, anoletivo: anoletivo})
+                            else CromosAlunos.insertSemFreq({user: user, idcromo: resultCromo.idcromo, virado: false, anoletivo: anoletivo})
+                            res.push(resultCromo)
+                        }
+                    }
                 }
 
                 return res
@@ -221,20 +255,35 @@ Cromos.getCromosJogosFromAluno = function(user){
 }
 
 Cromos.getCromosCampeonatosFromAluno = function(user){
+    var campeonatosCromos = this.getCampeonatosCromos(user)
+    var campeonatosParticipou = Campeonatos.getCampeonatosAlunoParticipou(user)
+    var cromosCampeonatosCompletados = CromosAlunos.getCromosCampeonatosCompletadosFromAluno(user)
+    var result = []
 
+    return Promise.all([campeonatosCromos, campeonatosParticipou, cromosCampeonatosCompletados])
+        .then(dados => {
+            var campeonatosCromos = dados[0]
+            var campeonatosParticipou = dados[1]
+            var cromosCampeonatosCompletados = dados[2]
+            for(var i = 0; i < campeonatosCromos.length; i++){
+                var cromo = campeonatosCromos[i]
+        
+                if(campeonatosParticipou.length >= cromo.campeonatos) result.push(cromo)
+            }
+            return result
+        })
+        .catch(erro => {console.log(erro); reject(erro)})
 }
 
 Cromos.getNovosCromos = function(user){
     var appsCromos = this.getCromosAppsFromAluno(user)
     var jogosCromos = this.getCromosJogosFromAluno(user)
-    //var campeonatosCromos = await this.getCromosCampeonatosFromAluno(user)
-    return Promise.all([appsCromos, jogosCromos])
+    var campeonatosCromos = this.getCromosCampeonatosFromAluno(user)
+    return Promise.all([appsCromos, jogosCromos, campeonatosCromos])
                   .then(values => {
-                    return {apps: values[0], jogos: values[1]}
+                      
+                    return {novosCromos: (values[0].concat(values[1])).concat(values[2])}
                   })
                   .catch(erro => {console.log(erro); reject(erro)})    
 }
 
-Cromos.getCromosFromUser= function(user){
-    // simples
-}

@@ -196,6 +196,7 @@ Jogos.getAllJogosTurma = async function(dataInicio, dataFim, turma, escola){
     return res;
 }
 
+/*
 Jogos.getJogosFromAluno = async function(user, dataInicio, dataFim){
     var jogos = await Jogos.getJogosDB()
     var res = []
@@ -213,21 +214,54 @@ Jogos.getJogosFromAluno = async function(user, dataInicio, dataFim){
     }
 
     return res;
+}*/
+
+Jogos.getJogosFromAluno = async function(user, dataInicio, dataFim){
+    
+    var jogos = await Jogos.getJogosDB()
+    var res = []
+    var promises = []
+
+    var alunoJogouCalculus = await Calculus.alunoJogouMinuteNew(user, dataInicio, dataFim)
+    if(alunoJogouCalculus.length > 0) res.push(minutenewDef)
+
+    var alunoJogouCalcRapid = await Calcrapid.alunoJogou(user, dataInicio, dataFim)
+    if(alunoJogouCalcRapid.length > 0) res.push(calcrapidDef)
+
+    for(var i = 0; i < jogos.length; i++){
+        var jogo = jogos[i]
+        var alunoJogou = JogosGerais.alunoJogou(user, dataInicio, dataFim, jogo.jogotable, jogo.tipo)
+        promises.push(alunoJogou)
+    }
+
+    return Promise.all(promises)
+                  .then(dados => {
+                    for(var i = 0; i < dados.length; i++){
+                        if(dados[i].length > 0) res.push(jogos[i])
+                    }
+                    return res;
+                  })
+                  .catch(erro => {console.log(erro); reject(erro);})    
+
+    
 }
 
 Jogos.getLast10FromAluno = async function(user){
     var jogos = await Jogos.getJogosDB()
     var aux = [], res = []
     var n = 10
-    
+    var promises = []
+
     for(var i = 0; i < jogos.length; i++){
-        var jogo = await JogosGerais.getAlunoLast(jogos[i].jogotable, jogos[i].tipo, user)
+        var jogo = JogosGerais.getAlunoLast(jogos[i].jogotable, jogos[i].tipo, user)
+        promises.push(jogo)
+        /*
         if(jogo.lastdate) {
             jogo.nome = jogos[i].jogo
             jogo.jogotable = jogos[i].jogotable
             jogo.tipo = jogos[i].tipo
             aux.push(jogo)
-        }
+        }*/
     }
 
     // calcrapid
@@ -246,21 +280,34 @@ Jogos.getLast10FromAluno = async function(user){
         aux.push(calculus)
     }
 
-    //console.log(aux)
-    if(aux.length > 1){
-        await aux.sort(function(a,b){
-            return b.lastdate.localeCompare(a.lastdate)
-        })
-    }
+    return Promise.all(promises)
+                    .then(async dados => {
+                        for(var i = 0; i < dados.length; i++){
+                            var jogo = dados[i]
+                            if(jogo.lastdate) {
+                                jogo.nome = jogos[i].jogo
+                                jogo.jogotable = jogos[i].jogotable
+                                jogo.tipo = jogos[i].tipo
+                                aux.push(jogo)
+                            }  
+                        }
 
-    for(var i = 0; i < n && i < aux.length; i++){
-        var auxDate = aux[i].lastdate.split(" ")
-        aux[i].lastdate = auxDate[0]
-        aux[i].horario = auxDate[1]
-        res.push(aux[i])
-    }
-    
-    return res;
+                        if(aux.length > 1){
+                            await aux.sort(function(a,b){
+                                return b.lastdate.localeCompare(a.lastdate)
+                            })
+                        }
+                        for(var i = 0; i < n && i < aux.length; i++){
+                            var auxDate = aux[i].lastdate.split(" ")
+                            aux[i].lastdate = auxDate[0]
+                            aux[i].horario = auxDate[1]
+                            res.push(aux[i])
+                        }
+                        
+                        return res;
+
+                    })
+                    .catch(erro => {console.log(erro); reject(erro);})    
 }
 
 /*
@@ -307,7 +354,7 @@ Jogos.getFrequenciaTotalAluno = async function(user){
                     }
                     return frequencia;
                   })
-                  .catch(erro => {console.log(erro); return erro;})
+                  .catch(erro => {console.log(erro); reject(erro);})
 }
 
 Jogos.getFrequenciaTotalAluno2 = async function(user){
@@ -336,7 +383,7 @@ Jogos.getFrequenciaTotalAluno2 = async function(user){
                     }
                     return {frequencia: frequencia, njogos: njogos}
                   })
-                  .catch(erro => {console.log(erro); return erro;})
+                  .catch(erro => {console.log(erro); reject(erro);})
 }
 
 Jogos.getAllJogosPorDiaAluno = async function(user){
@@ -369,6 +416,6 @@ Jogos.getAllJogosPorDiaAluno = async function(user){
                     }
                     return res
                   })
-                  .catch(error => {console.log(error); return error})
+                  .catch(erro => {console.log(erro); reject(erro);})
 
 }

@@ -33,7 +33,7 @@ getSubTemasFrom100 = function(){
 
 module.exports.getTemasLast10 = async function(){
     return new Promise(function(resolve, reject) {
-        sql.query(`SELECT tema,subtema, codtema, codsubtema FROM subtemas GROUP BY codsubtema;` , function(err, res){
+        sql.query(`SELECT tema, subtema, codtema, codsubtema FROM subtemas GROUP BY codsubtema;` , function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -477,24 +477,31 @@ module.exports.getLast10 = async function(user){
     })
 }
 
-module.exports.getLast10FromAluno = async function(user){
-    var temas = await this.getTemasLast10()
-    var last10 = await this.getLast10(user)
-    for(var i = 0; i < last10.length; i++){
-        var app = last10[i]        
-        var tema = temas.find(e => e.codtema == app.grupo && e.codsubtema == app.appid)
-        var aux = app.lastdate.split(" ")
-        app.lastdate = aux[0]
-        app.horario = aux[1]
-        if(tema){
-            app.nome = tema.subtema
-        }
-        else{
-            tema = temas.find(e => e.codtema == app.grupo)
-            app.nome = tema.tema
-        }
-    }
-    return last10
+module.exports.getLast10FromAluno = function(user){
+    var temas = this.getTemasLast10()
+    var last10 = this.getLast10(user)
+    return Promise.all([temas, last10])
+            .then(dados => {
+                var temas = dados[0]
+                var last10 = dados[1]
+                for(var i = 0; i < last10.length; i++){
+                    var app = last10[i]        
+                    var tema = temas.find(e => e.codtema == app.grupo && e.codsubtema == app.appid)
+                    var aux = app.lastdate.split(" ")
+                    app.lastdate = aux[0]
+                    app.horario = aux[1]
+                    if(tema){
+                        app.nome = tema.subtema
+                    }
+                    else{
+                        tema = temas.find(e => e.codtema == app.grupo)
+                        app.nome = tema.tema
+                    }
+                }
+                return last10
+            })
+            .catch(erro => {console.log(erro); reject(erro)})
+    
 }
 
 module.exports.getAppsFromAlunoAux = function(user, dataInicio, dataFim){
@@ -570,9 +577,10 @@ module.exports.getAppsFromTurma = async function(turma, codprofessor, dataInicio
 }
 
 module.exports.getAllAcertoFromAluno = async function(user){   
+    var args = [user, dataInicioAno, dataFimAno]
     return new Promise(function(resolve, reject) {
         sql.query(`select ROUND((sum(ncertas)/sum(ntotal))*100, 0) as acerto 
-                from ${bdTesteConhecimentos}.appsinfoall where userid=?;`, user, function(err, res){
+                from ${bdTesteConhecimentos}.appsinfoall where userid=? and (lastdate between ? and ?);`, args, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

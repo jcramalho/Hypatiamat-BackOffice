@@ -330,8 +330,6 @@ import ClassificacaoAluno from '@/components/Campeonatos/ClassificacaoAluno.vue'
         this.getLastJogos()
         this.getAcertoApps()
         this.getFrequenciaJogos()
-        var ultimo = await axios.get(hostCampeonatos + "alunos/" + this.aluno.user + "/ultimocampeonato?token=" + this.token)
-        this.ultimoCampeonato = ultimo.data
         this.calculaUltimoCampeonato()
         
     },
@@ -367,6 +365,8 @@ import ClassificacaoAluno from '@/components/Campeonatos/ClassificacaoAluno.vue'
         if(response.data) this.trofeus = response.data
       },
       calculaUltimoCampeonato: async function(){
+        var ultimo = await axios.get(hostCampeonatos + "alunos/" + this.aluno.user + "/ultimocampeonato?token=" + this.token)
+        this.ultimoCampeonato = ultimo.data
         if(this.ultimoCampeonato){
             var response = await axios.get(hostCampeonatos + this.ultimoCampeonato.campeonatoID + "/alunos/" + this.aluno.user
                                         + "?jogo=" + this.ultimoCampeonato.jogo + "&codprofessor=" + this.ultimoCampeonato.codprofessor

@@ -20,6 +20,7 @@ import Views from '@/components/View.vue'
 import Swal from 'sweetalert2'
 import axios from "axios"
 const h = require("@/config/hosts").hostAPI
+const hostCromos = require("@/config/hosts").hostCromos
 
 export default {
   components:{
@@ -36,7 +37,8 @@ export default {
       mensagensLer:0,
       oldNovasMensagensLer: 0, 
       token: "",
-      interval: undefined
+      interval: undefined,
+      utilizador: {}
     }
   },
   computed: {
@@ -49,12 +51,13 @@ export default {
 
   },
   created: async function(){
-    var utilizador = JSON.parse(localStorage.getItem("utilizador"))
+    this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
     this.token = localStorage.getItem("token")
     this.windowWidth = window.innerWidth
     this.size()
-    if(utilizador.type == 10){
-      var response = await axios.get(h + "mensagens/alunos/" + utilizador.user + "/number/naovistas?token=" + this.token)
+    if(this.utilizador.type == 10){
+      this.getNovosCromos()
+      var response = await axios.get(h + "mensagens/alunos/" + this.utilizador.user + "/number/naovistas?token=" + this.token)
       this.mensagensLer =  response.data.number 
       this.oldNovasMensagensLer = this.mensagensLer
       if(this.mensagensLer > 0){
@@ -64,7 +67,7 @@ export default {
           confirmButtonColor: '#009263'
         })
         this.interval = setInterval(async () => {
-          var response = await axios.get(h + "mensagens/alunos/" + utilizador.user + "/number/naovistas?token=" + this.token)
+          var response = await axios.get(h + "mensagens/alunos/" + this.utilizador.user + "/number/naovistas?token=" + this.token)
           this.mensagensLer =  response.data.number 
           if(this.mensagensLer - this.oldNovasMensagensLer > 0){
             Swal.fire({
@@ -100,6 +103,23 @@ export default {
           this.styleP = 'font-size:9px'
         }
     },
+    getNovosCromos: async function(){
+      var response = await axios.get(hostCromos + "novos/alunos/" + this.utilizador.user)
+      var novosCromos = response.data.novosCromos
+      if(novosCromos.length > 0){
+        var htmlCode = '<p><center><h1> Parabéns! </h1></center></p>'
+        for(var i = 0; i < novosCromos.length; i++){
+          var cromoGanho = novosCromos[i]
+          if(cromoGanho.freq) htmlCode += '<p> Ganhou o cromo ' + cromoGanho.numero + ' ' + cromoGanho.freq + 'vez(es). </p>'
+          else htmlCode += '<p> Ganhou o cromo ' + cromoGanho.numero + '. </p>'
+        }
+        Swal.fire({
+          icon: 'success',
+          html: htmlCode,
+          confirmButtonColor: '#009263'
+        })
+      }
+    }, 
     atualizaNovasMensagens: async function(){
       var response = await axios.get(h + "mensagens/alunos/" + utilizador.user + "/number/naovistas?token=" + this.token)
       this.mensagensLer =  response.data.number 

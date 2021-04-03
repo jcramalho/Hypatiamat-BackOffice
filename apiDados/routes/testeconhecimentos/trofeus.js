@@ -5,7 +5,7 @@ const { verifyAdmin_Professor_Aluno2 } = require('../../config/verifyToken');
 
 const Trofeus = require('../../controllers/db_testeconhecimentos/trofeus');
 
-// Todas os trofeus de uma aluno
+// Todos os trofeus de uma aluno
 router.get('/alunos/:user', passport.authenticate('jwt', {session: false}), verifyAdmin_Professor_Aluno2(), function(req, res, next) {
     Trofeus.getTrofeusFromUser(req.params.user)
                .then(dados => res.jsonp(dados))

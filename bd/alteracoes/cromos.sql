@@ -45,6 +45,7 @@ CREATE TABLE `hypati67_testeconhecimentos`.`cromos_alunos` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `user` VARCHAR(20) NOT NULL,
   `idcromo` INT NOT NULL,
+  `oldfrequencia` INT NULL,
   `frequencia` INT NULL,
   `lastdate` DATE NOT NULL,
   `virado` BOOLEAN NOT NULL,
