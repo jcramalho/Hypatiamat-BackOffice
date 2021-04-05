@@ -1,5 +1,6 @@
 const { bdTesteConhecimentos, bdAplicacoes } = require('../../models/conf');
 var sql = require('../../models/db_testeconhecimentos');
+const anoletivoAtual = require('../../config/confs').anoletivo
 
 module.exports.getCampeonatos= function(){
     return new Promise(function(resolve, reject) {
@@ -46,6 +47,22 @@ module.exports.getCampeonatosComMunicipio= function(municipio){
 module.exports.getCampeonatosAlunoParticipou= function(user){
     return new Promise(function(resolve, reject) {
         sql.query(`SELECT * FROM campeonatosID where cod in (select campeonatoID from campeonatos where user=?) order by di desc;`, user,
+         function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+module.exports.getCampeonatosAlunoParticipouAnoLetivo= function(user){
+    var args = [user, anoletivoAtual]
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT * FROM campeonatosID where cod in (select campeonatoID from campeonatos where user=?) and anoletivo=? order by di desc;`, args,
          function(err, res){
             if(err){
                 console.log("erro: " + err)

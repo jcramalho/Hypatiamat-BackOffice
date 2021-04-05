@@ -1,8 +1,9 @@
-var Escolas = require('../controllers/db_aplicacoes/escolas')
-var Alunos = require('../controllers/db_aplicacoes/alunos')
-var Turmas = require('../controllers/db_aplicacoes/turmas')
-var Professores = require('../controllers/db_aplicacoes/professor')
+const Escolas = require('../controllers/db_aplicacoes/escolas')
+const Alunos = require('../controllers/db_aplicacoes/alunos')
+const Turmas = require('../controllers/db_aplicacoes/turmas')
+const Professores = require('../controllers/db_aplicacoes/professor')
 const { updateTurma } = require('../controllers/db_aplicacoes/alunos')
+const CromosAlunos = require('../controllers/db_testeconhecimentos/cromos_alunos')
 
 module.exports.verifyAdmin = function(){
     
@@ -200,5 +201,26 @@ module.exports.verifyProfTurmas = function(){
             else if (u.type == 30 && u.escolas.find(esc => esc.cod == professor.escola)) next()
             else res.status(403).jsonp("Não tem permissão.")
         }              
+    }
+}
+
+module.exports.verifyAluno = function(){
+    return function(req, res, next) {
+        var u = req.user.user
+        var user = req.params.user
+        if(u.type == 50) next()
+        else if(u.type == 10 && u.user == user) next()
+        else res.status(403).jsonp("Não tem permissão.")
+    }
+}
+
+module.exports.verifyAluno2 = function(){
+    return async function(req, res, next) {
+        var u = req.user.user
+        var user = await CromosAlunos.getUserFromoCromoId(req.params.id)
+
+        if(u.type == 50) next()
+        else if(user && u.type == 10 && u.user == user.user) next()
+        else res.status(403).jsonp("Não tem permissão.")
     }
 }

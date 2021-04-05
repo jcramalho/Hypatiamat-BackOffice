@@ -104,14 +104,14 @@ export default {
         }
     },
     getNovosCromos: async function(){
-      var response = await axios.get(hostCromos + "novos/alunos/" + this.utilizador.user)
+      var response = await axios.get(hostCromos + "novos/alunos/" + this.utilizador.user + "?token=" + this.token)
       var novosCromos = response.data.novosCromos
       if(novosCromos.length > 0){
         var htmlCode = '<p><center><h1> Parabéns! </h1></center></p>'
         for(var i = 0; i < novosCromos.length; i++){
           var cromoGanho = novosCromos[i]
-          if(cromoGanho.freq) htmlCode += '<p> Ganhou o cromo ' + cromoGanho.numero + ' ' + cromoGanho.freq + 'vez(es). </p>'
-          else htmlCode += '<p> Ganhou o cromo ' + cromoGanho.numero + '. </p>'
+          if(cromoGanho.freq) htmlCode += '<p> Ganhou o cromo <b>' + cromoGanho.numero + '</b> ' + cromoGanho.freq + ' vez(es). </p>'
+          else htmlCode += '<p> Ganhou o cromo <b>' + cromoGanho.numero + '</b>. </p>'
         }
         Swal.fire({
           icon: 'success',

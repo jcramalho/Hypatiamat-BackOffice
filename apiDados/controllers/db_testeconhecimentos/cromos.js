@@ -157,7 +157,16 @@ Cromos.getCromosAppsFromAluno = function(user){
                         var cromoGanho = appsCromosCompletados.find(e => e.idcromo == cromo.id)
                         if(cromoGanho){
                             if(cromo.estrelas && cromoGanho.frequencia < maxFreq){
-                                
+                                var infoDiasAux = infoDias.filter(e => new Date(e.lastdate) > new Date(cromoGanho.lastdate))
+                                if(infoDiasAux.length > 0) {
+                                    var resultCromo = await this.checkCromoAppAluno(cromo, infoDiasAux, infoGeral)
+                                    if(resultCromo && resultCromo.freq) {
+                                        var frequencia = resultCromo.freq + cromoGanho.frequencia
+                                        if(frequencia > maxFreq) {frequencia = maxFreq; resultCromo.freq = resultCromo.freq - (frequencia - maxFreq)}
+                                        CromosAlunos.updateCromoFreq(cromoGanho.id, frequencia)
+                                        res.push(resultCromo)
+                                    }
+                                }
                             }
                         }
                         else{
@@ -235,13 +244,24 @@ Cromos.getCromosJogosFromAluno = function(user){
                     var cromo = jogosCromos[i]
                     var cromoGanho = jogosCromosCompletados.find(e => e.idcromo == cromo.id)
                     if(cromoGanho){
-
+                        if(cromo.estrelas && cromoGanho.frequencia < maxFreq){
+                            var infoDiasAux = infoDias.filter(e => new Date(e.lastdate) > new Date(cromoGanho.lastdate))
+                            if(infoDiasAux.length > 0) {
+                                var resultCromo = await this.checkCromoJogoAluno(cromo, infoDiasAux, infoGeral)
+                                if(resultCromo && resultCromo.freq) {
+                                    var frequencia = resultCromo.freq + cromoGanho.frequencia
+                                    if(frequencia > maxFreq) {frequencia = maxFreq; resultCromo.freq = resultCromo.freq - (frequencia - maxFreq)}
+                                    CromosAlunos.updateCromoFreq(cromoGanho.id, frequencia)
+                                    res.push(resultCromo)
+                                }
+                            }
+                        }
                     }
                     else{
                         var resultCromo = await this.checkCromoJogoAluno(cromo, infoDias, infoGeral)
                         if(resultCromo){
                             if(resultCromo.freq) CromosAlunos.insertComFreq({user: user, idcromo: resultCromo.idcromo, oldfrequencia:0, 
-                                frequencia: resultCromo.freq, lastdate: resultCromo.lastdate, virado: false, anoletivo: anoletivo})
+                                frequencia: resultCromo.freq, lastdate: resultCromo.data, virado: false, anoletivo: anoletivo})
                             else CromosAlunos.insertSemFreq({user: user, idcromo: resultCromo.idcromo, virado: false, anoletivo: anoletivo})
                             res.push(resultCromo)
                         }
@@ -256,7 +276,7 @@ Cromos.getCromosJogosFromAluno = function(user){
 
 Cromos.getCromosCampeonatosFromAluno = function(user){
     var campeonatosCromos = this.getCampeonatosCromos(user)
-    var campeonatosParticipou = Campeonatos.getCampeonatosAlunoParticipou(user)
+    var campeonatosParticipou = Campeonatos.getCampeonatosAlunoParticipouAnoLetivo(user)
     var cromosCampeonatosCompletados = CromosAlunos.getCromosCampeonatosCompletadosFromAluno(user)
     var result = []
 
@@ -265,10 +285,15 @@ Cromos.getCromosCampeonatosFromAluno = function(user){
             var campeonatosCromos = dados[0]
             var campeonatosParticipou = dados[1]
             var cromosCampeonatosCompletados = dados[2]
+            if(cromosCampeonatosCompletados.length == campeonatosCromos) return []
+
             for(var i = 0; i < campeonatosCromos.length; i++){
                 var cromo = campeonatosCromos[i]
-        
-                if(campeonatosParticipou.length >= cromo.campeonatos) result.push(cromo)
+                var cromoGanho = cromosCampeonatosCompletados.find(e => e.idcromo == cromo.id)
+                if(!cromoGanho && campeonatosParticipou.length >= cromo.campeonatos){
+                    CromosAlunos.insertSemFreq({user: user, idcromo: cromo.id, virado: false, anoletivo: anoletivo})
+                    result.push(cromo)
+                }
             }
             return result
         })

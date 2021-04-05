@@ -98,3 +98,46 @@ Cromos.getCromosFromUser= function(user){
         })
     })
 }
+
+Cromos.updateCromoAberto = function(id){
+    return new Promise(function(resolve, reject) {
+        sql.query(`Update cromos_alunos SET virado = true, oldfrequencia = frequencia where id=?;`, [id], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+Cromos.updateCromoFreq = function(id, frequencia){
+    return new Promise(function(resolve, reject) {
+        sql.query(`Update cromos_alunos SET frequencia=? where id=?;`, [frequencia, id], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+Cromos.getUserFromoCromoId = function(id){
+    return new Promise(function(resolve, reject) {
+        sql.query(`Select user from cromos_alunos where id=?;`, [id], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if(res.length > 0) resolve(res[0])
+                else resolve(undefined)
+            }
+        })
+    })
+}

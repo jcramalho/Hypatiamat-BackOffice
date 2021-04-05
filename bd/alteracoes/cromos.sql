@@ -19,7 +19,7 @@ COLLATE = utf8mb4_unicode_ci;
 
 Insert into hypati67_testeconhecimentos.cromosdb (`numero`,`nome`, `descricao`, `imagem`, `campeonatos`, `apps`, `jogos`, `dias`, `diferentes`, `estrelas`, `anoletivo`)
 			Values 
-	(1, 'Regular - iniciado', '3 dias consecutivos – apps de conteúdos – mais de 25 tarefas resolvidas corretamente por dia', 'apps1.png', null, 25, null, 3, null, true,'20/21'),
+	(1, 'Regular - iniciado', '3 dias consecutivos – apps de conteúdos – mais de 25 tarefas resolvidas corretamente por dia', 'cromo1.png', null, 25, null, 3, null, true,'20/21'),
     (2, 'Regular - médio', '3 dias consecutivos – apps de conteúdos – mais de 50 tarefas resolvidas corretamente por dia', 'apps2.png', null, 50, null, 3, null, true,'20/21'),
     (3, 'Regular - TOP', '3 dias consecutivos – apps de conteúdos – mais de 100 tarefas resolvidas corretamente por dia', 'apps3.png', null, 100, null, 3, null, true,'20/21'),
     (4, 'Persistente - iniciado', '5 dias consecutivos – apps de conteúdos – mais de 20 tarefas resolvidas corretamente por dia', 'apps4.png', null, 20, null, 5, null, true,'20/21'),
@@ -48,6 +48,7 @@ CREATE TABLE `hypati67_testeconhecimentos`.`cromos_alunos` (
   `oldfrequencia` INT NULL,
   `frequencia` INT NULL,
   `lastdate` DATE NOT NULL,
+  `lastcalculo` DATE NOT NULL,
   `virado` BOOLEAN NOT NULL,
   `anoletivo` VARCHAR(10) NOT NULL,
   PRIMARY KEY (`id`))
@@ -55,18 +56,6 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_unicode_ci;
 
-
--- rascunho jogos
--- 'martinho19'
--- 'monteiro10'
--- 'ferreira18'
--- 'martins02'
--- 'anun10'
-Select jogo.data, count(jogo.pontuacao) as count 
-        from hypati67_samd.anguloshypatia jogo 
-        where jogo.idaluno = 'monteiro10' and jogo.tipo = 1 and (jogo.data between '2020-09-01' and '2021-09-01')
-        Group by jogo.data
-        Order by jogo.data desc;
 
 -- rascunho apps ('aluno1', 'hypatiatmp')
 Select userid, sum(ncertas) as ncertas, count(distinct appid, grupo) as napps 

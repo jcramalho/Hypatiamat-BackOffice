@@ -25,18 +25,100 @@
                 </v-col>
                 <v-col cols="12" sm="6" md="4" lg="3" xl="2" v-for="cromo in cromos" v-bind:key="cromo.id">
                     <v-container class="text-center pa-0 ma-0">
-                        <v-avatar v-if="naoPossuiCromo(cromo.id)" tile color="#a6ffbe" size="200">
-                            <span style="color:#009263">{{cromo.numero}}</span>
-                        </v-avatar>
-                        <v-avatar v-else-if="!cromosCompletados.find(e => e.idcromo == cromo.id).virado" 
-                                  tile color="#a6ffbe" size="200" @click="abreCromo(cromo.id)">
-                            <span style="color:#009263">Clique para abrir o cromo!</span>
-                        </v-avatar>
+                      <center v-if="naoPossuiCromo(cromo.id)">
+                        <div style="margin-top:65px">
+                          <v-img :src="require('@/assets/cromos/cromoBack2.png')" width="150px">
+                            <v-avatar>
+                              <span class="green--text">{{cromo.numero}}</span>
+                            </v-avatar>
+                          </v-img>
+                          <v-tooltip bottom>
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-btn
+                                  icon
+                                  v-bind="attrs" 
+                                  v-on="on"
+                                >
+                                <v-icon color="green"> mdi-information-outline </v-icon>
+                                </v-btn>
+                              </template>
+                              <span>{{cromo.nome}}</span>
+                              <!--<span class="header"> <p> Para ganhar o cromo ou mais estrelas do cromo, terá que: </p> <p> {{cromo.descricao}}</p> </span>-->
+                          </v-tooltip>
+                        </div>
+                        <!--
+                        <v-card outlined height="170px" width="150px" color="#a6ffbe" style="margin-top:70px">
+                            <br>
+                            <br>
+                            <span  style="color:#009263; padding-top: 50px">{{cromo.numero}}</span>
+                            <br>
+                            
+                        </v-card>-->
+                      </center>
+                      <center v-else-if="!cromosCompletados.find(e => e.idcromo == cromo.id).virado" >
+                        <div style="margin-top:65px">
+                          <v-img :src="require('@/assets/cromos/cromoBack2.png')" width="150px" @click="abreCromo(cromo.id)">
+                              <span style="color:#009263">Clique para abrir o cromo!</span>
+                          </v-img>
+                          <v-tooltip bottom>
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-btn
+                                  icon
+                                  v-bind="attrs" 
+                                  v-on="on"
+                                >
+                                <v-icon color="green"> mdi-information-outline </v-icon>
+                                </v-btn>
+                              </template>
+                              <span>{{cromo.nome}}</span>
+                              <!--<span class="header"> <p> Para ganhar o cromo ou mais estrelas do cromo, terá que: </p> <p> {{cromo.descricao}}</p> </span>-->
+                          </v-tooltip>
+                        </div>
+                      </center>
                         <v-container v-else>
                           <center>
-                            <span v-if="cromo.estrelas">({{cromosCompletados.find(e => e.idcromo == cromo.id).frequencia}} estrelas)</span>
-                            <div><v-img  :src="require('@/assets/cromo.png')" width="150px" heigth="150px"> </v-img></div>
-                            <v-tooltip top>
+                            
+                            <div v-if="cromo.estrelas && verifyEstrelas(cromosCompletados.find(e => e.idcromo == cromo.id))">
+                              <!--<v-rating
+                                v-model="cromosCompletados.find(e => e.idcromo == cromo.id).estrelasGanhas"
+                                background-color="orange lighten-3"
+                                color="orange"
+                                dense
+                                hover
+                                size="22"
+                                readonly
+                              ></v-rating>  -->
+                              <div v-if="cromo.estrelas">
+                                <v-img width="150px" :src="require('@/assets/cromos/estrela'+cromosCompletados.find(e => e.idcromo == cromo.id).estrelasGanhas+'.png')">
+                                </v-img>
+                              </div>
+                              <v-img :src="require('@/assets/cromos/cromo' + cromo.numero + '.png')" width="150px" heigth="150px" @click="abreCromo(cromo.id)">
+                              </v-img>
+                              <span class="caption">Clique no cromo, ganhou uma estrela.</span>   
+                            </div>
+                            <div v-else>
+                              <!--<v-rating
+                                v-if="cromo.estrelas"
+                                v-model="cromosCompletados.find(e => e.idcromo == cromo.id).estrelasGanhas"
+                                background-color="orange lighten-3"
+                                color="orange"
+                                dense
+                                hover
+                                size="22"
+                                readonly
+                              ></v-rating>-->
+                              <div v-if="cromo.estrelas">
+                                <v-img width="150px" :src="require('@/assets/cromos/estrela'+cromosCompletados.find(e => e.idcromo == cromo.id).estrelasGanhas+'.png')">
+                                </v-img>
+                                <v-img  :src="require('@/assets/cromos/cromo' + cromo.numero + '.png')" width="150px" heigth="150px">
+                                </v-img>
+                              </div>
+                              <div v-else style="margin-top:55px">
+                                <v-img  :src="require('@/assets/cromos/cromo' + cromo.numero + '.png')" width="150px" heigth="150px">
+                                </v-img>
+                              </div>
+                            </div>
+                            <v-tooltip bottom>
                                   <template v-slot:activator="{ on, attrs }">
                                     <v-btn
                                       icon
@@ -76,7 +158,7 @@ const hostCromos = require("@/config/hosts").hostCromos
         cromos: [],
         cromosCompletados: [],
         numeroCromosCompletados:0,
-        totalCromos:0
+        totalCromos:0,
       }
     },
     props:["idProp"],
@@ -103,8 +185,14 @@ const hostCromos = require("@/config/hosts").hostCromos
         else return true
       },
       abreCromo: function(id){
-        this.cromosCompletados.find(e => e.idcromo == id).virado = true
-        this.countCromosCompletadosVirados()
+        var cromo = this.cromosCompletados.find(e => e.idcromo == id)
+        if(cromo){
+          cromo.virado = true
+          cromo.oldfrequencia = cromo.frequencia
+          cromo.estrelasGanhas = cromo.frequencia
+          this.countCromosCompletadosVirados()
+          axios.put(hostCromos + cromo.id + "/aberto?token=" + this.token)
+        }
       },
       countCromosCompletadosVirados: function(){
         var r = 0;
@@ -112,6 +200,17 @@ const hostCromos = require("@/config/hosts").hostCromos
           if(this.cromosCompletados[i].virado) r++
         }
         this.numeroCromosCompletados = r
+      },
+      verifyEstrelas: function(cromo){
+        
+        if(cromo.frequencia > cromo.oldfrequencia){
+          cromo.estrelasGanhas = cromo.oldfrequencia - 1
+          return true
+        } 
+        else{
+          cromo.estrelasGanhas = cromo.frequencia - 1
+          return false
+        }
       }
     }
   }
