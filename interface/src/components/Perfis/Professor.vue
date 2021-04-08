@@ -110,6 +110,10 @@
                   <v-btn class="white--text" primary large block style="background-color: #009263;" @click="editarPassword()">Confirmar alteração</v-btn>
                 </v-card>
           </v-dialog>
+          <v-dialog v-model="dialogEditar" width="80%">
+            <EditarProfessorProfessor v-if="dialogEditar && type==20" :idProp="professor.id" @alteracao="refreshInfo()"/>
+            <EditarProfessor v-else-if="dialogEditar && type==50" :idProp="professor.id" @alteracao="refreshInfo()"/>
+          </v-dialog>
       </v-row>
     </v-container>
     </v-card>
@@ -119,10 +123,14 @@
 import axios from "axios"
 import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
+import EditarProfessorProfessor from "@/components/Professores/EditarProfessorProfessor.vue"
+import EditarProfessor from "@/components/Professores/EditarProfessor.vue"
+
 
   export default {
     components:{
-
+      EditarProfessorProfessor,
+      EditarProfessor
     },
     data(){
       return {
@@ -130,6 +138,7 @@ const h = require("@/config/hosts").hostAPI
         show: false,
         dialogTurmas: false,
         dialogPassword: false,
+        dialogEditar: false,
         password1: "",
         password2: "",
         header_turmas: [
@@ -162,11 +171,7 @@ const h = require("@/config/hosts").hostAPI
     created: async function(){
         this.token = localStorage.getItem("token")
         this.type = localStorage.getItem("type")
-        var professorAux = JSON.parse(localStorage.getItem("utilizador"))
-        var response = await axios.get(h + "professores/" + professorAux.id + "/?token=" + this.token)
-        this.professor = response.data
-        if(this.type == 50) this.professor.nomeType = "Administrador"
-        else this.professor.nomeType = "Professor"
+        this.refreshInfo()
     },
     computed: {
       xl() {
@@ -175,6 +180,14 @@ const h = require("@/config/hosts").hostAPI
       },
     },
     methods: {
+      refreshInfo: async function(){
+        var professorAux = JSON.parse(localStorage.getItem("utilizador"))
+        var response = await axios.get(h + "professores/" + professorAux.id + "/?token=" + this.token)
+        this.professor = response.data
+        if(this.type == 50) this.professor.nomeType = "Administrador"
+        else this.professor.nomeType = "Professor"
+        this.dialogEditar = false
+      },
       verTurmas : async function(id){
           var response = await axios.get(h + "professores/" + this.professor.codigo + "/turmas?token=" + this.token)
           this.turmas = response.data
@@ -186,7 +199,7 @@ const h = require("@/config/hosts").hostAPI
         else this.$router.push({name: "Editar Turma", params: { id : id, minhaTurma:true} })
       },
       editarProfessor : function(){
-          this.$router.push({name: "Editar Professor", params: {id : this.professor.id}})
+          this.dialogEditar = true
       },
       editarPassword : async function(){
           if(this.password1 != "" && this.password2 != ""){

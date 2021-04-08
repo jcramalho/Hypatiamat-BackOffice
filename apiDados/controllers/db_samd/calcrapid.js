@@ -271,7 +271,7 @@ calcRapid.alunoJogou = async function(user, dataInicio, dataFim){
 // última vez que o aluno jogou
 calcRapid.getAlunoLast = function(user){
     return new Promise(function(resolve, reject) {
-        sql.query(`select max(concat(data, ' ', horario)) as lastdate from ${bdSAMD}.calcRapidHypatia where idaluno=?;`, user, function(err, res){
+        sql.query(`select max(concat(data, ' ', horario)) as lastdate, sum(f) as frequencia from ${bdSAMD}.calcRapidHypatia where idaluno=?;`, user, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

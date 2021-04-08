@@ -51,7 +51,7 @@ module.exports.verifyAdmin_Professor_Aluno = function(){
         // professor
         else if(u.type == 20){
             var aluno = await Alunos.getAluno(id)
-            if(aluno && u.codigo == aluno.codprofessor) next()
+            if(aluno && u.codigo.toUpperCase() == aluno.codprofessor.toUpperCase()) next()
             else res.status(403).jsonp("Não tem permissão.")
         }
         else res.status(403).jsonp("Não tem permissão.")
@@ -69,7 +69,7 @@ module.exports.verifyAdmin_Professor_Aluno2 = function(){
         // professor
         else if(u.type == 20){
             var aluno = await Alunos.getAlunoByUser(user)
-            if(aluno && u.codigo == aluno.codprofessor) next()
+            if(aluno && u.codigo.toUpperCase() === aluno.codprofessor.toUpperCase()) next()
             else res.status(403).jsonp("Não tem permissão.")
         }
         else res.status(403).jsonp("Não tem permissão.")
@@ -81,7 +81,7 @@ module.exports.verifyAdmin_Professor = function(){
         var u = req.user.user
         var codprofessor = req.body.codprofessor;
 
-        if(u.type == 50 || (u.type == 20 && u.codigo == codprofessor)) next()
+        if(u.type == 50 || (u.type == 20 && u.codigo.toUpperCase() === codprofessor.toUpperCase())) next()
         else res.status(403).jsonp("Não tem permissão.")
     }
 }
@@ -91,7 +91,7 @@ module.exports.verifyAdmin_Professor2 = function(){
         var u = req.user.user
         var codprofessor = req.body.idprofessor;
 
-        if(u.type == 50 || (u.type == 20 && u.codigo == codprofessor)) next()
+        if(u.type == 50 || (u.type == 20 && u.codigo.toUpperCase() === codprofessor.toUpperCase())) next()
         else res.status(403).jsonp("Não tem permissão.")
     }
 }
@@ -111,7 +111,7 @@ module.exports.verifyUserProf2 = function(){
         var u = req.user.user
         var codigo = req.params.codigo
 
-        if( ((u.type == 50) || (u.codigo == codigo)) && u.type != 10  ) next()
+        if( ((u.type == 50) || (u.codigo.toUpperCase() === codigo.toUpperCase())) && u.type != 10  ) next()
         else res.status(403).jsonp("Não tem permissão.")
     }
 }

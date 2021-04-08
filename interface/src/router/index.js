@@ -889,6 +889,7 @@ const routes = [
       }
     }
   },
+  /*
   {
     path: '/minhasturmas',
     name: 'Minhas Turmas',
@@ -902,7 +903,7 @@ const routes = [
         next({name: "Meu Perfil"})
       }
     }
-  },
+  },*/
   {
     path: '/criarTurma',
     name: 'Criar Turma',

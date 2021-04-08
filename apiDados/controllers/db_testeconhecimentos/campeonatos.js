@@ -1,6 +1,7 @@
 const { bdTesteConhecimentos, bdAplicacoes } = require('../../models/conf');
 var sql = require('../../models/db_testeconhecimentos');
 const anoletivoAtual = require('../../config/confs').anoletivo
+const jogosCampeonatosDescricao = require('../../config/confs').jogosCampeonatosDescricao
 
 module.exports.getCampeonatos= function(){
     return new Promise(function(resolve, reject) {
@@ -305,22 +306,22 @@ module.exports.getCampeonatoTurma = function(campeonato, escola, turma, codprofe
                     RIGHT JOIN (select * from ${bdAplicacoes}.turmasold where codProfessor=? and turma=?) aold ON a.user = aold.codAluno)) a,
 			 (select ranking.*, @rownum := @rownum + 1 AS posicao 
 				from (select user, pontuacao, njogos
-						from ${bdTesteConhecimentos}.campeonatos
+						from ${bdTesteConhecimentos}.campeonatos, (SELECT @rownum := 0) AS r
 						where campeonatoID=? and jogo=? and codprofessor=? and turma=?
-                        order by pontuacao desc, njogos desc) ranking, (SELECT @rownum := 0) AS r) posicaoturma,
+                        order by pontuacao desc, njogos desc) ranking) posicaoturma,
 				(select @rownumesc := @rownumesc + 1 AS posicao, ranking.*  
 					from (select camp.user, camp.pontuacao, camp.njogos
 							from (select * from ${bdTesteConhecimentos}.campeonatos where campeonatoID = ? and jogo=?) camp, 
-                            (select * from ${bdAplicacoes}.professores where escola=?) profs
+                            (select * from ${bdAplicacoes}.professores where escola=?) profs, (SELECT @rownumesc := 0) AS r
 							where profs.codigo = camp.codprofessor
-							order by pontuacao desc, njogos desc) ranking, (SELECT @rownumesc := 0) AS r) posicaoescola,
+							order by pontuacao desc, njogos desc) ranking) posicaoescola,
 				(select @rownumhypatia := @rownumhypatia + 1 AS posicao, ranking.*  
 					from (select user, pontuacao, njogos
-							from ${bdTesteConhecimentos}.campeonatos
+							from ${bdTesteConhecimentos}.campeonatos, (SELECT @rownumhypatia := 0) AS r
 							where campeonatoID = ? and jogo=?
-							order by pontuacao desc, njogos desc) ranking, (SELECT @rownumhypatia := 0) AS r) posicaoHypatia
+							order by pontuacao desc, njogos desc) ranking) posicaoHypatia
 					where posicaoescola.user = a.user and posicaoturma.user = a.user and posicaoHypatia.user = a.user
-                    Order by a.numero`, args, function(err, res){
+                    order by a.numero;`, args, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -363,6 +364,23 @@ module.exports.getCampeonatoInfoTurma = function(turma, codprofessor){
     })
 }
 
+module.exports.getJogosFromCampeonato = function(campeonato){
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT distinct jogo FROM campeonatos where campeonatoID=? Order by jogo asc;`, campeonato, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                var resultado = []
+                for(var i = 0; i < res.length; i++)
+                    resultado.push(jogosCampeonatosDescricao.find(e => e.jogo == res[i].jogo))
+                resolve(resultado)
+            }
+        })
+    })
+}
+
 
 module.exports.getDesempenhoAlunoCampeonato = function(campeonato, jogo, escola, codprofessor, turma, user){
     return new Promise(function(resolve, reject) {
@@ -381,21 +399,22 @@ module.exports.getDesempenhoAlunoCampeonato = function(campeonato, jogo, escola,
                     RIGHT JOIN (select * from ${bdAplicacoes}.turmasold where codProfessor=? and turma=?) aold ON a.user = aold.codAluno)) a,
 			 (select ranking.*, @rownum := @rownum + 1 AS posicao 
 				from (select user, pontuacao, njogos
-						from ${bdTesteConhecimentos}.campeonatos
+						from ${bdTesteConhecimentos}.campeonatos, (SELECT @rownum := 0) AS r
 						where campeonatoID=? and jogo=? and codprofessor=? and turma=?
-                        order by pontuacao desc, njogos desc) ranking, (SELECT @rownum := 0) AS r) posicaoturma,
+                        order by pontuacao desc, njogos desc) ranking) posicaoturma,
 				(select @rownumesc := @rownumesc + 1 AS posicao, ranking.*  
 					from (select camp.user, camp.pontuacao, camp.njogos
 							from (select * from ${bdTesteConhecimentos}.campeonatos where campeonatoID = ? and jogo=?) camp, 
-                            (select * from ${bdAplicacoes}.professores where escola=?) profs
+                            (select * from ${bdAplicacoes}.professores where escola=?) profs, (SELECT @rownumesc := 0) AS r
 							where profs.codigo = camp.codprofessor
-							order by pontuacao desc, njogos desc) ranking, (SELECT @rownumesc := 0) AS r) posicaoescola,
+							order by pontuacao desc, njogos desc) ranking) posicaoescola,
 				(select @rownumhypatia := @rownumhypatia + 1 AS posicao, ranking.*  
 					from (select user, pontuacao, njogos
-							from ${bdTesteConhecimentos}.campeonatos
+							from ${bdTesteConhecimentos}.campeonatos, (SELECT @rownumhypatia := 0) AS r
 							where campeonatoID = ? and jogo=?
-							order by pontuacao desc, njogos desc) ranking, (SELECT @rownumhypatia := 0) AS r) posicaoHypatia
-					where posicaoescola.user = a.user and posicaoturma.user = a.user and posicaoHypatia.user = a.user`, args, function(err, res){
+							order by pontuacao desc, njogos desc) ranking) posicaoHypatia
+					where posicaoescola.user = a.user and posicaoturma.user = a.user and posicaoHypatia.user = a.user
+                    order by a.numero;`, args, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

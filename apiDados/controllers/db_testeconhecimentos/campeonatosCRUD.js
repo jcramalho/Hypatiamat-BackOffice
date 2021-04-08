@@ -38,7 +38,7 @@ Campeonatos.getCampeonato = function(cod){
 
 Campeonatos.getUltimoCampeonato = function(user){
     return new Promise(function(resolve, reject) {
-        sql.query(`SELECT distinct campeonatoID, jogo, (select anoletivo from campeonatosid where cod=campeonatoID) as di, turma, codprofessor
+        sql.query(`SELECT distinct campeonatoID, jogo, (select anoletivo from campeonatosID where cod=campeonatoID) as di, turma, codprofessor
              FROM campeonatos where user=? Order by campeonatoID desc limit 1;`, user, function(err, res){
             if(err){
                 console.log("erro: " + err)

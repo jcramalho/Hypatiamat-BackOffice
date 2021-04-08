@@ -130,9 +130,8 @@
                         @input="this.parseMessages"
                     ></v-pagination>
                 </v-list>
-                <v-dialog v-model="dialogVistos" width="50%">
+                <v-dialog v-model="dialogVistos" :width="small ? '80%' : '50%'">
                     <v-card class="pa-3">
-                        <center><span> Alunos que receberam a mensagem </span></center>
                         <center>
                         <v-list class="py-0" nav >
                             <v-list-item v-for="visto in vistos" :key="visto.user">
@@ -144,8 +143,8 @@
                                                 <v-icon color="#009263">mdi-account</v-icon>
                                             </v-list-item-avatar>
                                         </v-col>
-                                        <v-col cols="9">
-                                            <span> {{visto.user}} </span>
+                                        <v-col cols="10" sm="9">
+                                            <span> {{visto.nome}} </span>
                                         </v-col>
                                         <v-col cols="2">
                                             <v-icon v-if="visto.visto" color="#009263">mdi-eye-check</v-icon>
@@ -210,9 +209,13 @@ const anoletivo = require("@/config/confs").anoletivo
     },
     computed:{
         mobile() {
-        if (this.$vuetify.breakpoint.xs) return true
-        return false
+            if (this.$vuetify.breakpoint.xs) return true
+            return false
         },
+        small(){
+            if (this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm) return true
+            return false
+        }
     },
     created: async function(){
         this.token = localStorage.getItem("token")

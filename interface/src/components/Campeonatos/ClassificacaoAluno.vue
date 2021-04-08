@@ -43,7 +43,7 @@
                                 mdi-trophy
                             </v-icon>
                             
-                            <p> <span> <b>Escola</b> </span> </p>
+                            <p> <span> <b>Agr. Escolas</b> </span> </p>
                             <v-card class="elevation-5" outlined>
                                 <span class="green--text"> <b>{{posicoes.posEscola}}</b> </span>
                             </v-card>

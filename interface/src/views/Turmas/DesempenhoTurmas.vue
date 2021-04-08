@@ -34,7 +34,7 @@
                     @click:row="showDesempenho"
                 ></v-data-table>
                 <v-dialog v-model="dialogDesempenho" width="80%">
-                    <Aluno v-if="dialogDesempenho" :idAluno="idAluno"/>
+                    <DesempenhoAluno v-if="dialogDesempenho" :idAluno="idAluno"/>
                 </v-dialog>
             </v-container>
         </v-card>
@@ -48,11 +48,11 @@
 const h = require("@/config/hosts").hostAPI
 const anoletivo = require("@/config/confs").anoletivo
 import axios from "axios"
-import Aluno from '@/components/Perfis/Aluno.vue'
+import DesempenhoAluno from '@/components/Alunos/DesempenhoAluno.vue'
 
   export default {
     components:{
-        Aluno
+        DesempenhoAluno
     },
     data(){
       return {

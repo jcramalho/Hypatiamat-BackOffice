@@ -184,6 +184,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
           if(this.turmaSel && this.turmaSel != ''){
             var response = await axios.get(hostCampeonatos + "turmas/" + this.turmaSel + "/campeonatos/?codprofessor=" + this.codprofessor + "&token=" + this.token)
             this.campeonatos = response.data
+            console.log(this.campeonatos)
             this.onCampeonatoChange()
           }
       },

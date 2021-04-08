@@ -13,7 +13,7 @@ router.get('/', passport.authenticate('jwt', {session: false}), function(req, re
             .catch(erro => res.status(500).jsonp('Erro'))
 });
 
-router.get('/alunos/:user', passport.authenticate('jwt', {session: false}), verifyToken.verifyAluno() ,function(req, res, next) {
+router.get('/alunos/:user', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2() ,function(req, res, next) {
     CromosAlunos.getCromosFromUser(req.params.user)
             .then(dados => res.jsonp(dados))
             .catch(erro => res.status(500).jsonp('Erro'))

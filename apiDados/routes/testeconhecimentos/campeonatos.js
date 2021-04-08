@@ -29,6 +29,14 @@ router.get('/:cod', passport.authenticate('jwt', {session: false}), function(req
                    .catch(erro => res.status(500).jsonp('Error'))
 });
 
+
+router.get('/:cod/jogos', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    Campeonatos.getJogosFromCampeonato(req.params.cod)
+                   .then(dados => res.jsonp(dados))
+                   .catch(erro => res.status(500).jsonp('Error'))
+});
+
+
 router.get('/alunos/:user/ultimocampeonato', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     var user = req.params.user
     if(user){

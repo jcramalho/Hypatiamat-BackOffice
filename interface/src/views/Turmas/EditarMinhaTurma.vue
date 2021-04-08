@@ -182,7 +182,7 @@ const anoLetivoAtual = require("@/config/hosts").anoAtual
         var response = await axios.get(h + "turmas/" + this.id + "?token=" + this.token)
         this.turma = response.data
         this.anoLetivoTurma1 = parseInt(this.turma.turma.split("-")[1])
-        response = await axios.get(h + "turmas/" + this.turma.turma + "/alunos?codprofessor="+ this.turma.idprofessor + "&token=" + this.token)
+        response = await axios.get(h + "turmas/" + this.turma.turma + "/alunos?codprofessor="+ this.turma.idprofessor + "&alunosAtuais=true" + "&token=" + this.token)
         this.alunosTurmaAtual = response.data
         response = await axios.get(h + "professores/" + this.utilizador.codigo + "/turmas?token=" + this.token)
         var i = 0
@@ -195,7 +195,7 @@ const anoLetivoAtual = require("@/config/hosts").anoAtual
         if(item != null){
          this.turma2 = item
          this.anoLetivoTurma2 = parseInt(this.turma2.split("-")[1])
-         let response = await axios.get(h + "turmas/" + this.turma2 + "/alunos?codprofessor="+ this.utilizador.codigo + "&token=" + this.token)
+         let response = await axios.get(h + "turmas/" + this.turma2 + "/alunos?codprofessor="+ this.utilizador.codigo + "&alunosAtuais=true" + "&token=" + this.token)
          this.alunosOutraTurma = response.data
         }
       }, 
@@ -220,9 +220,9 @@ const anoLetivoAtual = require("@/config/hosts").anoAtual
         this.atualizaAlunos()
       },
       atualizaAlunos: async function(){
-        var response = await axios.get(h + "turmas/" + this.turma.turma + "/alunos?codprofessor="+ this.turma.idprofessor + "&token=" + this.token)
+        var response = await axios.get(h + "turmas/" + this.turma.turma + "/alunos?codprofessor="+ this.turma.idprofessor + "&alunosAtuais=true" + "&token=" + this.token)
         this.alunosTurmaAtual = response.data
-        response = await axios.get(h + "turmas/" + this.turma2 + "/alunos?codprofessor="+ this.utilizador.codigo + "&token=" + this.token)
+        response = await axios.get(h + "turmas/" + this.turma2 + "/alunos?codprofessor="+ this.utilizador.codigo + "&alunosAtuais=true" + "&token=" + this.token)
         this.alunosOutraTurma = response.data
       }
     }

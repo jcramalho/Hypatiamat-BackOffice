@@ -48,7 +48,6 @@ CREATE TABLE `hypati67_testeconhecimentos`.`cromos_alunos` (
   `oldfrequencia` INT NULL,
   `frequencia` INT NULL,
   `lastdate` DATE NOT NULL,
-  `lastcalculo` DATE NOT NULL,
   `virado` BOOLEAN NOT NULL,
   `anoletivo` VARCHAR(10) NOT NULL,
   PRIMARY KEY (`id`))

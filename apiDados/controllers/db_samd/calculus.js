@@ -488,7 +488,7 @@ Calculus.alunoJogouMinuteNew = async function(user, dataInicio, dataFim){
 // última vez que o aluno jogou
 Calculus.getAlunoLast = function(user){
     return new Promise(function(resolve, reject) {
-        sql.query(`select max(concat(data, ' ', horario)) as lastdate from ${bdSAMD}.minutenew where user=?;`, user, function(err, res){
+        sql.query(`select max(concat(data, ' ', horario)) as lastdate, count(pontos) as frequencia from ${bdSAMD}.minutenew where user=?;`, user, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

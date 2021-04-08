@@ -6,6 +6,12 @@
             <v-card-title primary-title class="justify-center green--text">
                 Ranking dos Alunos (Aplicações de Conteúdo)
             </v-card-title>
+            <br v-if="items.length > 0">
+            <center>
+                <v-btn v-if="items.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()">
+                <v-icon> mdi-pdf-box </v-icon> Exportar 
+                </v-btn>
+            </center>
             <center>
                 <v-container style="width:80%">
                 <v-card class="pa-5" >
@@ -43,6 +49,7 @@
                         @change="onTurmaChange"
                     ></v-combobox>
                     <v-combobox
+                        v-if="apps"
                         id="apps"
                         v-model="app"
                         label="App"
@@ -94,6 +101,9 @@
 <script>
 import axios from "axios"
 import Swal from 'sweetalert2'
+import jsPDF from 'jspdf' 
+import 'jspdf-autotable'
+const hypatiaImg = require("@/assets/hypatiamat.png")
 const h = require("@/config/hosts").hostAPI
 const hostApps = require("@/config/hosts").hostApps
 const anosletivos2 = require("@/config/confs").anosletivos2
@@ -155,6 +165,8 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         escola: "",
         escolaId: "",
         escolaIdOriginal:"",
+        dataInicio:"",
+        dataFim:""
       }
     },
     created: async function(){
@@ -164,9 +176,19 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         var response = await axios.get(hostApps + "temas/?token=" + this.token)
         this.appsInfo = response.data
         await this.parseApps()
+        this.onAnoChange()
 
     },
     methods: {
+      atualizaApps: async function(){
+          if(this.turmaSel && this.turmaSel != ""){
+            this.apps = undefined
+            var response = await axios.get(hostApps + "turmas/" + this.turmaSel + "/jogou?codprofessor=" + this.idprofessor
+                                                + "&dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim + "&token=" + this.token)
+            this.appsInfo = response.data
+            this.parseApps()
+          }
+      },
       getAgrupamentos: async function(item){
         var response = await axios.get(h + "escolas/?token=" + this.token)
         this.agrupamentosIds = response.data
@@ -226,6 +248,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
                                                       + "&token=" + this.token)
 
               var escolas = []
+              this.atualizaApps()
               for(var i = 0; i < responseAlunos.data.length; i++){
                   if(responseAlunos.data[i].escola != this.escolaId){
                       var auxEscola = escolas.find(a => a.escola == responseAlunos.data[i].escola)
@@ -243,7 +266,10 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       },
       onAnoChange: async function(item){
           if(this.anoLetivo != "" && this.anoLetivo){
-             this.atualizaConteudo()
+            var aux = this.anoLetivo.split("/")
+             this.dataInicio = aux[0] + "-09-01"
+             this.dataFim = aux[1] + "-09-01"
+             this.atualizaApps()
           }
       },
       onAppChange: async function(item){
@@ -315,7 +341,63 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
                     }
                 }
           } 
-      }
+      },
+      exportPDF: async function(){
+        var doc = new jsPDF({
+        })
+        var xImage = doc.internal.pageSize.getWidth() / 4
+        var ytotal = 0
+        var pdfName = this.app + "-Ranking-" + this.turmaSel + ".pdf"
+        doc.addImage(hypatiaImg, 'PNG', xImage, 4);
+        //doc.text("Jogo:")
+        //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
+        doc.setFontSize(11)
+        doc.text("Professor: " + this.codProf, 15, 50)
+        doc.text("Critério: " + this.tipoRankSel, 15, 60)
+        doc.text("App: " + this.app, 130, 60)
+        doc.text("Turma: " + this.turmaSel, 130, 50)
+        var listaRes = []
+        var headers = []
+        if(this.tipoRankSel == "Acerto - Percentagem de acerto") headers = [['N.º', 'Nome', 'Posição (Turma)', "Posição (Agr. Escolas)", "Posição (Hypatia)", "Acerto (%)", "NTRC"]]
+        else headers = [['N.º', 'Nome', 'Posição (Turma)', "Posição (Agr. Escolas)", "Posição (Hypatia)", "NTRC", "Acerto (%)"]]
+        ytotal += 70
+
+        for(var i = 0; i<this.items.length; i++){
+            var aux = [];
+            aux.push(this.items[i].numero)
+            aux.push(this.items[i].nome)
+            aux.push(this.items[i].posTurma)
+            aux.push(this.items[i].posEscola)
+            aux.push(this.items[i].posHypatia)
+            aux.push(this.items[i].total)
+            aux.push(this.items[i].params)
+            listaRes.push(aux)
+        }
+
+        doc.autoTable({
+            head: headers,
+            body: listaRes,
+            headStyles: { fillColor: [0, 146, 99] },
+            margin:{top: ytotal, bottom: 34},
+            didDrawPage: function (data) {
+                    data.settings.margin.top = 10;
+                    ytotal = doc.internal.pageSize.getHeight()
+                    doc.setFontSize(8)
+                    //doc.setFontType('bold'
+
+                    doc.text("Legenda:" , 10, ytotal -30)
+                    doc.text("N.º - Número do Aluno", 10, ytotal-26)
+                    doc.text("Posição (Turma) - Posição do aluno na Turma", 10, ytotal-22)
+                    doc.text("Posição (Agr. Escolas) - Posição do aluno no Agrupamento de Escolas", 10, ytotal-18)
+                    doc.text("Posição (Hypatia) - Posição do aluno em todo o Hypatiamat", 10, ytotal-14)
+                    doc.text("NTRC - Nº de tarefas resolvidas corretamente", 10, ytotal-10)
+                    doc.text("Acerto (%) - Perecentagem de acerto do aluno", 10, ytotal-6)
+                },
+        })
+
+        doc.save(pdfName)
+       
+      },
     }
   }
 </script>

@@ -26,7 +26,7 @@ TurmaOld.insertTurmaOld = function (turma) {
 TurmaOld.getAlunosFromTurma = function(turma, codProfessor){
     return new Promise(function(resolve, reject) {
         var args = [turma, codProfessor]
-        sql.query(`Select a.id, a.user, a.numero, a.nome, a.datanascimento, a.escola, (select nome from Escolas e where e.cod=a.escola) as agrupamento, 
+        sql.query(`Select distinct a.id, a.user, a.numero, a.nome, a.datanascimento, a.escola, (select nome from Escolas e where e.cod=a.escola) as agrupamento, 
                     a.turma, a.email, a.confirmacao
                     from (Select codAluno from turmasold where turma = ? and codProfessor = ?) t, alunos a 
                     Where a.user = t.codAluno;`, args, function (err, res) {

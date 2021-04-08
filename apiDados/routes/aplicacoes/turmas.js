@@ -43,6 +43,7 @@ router.get('/:id', passport.authenticate('jwt', {session: false}), verifyToken.v
 router.get('/:turma/alunos', passport.authenticate('jwt', {session: false}), verifyToken.verifyTurma2(), async function(req, res){
     var turma = req.params.turma
     var codprofessor = req.query.codprofessor
+    var alunosAtuaisQuery = req.query.alunosAtuais
     var aux
     if(( aux = turma.split("-") )){
       if(req.query.codprofessor){
@@ -55,10 +56,14 @@ router.get('/:turma/alunos', passport.authenticate('jwt', {session: false}), ver
         }
         else{
           var alunosAtuais = await Alunos.getAlunosFromTurma(turma, codprofessor);
-          var alunosOld = await TurmasOld.getAlunosFromTurma(turma, codprofessor);
-          for(var i = 0; i < alunosOld.length; i++){
-            alunosOld[i].alunoOld = true
-            alunosAtuais.push(alunosOld[i])
+          if(!alunosAtuaisQuery){
+            var alunosOld = await TurmasOld.getAlunosFromTurma(turma, codprofessor);
+            for(var i = 0; i < alunosOld.length; i++){
+              if(!alunosAtuais.find(e => alunosOld[i].user == e.user)){
+                alunosOld[i].alunoOld = true
+                alunosAtuais.push(alunosOld[i])
+              }
+            }
           }
           res.jsonp(alunosAtuais)
         }

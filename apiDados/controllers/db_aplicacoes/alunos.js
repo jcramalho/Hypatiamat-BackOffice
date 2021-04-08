@@ -89,7 +89,10 @@ Aluno.getAlunosCodigo = function(){
 
 Aluno.getAluno = function(id){
     return new Promise(function(resolve, reject) {
-        sql.query("Select id, user, numero, nome, datanascimento, escola, (select nome from Escolas where cod=escola) as agrupamento, turma, email, codprofessor, pais, confirmacao from alunos where id=?", id, function(err, res){
+        sql.query(`Select id, user, numero, nome, datanascimento, escola, 
+                (select nome from Escolas where cod=escola) as agrupamento, turma, email, codprofessor, 
+                (select nome from professores where codigo=codprofessor) as professor, pais, confirmacao 
+                    from alunos where id=?`, id, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -228,7 +231,7 @@ Aluno.updateTurma = function(codAluno, turma, codprof){
     })
 }
 
-Aluno.updateTurma = function(id, escola){
+Aluno.updateEscola = function(id, escola){
     return new Promise(function(resolve, reject) {
         var args = [id, escola]
         sql.query("UPDATE alunos SET escola=? Where id = ?", args, function (err, res) {

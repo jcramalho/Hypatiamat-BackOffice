@@ -4,51 +4,6 @@
             <!-- Aluno !-->
             
           <v-row class="align-center justify-center" >
-            <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12" v-if="!this.idAluno">
-              <v-card-title primary-title class="justify-center green--text">
-                  Dados da minha conta ({{aluno.user}})
-              </v-card-title>
-            </v-col>
-            <v-col v-if="!small && !this.idAluno" cols="12" xs="12" sm="3" md="3" lg="3" xl="3" >
-              <center><v-btn class="white--text" style="background-color: #009263;" @click="editarAluno=true" rounded> Editar dados pessoais </v-btn></center>
-            </v-col>
-            <v-col v-if="!this.idAluno" cols="12" xs="12" sm="12" md="6" lg="6" xl="6">
-              <center>
-                <v-list-item-avatar class="elevation-6" color="#009263" size="120">
-                      <v-icon size="80" color="white">mdi-school</v-icon>             
-                </v-list-item-avatar>
-              </center>
-            </v-col>
-            <v-col v-if="small && !this.idAluno" cols="12" xs="12" sm="12" md="3" lg="3" xl="3">
-              <center><v-btn class="white--text" style="background-color: #009263;" @click="editarAluno = true" rounded> Editar dados pessoais </v-btn></center>
-            </v-col>
-            <v-col v-if="!this.idAluno" cols="12" xs="12" sm="12" md="3" lg="3" xl="3">
-              <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true" rounded> Alterar password </v-btn></center>
-            </v-col>
-          <v-row class="mx-auto" v-if="!this.idAluno">
-            <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="4">
-              <v-text-field label="Nome" v-model="aluno.nome" color="#009263" dense rounded outlined readonly/>
-            </v-col>
-
-            <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="4">
-              <v-text-field label="Agrupamento" v-model="aluno.agrupamento" color="#009263" dense rounded outlined readonly/>
-            </v-col>
-
-            <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="4">
-              <v-text-field label="Email"  v-model="aluno.email" color="#009263" dense rounded outlined readonly/>
-            </v-col>
-            <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="4">
-              <v-text-field label="Data de Nascimento" v-model="aluno.datanascimento" color="#009263" dense rounded outlined readonly/>
-            </v-col>
-
-            <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="4">
-              <v-text-field label="Turma"  v-model="aluno.turma" color="#009263" dense rounded outlined readonly/>
-            </v-col>
-            <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="4">
-              <v-text-field label="Professor do Aluno" v-model="aluno.professor" color="#009263" dense rounded outlined readonly/>
-            </v-col>
-            
-          </v-row>
             <v-card style="border: 2px solid green !important;">
             <v-row class="align-center justify-center" no-gutters>
               <v-col cols="12">
@@ -186,15 +141,16 @@
                 </v-card>
             </v-slide-y-transition>
             </v-col>
-            <v-col cols="12" v-if="!this.idAluno">
+            <v-col cols="12">
               <center>
-              <v-btn class="white--text" style="background-color: #009263;" @click="verJogos()">Ver Jogos</v-btn>
-              </center>
+                <v-btn v-if="!showCromos" text @click="showCromos=!showCromos"><v-icon color="#009263">mdi-book-open-page-variant-outline</v-icon><span>Caderneta de Cromos</span><v-icon color="#009263"> mdi-arrow-down </v-icon> </v-btn>
+                <v-btn v-else text @click="showCromos=!showCromos"><v-icon color="#009263">mdi-book-open-page-variant-outline</v-icon><span>Caderneta de Cromos</span><v-icon color="#009263"> mdi-arrow-up </v-icon></v-btn>
+              </center> 
             </v-col>
-            <v-col cols="12" v-if="!this.idAluno">
-              <center>
-              <v-btn class="white--text" style="background-color: #009263;" @click="verApps()">Ver Apps</v-btn>
-              </center>
+            <v-col cols="12" xs="12" sm="12" md="10" lg="10" xl="10">
+            <v-slide-y-transition>
+                <Cromos v-show="showCromos" v-if="aluno.user" :userAluno="aluno.user"/>
+            </v-slide-y-transition>
             </v-col>
         </v-row>
       </v-container>
@@ -237,7 +193,7 @@ import JogoDiaAluno from "@/components/Jogos/JogoDiaAluno.vue"
 import CalculusDiaAluno from "@/components/Jogos/CalculusDiaAluno.vue"
 import EditarAlunoAluno from "@/components/Alunos/EditarAluno.vue"
 import ClassificacaoAluno from '@/components/Campeonatos/ClassificacaoAluno.vue'
-
+import Cromos from '@/components/Alunos/CromosVisualizacao.vue'
 
   export default {
     components:{
@@ -245,13 +201,12 @@ import ClassificacaoAluno from '@/components/Campeonatos/ClassificacaoAluno.vue'
       JogoDiaAluno,
       CalculusDiaAluno,
       EditarAlunoAluno,
-      ClassificacaoAluno
+      ClassificacaoAluno,
+      Cromos
     },
     props:["idAluno"],
     data(){
       return {
-        turmas: [],
-        dialogTurmas: false,
         dialogPassword: false,
         dialogDia: false,
         dialogJogoDia: false,
@@ -260,6 +215,7 @@ import ClassificacaoAluno from '@/components/Campeonatos/ClassificacaoAluno.vue'
         password2: "",
         showApps: false,
         showJogos: false,
+        showCromos:false,
         lastApps:[],
         lastJogos:[],
         trofeus:{trophy3:0, trophy5:0, trophy10:0},
@@ -335,7 +291,6 @@ import ClassificacaoAluno from '@/components/Campeonatos/ClassificacaoAluno.vue'
         this.getAcertoApps()
         this.getFrequenciaJogos()
         this.calculaUltimoCampeonato()
-        
     },
     computed: {
       xl() {
