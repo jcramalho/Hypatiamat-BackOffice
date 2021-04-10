@@ -7,6 +7,8 @@
                     <v-card-title primary-title class="justify-center green--text">
                         Monitorização de Campeonatos por Municípios
                     </v-card-title>
+                        <center><v-btn class="white--text" style="background-color: #009263;" @click="goToRankingGeral()"> Ranking Geral </v-btn></center>
+                        <br>
                         <center><v-btn v-if="items.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn></center>
                         <br v-if="items.length>0">
                         <center>
@@ -328,6 +330,9 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       goToAgrupamentos: function(item){
           var params = {municipio: item.localidade, campeonato: this.campeonato}
           this.$router.push({name: 'Campeonatos Agrupamentos', params:params})
+      },
+      goToRankingGeral: function(){
+          this.$router.push({name: 'Ranking Geral Campeonatos'})
       },
       exportPDF: async function(){
         var doc = new jsPDF({

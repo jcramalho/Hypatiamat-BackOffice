@@ -233,6 +233,7 @@
                     text: 'O seu pedido de inscrição está realizado! \n Aguarde agora pela autorização necessária.',
                     confirmButtonColor: '#009263'
                   })
+                   axios.post(h + "emails/registo", {user:{nome:this.nome, email: this.email, codigo: this.codigo, escola: this.escola}})
                    this.$emit("login")
                  })
                 .catch(erro=> console.log(erro))
@@ -271,12 +272,16 @@
               
             }
             else{
+              var aux = this.escola.split(" - ")
+              var escolaEscolhida = this.escolasIds.find(element => element.nome == aux[1]).cod
+              var date = this.datanascimento.split("-")
+              var dataNascimento = date[2] + "/" + date[1] + "/" + date[0]
               let aluno = {
                 user: this.user,
                 numero: this.numero,
                 nome: this.nome,
-                datanascimento: this.datanascimento,
-                escola: this.escola,
+                datanascimento: dataNascimento,
+                escola: escolaEscolhida,
                 turma: this.turma,
                 email: this.email,
                 password: this.password,

@@ -9,6 +9,76 @@
                   Dados da minha conta ({{aluno.user}})
               </v-card-title>
             </v-col>
+            <v-col cols="12">
+              <center>
+                <v-btn v-if="!showAjuda" text @click="showAjuda=!showAjuda"><span>Mostrar Ajuda</span><v-icon color="#009263"> mdi-help-circle </v-icon> </v-btn>
+                <v-btn v-else text @click="showAjuda=!showAjuda">Esconder Ajuda</v-btn> 
+              </center>
+              <v-slide-y-transition>
+                  <v-card v-show="showAjuda" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
+                    <v-row class="justify-center">
+                      <v-col cols="12">
+                        <span> 1. Pode visualizar os seus dados pessoais, como o seu <b>Nome</b>, o seu <b>Agrupamento de Escolas</b>, o seu <b>email</b>,
+                        a sua <b>data de nascimento</b>, a sua <b>turma atual</b> e também o seu <b>professor</b>. </span>
+                      </v-col>
+                      <v-col cols="12">
+                        <span> 2. Caso deseje alterar alguns dos seus dados pessoais, pode fazê-lo através do clique no botão 
+                        <v-btn small text class="white--text" style="background-color: #009263;" rounded> <span>Editar dados pessoais</span> </v-btn>. </span>
+                      </v-col>
+                      <v-col cols="12">
+                        <span> 3. Caso deseje alterar a sua password, clique em 
+                        <v-btn small class="white--text" style="background-color: #009263;" rounded> Alterar password </v-btn>.
+                        </span>
+                      </v-col>
+                      <v-col cols="12">
+                        <span> 4. De seguida, encontram-se disponíveis a quantidade de troféus que já conquistou. Além disso, pode visualizar 
+                          a sua percentagem de acerto nas aplicações de conteúdo e quantas vezes já realizou jogos do Hypatiamat no ano letivo atual.
+                        </span>
+                      </v-col>
+                      <v-col cols="12">
+                        <span> 5. Também é possível visualizar a sua prestação no <b>último</b> campeonato em que participou.
+                        </span>
+                      </v-col>
+                      <v-col cols="12">
+                        <span> 6. As últimas 10 aplicações de conteúdo que realizou encontram-se também disponíveis, assim como as estatísticas 
+                          gerais de cada aplicação. Além disso, pode clicar numa das aplicações (respetiva linha) e visualizar o seu desempenho
+                          por dia.
+                        </span>
+                      </v-col>
+                      <v-col cols="9">
+                        <v-card class="mx-auto" color="grey lighten-4">
+                            <center> <h3 class="green--text"> Legenda da Tabela Útilmas 10 Apps: </h3> </center>
+                            <ul> 
+                                <li> <span> <b>NTRC</b> - Número de tarefas resolvidas corretamente; </span> </li>
+                                <li> <span> <b>NTR</b> - Número de tarefas resolvidas; </span> </li>
+                                <li> <span> <b>Acerto (%)</b> - Percentagem de acerto (NTRC/NTR); </span> </li>
+                                <li> <span> <b>#</b> - Frequência. </span> </li>
+                                <li> <div class="d-flex align-center"><hr color="#f26755" width="20px" heigth="15px" > <span> Acerto menor que 50%; </span> </div></li>
+                                <li> <div class="d-flex align-center"><hr color="#10de16" width="20px" heigth="15px" > <span> Acerto maior ou igual a 50%; </span> </div></li>
+                            </ul>
+                        </v-card>
+                      </v-col>
+                      <v-col cols="12">
+                        <span> 7. Também pode visualizar os últimos 10 jogos que jogou, assim como as estatísticas 
+                          gerais de cada jogo. Além disso, pode clicar num dos jogos (respetiva linha) e visualizar o seu desempenho no jogo
+                          por dia. Apenas para o jogo CalcRapid não é possível.
+                        </span>
+                      </v-col>
+                      <v-col cols="9">
+                        <v-card class="mx-auto" color="grey lighten-4">
+                            <center> <h3 class="green--text"> Legenda da Tabela Útilmos 10 Jogos: </h3> </center>
+                            <ul> 
+                                <li> <span> <b>Min</b> - Mínimo de pontuação obtida no jogo; </span> </li>
+                                <li> <span> <b>Max</b> - Máximo de pontuação obtida no jogo; </span> </li>
+                                <li> <span> <b>Média</b> - Pontuação média obtida no jogo; </span> </li>
+                                <li> <span> <b>#</b> - Frequência. </span> </li>
+                            </ul>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                  </v-card>
+              </v-slide-y-transition>
+            </v-col>
             <v-col v-if="!small && !this.idAluno" cols="12" xs="12" sm="3" md="3" lg="3" xl="3" >
               <center><v-btn class="white--text" style="background-color: #009263;" @click="editarAluno=true" rounded> Editar dados pessoais </v-btn></center>
             </v-col>
@@ -260,6 +330,7 @@ import ClassificacaoAluno from '@/components/Campeonatos/ClassificacaoAluno.vue'
         password2: "",
         showApps: false,
         showJogos: false,
+        showAjuda: false,
         lastApps:[],
         lastJogos:[],
         trofeus:{trophy3:0, trophy5:0, trophy10:0},

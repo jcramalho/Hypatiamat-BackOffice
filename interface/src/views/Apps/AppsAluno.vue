@@ -8,6 +8,40 @@
                     <v-card-title primary-title class="justify-center green--text">
                         Desempenho nas Aplicações de Conteúdo
                     </v-card-title>
+                    <center>
+                        <v-btn v-if="!showAjuda" text @click="showAjuda=!showAjuda"><span>Mostrar Ajuda</span><v-icon color="#009263"> mdi-help-circle </v-icon> </v-btn>
+                        <v-btn v-else text @click="showAjuda=!showAjuda">Esconder Ajuda</v-btn> 
+                    </center>
+                    <v-slide-y-transition>
+                        <v-card v-show="showAjuda" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
+                            <v-row class="justify-center">
+                                <v-col cols="12">
+                                    <span> 1. Pode escolher o ano letivo e/ou o intervalo de tempo que pretende visualizar os seus resultados. </span>
+                                </v-col>
+                                <v-col cols="12">
+                                    <span> 2. Pode escolher qual o a aplicação de conteúdo que pretende visualizar estatísticas. 
+                                        Apenas estarão disponíveis as aplicações que fez no intervalo de tempo definido.
+                                    </span>
+                                </v-col>
+                                <v-col cols="12">
+                                    <span> 3. À exceção da seleção de todas as aplicações, pode visualizar os resultados por dia daquele intervalo de tempo ao clicar em  
+                                        <v-btn v-if="!xs" small class="white--text" color="#009263">Ver todos estes resultados</v-btn>
+                                        <v-btn v-else x-small class="white--text" color="#009263" >Ver todos</v-btn>
+                                    </span>
+                                </v-col>
+                                <v-col cols="9">
+                                    <v-card class="mx-auto" color="grey lighten-4">
+                                        <center> <h3 class="green--text"> Legendas: </h3> </center>
+                                        <ul> 
+                                            <li> <span> <b>NTRC</b> - Número de tarefas resolvidas corretamente; </span> </li>
+                                            <li> <span> <b>NTR</b> - Número de tarefas resolvidas; </span> </li>
+                                            <li> <span> <b>Acerto (%)</b> - Percentagem de acerto (NTRC/NTR); </span> </li>
+                                        </ul>
+                                    </v-card>
+                                </v-col>
+                            </v-row>
+                        </v-card>
+                    </v-slide-y-transition>
                         <v-container :style="widthParams">
                             <v-combobox
                                 id="apps"
@@ -49,11 +83,11 @@
                                     <v-row>
                                         <v-col cols="12" xs="12" sm="6" md="4" lg="3" xl="3">
                                             <v-card  style="background-color:#009263">
-                                                <v-card-title class="justify-center">
+                                                <v-card-title class="white--text justify-center">
                                                     <span :style="styleP"> NTRC </span>
                                                 </v-card-title>
                                                 <center>
-                                                <v-card-text class="justify-center">
+                                                <v-card-text class="white--text justify-center">
                                                     {{resultadosGlobais.ncertas}}
                                                 </v-card-text>
                                                 </center>
@@ -61,11 +95,11 @@
                                         </v-col>
                                         <v-col cols="12" xs="12" sm="6" md="4" lg="3" xl="3">
                                             <v-card  style="background-color:#3ab040">
-                                                <v-card-title  primary-title class="justify-center">
+                                                <v-card-title  primary-title class="white--text justify-center">
                                                     <span :style="styleP"> NTR </span>
                                                 </v-card-title>
                                                 <center>
-                                                <v-card-text class="justify-center">
+                                                <v-card-text class="white--text justify-center">
                                                     {{resultadosGlobais.ntotal}}
                                                 </v-card-text>
                                                 </center>
@@ -73,11 +107,11 @@
                                         </v-col>
                                         <v-col cols="12" xs="12" sm="6" md="4" lg="3" xl="3">
                                             <v-card  style="background-color:#009263">
-                                                <v-card-title  primary-title class="justify-center">
+                                                <v-card-title  primary-title class="white--text justify-center">
                                                    <span :style="styleP"> Acerto </span>
                                                 </v-card-title>
                                                 <center>
-                                                <v-card-text class="justify-center">
+                                                <v-card-text class="white--text justify-center">
                                                     {{resultadosGlobais.acerto}}%
                                                 </v-card-text>
                                                 </center>
@@ -85,17 +119,17 @@
                                         </v-col>
                                         <v-col cols="12" xs="12" sm="6" md="12" lg="3" xl="3">
                                             <v-card  style="background-color:#3ab040">
-                                                <v-card-title  primary-title class="justify-center">
+                                                <v-card-title  primary-title class="white--text justify-center">
                                                     <span :style="styleP">Frequência</span>
                                                 </v-card-title>
                                                 <center>
-                                                <v-card-text class="justify-center">
+                                                <v-card-text class="white--text justify-center">
                                                     {{resultadosGlobais.frequencia}}
                                                 </v-card-text>
                                                 </center>
                                             </v-card>
                                         </v-col>
-                                        <v-col cols="12"  xs="12" sm="12" md="12" lg="12" xl="12">
+                                        <v-col v-if="app!='Todas'" cols="12"  xs="12" sm="12" md="12" lg="12" xl="12">
                                             <center>
                                                 <v-btn v-if="!xs" class="white--text" color="#009263" @click="verTodos()">Ver todos estes resultados</v-btn>
                                                 <v-btn v-else class="white--text" color="#009263" @click="verTodos()">Ver todos</v-btn>
@@ -104,16 +138,8 @@
                                     </v-row>                                    
                                 </v-container>
                             </v-card>
-                            <v-dialog v-model="verTotal" width="60%">
-                                <v-card class="pa-5" >
-                                <v-data-table
-                                class="elevation-4"
-                                :headers="header_resultados"
-                                :items="resultadosTotal"
-                                :footer-props="footer_props"
-                                >
-                                </v-data-table>
-                                </v-card>
+                            <v-dialog v-model="dialogDia">
+                                <AppDiaAluno v-if="dialogDia" :resultados="appPorDia" :app="app" />
                             </v-dialog>
                 </v-container>
             </v-card>
@@ -130,11 +156,14 @@ const h = require("@/config/hosts").hostAPI
 const hostApps = require("@/config/hosts").hostApps
 const anosletivos2 = require("@/config/confs").anosletivos2
 const anoletivoAtual = require("@/config/confs").anoletivo2
+import AppDiaAluno from "@/components/Apps/AppDiaAluno.vue"
 
   export default {
     data(){
       return {
-        verTotal: false,
+        showAjuda: false,
+        dialogDia: false,
+        appPorDia: [],
         token: "",
         app:"",
         dataInicio: "2019-09-01",
@@ -156,11 +185,13 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         apps:[],
         appsInfo:[], 
         resultadosGlobais:undefined,
-        resultadosTotal:[],
         styleP: 'font-size:20px',
         styleF: 'font-size:15px',
         widthParams: 'width:70%'
       }
+    },
+    components:{
+        AppDiaAluno
     },
     created: async function(){
         this.token = localStorage.getItem("token")
@@ -253,7 +284,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         this.resultadosGlobais = response.data
       },
       atualizaConteudo: async function(){
-          if(this.jogo != "" && this.dataFim != "" && this.dataInicio != "" ){
+          if(this.app != "" && this.dataFim != "" && this.dataInicio != "" ){
             if(this.app == "Todas"){
                     this.resultadosGlobais = undefined
                     var response = await axios.get(hostApps + "alunos/" + this.utilizador.user
@@ -275,17 +306,21 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           } 
       },
       verTodos: async function(){
-          if(this.jogo != "" && this.dataFim != "" && this.dataInicio != "" ){
-              var aux = this.jogosInfo.find(element => element.jogo == this.jogo)
-              var jogoTipo = aux.tipo
-              var jogoTable = aux.jogotable
-
-                var response = await axios.get(h + "alunos/" + this.utilizador.user + "/jogos/" + jogoTable 
-                                                + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                + "&jogoTipo=" + jogoTipo
-                                                + "&token=" + this.token)
-              this.resultadosTotal = response.data
-              this.verTotal = true
+          if(this.app != "" && this.dataFim != "" && this.dataInicio != "" ){
+              var appInfo = this.appsInfo.find(element => element.tema == this.app)
+              
+              if(appInfo) {
+                  var response = await axios.get(hostApps + "alunos/" + this.utilizador.user + "/dias?codtema=" + appInfo.codtema
+                                                    + "&token=" + this.token)
+              }
+              else{
+                  appInfo = this.appsInfo.find(element => element.subtema == this.app)
+                  var response = await axios.get(hostApps + "alunos/" + this.utilizador.user + "/dias?codtema=" + appInfo.codtema
+                                        + "&codsubtema=" + appInfo.codsubtema + "&token=" + this.token)
+              }
+                
+              this.appPorDia = response.data
+              this.dialogDia = true
           } 
 
       }

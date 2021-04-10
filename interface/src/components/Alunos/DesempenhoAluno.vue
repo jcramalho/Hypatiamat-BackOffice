@@ -4,8 +4,71 @@
             <!-- Aluno !-->
             
           <v-row class="align-center justify-center" >
+            <v-col cols="12">
+              <center>
+                <v-btn v-if="!showAjuda" text @click="showAjuda=!showAjuda"><span>Mostrar Ajuda</span><v-icon color="#009263"> mdi-help-circle </v-icon> </v-btn>
+                <v-btn v-else text @click="showAjuda=!showAjuda">Esconder Ajuda</v-btn> 
+              </center>
+              <v-slide-y-transition>
+                  <v-card v-show="showAjuda" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
+                    <v-row class="justify-center">
+                      <v-col cols="12">
+                        <span> 1. Encontram-se disponíveis a quantidade de troféus que o aluno já conquistou. Além disso, pode visualizar 
+                          a sua percentagem de acerto nas aplicações de conteúdo e quantas vezes já realizou jogos do Hypatiamat no ano letivo atual.
+                        </span>
+                      </v-col>
+                      <v-col cols="12">
+                        <span> 2. Também é possível visualizar a sua prestação no <b>último</b> campeonato em que participou.
+                        </span>
+                      </v-col>
+                      <v-col cols="12">
+                        <span> 3. As últimas 10 aplicações de conteúdo que realizou encontram-se também disponíveis, assim como as estatísticas 
+                          gerais de cada aplicação. Além disso, pode clicar numa das aplicações (respetiva linha) e visualizar o desempenho
+                          por dia.
+                        </span>
+                      </v-col>
+                      <v-col cols="9">
+                        <v-card class="mx-auto" color="grey lighten-4">
+                            <center> <h3 class="green--text"> Legenda da Tabela Útilmas 10 Apps: </h3> </center>
+                            <ul> 
+                                <li> <span> <b>NTRC</b> - Número de tarefas resolvidas corretamente; </span> </li>
+                                <li> <span> <b>NTR</b> - Número de tarefas resolvidas; </span> </li>
+                                <li> <span> <b>Acerto (%)</b> - Percentagem de acerto (NTRC/NTR); </span> </li>
+                                <li> <span> <b>#</b> - Frequência. </span> </li>
+                                <li> <div class="d-flex align-center"><hr color="#f26755" width="20px" heigth="15px" > <span> Acerto menor que 50%; </span> </div></li>
+                                <li> <div class="d-flex align-center"><hr color="#10de16" width="20px" heigth="15px" > <span> Acerto maior ou igual a 50%; </span> </div></li>
+                            </ul>
+                        </v-card>
+                      </v-col>
+                      <v-col cols="12">
+                        <span> 4. Também pode visualizar os últimos 10 jogos que o aluno jogou, assim como as estatísticas 
+                          gerais de cada jogo. Além disso, pode clicar num dos jogos (respetiva linha) e visualizar o seu desempenho no jogo
+                          por dia. Apenas para o jogo CalcRapid não é possível.
+                        </span>
+                      </v-col>
+                      <v-col cols="9">
+                        <v-card class="mx-auto" color="grey lighten-4">
+                            <center> <h3 class="green--text"> Legenda da Tabela Útilmos 10 Jogos: </h3> </center>
+                            <ul> 
+                                <li> <span> <b>Min</b> - Mínimo de pontuação obtida no jogo; </span> </li>
+                                <li> <span> <b>Max</b> - Máximo de pontuação obtida no jogo; </span> </li>
+                                <li> <span> <b>Média</b> - Pontuação média obtida no jogo; </span> </li>
+                                <li> <span> <b>#</b> - Frequência. </span> </li>
+                            </ul>
+                        </v-card>
+                      </v-col>
+                      <v-col cols="12">
+                        <span>
+                          5. Por último, pode visualizar a caderneta de cromos do aluno e quais os cromos que já conquistou e abriu.
+                        </span>
+                      </v-col>
+                    </v-row>
+                  </v-card>
+              </v-slide-y-transition>
+              </v-col>
             <v-card style="border: 2px solid green !important;">
             <v-row class="align-center justify-center" no-gutters>
+              
               <v-col cols="12">
               <v-card-title class="justify-center green--text"> Troféus: </v-card-title>
               </v-col>
@@ -252,7 +315,7 @@ import Cromos from '@/components/Alunos/CromosVisualizacao.vue'
         appAtual:"",
         jogoPorDia:[],
         jogoAtual:"",
-        editarAluno:false,
+        showAjuda:false,
         frequenciaJogos:0,
         ultimoCampeonato:{},
         acertoApps:0,

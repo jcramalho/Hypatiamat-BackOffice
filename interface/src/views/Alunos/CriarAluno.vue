@@ -1,5 +1,6 @@
 <template>
  <v-app id="inspire">
+  <v-main class="grey lighten-3">
   <v-container>
     <v-layout row class="text-xs-center">
         <v-container style="position: relative;top: 15%; width: 80%;" class="text-xs-center">
@@ -44,6 +45,7 @@
         </v-container>
     </v-layout>
   </v-container>
+  </v-main>
  </v-app>
 </template>
 
@@ -160,7 +162,7 @@
                 pais: this.pais,
                 password : this.password
             }
-            axios.post(h + "alunos/", data)
+            axios.post(h + "alunos/admin?token="+this.token, data)
                  .then(()=>{
                    Swal.fire({
                     icon: 'success',

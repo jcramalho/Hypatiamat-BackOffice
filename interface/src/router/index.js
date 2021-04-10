@@ -73,6 +73,7 @@ import CampeonatosProfessores from '../views/Campeonatos/CampeonatosProfessores.
 import CampeonatosTurmas from '../views/Campeonatos/CampeonatosTurmas.vue'
 import DesempenhoAluno from '../views/Campeonatos/DesempenhoAluno.vue'
 import GestaoCampeonatos from '../views/Campeonatos/GestaoCampeonatos.vue'
+import CampeonatosGeralAdmin from '../views/Campeonatos/CampeonatosGeralAdmin.vue'
 
 
 import RankingJogos from '../views/Rankings/RankingJogos.vue'
@@ -413,6 +414,24 @@ const routes = [
     path: '/campeonatos/municipios',
     name: 'Campeonatos Municipios',
     component: CampeonatosMunicipios,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if((utilizador.type == 50)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/campeonatos/geral',
+    name: 'Ranking Geral Campeonatos',
+    component: CampeonatosGeralAdmin,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50)){

@@ -8,6 +8,42 @@
                     <v-card-title primary-title class="justify-center green--text">
                         Campeonatos
                     </v-card-title>
+                    <center>
+                        <v-btn v-if="!showAjuda" text @click="showAjuda=!showAjuda"><span>Mostrar Ajuda</span><v-icon color="#009263"> mdi-help-circle </v-icon> </v-btn>
+                        <v-btn v-else text @click="showAjuda=!showAjuda">Esconder Ajuda</v-btn> 
+                    </center>
+                    <v-slide-y-transition>
+                        <v-card v-show="showAjuda" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
+                            <v-row class="justify-center">
+                                <v-col cols="12">
+                                    <span> 1. Pode visualizar a sua prestação no último campeonato em que participou. </span>
+                                </v-col>
+                                <v-col cols="12">
+                                    <span> 2. Pode visualizar o ranking dos seus colegas de turma através da escolha de um campeonato que participou. A verde é 
+                                      onde se encontra na tabela.
+                                    </span>
+                                </v-col>
+                                <v-col cols="12">
+                                    <span> 3. Caso o certificado já se encontre disponível, pode obtê-lo ao clicar em 
+                                      <v-btn class="text-none white--text" small rounded color="#009263">
+                                  <v-icon color="white"> mdi-download </v-icon> Certificado</v-btn>.
+                                    </span>
+                                </v-col>
+                                 <v-col cols="9">
+                                    <v-card class="mx-auto" color="grey lighten-4">
+                                        <center> <h3 class="green--text"> Legenda da Tabela: </h3> </center>
+                                        <ul> 
+                                            <li> <span> <b>Posição (Turma)</b> - Posição do aluno na turma. </span> </li>
+                                            <li> <span> <b>Posição (Agr. Escolas)</b> - Posição do aluno no Agrupamento de Escolas. </span> </li>
+                                            <li> <span> <b>Posição (Hypatia)</b> - Posição do aluno em todo o campeonato Hypatiamat. </span> </li>
+                                            <li> <span> <b>Pontuação</b> - Melhor pontuação obtida pelo aluno no campeonato. </span> </li>
+                                            <li> <span> <b>#Jogos</b> - Nº de vezes que o aluno jogou no campeonato. </span> </li>
+                                        </ul>
+                                    </v-card>
+                                </v-col>
+                            </v-row>
+                        </v-card>
+                    </v-slide-y-transition>
                         <v-container style="width:70%">
                         <ClassificacaoAluno :posicoes="desempenhoUltimo"/>
                         </v-container>
@@ -33,6 +69,11 @@
                             <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
                         </v-container>
                         <v-container v-else>
+                            <center>
+                              <v-btn v-if="items.length > 0" class="text-none white--text" rounded color="#009263" @click="download()">
+                                  <v-icon color="white"> mdi-download </v-icon> Certificado
+                              </v-btn>
+                            </center>
                             <v-text-field
                                 v-model="filtrar"
                                 label="Filtrar"
@@ -74,6 +115,7 @@
 import axios from "axios"
 import jsPDF from 'jspdf' 
 import 'jspdf-autotable'
+import Swal from 'sweetalert2'
 import ClassificacaoAluno from '@/components/Campeonatos/ClassificacaoAluno.vue'
 const h = require("@/config/hosts").hostAPI
 const hostCampeonatos = require("@/config/hosts").hostCampeonatos
@@ -85,6 +127,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
     },
     data(){
       return {
+        showAjuda: false,
         token: "",
         loading: false,
         filtrar:"",
@@ -225,6 +268,38 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
 
         doc.save(pdfName)
        
+      },
+      download: async function(){
+         var desempenho = this.items.find(e => e.user == this.userAluno)
+
+         if(desempenho.posHypatia > 11) var posFinal = 11
+         else var posFinal = desempenho.posHypatia
+         var response1 = await axios.get(hostCampeonatos + this.campeonato.campeonatoID + "/certificados/nome?jogo=" + this.campeonato.jogo + 
+                        "&posicao=" + posFinal + "&token=" + this.token) 
+         if(response1.data){
+            var nome = response1.data.ficheiro
+            axios({
+                method: "get",
+                url: hostCampeonatos + this.campeonato.campeonatoID + "/certificados/download?jogo=" + this.campeonato.jogo + 
+                            "&posicao=" + posFinal + "&token=" + this.token,
+                responseType: 'arraybuffer'
+            })
+                .then(function (response) {
+                        var fileURL = window.URL.createObjectURL(new Blob([response.data]));
+                        var fileLink = document.createElement('a');
+                        fileLink.href = fileURL;
+                        console.log(response)
+                        fileLink.setAttribute('download', nome);
+                        document.body.appendChild(fileLink);
+                        fileLink.click();
+                    })
+                .catch(erro => {console.log("DEUUUU ERROOOOO "); console.log(erro.response)})
+         }
+         else Swal.fire({
+            icon: 'error',
+            text: 'Pedimos desculpa, mas o certificado ainda não se encontra disponível.',
+            confirmButtonColor: '#009263'
+          })
       },
       
     }

@@ -214,6 +214,11 @@ import EditarProfessor from "@/components/Professores/EditarProfessor.vue"
                 if (result.isConfirmed) {
                   await axios.put(h + "professores/" + this.professor.codigo + "/password?token=" +this.token, {password: this.password1})
                   this.dialogPassword = false
+                  Swal.fire({
+                    icon: 'success',
+                    text: "Palavra passe alterada com sucesso.",
+                    confirmButtonColor: '#009263'
+                  })
                 }
               })
             }

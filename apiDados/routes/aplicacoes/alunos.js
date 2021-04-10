@@ -180,7 +180,7 @@ router.put('/:id/password', passport.authenticate('jwt', {session: false}), veri
   else res.status(400).jsonp({response: 'Existem campos que devem ser fornecidos em falta ou campos inválidos.'})
 });
 
-/* POST insere um novo aluno. */
+/* POST insere um novo aluno (Registo). */
 router.post('/', async function(req, res, next) {
   var aluno = req.body
   if(aluno.user && aluno.numero && aluno.nome && aluno.datanascimento && aluno.escola 
@@ -188,6 +188,22 @@ router.post('/', async function(req, res, next) {
         var verificacao = await verifyAluno(aluno)
         if(verificacao.response){
           Alunos.insertAluno(aluno)
+                .then(dados =>{ res.jsonp(dados)})
+                .catch(erro => res.status(500).jsonp(erro))
+        }
+        else res.status(400).jsonp(verificacao)
+  }
+  else res.status(400).jsonp({response: 'Existem campos que devem ser fornecidos em falta ou campos inválidos.'})
+});
+
+/* POST insere um novo aluno (Admin). */
+router.post('/admin', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), async function(req, res, next) {
+  var aluno = req.body
+  if(aluno.user && aluno.numero && aluno.nome && aluno.datanascimento && aluno.escola 
+      && aluno.codprofessor && aluno.turma && aluno.email && aluno.password && aluno.pais){
+        var verificacao = await verifyAluno(aluno)
+        if(verificacao.response){
+          Alunos.insertAlunoAdmin(aluno)
                 .then(dados =>{ res.jsonp(dados)})
                 .catch(erro => res.status(500).jsonp(erro))
         }

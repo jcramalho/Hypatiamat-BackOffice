@@ -82,6 +82,13 @@
                         <v-textarea v-else class="pa-0" color="#009263" outlined rounded
                                 v-model="novaMensagem.text" name="Mensagem" label="Mensagem"
                         ></v-textarea>
+                        <v-checkbox
+                            class="mt-0"
+                            v-model="enviarEmail"
+                            color="#009263"
+                            label="Enviar Email"
+                            :ripple="false"
+                        ></v-checkbox>
                         <center><v-btn :disabled="novaMensagem.alunos.length <= 0 || novaMensagem.text.length == 0" 
                             class="pa-0 white--text" block color="#009263" @click="enviaMensagem">Enviar</v-btn>
                         </center>
@@ -176,6 +183,7 @@ import Swal from 'sweetalert2'
 import EditarProfessor from '@/components/Professores/EditarProfessor.vue'
 const h = require("@/config/hosts").hostAPI
 const anoletivo = require("@/config/confs").anoletivo
+//const Email = require("@/config/email")
 
   export default {
     components:{
@@ -184,6 +192,7 @@ const anoletivo = require("@/config/confs").anoletivo
     data(){
       return {
         token: "",
+        nomeProf:"",
         dialogVistos: false,
         pagination: {
             page: 1,
@@ -204,7 +213,8 @@ const anoletivo = require("@/config/confs").anoletivo
         alunos: [], 
         mensagensShow: [],
         vistos:[],
-        todosAlunosSel: false
+        todosAlunosSel: false,
+        enviarEmail: false
       }
     },
     computed:{
@@ -228,8 +238,13 @@ const anoletivo = require("@/config/confs").anoletivo
         this.mensagens = responseM.data
         this.pagination.total = Math.ceil(this.mensagens.length/5)
         this.parseMessages()
+        this.getNomeProf()
     },
     methods: {
+      getNomeProf: async function(){
+          var response = await axios.get(h + "professores/codigos/" + this.utilizador.codigo + "?token=" + this.token)
+          this.nomeProf = response.data.nome
+      },
       parseMessages: function(){
           this.mensagensShow = []
           for(var i = (this.pagination.page-1)*this.pagination.perPage; i < this.mensagens.length && i < this.pagination.page*this.pagination.perPage; i++){
@@ -239,7 +254,8 @@ const anoletivo = require("@/config/confs").anoletivo
       changeTurma : async function(item){
           if(this.turmaSel && this.turmas.find(e => e.turma == this.turmaSel.turma)){
                 this.alunos = []
-                var response = await axios.get(h + "turmas/" + this.turmaSel.turma + "/alunos?codprofessor="+ this.utilizador.codigo + "&token=" + this.token)
+                var response = await axios.get(h + "turmas/" + this.turmaSel.turma + "/alunos?codprofessor="+ 
+                                                this.utilizador.codigo + "&atuais=true" + "&token=" + this.token)
                 this.alunos = response.data
                 this.checkAllAlunosSel()
           }
@@ -251,15 +267,24 @@ const anoletivo = require("@/config/confs").anoletivo
           }
           this.todosAlunosSel = teste
       },
+      sendEmail: async function(mensagem){
+          var destinatarios = []
+          for(var i = 0; i < mensagem.alunos.length ; i++){
+              destinatarios.push(mensagem.alunos[i].email)
+          }
+          axios.post(h + "emails/enviar?token="+this.token, {destinatarios: destinatarios, texto: mensagem.text, nome:this.nomeProf})
+      },
       enviaMensagem: async function(){
           this.novaMensagem.codprofessor = this.utilizador.codigo
           await axios.post(h + "mensagens?token=" + this.token, this.novaMensagem)
+          if(this.enviarEmail) this.sendEmail(this.novaMensagem)
           Swal.fire({
             icon: 'success',
             text: 'Mensagem enviada com sucesso.',
             confirmButtonColor: '#009263'
           })
           this.novaMensagem = {text: '', alunos : []}
+          this.enviarEmail = false
           var responseM = await axios.get(h + "mensagens/professores/" + this.utilizador.codigo + "?token=" + this.token)
           this.mensagens = responseM.data
           this.pagination.total = Math.ceil(this.mensagens.length/5)

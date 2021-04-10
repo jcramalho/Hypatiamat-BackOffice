@@ -400,13 +400,33 @@ module.exports.getAppFromAlunoSubTema = function(codtema, codsubtema, user, data
     })
 }
 
-module.exports.getAppFromAlunoPorDia = function(user, codtema, codsubtema){
+module.exports.getAppFromAlunoPorDiaSubTema = function(user, codtema, codsubtema){
     var args = [user, codtema, codsubtema]
     return new Promise(function(resolve, reject) {
         sql.query(`SELECT lastdate, SUM(ncertas) as ncertas, SUM(ntotal) as ntotal, round( sum(ncertas)/sum(ntotal) *100, 0) as acerto, 
                 SUM(onpeak) as onpeak, SUM(offpeak) as offpeak, (SUM(onpeak) + SUM(offpeak)) as frequencia 
                 FROM ${bdTesteConhecimentos}.appsinfoall 
                 WHERE userid=? and grupo=? and appid=?
+                group by lastdate
+                order by lastdate desc;`, args,function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+module.exports.getAppFromAlunoPorDiaTema = function(user, codtema){
+    var args = [user, codtema]
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT lastdate, SUM(ncertas) as ncertas, SUM(ntotal) as ntotal, round( sum(ncertas)/sum(ntotal) *100, 0) as acerto, 
+                SUM(onpeak) as onpeak, SUM(offpeak) as offpeak, (SUM(onpeak) + SUM(offpeak)) as frequencia 
+                FROM ${bdTesteConhecimentos}.appsinfoall 
+                WHERE userid=? and grupo=?
                 group by lastdate
                 order by lastdate desc;`, args,function(err, res){
             if(err){

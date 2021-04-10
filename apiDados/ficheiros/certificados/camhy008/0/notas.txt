@@ -1,0 +1,47 @@
+%\begin{itemize}
+ %   \item \textit{Aluno} : Se o utilizador que se estiver a autenticar for um aluno, no \textit{Payload} do \acrshot{jwt} será guardadas as informações à cerca do aluno e também o seu tipo que define o utilizador em questão (\texttt{type=10}); 
+  %  \item \textit{Professor} : Tal como o anterior, é guardada a sua informação no \textit{Payload}, com a diferença de o seu \texttt{type} ser igual a 20. De referir que o atributo \texttt{premium} seja igual a 1;
+   % \item \textit{Agrupamento} : Este utilizador encontra-se na tabela \textit{Professores}, com a diferença que o seu atributo \texttt{premium} é igual a 3 e, tal como nos anteriores, é guardada a sua informação no \textit{Payload} com o \texttt{type} a ser igual a 40;
+    %\item \textit{Município} : Semelhante aos anteriores, a diferença é que o atributo \texttt{premium} é igual a 2 e, portanto, terá um \texttt{type} igual a 30. Tem informações adicionais no \textit{Payload} do \acrshot{jwt}, na medida em que ;
+    %\item \textit{Administrador} : Mais uma vez, tal como os anteriores
+%\end{itemize}
+
+
+%@INPROCEEDINGS{7023652,
+ % author={K. {Lei} and Y. {Ma} and Z. {Tan}},
+ % booktitle={2014 IEEE 17th International Conference on Computational Science and Engineering}, 
+  %title={Performance Comparison and Evaluation of Web Development Technologies in PHP, Python, and %Node.js}, 
+  %year={2014},
+  %volume={7},
+  %number={},
+  %pages={661-668},
+  %doi={10.1109/CSE.2014.142}
+ %}
+
+%@article{nosqlvssql,
+  %  author = {Mohamed A.and Mohamed Obay G. and Altrafi Mohammed O. Ismail},
+   % title = {{Relational vs. NoSQL Databases: A Survey}},
+%    url = {https://www.researchgate.net/profile/Mohamed_Mohamed69/publication/263272704_Relational_%Vs_NoSQL_databases_A_survey/links/00b7d53a495312ad22000000/Relational-Vs-NoSQL-databases-A-survey.p%df}
+%}
+
+% https://dev.mysql.com/doc/refman/8.0/en/what-is-mysql.html
+
+%https://www.treinaweb.com.br/blog/sql-vs-nosql-qual-usar/
+
+%https://pt.slideshare.net/alexculpado/jose-alexandrerdbm-sxnosql
+
+%https://dev.mysql.com/doc/refman/8.0/en/what-is-mysql.html
+
+%https://www.universia.net/pt/actualidad/orientacao-academica/aprender-matematica-em-2020-dicas-estudo-essenciais-e-recursos-online-1130754.html
+
+%https://www.matematica.pt/index.php
+
+%https://pt-pt.khanacademy.org/about
+
+%https://techbeacon.com/app-dev-testing/5-back-end-frameworks-better-cross-platform-development
+
+%https://nodejs.org/en/about/
+
+%https://jwt.io/introduction/
+
+%https://www.educba.com/node-dot-js-alternatives/

@@ -110,7 +110,19 @@
                     :footer-props="footer_props"
                     :search="filtrar"
                 >
-                    
+                    <template v-slot:item="row">
+                        <tr :class="row.item.acerto>=50 ? 'style-positivo' : 'style-negativo'">
+                            <td>{{row.item.numero}}</td>
+                            <td>{{row.item.nome}}</td>
+                            <td>{{row.item.ncertas}}</td>
+                            <td>{{row.item.ntotal}}</td>
+                            <td>{{row.item.acerto}}</td>
+                            <td>{{row.item.frequencia}}</td>
+                            <td>{{row.item.onpeak}}</td>
+                            <td>{{row.item.offpeak}}</td>
+                            <td>{{row.item.frequencia}}</td>
+                         </tr>
+                    </template>
                 </v-data-table>
                 </v-container>
                 </v-container>
@@ -367,3 +379,12 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       
   }
 </script>
+
+<style>
+.style-negativo {
+  background-color: #f26755
+}
+.style-positivo {
+  background-color: #10de16
+}
+</style>

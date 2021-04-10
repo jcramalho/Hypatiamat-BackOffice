@@ -8,6 +8,29 @@
                     <v-card-title primary-title class="justify-center green--text">
                         <span>Desempenho nos Jogos</span>
                     </v-card-title>
+                    <center>
+                        <v-btn v-if="!showAjuda" text @click="showAjuda=!showAjuda"><span>Mostrar Ajuda</span><v-icon color="#009263"> mdi-help-circle </v-icon> </v-btn>
+                        <v-btn v-else text @click="showAjuda=!showAjuda">Esconder Ajuda</v-btn> 
+                    </center>
+                    <v-slide-y-transition>
+                        <v-card v-show="showAjuda" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
+                            <v-row class="justify-center">
+                                <v-col cols="12">
+                                    <span> 1. Pode escolher o ano letivo e/ou o intervalo de tempo que pretende visualizar os seus resultados. </span>
+                                </v-col>
+                                <v-col cols="12">
+                                    <span> 2. Pode escolher qual o jogo que pretende visualizar estatísticas. Apenas estarão disponíveis os que jogou no intervalo de tempo definido.
+                                    </span>
+                                </v-col>
+                                <v-col cols="12">
+                                    <span> 3. À exceção do jogo CalcRapid, pode visualizar todos os resultados daquele intervalo de tempo ao clicar em  
+                                        <v-btn v-if="!xs" small class="white--text" color="#009263">Ver todos estes resultados</v-btn>
+                                        <v-btn v-else x-small class="white--text" color="#009263" >Ver todos</v-btn>
+                                    </span>
+                                </v-col>
+                            </v-row>
+                        </v-card>
+                    </v-slide-y-transition>
                         <v-container :style="widthParams">
                             <v-combobox
                                 id="jogos"
@@ -139,6 +162,7 @@ import CalculusAluno from "@/components/Jogos/CalculusAluno.vue"
         jogosInfo:[], 
         resultadosGlobais:undefined,
         resultadosTotal:[],
+        showAjuda: false,
         tiposCalc: ["1 - Adição", "2 - Subtração", "3 - Multiplicação", "4 - Divisão"],
         niveisSel:["1","2","3","4","5"],
         tiposCalculusSel:["0 - Todas as combinações"],

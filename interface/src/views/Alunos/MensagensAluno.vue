@@ -37,7 +37,7 @@
                             <v-icon color="#009263">mdi-account</v-icon>
                         </v-list-item-avatar>
 
-                        <v-card class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3" width="100%">
+                        <v-card class="elevation-6 pa-3" style="border: 2px solid green !important;" :color="mensagem.nova ? 'green lighten-3':'grey lighten-3'" width="100%">
                             
                             <v-list-item-title> <b>{{mensagem.codprofessor}}</b> </v-list-item-title>
                             <v-subheader class="pa-0">{{mensagem.data.split(" ")[0]}} 
@@ -125,7 +125,11 @@ const anoletivo = require("@/config/confs").anoletivo
       },
       atualizaVistas: function(){
           for(var i = 0; i < this.mensagens.length; i++){
-              if(!this.mensagens[i].visto) axios.put(h + "mensagens/" + this.mensagens[i].id + "/vista?token=" + this.token)
+              if(!this.mensagens[i].visto) {
+                  this.mensagens[i].visto = !this.mensagens[i].visto
+                  this.mensagens[i].nova = true
+                  axios.put(h + "mensagens/" + this.mensagens[i].id + "/vista?token=" + this.token)
+              }
           }
       },
       showRecentes: async function(){

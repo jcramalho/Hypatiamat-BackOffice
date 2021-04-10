@@ -33,7 +33,7 @@ var comunidadesRouter = require('./routes/aplicacoes/comunidades');
 var novidadesRouter = require('./routes/aplicacoes/novidades');
 var trofeusRouter = require('./routes/testeconhecimentos/trofeus');
 var mensagensRouter = require('./routes/aplicacoes/mensagens');
-
+var emailsRouter = require('./routes/aplicacoes/email');
 
 
 
@@ -119,7 +119,7 @@ app.use('/cromos', cromosRouter)
 app.use('/aplicacoes/comunidades', comunidadesRouter)
 app.use('/aplicacoes/novidades', novidadesRouter)
 app.use('/aplicacoes/mensagens', mensagensRouter)
-
+app.use('/aplicacoes/emails', emailsRouter)
 
 
 // catch 404 and forward to error handler

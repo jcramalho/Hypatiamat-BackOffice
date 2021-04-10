@@ -66,7 +66,13 @@ export default {
           text: 'Tem ' + this.mensagensLer + ' mensagens por ler.',
           confirmButtonColor: '#009263'
         })
-        this.interval = setInterval(async () => {
+        
+      }
+      
+      this.interval = setInterval(async function(){
+          console.log(this)
+          console.log(this.utilizador)
+          /*
           var response = await axios.get(h + "mensagens/alunos/" + this.utilizador.user + "/number/naovistas?token=" + this.token)
           this.mensagensLer =  response.data.number 
           if(this.mensagensLer - this.oldNovasMensagensLer > 0){
@@ -76,9 +82,8 @@ export default {
               confirmButtonColor: '#009263'
             })
           }
-          this.oldNovasMensagensLer = this.mensagensLer
-        }, 3* 60 * 1000)
-      }
+          this.oldNovasMensagensLer = this.mensagensLer*/
+        }, 10000)
       
     }
   },

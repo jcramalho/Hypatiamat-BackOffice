@@ -23,7 +23,13 @@
                                     </span>
                                 </v-col>
                                 <v-col cols="12">
-                                <span> 3. Estando os dois primeiros passos realizados, poderá visualizar os dados de cada aluno da turma inscrito no campeonato. </span> 
+                                    <span> 3. Estando os dois primeiros passos realizados, poderá visualizar os dados de cada aluno da turma inscrito no campeonato. </span> 
+                                </v-col>
+                                <v-col cols="12">
+                                    <span> 4. Caso os certificados se encontrem disponíveis, pode obter o certificado através do clique no botão 
+                                        <v-btn class="text-none white--text" rounded small color="#009263">
+                                            <v-icon color="white"> mdi-download </v-icon> Certificado
+                                        </v-btn>. </span> 
                                 </v-col>
                                 <v-col cols="9">
                                     <v-card class="mx-auto" color="grey lighten-4">
@@ -88,6 +94,23 @@
                     :footer-props="footer_props"
                     :search="filtrar"
                 >
+                    <template v-slot:item="row">
+                        <tr>
+                            <td>{{row.item.numero}}</td>
+                            <td>{{row.item.nome}}</td>
+                            <td>{{row.item.posTurma}}</td>
+                            <td>{{row.item.posEscola}}</td>
+                            <td>{{row.item.posHypatia}}</td>
+                            <td>{{row.item.pontuacao}}</td>
+                            <td>{{row.item.njogos}}</td>
+                            <td>
+                                <v-btn class="text-none white--text" rounded small color="#009263" @click="download(row.item.posHypatia)">
+                                    <v-icon color="white"> mdi-download </v-icon> Certificado
+                                </v-btn>
+                            </td>
+
+                        </tr>
+                    </template>
                 </v-data-table>
                 </v-container>
                 </v-container>
@@ -102,6 +125,7 @@
 <script>
 import axios from "axios"
 import jsPDF from 'jspdf' 
+import Swal from 'sweetalert2'
 import 'jspdf-autotable'
 import EstatisticasGeraisCampeonato from '@/components/Campeonatos/EstatisticasGeraisCampeonato.vue'
 import CampeonatoMunicipio from '@/components/Campeonatos/CampeonatoMunicipio.vue'
@@ -134,6 +158,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
             {text: "Posição (Hypatia)", value: 'posHypatia', class: 'subtitle-1'},
             {text: "Pontuação", value: 'pontuacao', class: 'subtitle-1'},
             {text: "#Jogos", value: 'njogos', class: 'subtitle-1'},
+            {text: "Certificado", class: 'subtitle-1'}
         ],
         items:[],
         campeonatos:[],
@@ -310,7 +335,36 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         doc.save(pdfName)
        
       },
-      
+      download: async function(posicao){
+         if(posicao > 11) var posFinal = 11
+         else var posFinal = posicao
+         var response1 = await axios.get(hostCampeonatos + this.campeonato.campeonatoID + "/certificados/nome?jogo=" + this.campeonato.jogo + 
+                        "&posicao=" + posFinal + "&token=" + this.token) 
+         if(response1.data){
+            var nome = response1.data.ficheiro
+            axios({
+                method: "get",
+                url: hostCampeonatos + this.campeonato.campeonatoID + "/certificados/download?jogo=" + this.campeonato.jogo + 
+                            "&posicao=" + posFinal + "&token=" + this.token,
+                responseType: 'arraybuffer'
+            })
+                .then(function (response) {
+                        var fileURL = window.URL.createObjectURL(new Blob([response.data]));
+                        var fileLink = document.createElement('a');
+                        fileLink.href = fileURL;
+                        console.log(response)
+                        fileLink.setAttribute('download', nome);
+                        document.body.appendChild(fileLink);
+                        fileLink.click();
+                    })
+                .catch(erro => {console.log("DEUUUU ERROOOOO "); console.log(erro.response)})
+         }
+         else Swal.fire({
+            icon: 'error',
+            text: 'Pedimos desculpa, mas o certificado ainda não se encontra disponível.',
+            confirmButtonColor: '#009263'
+          })
+      },
     }
   }
 </script>

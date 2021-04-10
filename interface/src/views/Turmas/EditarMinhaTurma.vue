@@ -140,6 +140,7 @@
 
 <script>
 import axios from "axios"
+import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
 const anoLetivoAtual = require("@/config/hosts").anoAtual
 
@@ -200,24 +201,44 @@ const anoLetivoAtual = require("@/config/hosts").anoAtual
         }
       }, 
       alteraTurma: async function(){
-          var body = {
-                codprofessor: this.utilizador.codigo, 
-                turmaOld: this.turma.turma,
-                alunos: this.selected
-          }
-          await axios.put(h + "alunos/turmas/" + this.turma2 + "?token=" + this.token, body)
-          this.selected = []
-          this.atualizaAlunos()
+          Swal.fire({
+            title: 'Tem a certeza que pretende transferir os alunos selecionados da turma ' + this.turma.turma + ' para a turma '+ this.turma2 +  '?',
+            showDenyButton: true,
+            confirmButtonColor: '#009263',
+            confirmButtonText: `Sim`,
+            denyButtonText: `Não`,
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+            var body = {
+                  codprofessor: this.utilizador.codigo, 
+                  turmaOld: this.turma.turma,
+                  alunos: this.selected
+            }
+            await axios.put(h + "alunos/turmas/" + this.turma2 + "?token=" + this.token, body)
+            this.selected = []
+            this.atualizaAlunos()
+            }
+          })
       },
       alteraTurma2: async function(){
-        var body = {
-              codprofessor: this.utilizador.codigo, 
-              turmaOld: this.turma2,
-              alunos: this.selected2
-        }
-        await axios.put(h + "alunos/turmas/" + this.turma.turma + "?token=" + this.token, body)
-        this.selected2 = []
-        this.atualizaAlunos()
+          Swal.fire({
+              title: 'Tem a certeza que pretende transferir os alunos selecionados da turma ' + this.turma2 + ' para a turma '+ this.turma.turma +  '?',
+              showDenyButton: true,
+              confirmButtonColor: '#009263',
+              confirmButtonText: `Sim`,
+              denyButtonText: `Não`,
+            }).then(async (result) => {
+              if (result.isConfirmed) {
+                var body = {
+                      codprofessor: this.utilizador.codigo, 
+                      turmaOld: this.turma2,
+                      alunos: this.selected2
+                }
+                await axios.put(h + "alunos/turmas/" + this.turma.turma + "?token=" + this.token, body)
+                this.selected2 = []
+                this.atualizaAlunos()
+                }
+        })
       },
       atualizaAlunos: async function(){
         var response = await axios.get(h + "turmas/" + this.turma.turma + "/alunos?codprofessor="+ this.turma.idprofessor + "&alunosAtuais=true" + "&token=" + this.token)

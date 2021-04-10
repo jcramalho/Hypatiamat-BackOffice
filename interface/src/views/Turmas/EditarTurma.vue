@@ -345,10 +345,10 @@ import EditarAluno from '@/components/Alunos/EditarAluno.vue'
         })
       },
       atualizaAlunos: async function(){
-        var response = await axios.get(h + "turmas/" + this.turma.turma + "/alunos?codprofessor="+ this.turma.idprofessor + "&token=" + this.token)
+        var response = await axios.get(h + "turmas/" + this.turma.turma + "/alunos?codprofessor="+ this.turma.idprofessor + "&atuais=true" + "&token=" + this.token)
         this.alunosTurmaAtual = response.data
         this.selected = []
-        response = await axios.get(h + "turmas/" + this.turma2 + "/alunos?codprofessor="+ this.idprofessor2 + "&token=" + this.token)
+        response = await axios.get(h + "turmas/" + this.turma2 + "/alunos?codprofessor="+ this.idprofessor2 + "&atuais=true" + "&token=" + this.token)
         this.alunosOutraTurma = response.data
         this.selected2 = []
       },

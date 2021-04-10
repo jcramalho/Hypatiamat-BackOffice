@@ -257,7 +257,12 @@ router.get('/alunos/:user/dias', passport.authenticate('jwt', {session: false}),
     var codsubtema = req.query.codsubtema
 
     if(codtema && codsubtema){
-        Apps.getAppFromAlunoPorDia(user, codtema, codsubtema)
+        Apps.getAppFromAlunoPorDiaSubTema(user, codtema, codsubtema)
+            .then(dados => res.jsonp(dados))
+            .catch(erro => res.status(500).jsonp(erro))
+    }
+    else if(codtema){
+        Apps.getAppFromAlunoPorDiaTema(user, codtema)
             .then(dados => res.jsonp(dados))
             .catch(erro => res.status(500).jsonp(erro))
     }

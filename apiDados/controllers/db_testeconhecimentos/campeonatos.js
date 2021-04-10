@@ -304,20 +304,23 @@ module.exports.getCampeonatoTurma = function(campeonato, escola, turma, codprofe
                 (SELECT a.*
                     FROM (select * from ${bdAplicacoes}.alunos where escola=?) a
                     RIGHT JOIN (select * from ${bdAplicacoes}.turmasold where codProfessor=? and turma=?) aold ON a.user = aold.codAluno)) a,
-			 (select ranking.*, @rownum := @rownum + 1 AS posicao 
+			 (select ranking.*, @prevScore1:=@currScore1, @currScore1:=ranking.pontuacao, @rownum :=if(@prevScore1=ranking.pontuacao, @rownum, @rownum +1) as posicao 
 				from (select user, pontuacao, njogos
-						from ${bdTesteConhecimentos}.campeonatos, (SELECT @rownum := 0) AS r
+						from ${bdTesteConhecimentos}.campeonatos, (SELECT @rownum := 0, @currScore1:=null) AS r
 						where campeonatoID=? and jogo=? and codprofessor=? and turma=?
                         order by pontuacao desc, njogos desc) ranking) posicaoturma,
-				(select @rownumesc := @rownumesc + 1 AS posicao, ranking.*  
+				(select ranking.*, @prevScore2:=@currScore2, @currScore2:=ranking.pontuacao, 
+                    @rownumesc :=if(@prevScore2=ranking.pontuacao, @rownumesc, @rownumesc +1) as posicao  
 					from (select camp.user, camp.pontuacao, camp.njogos
 							from (select * from ${bdTesteConhecimentos}.campeonatos where campeonatoID = ? and jogo=?) camp, 
-                            (select * from ${bdAplicacoes}.professores where escola=?) profs, (SELECT @rownumesc := 0) AS r
+                            (select * from ${bdAplicacoes}.professores where escola=?) profs, 
+                            (SELECT @rownumesc := 0, @currScore2:=null) AS r
 							where profs.codigo = camp.codprofessor
 							order by pontuacao desc, njogos desc) ranking) posicaoescola,
-				(select @rownumhypatia := @rownumhypatia + 1 AS posicao, ranking.*  
+				(select ranking.*, @prevScore3:=@currScore3, @currScore3:=ranking.pontuacao, 
+                    @rownumhypatia :=if(@prevScore3=ranking.pontuacao, @rownumhypatia, @rownumhypatia +1) as posicao   
 					from (select user, pontuacao, njogos
-							from ${bdTesteConhecimentos}.campeonatos, (SELECT @rownumhypatia := 0) AS r
+							from ${bdTesteConhecimentos}.campeonatos, (SELECT @rownumhypatia := 0, @currScore3:=null) AS r
 							where campeonatoID = ? and jogo=?
 							order by pontuacao desc, njogos desc) ranking) posicaoHypatia
 					where posicaoescola.user = a.user and posicaoturma.user = a.user and posicaoHypatia.user = a.user
@@ -327,6 +330,35 @@ module.exports.getCampeonatoTurma = function(campeonato, escola, turma, codprofe
                 reject(err)
             }
             else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+module.exports.getRankingGeral = function(campeonato, jogo){
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT a.nome, esc.nome as agrupamento, posicaoHypatia.*  
+             FROM (select @rownumhypatia := @rownumhypatia + 1 AS posicao, ranking.*  
+                from (select user, pontuacao, njogos
+                        from ${bdTesteConhecimentos}.campeonatos, (SELECT @rownumhypatia := 0) AS r
+                        where campeonatoID = ? and jogo=?
+                        order by pontuacao desc, njogos desc) ranking) posicaoHypatia,
+                        ${bdAplicacoes}.alunos a, ${bdAplicacoes}.escolas esc
+                        where posicaoHypatia.user = a.user and a.escola = esc.cod
+                        ;`, [campeonato, jogo], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                var aux = 0; 
+                var posAtual = 0
+                for(var i = 0; i <res.length; i++){
+                    if(aux == res[i].pontuacao) res[i].posicao = posAtual
+                    else res[i].posicao = ++posAtual
+                    aux = res[i].pontuacao
+                }
                 resolve(res)
             }
         })
@@ -397,20 +429,23 @@ module.exports.getDesempenhoAlunoCampeonato = function(campeonato, jogo, escola,
                 (SELECT a.*
                     FROM (select * from ${bdAplicacoes}.alunos where escola=?) a
                     RIGHT JOIN (select * from ${bdAplicacoes}.turmasold where codProfessor=? and turma=?) aold ON a.user = aold.codAluno)) a,
-			 (select ranking.*, @rownum := @rownum + 1 AS posicao 
+			 (select ranking.*, @prevScore1:=@currScore1, @currScore1:=ranking.pontuacao, @rownum :=if(@prevScore1=ranking.pontuacao, @rownum, @rownum +1) as posicao 
 				from (select user, pontuacao, njogos
-						from ${bdTesteConhecimentos}.campeonatos, (SELECT @rownum := 0) AS r
+						from ${bdTesteConhecimentos}.campeonatos, (SELECT @rownum := 0, @currScore1:=null) AS r
 						where campeonatoID=? and jogo=? and codprofessor=? and turma=?
                         order by pontuacao desc, njogos desc) ranking) posicaoturma,
-				(select @rownumesc := @rownumesc + 1 AS posicao, ranking.*  
+				(select ranking.*, @prevScore2:=@currScore2, @currScore2:=ranking.pontuacao, 
+                    @rownumesc :=if(@prevScore2=ranking.pontuacao, @rownumesc, @rownumesc +1) as posicao  
 					from (select camp.user, camp.pontuacao, camp.njogos
 							from (select * from ${bdTesteConhecimentos}.campeonatos where campeonatoID = ? and jogo=?) camp, 
-                            (select * from ${bdAplicacoes}.professores where escola=?) profs, (SELECT @rownumesc := 0) AS r
+                            (select * from ${bdAplicacoes}.professores where escola=?) profs, 
+                            (SELECT @rownumesc := 0, @currScore2:=null) AS r
 							where profs.codigo = camp.codprofessor
 							order by pontuacao desc, njogos desc) ranking) posicaoescola,
-				(select @rownumhypatia := @rownumhypatia + 1 AS posicao, ranking.*  
+				(select ranking.*, @prevScore3:=@currScore3, @currScore3:=ranking.pontuacao, 
+                    @rownumhypatia :=if(@prevScore3=ranking.pontuacao, @rownumhypatia, @rownumhypatia +1) as posicao   
 					from (select user, pontuacao, njogos
-							from ${bdTesteConhecimentos}.campeonatos, (SELECT @rownumhypatia := 0) AS r
+							from ${bdTesteConhecimentos}.campeonatos, (SELECT @rownumhypatia := 0, @currScore3:=null) AS r
 							where campeonatoID = ? and jogo=?
 							order by pontuacao desc, njogos desc) ranking) posicaoHypatia
 					where posicaoescola.user = a.user and posicaoturma.user = a.user and posicaoHypatia.user = a.user

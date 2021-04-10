@@ -23,8 +23,28 @@ var Aluno = function(aluno){
 
 Aluno.insertAluno = function (aluno) {    
     return new Promise(function(resolve, reject) {
+    var confirmacao = 0
+    var args = [aluno.user, aluno.numero, aluno.nome, aluno.datanascimento, 
+                aluno.escola, aluno.turma, aluno.email, md5(aluno.password), 
+                aluno.codprofessor, aluno.pais, confirmacao]
+    sql.query("INSERT INTO alunos (`user`, `numero`, `nome`, `datanascimento`, `escola`, `turma`, `email`, `password`," 
+                + " `codprofessor`, `pais`, `confirmacao`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+                args, function (err, res) {
+            
+            if(err) {
+                console.log("error: ", err);
+                reject(err);
+            }
+            else{
+                resolve(res);
+            }
+        });   
+    })       
+};
+
+Aluno.insertAlunoAdmin = function (aluno) {    
+    return new Promise(function(resolve, reject) {
     var confirmacao = 1
-    if(aluno.confirmacao) confirmacao = aluno.confirmacao
     var args = [aluno.user, aluno.numero, aluno.nome, aluno.datanascimento, 
                 aluno.escola, aluno.turma, aluno.email, md5(aluno.password), 
                 aluno.codprofessor, aluno.pais, confirmacao]
