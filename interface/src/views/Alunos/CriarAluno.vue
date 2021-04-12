@@ -8,7 +8,7 @@
             <v-form>
             <v-text-field prepend-icon="mdi-card-account-details" v-model="codigo" name="Username (Código)" label="Username (Código)" :rules="[string15, existeCodigo]" required></v-text-field>
             <v-text-field prepend-icon="mdi-account" v-model="nome" name="Nome" label="Nome" required></v-text-field>
-            <v-text-field prepend-icon="mdi-email" v-model="email" name="Email" label="Email" :rules="[emailCheck, existeEmail]" required></v-text-field>
+            <v-text-field prepend-icon="mdi-email" v-model="email" name="Email" label="Email" :rules="[emailValido, existeEmail]" required></v-text-field>
             <v-text-field prepend-icon="mdi-calendar" v-model="datanasc" name="Data de Nascimento" label="Data de Nascimento" type="date" required></v-text-field>
             <v-text-field prepend-icon="mdi-bank" v-model="pais" name="País" label="País" required></v-text-field>
             <v-combobox
@@ -38,7 +38,7 @@
             <v-text-field prepend-icon="mdi-key" v-model="password" name="Password" label="Password" type="password" required></v-text-field>
             <v-text-field prepend-icon="mdi-key" v-model="password2" name="Confirmação Password" label="Confirmação Password" type="password" required></v-text-field>
             <v-card-actions>
-              <v-btn class="white--text" primary large block style="background-color: #009263;" @click="registarAluno">Confirmar</v-btn>
+              <v-btn class="white--text" :disabled="disabledCodigo || disabledEmail" primary large block style="background-color: #009263;" @click="registarAluno">Confirmar</v-btn>
             </v-card-actions>
             </v-form>
           </v-card>
@@ -75,24 +75,37 @@
         turmas: [],
         password2 : "",
         token: "",
+        codigosprof:[],
+        disabledCodigo: false,
+        disabledEmail: false,
+        reg: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/,
         string15: v  => {
           if(v.length <= 15) return true
           else return "Apenas pode conter 15 caractéres"
         },
-        isNumber: v=>{
+        isNumber: v =>{
 
         },
         existeCodigo: v =>{
-          if(this.codigos.find(element => element.user == v)) return 'Esse username já existe. Escolha outro por favor.'
-          else return true
-        },
-        emailCheck: v =>{
+          if(this.codigos.find(e => e.user == v) || this.codigosprof.find(e => e.codigo == v)) {
+            this.disabledCodigo = true
+            return 'Esse username já existe. Escolha outro por favor.'
+          }
+          this.disabledCodigo = false
           return true
         },
         existeEmail: v =>{
-          if(this.codigos.find(element => element.email == v)) return 'Esse email já existe. Escolha outro por favor.'
-          else return true
-        }
+          if(this.codigos.find(e => e.email == v) || this.codigosprof.find(e => e.email == v)) {
+            this.disabledEmail = true
+            return 'Esse email já existe. Escolha outro por favor.'
+          }
+          this.disabledEmail = false
+          return true
+        },
+        emailValido: v =>{
+          if(v != "" && this.reg.test(v)) {this.disabledEmail = false; return true}
+          else {this.disabledEmail = true; return false}
+        },
       }
     },
     created : async function() {
@@ -105,8 +118,7 @@
             var string = this.escolasIds[i].localidade + " - " + this.escolasIds[i].nome 
             this.escolas.push(string)
           }
-          var responseCodigos = await axios.get(h + "alunos/codigos?token=" + this.token)
-          this.codigos = responseCodigos.data
+          this.getCodigos()
         } catch (e) {
         return e
         }
@@ -114,6 +126,12 @@
      methods: {
       format(value, event) {
         return moment(value).format('DD/MM/YYYY')
+      },
+      getCodigos: async function(){
+        var response1 = await axios.get(h + "professores/codigos?token=" + this.token)
+        this.codigosprof = response1.data
+        var response2 = await axios.get(h + "alunos/codigos?token=" + this.token)
+        this.codigos = response2.data
       },
       onEscolaChange: async function(item){
           if(this.escola == "") this.professores = []

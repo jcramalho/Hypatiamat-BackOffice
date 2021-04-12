@@ -80,6 +80,8 @@ import RankingJogos from '../views/Rankings/RankingJogos.vue'
 import RankingApps from '../views/Rankings/RankingApps.vue'
 import RankingJogosAdmin from '../views/Rankings/RankingJogosAdmin.vue'
 import RankingAppsAdmin from '../views/Rankings/RankingAppsAdmin.vue'
+import RankingJogosMunicipio from '../views/Rankings/RankingJogosMunicipio.vue'
+import RankingAppsMunicipio from '../views/Rankings/RankingAppsMunicipio.vue'
 
 
 import GestaoNovidades from '../views/Novidades/GestaoNovidades.vue'
@@ -285,6 +287,24 @@ const routes = [
     }
   },
   {
+    path: '/classificacoes/jogos/municipio',
+    name: 'Ranking Jogos Município',
+    component: RankingJogosMunicipio,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if((utilizador.type == 30)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
     path: '/classificacoes/apps',
     name: 'Ranking Apps',
     component: RankingApps,
@@ -309,6 +329,24 @@ const routes = [
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/classificacoes/apps/municipio',
+    name: 'Ranking Apps Municipio',
+    component: RankingAppsMunicipio,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if((utilizador.type == 30)){
         next()
       }
       else{
@@ -362,7 +400,7 @@ const routes = [
     component: EstatisticasAgrupamentos,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if((utilizador.type == 50)){
+      if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.infoEscola.localidade == to.params.municipio)){
         next()
       }
       else{
@@ -380,7 +418,7 @@ const routes = [
     component: EstatisticasProfessores,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if((utilizador.type == 50)){
+      if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.escolas.find(e => e.cod == to.params.escola)) ){
         next()
       }
       else{
@@ -506,7 +544,7 @@ const routes = [
     component: CampeonatosAgrupamentos,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if((utilizador.type == 50)){
+      if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.infoEscola.localidade == to.params.municipio) ){
         next()
       }
       else{
@@ -524,7 +562,7 @@ const routes = [
     component: CampeonatosProfessores,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if((utilizador.type == 50)){
+      if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.escolas.find(e => e.cod == to.params.escola)) ){
         next()
       }
       else{
@@ -540,9 +578,21 @@ const routes = [
     path: '/campeonatos/professores/:codprofessor',
     name: 'Campeonatos Turmas',
     component: CampeonatosTurmas,
-    beforeEnter: (to, from, next) => {
+    beforeEnter: async (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if((utilizador.type == 50) || (utilizador.type == 20 && utilizador.codigo == to.params.codprofessor)){
+      let token = localStorage.getItem("token")
+      var professores, professor
+      if(utilizador.type == 40){
+        var response = await axios.get(h + "escolas/" + utilizador.escola + "/professores?token=" + token)
+        professores = response.data
+      }
+      else if(utilizador.type == 30){
+        var response = await axios.get(h + "professores/codigos/" + to.params.codprofessor + "?token=" + token)
+                                  .catch(() => next({name: "Meu Perfil"}))
+        professor = response.data
+      }
+      if((utilizador.type == 50) || (utilizador.type == 20 && utilizador.codigo == to.params.codprofessor)
+        || (utilizador.type == 30 && professor)){
         next()
       }
       else{
@@ -605,7 +655,8 @@ const routes = [
         var response = await axios.get(h + "escolas/" + utilizador.escola + "/professores?token=" + token)
         professores = response.data
       }
-      if( utilizador.type == 50 || utilizador.type == 30 || (utilizador.type == 20 && utilizador.codigo == to.params.idprofessor)
+      if( utilizador.type == 50 || utilizador.type == 30 || 
+            (utilizador.type == 20 && utilizador.codigo == to.params.idprofessor)
               || (utilizador.type == 40 && professores.find(element=> element.codigo == to.params.idprofessor))){
         next()
       }

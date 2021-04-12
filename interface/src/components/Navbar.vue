@@ -61,6 +61,16 @@
               </v-list-item-content>
             </v-list-item>
           </v-list>
+          <template v-slot:append>
+            <div class="pa-2" >
+              <span v-if="mini" class="white--text" style="font-size:12px" >
+               <b> {{versao}} </b>
+              </span>
+              <span v-else class="white--text" style="font-size:12px" >
+               <b> Versão {{versao}} </b>
+              </span>
+            </div>
+          </template>
         </v-navigation-drawer>
 </nav>
    
@@ -96,7 +106,8 @@ export default {
       background: false,
       idUtilizador:"",
       nomeUtilizador:"",
-      nome:""
+      nome:"",
+      versao: "1.3"
     }
   },
   watch: {
@@ -171,6 +182,10 @@ export default {
         { title: 'Meus Agrupamentos', icon: 'mdi-school', href:"/agrupamentos" },
         { title: 'Monitorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/"+ utilizador.infoEscola.localidade +"/escolas" },
         { title: 'Monitorização de Apps', icon: 'mdi-apps', href:"/apps/" + utilizador.infoEscola.localidade + "/escolas"},
+        { title: 'Ranking Jogos', icon: 'mdi-podium', href:"/classificacoes/jogos/municipio"},
+        { title: 'Ranking Apps', icon: 'mdi-podium', href:"/classificacoes/apps/municipio"},
+        { title: 'Outras estatísticas', icon:'mdi-home-analytics', href:"/estatisticas/municipios/" + utilizador.infoEscola.localidade},
+        { title: 'Campeonatos', icon: 'mdi-trophy', href:"/campeonatos/municipios/" + utilizador.infoEscola.localidade},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }

@@ -344,7 +344,7 @@ module.exports.getRankingGeral = function(campeonato, jogo){
                         from ${bdTesteConhecimentos}.campeonatos, (SELECT @rownumhypatia := 0) AS r
                         where campeonatoID = ? and jogo=?
                         order by pontuacao desc, njogos desc) ranking) posicaoHypatia,
-                        ${bdAplicacoes}.alunos a, ${bdAplicacoes}.escolas esc
+                        ${bdAplicacoes}.alunos a, ${bdAplicacoes}.Escolas esc
                         where posicaoHypatia.user = a.user and a.escola = esc.cod
                         ;`, [campeonato, jogo], function(err, res){
             if(err){

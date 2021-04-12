@@ -104,7 +104,7 @@
                             <td>{{row.item.pontuacao}}</td>
                             <td>{{row.item.njogos}}</td>
                             <td>
-                                <v-btn class="text-none white--text" rounded small color="#009263" @click="download(row.item.posHypatia)">
+                                <v-btn class="text-none white--text" rounded small color="#009263" @click="download(row.item.posHypatia, row.item.user)">
                                     <v-icon color="white"> mdi-download </v-icon> Certificado
                                 </v-btn>
                             </td>
@@ -335,17 +335,17 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         doc.save(pdfName)
        
       },
-      download: async function(posicao){
+      download: async function(posicao, user){
          if(posicao > 11) var posFinal = 11
          else var posFinal = posicao
          var response1 = await axios.get(hostCampeonatos + this.campeonato.campeonatoID + "/certificados/nome?jogo=" + this.campeonato.jogo + 
-                        "&posicao=" + posFinal + "&token=" + this.token) 
+                        "&posicao=" + posFinal + "&user=" + user + "&token=" + this.token) 
          if(response1.data){
             var nome = response1.data.ficheiro
             axios({
                 method: "get",
                 url: hostCampeonatos + this.campeonato.campeonatoID + "/certificados/download?jogo=" + this.campeonato.jogo + 
-                            "&posicao=" + posFinal + "&token=" + this.token,
+                            "&posicao=" + posFinal + "&user=" + user + "&token=" + this.token,
                 responseType: 'arraybuffer'
             })
                 .then(function (response) {

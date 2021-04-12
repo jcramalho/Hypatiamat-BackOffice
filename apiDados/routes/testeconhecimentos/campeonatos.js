@@ -11,7 +11,7 @@ const CampeonatosCRUD = require('../../controllers/db_testeconhecimentos/campeon
 const Campeonatos_Certificados = require('../../controllers/db_testeconhecimentos/campeonatos_certificados');
 const { getCromosCampeonatosCompletadosFromAluno } = require('../../controllers/db_testeconhecimentos/cromos_alunos');
 
-
+const root = __dirname + "/../../" 
 
 // Todos os campeonatos realizados
 router.get('/', passport.authenticate('jwt', {session: false}), function(req, res, next) {
@@ -66,12 +66,17 @@ router.get('/:cod/certificados', passport.authenticate('jwt', {session: false}),
 router.get('/:cod/certificados/download', passport.authenticate('jwt', {session: false}), async function(req, res, next) {
     var jogo = req.query.jogo
     var campeonato = req.params.cod
+    var user = req.query.user
     var posicao = req.query.posicao
     if(campeonato && (jogo!=undefined) && posicao){
-        var certificado = await Campeonatos_Certificados.getCertificado(campeonato, jogo, posicao)
+
+        if(posicao >= 11) var certificado = await Campeonatos_Certificados.getCertificado(campeonato, jogo, 11) 
+        else if(user) var certificado = await Campeonatos_Certificados.getCertificadoUser(user, campeonato, jogo, posicao)
+        else {res.status(400).send('Parâmetros Inválidos.'); return;}
+
         console.log(certificado)
         if(certificado){
-            var path = __dirname + "/../../ficheiros/certificados/" + campeonato + "/" + jogo + "/" + certificado.ficheiro
+            var path = root + "ficheiros/certificados/" + campeonato + "/" + jogo + "/" + certificado.ficheiro
             res.download(path)
         }
         else res.status(400).send('Certificado Inexistente.')
@@ -82,11 +87,20 @@ router.get('/:cod/certificados/download', passport.authenticate('jwt', {session:
 router.get('/:cod/certificados/nome', passport.authenticate('jwt', {session: false}), async function(req, res, next) {
     var jogo = req.query.jogo
     var campeonato = req.params.cod
+    var user = req.query.user
     var posicao = req.query.posicao
     if(campeonato && (jogo!=undefined) && posicao){
-        Campeonatos_Certificados.getCertificado(campeonato, jogo, posicao)
-                                .then(dados => res.jsonp(dados))
-                                .catch(erro => {console.log(erro); res.status(500).send('Error')})
+        if(posicao >= 11){
+            Campeonatos_Certificados.getCertificado(campeonato, jogo, 11)
+                                    .then(dados => res.jsonp(dados))
+                                    .catch(erro => {console.log(erro); res.status(500).send('Error')})
+        }
+        else if(user){
+            Campeonatos_Certificados.getCertificadoUser(user, campeonato, jogo, posicao)
+                                    .then(dados => res.jsonp(dados))
+                                    .catch(erro => {console.log(erro); res.status(500).send('Error')})
+        }
+        else res.status(400).send('Parâmetros Inválidos.')
     }
     else res.status(400).send('Faltam Parâmetros.')
 })
@@ -260,10 +274,11 @@ router.post('/:cod/certificados', upload.single('file'), passport.authenticate('
     let campeonato = req.params.cod
     let jogo = req.query.jogo
     let posicao = req.query.posicao
+    let user = req.query.user
     let file = req.file
 
     if(campeonato && (jogo!=null || jogo!=undefined) && posicao && file){
-        let newPath = __dirname + '/../../ficheiros/certificados/' + campeonato + "/"
+        let newPath = root + 'ficheiros/certificados/' + campeonato + "/"
 
         if (!fs.existsSync(newPath)){
             fs.mkdirSync(newPath);
@@ -275,11 +290,18 @@ router.post('/:cod/certificados', upload.single('file'), passport.authenticate('
             fs.mkdirSync(newPath);
         }
 
-        let oldPath = __dirname + '/../../' + file.path
+        let oldPath = root + file.path
         let newPathFile = newPath + file.originalname;
-        var certificado = await Campeonatos_Certificados.getCertificado(campeonato, jogo, posicao)
+        
+        var userid = ''
+        if(user) {
+            userid = user
+            var certificado = await Campeonatos_Certificados.getCertificadoUser(userid, campeonato, jogo, posicao)  
+        }
+        else var certificado = await Campeonatos_Certificados.getCertificado(campeonato, jogo, posicao)
+
         if(certificado){
-            let oldFile = __dirname + '/../../ficheiros/certificados/' + campeonato + "/" + jogo + "/" + certificado.ficheiro
+            let oldFile = root + 'ficheiros/certificados/' + campeonato + "/" + jogo + "/" + certificado.ficheiro
             if (fs.existsSync(oldFile)){
                 fs.unlinkSync(oldFile)
             }
@@ -291,12 +313,12 @@ router.post('/:cod/certificados', upload.single('file'), passport.authenticate('
             
             if(certificado){
                 Campeonatos_Certificados.updateCertificado(certificado.id, file.originalname)
-                                        .then(() => res.jsonp({posicao: posicao, ficheiro: file.originalname}))
+                                        .then(() => res.jsonp({posicao: posicao, ficheiro: file.originalname, user: userid}))
                                         .catch(erro => {console.log(erro); res.status(500).send('Erro.')})
             }
             else{
-                Campeonatos_Certificados.insertCampeonato_Certificado(campeonato, jogo, posicao, file.originalname)
-                                        .then(() => res.jsonp({posicao: posicao, ficheiro: file.originalname}))
+                Campeonatos_Certificados.insertCampeonato_Certificado(userid, campeonato, jogo, posicao, file.originalname)
+                                        .then(() => res.jsonp({posicao: posicao, ficheiro: file.originalname, user: userid}))
                                         .catch(erro => {console.log(erro); res.status(500).send('Erro.')})
             }
         })

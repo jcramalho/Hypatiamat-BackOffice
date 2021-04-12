@@ -15,7 +15,7 @@
                 color="#009263"
                 :items="escolas"
           ></v-combobox>
-          <v-text-field prepend-icon="mdi-email" label="Email" placeholder="Email" v-model="professor.email" color="#009263" required/>
+          <v-text-field prepend-icon="mdi-email" label="Email" placeholder="Email" v-model="professor.email" :rules="[existeEmail]" color="#009263" required/>
           <br>
           <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true"> Alterar password </v-btn></center>
           <br>
@@ -36,7 +36,7 @@
 
 
 
-          <center><v-btn class="white--text" style="background-color: #009263;" @click="editarProfessor()"> Confirmar Alterações </v-btn></center>
+          <center><v-btn :disabled="disabledEmail" class="white--text" style="background-color: #009263;" @click="editarProfessor()"> Confirmar Alterações </v-btn></center>
         
         </v-container>
     </v-card>
@@ -74,16 +74,24 @@ const h = require("@/config/hosts").hostAPI
 
         escolas: [],
         escolaAtual:"",
-        number0or1: v  => {
-          //if (!v.trim()) return true;
-          if (!isNaN(parseInt(v)) && (v == 0 || v == 1)) return true;
-          return 'Tem que ser 0 ou 1';
+        codigosprof:[],
+        codigosalunos:[],
+        emailOriginal:"",
+        disabledEmail: false,
+        premiumAtual: "",
+        reg: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/,
+        existeEmail: v => {
+          if(this.emailOriginal != v && ( this.codigosprof.find(e => e.email == v) || this.codigosalunos.find(e => e.email == v) ) ){
+            this.disabledEmail = true
+            return 'Email já utilizado.'
+          }
+          
+          if(v != "" && this.reg.test(v)) {this.disabledEmail = false; return true}
+          else {this.disabledEmail = true; return false}
         },
-        number: v  => {
-          //if (!v.trim()) return true;
-          if (!isNaN(parseInt(v))) return true;
-          return 'Tem que ser um inteiro';
-        } 
+        emailValido: v =>{
+          
+        },
 
       }
     },
@@ -94,14 +102,22 @@ const h = require("@/config/hosts").hostAPI
         this.id = this.idProp
         var response = await axios.get(h + "professores/" + this.id + "?token=" + this.token)
         this.professor = response.data
+        this.emailOriginal = this.professor.email
         var responseEscolas = await axios.get(h + "escolas")
         this.escolasIds = responseEscolas.data
         this.escolaAtual = this.escolasIds.find(e => e.cod == this.professor.escola).nome
         this.parseEscolas()
+        this.getCodigos()
     },
     methods: {
       format(value, event) {
         return moment(value).format('YYYY-MM-DD')
+      },
+      getCodigos: async function(){
+        var response1 = await axios.get(h + "professores/codigos?token=" + this.token)
+        this.codigosprof = response1.data
+        var response2 = await axios.get(h + "alunos/codigos?token=" + this.token)
+        this.codigosalunos = response2.data
       },
       parseEscolas: async function(){
         var aux = []

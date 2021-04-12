@@ -3,10 +3,9 @@ module.exports.auth={
     pass: '981015guilherme'
 }
 
-
 /*
 module.exports.auth={
-    user: 'hypatiamate@gmail.com',
-    pass: 'hypatia2000'
+    user: 'hypatiamatemail@gmail.com',
+    pass: 'Hypatia123!'
 }
 */

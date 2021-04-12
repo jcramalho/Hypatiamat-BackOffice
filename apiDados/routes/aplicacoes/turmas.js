@@ -47,26 +47,20 @@ router.get('/:turma/alunos', passport.authenticate('jwt', {session: false}), ver
     var aux
     if(( aux = turma.split("-") )){
       if(req.query.codprofessor){
-        if(aux[1] == anoAtual){
-          Alunos.getAlunosFromTurma(turma, codprofessor)
-                    .then(alunosAtuais =>{
-                      res.jsonp(alunosAtuais)
-                    })
-                    .catch(erro => res.status(500).jsonp(erro))
-        }
-        else{
-          var alunosAtuais = await Alunos.getAlunosFromTurma(turma, codprofessor);
-          if(!alunosAtuaisQuery){
-            var alunosOld = await TurmasOld.getAlunosFromTurma(turma, codprofessor);
-            for(var i = 0; i < alunosOld.length; i++){
-              if(!alunosAtuais.find(e => alunosOld[i].user == e.user)){
-                alunosOld[i].alunoOld = true
-                alunosAtuais.push(alunosOld[i])
-              }
+        
+        var alunosAtuais = await Alunos.getAlunosFromTurma(turma, codprofessor);
+        console.log(alunosAtuaisQuery)
+        if(!alunosAtuaisQuery){
+          var alunosOld = await TurmasOld.getAlunosFromTurma(turma, codprofessor);
+          console.log(alunosOld)
+          for(var i = 0; i < alunosOld.length; i++){
+            if(!alunosAtuais.find(e => alunosOld[i].user == e.user)){
+              alunosOld[i].alunoOld = true
+              alunosAtuais.push(alunosOld[i])
             }
           }
-          res.jsonp(alunosAtuais)
         }
+        res.jsonp(alunosAtuais)
       }
       else res.status(400).jsonp("Faltam parametros.")
     }

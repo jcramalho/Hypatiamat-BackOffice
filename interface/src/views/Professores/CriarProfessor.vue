@@ -1,41 +1,43 @@
 <template>
  <v-app id="inspire">
-  <v-container>
-    <v-layout row class="text-xs-center">
-        <v-container style="position: relative;top: 15%; width: 60%;" class="text-xs-center">
-          <v-card class="pa-5">
-            
-            <v-form>
-            <v-text-field prepend-icon="mdi-card-account-details" v-model="codigo" color="#009263" name="Username (Código)" label="Username (Código)" :rules="[string15, existeCodigo]" required></v-text-field>
-            <v-text-field prepend-icon="mdi-account" v-model="nome" color="#009263" name="Nome" label="Nome" required></v-text-field>
-            <v-text-field prepend-icon="mdi-email" v-model="email" color="#009263" name="Email" label="Email" required></v-text-field>
-            <v-combobox
-                id="escola"
-                prepend-icon="mdi-school"
-                label="Agrupamento de Escolas"
-                v-model="escola"
-                color="#009263"
-                :items="escolas"
-            ></v-combobox>
-            <v-combobox
-                id="premium"
-                prepend-icon="mdi-vpn"
-                label="Premium"
-                v-model="premium"
-                color="#009263"
-                :items="typePremium"
-            ></v-combobox>
-            <v-text-field prepend-icon="mdi-handshake" color="#009263" v-model="socionum" name="Nº de Sócio" label="Nº de Sócio" required></v-text-field>
-            <v-text-field prepend-icon="mdi-key" color="#009263" v-model="password" name="Password" label="Password" type="password" required></v-text-field>
-            <v-text-field prepend-icon="mdi-key" color="#009263" v-model="password2" name="Confirmação Password" label="Confirmação Password" type="password" required></v-text-field>
-            <v-card-actions>
-              <v-btn class="white--text" primary large block style="background-color: #009263;" @click="registarProfessor">Confirmar</v-btn>
-            </v-card-actions>
-            </v-form>
-          </v-card>
-        </v-container>
-    </v-layout>
-  </v-container>
+   <v-main class="grey lighten-3">
+    <v-container>
+      <v-layout row class="text-xs-center">
+          <v-container style="position: relative;top: 15%; width: 80%;" class="text-xs-center">
+            <v-card class="pa-5">
+              
+              <v-form>
+              <v-text-field prepend-icon="mdi-card-account-details" v-model="codigo" color="#009263" name="Username (Código)" label="Username (Código)" :rules="[string15, existeCodigo]" required></v-text-field>
+              <v-text-field prepend-icon="mdi-account" v-model="nome" color="#009263" name="Nome" label="Nome" required></v-text-field>
+              <v-text-field prepend-icon="mdi-email" v-model="email" color="#009263" name="Email" label="Email" :rules="[existeEmail]" required></v-text-field>
+              <v-combobox
+                  id="escola"
+                  prepend-icon="mdi-school"
+                  label="Agrupamento de Escolas"
+                  v-model="escola"
+                  color="#009263"
+                  :items="escolas"
+              ></v-combobox>
+              <v-combobox
+                  id="premium"
+                  prepend-icon="mdi-vpn"
+                  label="Premium"
+                  v-model="premium"
+                  color="#009263"
+                  :items="typePremium"
+              ></v-combobox>
+              <v-text-field prepend-icon="mdi-handshake" color="#009263" v-model="socionum" name="Nº de Sócio" label="Nº de Sócio" required></v-text-field>
+              <v-text-field prepend-icon="mdi-key" color="#009263" v-model="password" name="Password" label="Password" type="password" required></v-text-field>
+              <v-text-field prepend-icon="mdi-key" color="#009263" v-model="password2" name="Confirmação Password" label="Confirmação Password" type="password" required></v-text-field>
+              <v-card-actions>
+                <v-btn class="white--text" :disabled="disabledCodigo || disabledEmail" primary large block style="background-color: #009263;" @click="registarProfessor">Confirmar</v-btn>
+              </v-card-actions>
+              </v-form>
+            </v-card>
+          </v-container>
+      </v-layout>
+    </v-container>
+   </v-main>
  </v-app>
 </template>
 
@@ -65,23 +67,36 @@
         password : "",
         password2 : "",
         codigos:[],
+        codigosalunos:[],
+        disabledCodigo: false,
+        disabledEmail: false,
         token: "",
         string15: v  => {
           if(v.length <= 15) return true
           else return "Apenas pode conter 15 caractéres"
         },
         existeCodigo: v =>{
-            if(this.codigos.find(element => element.codigo == this.codigo)){
-                return 'Esse código de professor já existe. Tente outro por favor.'
+            if(this.codigos.find(element => element.codigo == this.codigo) || this.codigosalunos.find(e => e.user == this.codigo)){
+                this.disabledCodigo = true
+                return 'Esse código já existe. Tente outro por favor.'
             }
-            else return true
+            this.disabledCodigo = false
+            return true
+        },
+        existeEmail: v =>{
+          if(this.codigos.find(e => e.email == v) || this.codigosalunos.find(e => e.email == v)){
+                this.disabledEmail = true
+                return 'Esse email já existe. Tente outro por favor.'
+            }
+           this.disabledEmail = false
+           return true
         }
       }
     },
     created : async function() {
         try {
           this.token = localStorage.getItem("token")
-          var response = await axios.get(h + "escolas")
+          var response = await axios.get(h + "escolas?token=" + this.token)
           this.escolasIds = response.data
           var i
           for(i = 0; i < this.escolasIds.length; i++){
@@ -90,6 +105,8 @@
           }
           var responseCodigos = await axios.get(h + "professores/codigos?token=" + this.token)
           this.codigos = responseCodigos.data
+          var responseCodigos2 = await axios.get(h + "alunos/codigos?token=" + this.token)
+          this.codigosalunos = responseCodigos2.data
         } catch (e) {
         return e
         }

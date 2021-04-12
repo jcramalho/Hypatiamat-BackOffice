@@ -53,7 +53,8 @@
                                 <v-card class="pa-1" outlined color="green lighten-3">
                                     <v-row class="align-center">
                                         <v-col cols="3">
-                                            <span>Posição <b>{{certificado.posicao}}</b></span>
+                                            <span>Posição <b>{{certificado.posicao}}</b></span><br>
+                                            <span class="caption" v-if="certificado.user && certificado.user!=''">{{certificado.user}}</span>
                                         </v-col>
                                         <v-col cols="5">
                                             <div v-if="certificado.ficheiro">
@@ -113,6 +114,7 @@
                     <template v-slot:item="row">
                         <tr>
                             <td>{{row.item.posicao}}</td>
+                            <td>{{row.item.user}}</td>
                             <td>{{row.item.nome}}</td>
                             <td>{{row.item.pontuacao}}</td>
                             <td>{{row.item.agrupamento}}</td>
@@ -157,6 +159,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         filtrar : "",
         headers:[
             {text: "Posição", value: 'posicao', class: 'subtitle-1'},
+            {text: "User", value: 'user', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
             {text: "Pontos", value: 'pontuacao', class: 'subtitle-1'},
             {text: "Agrupamento", value: 'agrupamento', class: 'subtitle-1'},
@@ -195,26 +198,31 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
             this.$set(this.certificados, index, aux)
       },
       postFile(index){
+
           var certificado = this.certificados[index]
           if(certificado.selectedFile){
               let formData = new FormData();
               formData.append("file", certificado.selectedFile);
+              if(certificado.posicao == 11) var user = ''
+              else var user = certificado.user
               axios.post(hostCampeonatos + this.campeonato.cod + '/certificados?jogo=' + this.jogoSel.jogo + 
-                                "&posicao=" + certificado.posicao + "&token=" + this.token, formData, {headers: {'Content-Type': 'multipart/form-data'}})
+                                "&posicao=" + certificado.posicao + "&user=" + user +
+                                 "&token=" + this.token, formData, {headers: {'Content-Type': 'multipart/form-data'}})
                                 
                     .then(response => {
                         console.log('Ficheiro inserido')
-                        console.log(response.data)
                         this.$set(this.certificados, index, response.data)
                     })
                     .catch(erro => console.log(erro))
           }
       },
       download: function(certificado){
+         if(certificado.user) var user = certificado.user
+         else var user = ''
          axios({
             method: "get",
             url: hostCampeonatos + this.campeonato.cod + "/certificados/download?jogo=" + this.jogoSel.jogo + 
-                        "&posicao=" + certificado.posicao + "&token=" + this.token,
+                        "&posicao=" + certificado.posicao + "&user=" + user + "&token=" + this.token,
             responseType: 'arraybuffer'
           })
              .then(function (response) {
@@ -246,10 +254,38 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
       atualizaFicheiros: async function(){         
          var response = await axios.get(hostCampeonatos + this.campeonato.cod + "/certificados?jogo=" + this.jogoSel.jogo + "&token=" + this.token)
          var aux = response.data
+         var res = []
          for(var i = 0; i < this.items.length && i <= 10; i++){
-             if(!aux.find(e => e.posicao == i+1)) aux.push({posicao: i+1, ficheiro: null})
+             var ficheiro = aux.find(e => e.posicao == i+1)
+             if(!ficheiro) {
+                 if(i != 10){
+                     var posicaoUsers = this.items.filter(e => e.posicao == i+1)
+                     for(var j = 0; j < posicaoUsers.length; j++){
+                         var auxUser = aux.find(e => e.user == posicaoUsers[j].user)
+                         if(!auxUser){
+                             res.push({posicao: i+1, ficheiro: null, user: posicaoUsers[j].user})
+                         }
+                     }
+                 }
+                 else{
+                     res.push({posicao: i+1, ficheiro: null, user: null})
+                 }                 
+             }
+             else{
+                 if(i != 10){
+                     var posicaoUsers = this.items.filter(e => e.posicao == i+1)
+                     for(var j = 0; j < posicaoUsers.length; j++){
+                         var auxUser = aux.find(e => e.user == posicaoUsers[j].user)
+                         if(!auxUser){
+                             res.push({posicao: i+1, ficheiro: null, user: posicaoUsers[j].user})
+                         }
+                         else res.push(auxUser)
+                     }
+                 }
+                 else res.push(ficheiro)
+             }
          }
-         this.certificados = aux
+         this.certificados = res
          return true 
       },
       atualizaConteudo: async function(){

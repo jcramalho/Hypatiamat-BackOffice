@@ -107,11 +107,16 @@ module.exports.verifyUserProf = function(){
 }
 
 module.exports.verifyUserProf2 = function(){
-    return function(req, res, next) {
+    return async function(req, res, next) {
         var u = req.user.user
         var codigo = req.params.codigo
 
         if( ((u.type == 50) || (u.codigo.toUpperCase() === codigo.toUpperCase())) && u.type != 10  ) next()
+        else if(u.type == 30){
+            var professor = await Professores.getProfessorByCodigo(codigo)
+            if(u.escolas.find(e => e.cod == professor.escola)) next()
+            else res.status(403).jsonp("Não tem permissão.")
+        }
         else res.status(403).jsonp("Não tem permissão.")
     }
 }

@@ -17,7 +17,7 @@
                     color="#009263"
                     :items="escolas"
               ></v-combobox>
-              <v-text-field prepend-icon="mdi-email" label="Email" placeholder="Email" v-model="professor.email" color="#009263" required/>
+              <v-text-field prepend-icon="mdi-email" label="Email" placeholder="Email" v-model="professor.email" :rules="[existeEmail]" color="#009263" required/>
               <v-text-field prepend-icon="mdi-ticket-confirmation-outline" label="Confirmação (0 ou 1)" placeholder="Confirmação (0 ou 1) " v-model="professor.confirmacao" :rules="[number0or1]" color="#009263" required/>
               <v-combobox
                     id="premium"
@@ -75,7 +75,7 @@
 
 
 
-              <center><v-btn class="white--text" style="background-color: #009263;" @click="editarProfessor()"> Confirmar Alterações </v-btn></center>
+              <center><v-btn :disabled="disabledEmail" class="white--text" style="background-color: #009263;" @click="editarProfessor()"> Confirmar Alterações </v-btn></center>
             
             </v-container>
         </v-card>
@@ -123,6 +123,10 @@ const h = require("@/config/hosts").hostAPI
         ],
         escolas: [],
         escolaAtual:"",
+        codigosprof:[],
+        codigosalunos:[],
+        emailOriginal:"",
+        disabledEmail: false,
         premiumAtual: "",
         number0or1: v  => {
           //if (!v.trim()) return true;
@@ -133,7 +137,16 @@ const h = require("@/config/hosts").hostAPI
           //if (!v.trim()) return true;
           if (!isNaN(parseInt(v))) return true;
           return 'Tem que ser um inteiro';
-        } 
+        },
+        existeEmail: v => {
+          if(this.emailOriginal != v && ( this.codigosprof.find(e => e.email == v) || this.codigosalunos.find(e => e.email == v) ) ){
+            this.disabledEmail = true
+            return 'Email já utilizado.'
+          }
+          
+          if(v != "" && this.reg.test(v)) {this.disabledEmail = false; return true}
+          else {this.disabledEmail = true; return false}
+        }
 
       }
     },
@@ -145,15 +158,23 @@ const h = require("@/config/hosts").hostAPI
         if(!this.id) this.id = this.idProp
         var response = await axios.get(h + "professores/" + this.id + "?token=" + this.token)
         this.professor = response.data
+        this.emailOriginal = this.professor.email
         var responseEscolas = await axios.get(h + "escolas")
         this.escolasIds = responseEscolas.data
         this.escolaAtual = this.escolasIds.find(e => e.cod == this.professor.escola).nome
         this.premiumAtual = this.typePremium.find(e => e.split(" - ")[0] == this.professor.premium)
         this.parseEscolas()
+        this.getCodigos()
     },
     methods: {
       format(value, event) {
         return moment(value).format('YYYY-MM-DD')
+      },
+      getCodigos: async function(){
+        var response1 = await axios.get(h + "professores/codigos?token=" + this.token)
+        this.codigosprof = response1.data
+        var response2 = await axios.get(h + "alunos/codigos?token=" + this.token)
+        this.codigosalunos = response2.data
       },
       parseEscolas: async function(){
         var aux = []

@@ -12,13 +12,13 @@ var transporter = nodemailer.createTransport({
 
 var fromHypatia = {
   name: 'Hypatiamat',
-  address: 'luis15945@agvv.edu.pt'
+  address: authEmail.user
 }
 
 Email.sendEmail=  async function(senderNome, destinatarios, texto){
     var fromProf = {
       name: senderNome,
-      address: 'luis15945@agvv.edu.pt'
+      address: authEmail.user
     }
     var mailOptions = {
       from: fromProf,

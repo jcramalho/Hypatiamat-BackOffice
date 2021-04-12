@@ -242,7 +242,7 @@ Turma.getJogos = async function(turma, escola, dataInicio, dataFim){
 
 Turma.getEstatisticasFromTurma = async function(dataInicio, dataFim, jogoTipo, tableJogo, turma, escola){
     return new Promise(function(resolve, reject) {
-        sqlSAMD.query(`SELECT min(pontuacao) as min, max(pontuacao) as max, avg(pontuacao) as media, count(pontuacao) as number 
+        sqlSAMD.query(`SELECT min(pontuacao) as min, max(pontuacao) as max, Round(avg(pontuacao), 0) as media, count(pontuacao) as number 
 		FROM ${bdSAMD}.${tableJogo} 
          WHERE turma!='99' AND turma = ? AND tipo=? AND idescola=? and (data BETWEEN ? and ?);`, [turma, jogoTipo, escola, dataInicio, dataFim], function(err, res){
             if(err){
@@ -259,7 +259,7 @@ Turma.getEstatisticasFromTurma = async function(dataInicio, dataFim, jogoTipo, t
 
 Turma.getEstatisticasFromEscola = async function(dataInicio, dataFim, jogoTipo, tableJogo, escola){
     return new Promise(function(resolve, reject) {
-        sqlSAMD.query(`SELECT min(pontuacao) as min, max(pontuacao) as max, avg(pontuacao) as media, count(pontuacao) as number 
+        sqlSAMD.query(`SELECT min(pontuacao) as min, max(pontuacao) as max, Round(avg(pontuacao), 0) as media, count(pontuacao) as number 
 		FROM ${bdSAMD}.${tableJogo} 
          WHERE turma!='99' AND tipo=? AND idescola=? and (data BETWEEN ? and ?);`, [jogoTipo, escola, dataInicio, dataFim], function(err, res){
             if(err){
@@ -276,7 +276,7 @@ Turma.getEstatisticasFromEscola = async function(dataInicio, dataFim, jogoTipo, 
 
 Turma.getEstatisticasFromHypatia = async function(dataInicio, dataFim, jogoTipo, tableJogo){
     return new Promise(function(resolve, reject) {
-        sqlSAMD.query(`SELECT min(pontuacao) as min, max(pontuacao) as max, avg(pontuacao) as media, count(pontuacao) as number 
+        sqlSAMD.query(`SELECT min(pontuacao) as min, max(pontuacao) as max, Round(avg(pontuacao), 0) as media, count(pontuacao) as number 
 		FROM ${bdSAMD}.${tableJogo} 
          WHERE turma!='99' AND tipo=? and (data BETWEEN ? and ?);`, [jogoTipo, dataInicio, dataFim], function(err, res){
             if(err){

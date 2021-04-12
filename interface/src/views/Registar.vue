@@ -159,20 +159,22 @@
           else {this.disabledCodigo = true; return "Apenas pode conter 15 caractéres"}
         },
         codigoProfExistente: v => {
-          if(this.codigosprofs.find(e => e.codigo.toUpperCase() == v.toUpperCase())) {this.disabledCodigo = true ; return 'Código já utilizado por outro professor. Escolha outro por favor.'}
+          if(this.codigosprofs.find(e => e.codigo.toUpperCase() == v.toUpperCase()) || this.codigosalunos.find(e => e.user.toUpperCase() == v.toUpperCase())) 
+                      {this.disabledCodigo = true ; return 'Código já utilizado. Escolha outro por favor.'}
           else {this.disabledCodigo = false; return true}
         },
         codigoAlunoExistente: v =>{
-          if(this.codigosalunos.find(e => e.user.toUpperCase() == v.toUpperCase())) {this.disabledCodigo = true ; return 'Código já utilizado por outro professor. Escolha outro por favor.'}
+          if(this.codigosalunos.find(e => e.user.toUpperCase() == v.toUpperCase()) || this.codigosprofs.find(e => e.codigo.toUpperCase() == v.toUpperCase())) 
+                      {this.disabledCodigo = true ; return 'Código já utilizado. Escolha outro por favor.'}
           else {this.disabledCodigo = false; return true}
         },
         emailProfExistente: v =>{
-          if(this.codigosprofs.find(e => e.email == v)) {this.disabledEmail = true; return 'Email já utilizado por outro professor. Escolha outro por favor.'}
+          if(this.codigosprofs.find(e => e.email == v) || this.codigosalunos.find(e => e.email == v)) {this.disabledEmail = true; return 'Email já utilizado. Escolha outro por favor.'}
           else {this.disabledEmail = false; return true}
         },
         emailAlunoExistente: v =>{
-          if(this.codigosalunos.find(e => e.codigo == v)) {this.disabledCodigo = true ; return 'Código já utilizado por outro professor. Escolha outro por favor.'}
-          else {this.disabledCodigo = false; return true}
+          if(this.codigosalunos.find(e => e.email == v) || this.codigosprofs.find(e => e.email == v)) {this.disabledEmail = true; return 'Email já utilizado. Escolha outro por favor.'}
+          else {this.disabledEmail = true; return true}
         },
         codigoProfessorAluno: v=>{
           if(this.codigosprofs.find(e => e.codigo == v)) {this.disabledCodProfAluno = false; return true;}

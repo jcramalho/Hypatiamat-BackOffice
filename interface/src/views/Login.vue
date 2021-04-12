@@ -70,8 +70,7 @@ import axios from "axios"
 import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
 
-import VueJwtDecode from "vue-jwt-decode";
-import { ResponsiveDirective } from "vue-responsive-components"
+import jwt_decode from "jwt-decode";
 
 
   export default {
@@ -83,9 +82,6 @@ import { ResponsiveDirective } from "vue-responsive-components"
       }
     },
 
-  directives: {
-    responsive: ResponsiveDirective
-  },
   computed:{
     small() {
       if (this.$vuetify.breakpoint.sm) return true
@@ -111,7 +107,7 @@ import { ResponsiveDirective } from "vue-responsive-components"
           let token = response.data.token;
           if (token) {
             localStorage.setItem("type", JSON.stringify(response.data.type))
-            var aux = VueJwtDecode.decode(token)
+            var aux = jwt_decode(token)
             localStorage.setItem("utilizador", JSON.stringify(aux.user))
             //let utilizador = JSON.parse(localStorage.getItem("utilizador"))
             localStorage.setItem("token", token);

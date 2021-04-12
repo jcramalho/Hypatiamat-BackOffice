@@ -11,9 +11,6 @@ router.post('/enviar', passport.authenticate('jwt', {session: false}), function(
     var texto = req.body.texto
     var nome = req.body.nome
     if(destinatarios && Array.isArray(destinatarios) && texto && nome){
-        console.log(JSON.stringify(destinatarios))
-        console.log(texto)
-        console.log(nome)
         Email.sendEmail(nome, destinatarios, texto)
              .then(dados => res.jsonp(dados))
              .catch(erro => res.status(500).send('Erro'))

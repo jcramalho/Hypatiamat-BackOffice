@@ -9,12 +9,12 @@
           <v-text-field prepend-icon="mdi-numeric-1-box-multiple-outline" label="Número" placeholder="Número" v-model="aluno.numero" color="#009263" type="number" :rules="[number]" required/>           
           <v-text-field prepend-icon="mdi-account" label="Nome" placeholder="Nome" v-model="aluno.nome" color="#009263" required/>
           <v-text-field prepend-icon="mdi-calendar" label="Data de Nascimento" placeholder="Data de Nascimento" v-model="aluno.datanascimento" type="date" color="#009263" required/>
-          <v-text-field prepend-icon="mdi-email" label="Email" placeholder="Email" v-model="aluno.email" color="#009263" required/>
+          <v-text-field prepend-icon="mdi-email" label="Email" placeholder="Email" v-model="aluno.email" color="#009263" :rules="[existeEmail]" required/>
           <v-text-field v-if="utilizador.type!=10" prepend-icon="mdi-account-check" label="Confirmação (0 ou 1)" placeholder="Confirmação (0 ou 1) " v-model="aluno.confirmacao" :rules="[number0or1]" color="#009263" required/>
 
           <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true"> Alterar password </v-btn></center>
           <br>
-          <center><v-btn class="white--text" style="background-color: #009263;" @click="editarAluno()"> Confirmar Alterações </v-btn></center>
+          <center><v-btn :disabled="disabledEmail" class="white--text" style="background-color: #009263;" @click="editarAluno()"> Confirmar Alterações </v-btn></center>
           
            <v-dialog
             v-model="dialogPassword"
@@ -53,6 +53,11 @@ const h = require("@/config/hosts").hostAPI
         password1:"",
         password2:"",
         filtrar:"",
+        codigosprof:[],
+        codigosalunos:[],
+        emailOriginal:"",
+        disabledEmail: false,
+        reg: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/,
         number0or1: v  => {
           if (!isNaN(parseInt(v)) && (v == 0 || v == 1)) return true;
           return 'Tem que ser 0 ou 1';
@@ -60,7 +65,19 @@ const h = require("@/config/hosts").hostAPI
         number: v  => {
           if (!isNaN(parseInt(v))) return true;
           return 'Tem que ser um inteiro';
-        } 
+        },
+        existeEmail: v => {
+          if(this.emailOriginal != v && ( this.codigosprof.find(e => e.email == v) || this.codigosalunos.find(e => e.email == v) ) ){
+            this.disabledEmail = true
+            return 'Email já utilizado.'
+          }
+          
+          if(v != "" && this.reg.test(v)) {this.disabledEmail = false; return true}
+          else {this.disabledEmail = true; return false}
+        },
+        emailValido: v =>{
+          
+        },
 
       }
     },
@@ -72,12 +89,21 @@ const h = require("@/config/hosts").hostAPI
         this.id = this.idProp
         var response = await axios.get(h + "alunos/" + this.id + "?token=" + this.token)
         this.aluno = response.data
+        this.emailOriginal = this.aluno.email
+        this.getCodigos()
         var aux = this.aluno.datanascimento.split("/")
         if(aux.length > 0){
           this.aluno.datanascimento = aux[2] + "-" + aux[1] + "-" + aux[0]
         }
+        
     },
     methods: {
+      getCodigos: async function(){
+        var response1 = await axios.get(h + "professores/codigos?token=" + this.token)
+        this.codigosprof = response1.data
+        var response2 = await axios.get(h + "alunos/codigos?token=" + this.token)
+        this.codigosalunos = response2.data
+      },
       editarAluno : function(){
         var formatada = this.aluno.datanascimento
         var data = this.aluno.datanascimento.split("-")

@@ -117,7 +117,6 @@
                             <td>{{row.item.ncertas}}</td>
                             <td>{{row.item.ntotal}}</td>
                             <td>{{row.item.acerto}}</td>
-                            <td>{{row.item.frequencia}}</td>
                             <td>{{row.item.onpeak}}</td>
                             <td>{{row.item.offpeak}}</td>
                             <td>{{row.item.frequencia}}</td>

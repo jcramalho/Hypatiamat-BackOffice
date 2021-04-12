@@ -68,22 +68,21 @@ export default {
         })
         
       }
-      
+      /*
+      var self = this
       this.interval = setInterval(async function(){
-          console.log(this)
-          console.log(this.utilizador)
-          /*
-          var response = await axios.get(h + "mensagens/alunos/" + this.utilizador.user + "/number/naovistas?token=" + this.token)
-          this.mensagensLer =  response.data.number 
-          if(this.mensagensLer - this.oldNovasMensagensLer > 0){
+          
+          var response = await axios.get(h + "mensagens/alunos/" + self.utilizador.user + "/number/naovistas?token=" + self.token)
+          self.mensagensLer =  response.data.number 
+          if(self.mensagensLer - self.oldNovasMensagensLer > 0){
             Swal.fire({
               icon: 'warning',
-              text: 'Tem mais ' + (this.mensagensLer - this.oldNovasMensagensLer) + ' novas mensagens por ler.',
+              text: 'Tem mais ' + (self.mensagensLer - self.oldNovasMensagensLer) + ' novas mensagens por ler.',
               confirmButtonColor: '#009263'
             })
           }
-          this.oldNovasMensagensLer = this.mensagensLer*/
-        }, 10000)
+          self.oldNovasMensagensLer = self.mensagensLer
+        }, 10000)*/
       
     }
   },

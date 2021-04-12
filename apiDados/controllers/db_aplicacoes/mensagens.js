@@ -160,7 +160,7 @@ Mensagens.putMensagemVista = function(id){
 Mensagens.getQuemViuMensagem = function(idMensagem){
     return new Promise(function(resolve, reject) {
         sql.query(`Select ms.user, al.nome, ms.visto 
-            from mensagens ms, alunos al where ms.idMensagem = ? and al.user = ms.user order by ms.visto desc`, idMensagem, function(err, res){
+            from (select * from mensagens where idMensagem=?) ms, alunos al where al.user = ms.user order by ms.visto desc`, idMensagem, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

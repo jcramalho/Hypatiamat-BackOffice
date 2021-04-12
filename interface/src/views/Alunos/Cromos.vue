@@ -42,8 +42,11 @@
                                 <v-icon color="green"> mdi-information-outline </v-icon>
                                 </v-btn>
                               </template>
-                              <span>{{cromo.nome}}</span>
-                              <!--<span class="header"> <p> Para ganhar o cromo ou mais estrelas do cromo, terá que: </p> <p> {{cromo.descricao}}</p> </span>-->
+                              <center>
+                                <span>{{cromo.nome}}</span>
+                                <br>
+                                <span>{{cromo.descricao}}</span>
+                              </center>
                           </v-tooltip>
                         </div>
                         <!--
@@ -70,8 +73,11 @@
                                 <v-icon color="green"> mdi-information-outline </v-icon>
                                 </v-btn>
                               </template>
-                              <span>{{cromo.nome}}</span>
-                              <!--<span class="header"> <p> Para ganhar o cromo ou mais estrelas do cromo, terá que: </p> <p> {{cromo.descricao}}</p> </span>-->
+                              <center>
+                                <span>{{cromo.nome}}</span>
+                                <br>
+                                <span>{{cromo.descricao}}</span>
+                              </center>
                           </v-tooltip>
                         </div>
                       </center>
@@ -119,18 +125,21 @@
                               </div>
                             </div>
                             <v-tooltip bottom>
-                                  <template v-slot:activator="{ on, attrs }">
-                                    <v-btn
-                                      icon
-                                      v-bind="attrs" 
-                                      v-on="on"
-                                    >
-                                    <v-icon color="green"> mdi-information-outline </v-icon>
-                                    </v-btn>
-                                  </template>
-                                  <span>{{cromo.nome}}</span>
-                                  <!--<span class="header"> <p> Para ganhar o cromo ou mais estrelas do cromo, terá que: </p> <p> {{cromo.descricao}}</p> </span>-->
-                            </v-tooltip>
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-btn
+                                  icon
+                                  v-bind="attrs" 
+                                  v-on="on"
+                                >
+                                <v-icon color="green"> mdi-information-outline </v-icon>
+                                </v-btn>
+                              </template>
+                              <center>
+                                <span>{{cromo.nome}}</span>
+                                <br>
+                                <span>{{cromo.descricao}}</span>
+                              </center>
+                          </v-tooltip>
                           </center>
                         </v-container>
                     </v-container>

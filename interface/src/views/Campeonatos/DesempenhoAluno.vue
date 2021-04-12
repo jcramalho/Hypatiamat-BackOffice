@@ -275,13 +275,13 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
          if(desempenho.posHypatia > 11) var posFinal = 11
          else var posFinal = desempenho.posHypatia
          var response1 = await axios.get(hostCampeonatos + this.campeonato.campeonatoID + "/certificados/nome?jogo=" + this.campeonato.jogo + 
-                        "&posicao=" + posFinal + "&token=" + this.token) 
+                        "&posicao=" + posFinal + "&user=" + this.userAluno + "&token=" + this.token) 
          if(response1.data){
             var nome = response1.data.ficheiro
             axios({
                 method: "get",
                 url: hostCampeonatos + this.campeonato.campeonatoID + "/certificados/download?jogo=" + this.campeonato.jogo + 
-                            "&posicao=" + posFinal + "&token=" + this.token,
+                            "&posicao=" + posFinal + "&user=" + this.userAluno + "&token=" + this.token,
                 responseType: 'arraybuffer'
             })
                 .then(function (response) {
