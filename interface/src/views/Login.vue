@@ -1,5 +1,6 @@
 <template>
-  <v-container>  
+  <div class="grey lighten-3">
+    <v-main class="grey lighten-3">  
     <v-row class="text-xs-center pa-lg-16" justify-center align-center  >
       <v-col class="justify-center" cols="12" xs="12" sm="12" md="12" lg="12" xl="3">
       </v-col>
@@ -27,9 +28,9 @@
         <v-container :v-bind:style="[small ? 'width:60%;' : 'width:10%;']">
         <v-row>
           <v-col cols="12">
-          <v-card class="pa-4" style="background-color: #d8dbd7;">
-              <v-card-title class="justify-center" style="text-color: #d8dbd7;">
-                Autenticação
+          <v-card class="pa-4" rounded outlined>
+              <v-card-title class="justify-center green--text" >
+                <b>Autenticação</b>
               </v-card-title>
               
               <v-form>
@@ -50,7 +51,7 @@
                 <v-btn class="white--text" primary large block style="background-color: #009263;" @click="login">Login</v-btn>
               </v-card-actions>
               </v-form>
-              <center><span> Ainda não possuí conta? </span> <span class="font-weight-bold black--text" @click="registar()" style="cursor: pointer;" > Registe-se aqui! </span></center>
+              <center><span> Ainda não possuí conta? </span> <span class="font-weight-bold green--text" @click="registar()" style="cursor: pointer;" > Registe-se aqui! </span></center>
           </v-card>
           </v-col>     
         </v-row>   
@@ -59,8 +60,9 @@
       <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="3">
       </v-col>
     </v-row>
-    </v-container>
-  
+    <Footer  class="grey lighten-3" />
+    </v-main>
+    </div>
 </template>
 
 
@@ -71,9 +73,11 @@ import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
 
 import jwt_decode from "jwt-decode";
+import Footer from '../components/Footer.vue';
 
 
   export default {
+  components: { Footer },
     data(){
       return {
         user : "",

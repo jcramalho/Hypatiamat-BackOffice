@@ -1,5 +1,6 @@
 var sql = require('../../models/db_aplicacoes');
 var sqlSamd = require('../../models/db_samd')
+var sqlConhecimentos = require('../../models/db_testeconhecimentos')
 var Jogos = require('../db_samd/jogos')
 var md5 = require('md5')
 const bdSAMD = require('../../models/conf').bdSAMD
@@ -298,7 +299,7 @@ Aluno.updatePassword = function(id, password){
 
 Aluno.getApps = function(user){
     return new Promise(function(resolve, reject) {
-        sqlSamd.query("Select * from appsinfoall where userid = ? ;", user, function(err, res){
+        sqlConhecimentos.query("Select * from appsinfoall where userid = ? ;", user, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -328,7 +329,7 @@ Aluno.getJogosFromJogo = function(user, tableJogo, jogoTipo){
 Aluno.jogou = async function(typeJogos, user){
     for(var i = 0; i < typeJogos.length; i++){
         var jogo = await Aluno.getJogosFromJogo(user, typeJogos[i].jogotable, typeJogos[i].tipo)
-        if(jogo.length == 0) return true
+        if(jogo.length > 0) return true
     }
     return false
 }
@@ -338,6 +339,7 @@ Aluno.apagar = async function(user){
     if(apps.length == 0){
         var typeJogos = await Jogos.getJogosDB()
         var jogou = await Aluno.jogou(typeJogos, user)
+        console.log(jogou)
         if(jogou){
             return {removed: false, message: "O aluno já jogou alguns jogos, logo não pode ser removido."}
         }

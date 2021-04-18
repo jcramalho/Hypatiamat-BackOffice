@@ -218,16 +218,13 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
                                                     + "&token=" + this.token)
 
             var escolas = []
+            var escolas = []
             for(var i = 0; i < responseAlunos.data.length; i++){
-                if(responseAlunos.data[i].escola != this.escola){
-                    var auxEscola = escolas.find(a => a.escola == responseAlunos.data[i].escola)
-                    if(auxEscola){
-                        auxEscola.numero++;
-                    }
-                    else escolas.push({escola: responseAlunos.data[i].escola, numero:1})
-                }
+                var auxEscola = escolas.find(a => a.escola == responseAlunos.data[i].escola)
+                if(auxEscola) auxEscola.numero++;
+                else escolas.push({escola: responseAlunos.data[i].escola, numero:1})
             }
-            if(escolas.length > 0){
+            if(escolas.length > 1){
                 var res = Math.max.apply(Math, escolas.map(function(o){return o.numero;}))
                 var escolaAux = escolas.find(function(o){ return o.numero == res; })
                 if(escolaAux && escolaAux.escola != this.escola) this.escola = escolaAux.escola;

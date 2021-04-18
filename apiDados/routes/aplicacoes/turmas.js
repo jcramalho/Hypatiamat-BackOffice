@@ -47,12 +47,9 @@ router.get('/:turma/alunos', passport.authenticate('jwt', {session: false}), ver
     var aux
     if(( aux = turma.split("-") )){
       if(req.query.codprofessor){
-        
         var alunosAtuais = await Alunos.getAlunosFromTurma(turma, codprofessor);
-        console.log(alunosAtuaisQuery)
         if(!alunosAtuaisQuery){
           var alunosOld = await TurmasOld.getAlunosFromTurma(turma, codprofessor);
-          console.log(alunosOld)
           for(var i = 0; i < alunosOld.length; i++){
             if(!alunosAtuais.find(e => alunosOld[i].user == e.user)){
               alunosOld[i].alunoOld = true

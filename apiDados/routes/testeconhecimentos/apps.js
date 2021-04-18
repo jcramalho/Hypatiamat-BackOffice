@@ -165,33 +165,38 @@ router.get('/turmas/:turma', passport.authenticate('jwt', {session: false}), fun
     var codProf = req.query.codProf
     var codtema = req.query.codtema
     var codsubtema = req.query.codsubtema
+    var horaInicio = req.query.horaInicio
+    var horaFim = req.query.horaFim
 
-    if(codtema){
-        // é um tema
-        if(codsubtema){
-            // com subtema
-            Apps.getAppFromTurmaSubTema(codtema, codsubtema, turma, codProf, dataInicio, dataFim)
-                .then(dados =>{
-                    res.jsonp(dados)
-                })
-                .catch(erro => res.status(500).jsonp(erro))
+    if(dataInicio && dataFim && codProf && horaInicio && horaFim){
+        if(codtema){
+            // é um tema
+            if(codsubtema){
+                // com subtema
+                Apps.getAppFromTurmaSubTema(codtema, codsubtema, turma, codProf, dataInicio, dataFim, horaInicio, horaFim)
+                    .then(dados =>{
+                        res.jsonp(dados)
+                    })
+                    .catch(erro => res.status(500).jsonp(erro))
+            }
+            else{
+                // sem subtema
+                Apps.getAppFromTurma(codtema, turma, codProf, dataInicio, dataFim, horaInicio, horaFim)
+                    .then(dados =>{
+                        res.jsonp(dados)
+                    })
+                    .catch(erro => res.status(500).jsonp(erro))
+            }
         }
         else{
-            // sem subtema
-            Apps.getAppFromTurma(codtema, turma, codProf, dataInicio, dataFim)
+            Apps.getAllAppsFromTurma(turma, codProf, dataInicio, dataFim, horaInicio, horaFim)
                 .then(dados =>{
                     res.jsonp(dados)
                 })
                 .catch(erro => res.status(500).jsonp(erro))
-        }
-    }
-    else{
-        Apps.getAllAppsFromTurma(turma, codProf, dataInicio, dataFim)
-            .then(dados =>{
-                res.jsonp(dados)
-            })
-            .catch(erro => res.status(500).jsonp(erro))
-    }          
+        }    
+    }      
+    else res.status(400).jsonp('Faltam parâmetros')
 });
 
 router.get('/turmas/:turma/jogou', passport.authenticate('jwt', {session: false}), function(req, res, next) {

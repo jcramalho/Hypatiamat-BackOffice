@@ -175,12 +175,12 @@ calcRapid.getCalcRapidTipoAgrupamentos = async function(dataInicio, dataFim, tip
 }
 
 // por cada aluno de uma turma de um professor e todos os tipos do calcrapid
-calcRapid.getTodosCalcRapidTurmas = async function(dataInicio, dataFim, escola, turma){
-    var args = [dataInicio, dataFim, escola, turma, escola]
+calcRapid.getTodosCalcRapidTurmas = async function(dataInicio, dataFim, escola, turma, horaInicio, horaFim){
+    var args = [ escola, turma, dataInicio, dataFim, horaInicio, horaFim, escola]
     return new Promise(function(resolve, reject) {
         sql.query(`select jogo.idaluno, al.numero, al.nome, sum(pontcerta) as pontcerta, sum(ponterrada) as ponterrada,  sum(n) as oprealizadas, sum(f) as frequencia 
 		from (select * from ${bdSAMD}.calcRapidHypatia 
-        where (data BETWEEN ? and ?) and idescola = ? and turma = ?) as jogo, 
+        where idescola = ? and turma = ? and (data BETWEEN ? and ?) and (horario between ? and ?)) as jogo, 
         (select * from ${bdAplicacoes}.alunos where escola = ?) as al
         where al.user = jogo.idaluno Group By jogo.idaluno Order by al.numero;`, args, function (err, res) {            
                 if(err) {
@@ -195,12 +195,12 @@ calcRapid.getTodosCalcRapidTurmas = async function(dataInicio, dataFim, escola, 
 }
 
 // por cada aluno de uma turma de um professor e por uma lista de tipos do calcrapid
-calcRapid.getTiposCalcRapidTurmas = async function(dataInicio, dataFim, tipo, escola, turma){
-    var args = [dataInicio, dataFim, tipo, escola, turma, escola]
+calcRapid.getTiposCalcRapidTurmas = async function(dataInicio, dataFim, tipo, escola, turma, horaInicio, horaFim){
+    var args = [dataInicio, dataFim, tipo, escola, turma, horaInicio, horaFim, escola]
     return new Promise(function(resolve, reject) {
         sql.query(`select jogo.idaluno, al.numero, al.nome, sum(pontcerta) as pontcerta, sum(ponterrada) as ponterrada,  sum(n) as oprealizadas, sum(f) as frequencia 
 		from (select * from ${bdSAMD}.calcRapidHypatia 
-        where (data BETWEEN ? and ?) and tipo in (?) and idescola = ? and turma=?) as jogo, 
+        where (data BETWEEN ? and ?) and tipo in (?) and idescola = ? and turma=? and (horario between ? and ?)) as jogo, 
         (select * from ${bdAplicacoes}.alunos where escola=?) as al
         where al.user = jogo.idaluno Group By jogo.idaluno Order by al.numero;`, args, function (err, res) {            
                 if(err) {
@@ -271,7 +271,8 @@ calcRapid.alunoJogou = async function(user, dataInicio, dataFim){
 // última vez que o aluno jogou
 calcRapid.getAlunoLast = function(user){
     return new Promise(function(resolve, reject) {
-        sql.query(`select max(concat(data, ' ', horario)) as lastdate, sum(f) as frequencia from ${bdSAMD}.calcRapidHypatia where idaluno=?;`, user, function(err, res){
+        sql.query(`select max(concat(data, ' ', horario)) as lastdate, sum(f) as frequencia 
+                from ${bdSAMD}.calcRapidHypatia where idaluno=? and (data between ? and ?);`, [user, dataInicioAno, dataFimAno], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

@@ -15,7 +15,7 @@
                     <v-file-input show-size v-model="file" placeholder="Anexar ficheiro csv"  label="Anexar ficheiro csv"
                     prepend-icon="mdi-paperclip" style="width:70%;" color="#009263" @change="checkFile()"/> 
 
-                    <v-btn color="#009263" type='submit' @click="postFile()"> Inserir Alunos </v-btn>
+                    <v-btn class="white--text" color="#009263" type='submit' @click="postFile()"> Inserir Alunos </v-btn>
                     </center>
                   </v-card>
                 </v-dialog>
@@ -136,7 +136,6 @@ const h = require("@/config/hosts").hostAPI
     },
     methods: {
       checkFile: async function(){
-        console.log(this.file)
         if(this.file != undefined){
           if(this.file.type != "application/vnd.ms-excel" && this.file.type != "text/csv"){
             Swal.fire({

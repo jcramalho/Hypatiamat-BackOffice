@@ -107,7 +107,7 @@ export default {
       idUtilizador:"",
       nomeUtilizador:"",
       nome:"",
-      versao: "1.3"
+      versao: "1.4"
     }
   },
   watch: {
@@ -193,9 +193,13 @@ export default {
       // Agrupamento
       this.items =[
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
-        { title: 'Minhas Turmas', icon: 'mdi-book-account', href:"/minhasturmas" },
+        { title: 'Meus Professores', icon: 'mdi-teach', href:"/escolas/" + utilizador.escola +  "/professores" },
         { title: 'Monitorização de Jogos', icon: 'mdi-gamepad-variant', href:"/escolas/"+ utilizador.escola + "/jogos" },        
         { title: 'Monitorização de Apps', icon: 'mdi-apps', href:"/escolas/"+ utilizador.escola + "/apps" },
+        { title: 'Ranking Jogos', icon: 'mdi-podium', href:"/classificacoes/jogos/escola"},
+        { title: 'Ranking Apps', icon: 'mdi-podium', href:"/classificacoes/apps/escola"},
+        { title: 'Outras estatísticas', icon:'mdi-home-analytics', href:"/estatisticas/escolas/" + utilizador.escola},
+        { title: 'Campeonatos', icon: 'mdi-trophy', href:"/campeonatos/escolas/" + utilizador.escola},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }

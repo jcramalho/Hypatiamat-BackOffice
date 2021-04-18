@@ -197,7 +197,7 @@ router.post('/', async function(req, res, next) {
 });
 
 /* POST insere um novo aluno (Admin). */
-router.post('/admin', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), async function(req, res, next) {
+router.post('/admin', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdminProf(), async function(req, res, next) {
   var aluno = req.body
   if(aluno.user && aluno.numero && aluno.nome && aluno.datanascimento && aluno.escola 
       && aluno.codprofessor && aluno.turma && aluno.email && aluno.password && aluno.pais){
@@ -248,7 +248,7 @@ router.post('/csv', passport.authenticate('jwt', {session: false}), verifyToken.
             var aluno = alunos[i]
             var verificacao = await verifyAluno(aluno)
             if(verificacao.response){
-              Alunos.insertAluno(aluno)
+              Alunos.insertAlunoAdmin(aluno)
             }
             else{
               errosCodigos.push({

@@ -7,11 +7,12 @@
                 <v-card-title primary-title class="justify-center green--text">
                     Alunos da Turma {{turma.turma}}
                 </v-card-title>
-                <center>
+                <center v-if="utilizador.type==20">
                   <v-btn v-if="!show" text @click="show=!show"><span>Mostrar Ajuda</span><v-icon color="#009263"> mdi-help-circle </v-icon> </v-btn>
                   <v-btn v-else text @click="show=!show">Esconder Ajuda</v-btn> 
                 </center>
-                <v-slide-y-transition>
+                
+                <v-slide-y-transition v-if="utilizador.type==20">
                       <v-card v-show="show" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
                         <v-row >
                           <v-col cols="12">
@@ -49,7 +50,7 @@
                         <td>{{row.item.user}}</td>
                         <td>{{row.item.email}}</td>
                         <td>{{row.item.agrupamento}}</td>
-                        <td>
+                        <td v-if="utilizador.type==20">
                           <v-tooltip top>
                           <template v-slot:activator="{ on, attrs }">
                             <v-btn
@@ -67,7 +68,7 @@
                     </template>
                     </v-data-table>
                       
-                      <v-dialog class="mydialog" v-model="dialogEditar" width="85%" >
+                      <v-dialog v-if="utilizador.type==20" class="mydialog" v-model="dialogEditar" width="85%" >
                         <v-card id="inspire">
                           <EditarAluno v-if="dialogEditar" @alteracao="atualizaAlunos()" :idProp="this.idEditarAluno"/>
                         </v-card>
@@ -121,8 +122,19 @@ const h = require("@/config/hosts").hostAPI
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
         this.idTurma = this.$route.params.id
-        var response = await axios.get(h + "turmas/" + this.idTurma + "?token=" + this.token)
-        this.turma = response.data
+        var response = await axios.get(h + "turmas/" + this.idTurma + "?token=" + this.token)                     
+        if(response) this.turma = response.data
+        else this.$router.push({name: "Meu Perfil"})
+        
+        if(this.utilizador.type != 20){
+          this.header_alunos = [
+            {text: "Número", value: 'numero', class: 'subtitle-1'},
+            {text: "Nome", value: 'nome', class: 'subtitle-1'},
+            {text: "Username", value: 'user', class: 'subtitle-1'},
+            {text: "Email", value: 'email', class: 'subtitle-1'},
+            {text: "Agrupamento", value: 'agrupamento', class: 'subtitle-1'},
+          ]
+        }
         var responseA = await axios.get(h + "turmas/" + this.turma.turma + "/alunos?codprofessor="+ this.turma.idprofessor + "&token=" + this.token)
         this.alunos = responseA.data
     },
@@ -131,9 +143,6 @@ const h = require("@/config/hosts").hostAPI
           this.idEditarAluno = idAluno;
           this.dialogEditar = true;
           //this.$router.push({name: "Editar Aluno", params: { id : idAluno } })
-      },
-      editarTurma: function(id){
-
       },
       atualizaAlunos: async function(){
         this.dialogEditar = false

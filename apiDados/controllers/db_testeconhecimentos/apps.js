@@ -144,13 +144,16 @@ module.exports.getAllAppsFromEscola = function(escola, dataInicio, dataFim){
     })
 }
 
-module.exports.getAllAppsFromTurma = function(turma, codprofessor, dataInicio, dataFim){
+module.exports.getAllAppsFromTurma = function(turma, codprofessor, dataInicio, dataFim, horaInicio, horaFim){
+    var args = [turma, codprofessor, dataInicio, dataFim, horaInicio, horaFim]
     return new Promise(function(resolve, reject) {
         sql.query(`SELECT al.numero, apps.userid, al.nome, SUM(apps.ncertas) as ncertas, SUM(apps.ntotal) as ntotal, round( sum(apps.ncertas)/sum(apps.ntotal) *100, 0) as acerto, 
         SUM(apps.onpeak) as onpeak, SUM(apps.offpeak) as offpeak, (SUM(apps.onpeak) + SUM(apps.offpeak)) as frequencia FROM 
-        (select * from ${bdTesteConhecimentos}.appsinfoall WHERE  turma = ? AND codProf = ? AND (lastdate between ? and ?)) as apps, ${bdAplicacoes}.alunos al 
+        (select * from ${bdTesteConhecimentos}.appsinfoall WHERE  turma = ? AND 
+                    codProf = ? AND (lastdate between ? and ?) and (horario between ? and ?)) as apps, 
+        ${bdAplicacoes}.alunos al 
         WHERE al.user = apps.userid 
-        GROUP BY apps.userid Order by al.numero;`, [turma, codprofessor, dataInicio, dataFim] ,function(err, res){
+        GROUP BY apps.userid Order by al.numero;`, args ,function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -309,13 +312,16 @@ module.exports.getAppFromEscolaSubTema = function(codtema, codsubtema, escola, d
     })
 }
 
-module.exports.getAppFromTurma = function(codtema, turma, codprofessor, dataInicio, dataFim){
+module.exports.getAppFromTurma = function(codtema, turma, codprofessor, dataInicio, dataFim, horaInicio, horaFim){
+    var args = [turma, codprofessor, dataInicio, dataFim, codtema, horaInicio, horaFim]
     return new Promise(function(resolve, reject) {
         sql.query(`SELECT al.numero, apps.userid, al.nome, SUM(apps.ncertas) as ncertas, SUM(apps.ntotal) as ntotal, round( sum(apps.ncertas)/sum(apps.ntotal) *100, 0) as acerto, 
         SUM(apps.onpeak) as onpeak, SUM(apps.offpeak) as offpeak, (SUM(apps.onpeak) + SUM(apps.offpeak)) as frequencia FROM 
-        (select * from ${bdTesteConhecimentos}.appsinfoall WHERE  turma = ? AND codProf = ? AND (lastdate between ? and ?) and grupo=?) as apps, ${bdAplicacoes}.alunos al 
+        (select * from ${bdTesteConhecimentos}.appsinfoall WHERE  turma = ? AND 
+                    codProf = ? AND (lastdate between ? and ?) and grupo=? and (horario between ? and ?)) as apps, 
+        ${bdAplicacoes}.alunos al 
         WHERE al.user = apps.userid 
-        GROUP BY apps.userid Order by al.numero;`, [turma, codprofessor, dataInicio, dataFim, codtema] ,function(err, res){
+        GROUP BY apps.userid Order by al.numero;`, args ,function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -327,13 +333,16 @@ module.exports.getAppFromTurma = function(codtema, turma, codprofessor, dataInic
     })
 }
 
-module.exports.getAppFromTurmaSubTema = function(codtema, codsubtema, turma, codprofessor, dataInicio, dataFim){
+module.exports.getAppFromTurmaSubTema = function(codtema, codsubtema, turma, codprofessor, dataInicio, dataFim, horaInicio, horaFim){
+    var args = [turma, codprofessor, dataInicio, dataFim, codtema, codsubtema, horaInicio, horaFim] 
     return new Promise(function(resolve, reject) {
         sql.query(`SELECT al.numero, apps.userid, al.nome, SUM(apps.ncertas) as ncertas, SUM(apps.ntotal) as ntotal, round( sum(apps.ncertas)/sum(apps.ntotal) *100, 0) as acerto, 
         SUM(apps.onpeak) as onpeak, SUM(apps.offpeak) as offpeak, (SUM(apps.onpeak) + SUM(apps.offpeak)) as frequencia FROM 
-        (select * from ${bdTesteConhecimentos}.appsinfoall WHERE  turma = ? AND codProf = ? AND (lastdate between ? and ?) and grupo=? and appid=?) as apps, ${bdAplicacoes}.alunos al 
+        (select * from ${bdTesteConhecimentos}.appsinfoall WHERE  turma = ? AND 
+                    codProf = ? AND (lastdate between ? and ?) and grupo=? and appid=? and (horario between ? and ?)) as apps, 
+        ${bdAplicacoes}.alunos al 
         WHERE al.user = apps.userid 
-        GROUP BY apps.userid Order by al.numero;`, [turma, codprofessor, dataInicio, dataFim, codtema, codsubtema] ,function(err, res){
+        GROUP BY apps.userid Order by al.numero;`, args,function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

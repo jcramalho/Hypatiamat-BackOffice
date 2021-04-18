@@ -35,8 +35,11 @@
                                 <v-icon color="green"> mdi-information-outline </v-icon>
                                 </v-btn>
                               </template>
-                              <span>{{cromo.nome}}</span>
-                              <!--<span class="header"> <p> Para ganhar o cromo ou mais estrelas do cromo, terá que: </p> <p> {{cromo.descricao}}</p> </span>-->
+                              <center>
+                                <span>{{cromo.nome}}</span>
+                                <br>
+                                <span>{{cromo.descricao}}</span>
+                              </center>
                           </v-tooltip>
                         </div>
                       </center>
@@ -44,15 +47,6 @@
                           <center>
                             
                             <div v-if="cromo.estrelas && verifyEstrelas(cromosCompletados.find(e => e.idcromo == cromo.id))">
-                              <!--<v-rating
-                                v-model="cromosCompletados.find(e => e.idcromo == cromo.id).estrelasGanhas"
-                                background-color="orange lighten-3"
-                                color="orange"
-                                dense
-                                hover
-                                size="22"
-                                readonly
-                              ></v-rating>  -->
                               <div v-if="cromo.estrelas">
                                 <v-img width="150px" :src="require('@/assets/cromos/estrela'+cromosCompletados.find(e => e.idcromo == cromo.id).estrelasGanhas+'.png')">
                                 </v-img>
@@ -61,16 +55,6 @@
                               </v-img>
                             </div>
                             <div v-else>
-                              <!--<v-rating
-                                v-if="cromo.estrelas"
-                                v-model="cromosCompletados.find(e => e.idcromo == cromo.id).estrelasGanhas"
-                                background-color="orange lighten-3"
-                                color="orange"
-                                dense
-                                hover
-                                size="22"
-                                readonly
-                              ></v-rating>-->
                               <div v-if="cromo.estrelas">
                                 <v-img width="150px" :src="require('@/assets/cromos/estrela'+cromosCompletados.find(e => e.idcromo == cromo.id).estrelasGanhas+'.png')">
                                 </v-img>
@@ -92,8 +76,11 @@
                                     <v-icon color="green"> mdi-information-outline </v-icon>
                                     </v-btn>
                                   </template>
-                                  <span>{{cromo.nome}}</span>
-                                  <!--<span class="header"> <p> Para ganhar o cromo ou mais estrelas do cromo, terá que: </p> <p> {{cromo.descricao}}</p> </span>-->
+                                  <center>
+                                    <span>{{cromo.nome}}</span>
+                                    <br>
+                                    <span>{{cromo.descricao}}</span>
+                                  </center>
                             </v-tooltip>
                           </center>
                         </v-container>

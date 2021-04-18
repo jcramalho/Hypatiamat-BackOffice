@@ -4,49 +4,8 @@
     <v-container>
         <v-card class="pa-5">
             <v-card-title primary-title class="justify-center green--text">
-                Ranking dos Alunos das suas turmas (Aplicações de Conteúdo)
+                Ranking dos Alunos (Aplicações de Conteúdo)
             </v-card-title>
-            <center>
-                <v-btn v-if="!show" text @click="show=!show"><span>Mostrar Ajuda</span><v-icon color="#009263"> mdi-help-circle </v-icon> </v-btn>
-                <v-btn v-else text @click="show=!show">Esconder Ajuda</v-btn> 
-            </center>
-            <v-slide-y-transition>
-                <v-card v-show="show" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
-                <v-row class="justify-center">
-                    <v-col cols="12">
-                    <span> 1. No "Tipo de Ranking", pode escolher o critério de ordenação que desejar. </span>
-                    </v-col>
-                    <v-col cols="12">
-                    <span> 2. Pode selecionar a turma desejada através da seleção do campo "Turma". </span>
-                    </v-col>
-                    <v-col cols="12">
-                    <span> 3. Pode escolher a aplicação de conteúdo pretendida através da seleção do campo "Aplicação". De referir que este campo apenas contém
-                      as aplicações de conteúdo que a turma selecionada realizou. </span>
-                    </v-col>
-                    <v-col cols="12">
-                    <span> 4. Pode escolher o ano letivo desejado através do campo "Ano Letivo". </span>
-                    </v-col>
-                    <v-col cols="12">
-                    <span> 5. Tendo os campos todos selecionados, pode visualizar o ranking dos seus alunos. </span> 
-                    </v-col>
-                    <v-col cols="9">
-                        <v-card class="mx-auto" color="grey lighten-4">
-                            <center> <h3 class="green--text"> Legenda da Tabela: </h3> </center>
-                            <ul> 
-                                <li> <span> <b>N.º</b> - Número do aluno; </span> </li>
-                                <li> <span> <b>Posição (Turma)</b> - Posição do aluno na turma; </span> </li>
-                                <li> <span> <b>Posição (Agr. Escolas)</b> - Posição do aluno no seu Agrupamento de Escolas; </span> </li>
-                                <li> <span> <b>Posição (Hypatia)</b> - Posição do aluno em todo o Hypatiamat; </span> </li>
-                                <li> <span> <b>NTRC</b> - Número de tarefas resolvidas corretamente. Caso o nome da coluna esteja a verde, significa que 
-                                é o critério de ordenação selecionado; </span> </li>
-                                <li> <span> <b>Acerto(%)</b> - Percentagem de acerto, ou seja, a divisão do NTRC pelo número de tarefas resolvidas. 
-                                Caso o nome da coluna esteja a verde, significa que é o critério de ordenação selecionado. </span> </li>
-                            </ul>
-                        </v-card>
-                    </v-col>
-                </v-row>
-                </v-card>
-            </v-slide-y-transition>
             <br v-if="items.length > 0">
             <center>
                 <v-btn v-if="items.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()">
@@ -57,6 +16,15 @@
                 <v-container style="width:80%">
                 <v-card class="pa-5" >
                     <v-combobox
+                      v-if="professores.length > 0"
+                      id="professor"
+                      label="Professor"
+                      color="green"
+                      v-model="idprofessor"
+                      :items="professores"
+                      @change="getTurmas()"
+                    ></v-combobox>
+                   <v-combobox
                         id="tipoRanking"
                         v-model="tipoRankSel"
                         label="Tipo de Ranking"
@@ -76,7 +44,7 @@
                         v-if="apps"
                         id="apps"
                         v-model="app"
-                        label="Aplicação"
+                        label="App"
                         color="green"
                         :items="apps"
                         @change="onAppChange"
@@ -110,7 +78,6 @@
             :items="items"
             :footer-props="footer_props"
             :search="filtrar"
-            color="#009263"
         >
             
         </v-data-table>
@@ -178,45 +145,64 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           {text: "NTRC", value: 'params', class: 'subtitle-1'},
         ],
         items:[],
-        codProf:"",
         turmas:[],
         turmaSel:"",
-        dataInicio:"",
-        dataFim:"",
         app:"",
-        escola: "",
-        escolaOriginal:"",
         loading: false,
         tipoRankSel: "NTRC - Número de tarefas resolvidas corretamente",
         tiposRanking: ["NTRC - Número de tarefas resolvidas corretamente", "Acerto - Percentagem de acerto"],
-        show:false
+        professores: [],
+        escola: "",
+        escolaId: "",
+        escolaIdOriginal:"",
+        dataInicio:"",
+        dataFim:"",
+        idprofessor:""
       }
     },
     created: async function(){
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
-        this.codProf = this.utilizador.codigo
+        this.escolaIdOriginal = this.escola = this.utilizador.escola
         var response = await axios.get(hostApps + "temas/?token=" + this.token)
         this.appsInfo = response.data
         await this.parseApps()
         this.onAnoChange()
-
-        var response = await axios.get(h + "professores/" + this.codProf + "/turmas?token=" + this.token)
-        var i = 0
-        for(i = 0; i < response.data.length; i++){
-          this.turmas.push(response.data[i].turma)
-        }
-        this.escola = this.escolaOriginal = this.utilizador.escola        
+        this.getProfessores()
 
     },
     methods: {
       atualizaApps: async function(){
           if(this.turmaSel && this.turmaSel != ""){
             this.apps = undefined
-            var response = await axios.get(hostApps + "turmas/" + this.turmaSel + "/jogou?codprofessor=" + this.codProf
+            var response = await axios.get(hostApps + "turmas/" + this.turmaSel + "/jogou?codprofessor=" + this.idprofessor
                                                 + "&dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim + "&token=" + this.token)
             this.appsInfo = response.data
             this.parseApps()
+          }
+      },
+      getProfessores: async function(item){
+        if(this.escola != "" && this.escola){
+          this.turmaSel = ""
+          this.app = ""
+          var responseProfs = await axios.get(h + "escolas/" + this.escola + "/professores/?token=" + this.token)
+          var aux = []
+          for(var i = 0; i < responseProfs.data.length; i++){
+            aux.push(responseProfs.data[i].codigo)
+          }
+          this.professores = aux
+        }
+      },
+      getTurmas: async function(){
+          if(this.idprofessor && this.idprofessor != ""){
+            this.turmaSel = ""
+            var responseTurmas = await axios.get(h + "professores/" + this.idprofessor + "/turmas?token=" + this.token)
+            var i = 0
+            var aux = []
+            for(i = 0; i < responseTurmas.data.length; i++){
+                aux.push(responseTurmas.data[i].turma)
+            }
+            this.turmas = aux
           }
       },
       parseApps: async function(){
@@ -230,9 +216,9 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       },
       onTurmaChange: async function(item){
           if(this.turmaSel != "" && this.turmaSel){
-              this.escola = this.escolaOriginal
+              this.escola = this.escolaIdOriginal
               var responseAlunos = await axios.get(h + "turmas/" + this.turmaSel + 
-                                                      "/alunos?codprofessor=" + this.codProf
+                                                      "/alunos?codprofessor=" + this.idprofessor
                                                       + "&token=" + this.token)
 
               var escolas = []
@@ -247,18 +233,19 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
                 var escolaAux = escolas.find(function(o){ return o.numero == res; })
                 if(escolaAux && escolaAux.escola != this.escola) this.escola = escolaAux.escola;
             }
+              this.atualizaConteudo()
           }
       },
       onAnoChange: async function(item){
           if(this.anoLetivo != "" && this.anoLetivo){
-             var aux = this.anoLetivo.split("/")
+            var aux = this.anoLetivo.split("/")
              this.dataInicio = aux[0] + "-09-01"
              this.dataFim = aux[1] + "-09-01"
              this.atualizaApps()
           }
       },
       onAppChange: async function(item){
-          if(this.app){
+          if(this.app && this.app != ""){
             this.atualizaConteudo()
           }
       },
@@ -276,7 +263,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         var aux = this.tipoRankSel.split(" - ")
         var response = await axios.get(hostApps + "turmas/" + this.turmaSel + "/ranking/" + aux[0]
                                             + "/?anoletivo=" + this.anoLetivo + "&escola=" + this.escola
-                                            + "&codProf=" + this.codProf + "&token=" + this.token)
+                                            + "&codProf=" + this.idprofessor + "&token=" + this.token)
             
         this.items = response.data
         this.loading = false
@@ -286,7 +273,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         var aux = this.tipoRankSel.split(" - ")
         var response = await axios.get(hostApps + "turmas/" + this.turmaSel + "/ranking/" + aux[0]
                                             + "/?anoletivo=" + this.anoLetivo + "&escola=" + this.escola
-                                            + "&codProf=" + this.codProf + "&codtema=" + appInfo.codtema +
+                                            + "&codProf=" + this.idprofessor + "&codtema=" + appInfo.codtema +
                                             "&token=" + this.token)
                         
         this.items = response.data
@@ -297,7 +284,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         var aux = this.tipoRankSel.split(" - ")
         var response = await axios.get(hostApps + "turmas/" + this.turmaSel + "/ranking/" + aux[0]
                                             + "/?anoletivo=" + this.anoLetivo + "&escola=" + this.escola
-                                            + "&codProf=" + this.codProf + "&codtema=" + appInfo.codtema +
+                                            + "&codProf=" + this.idprofessor + "&codtema=" + appInfo.codtema +
                                             "&codsubtema=" + appInfo.codsubtema + "&token=" + this.token)
                         
         this.items = response.data

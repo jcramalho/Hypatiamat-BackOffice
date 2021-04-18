@@ -81,11 +81,19 @@
                                 @change="onAnoChange"
                             ></v-combobox>
                             <v-layout row class="text-xs-center" justify-center align-center>
-                                <v-col cols="12" xs="12" sm="12" md="12" lg="6" xl="6">
+                                <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="6">
                                 <v-text-field @change="onDataInChange" v-model="dataInicio" label="Data Inicio" type="date" :format="format" required></v-text-field>
                                 </v-col>
-                                <v-col cols="12" xs="12" sm="12" md="12" lg="6" xl="6">
+                                <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="6">
                                     <v-text-field @change="onDataFimChange" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
+                                </v-col>
+                            </v-layout>
+                            <v-layout row class="text-xs-center" justify-center align-center>
+                                <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="6">
+                                <v-text-field @change="onHorarioInChange" v-model="horaInicio" label="Hora Inicio" type="time" :format="format" required></v-text-field>
+                                </v-col>
+                                <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="6">
+                                    <v-text-field @change="onHorarioFimChange" v-model="horaFim" label="Hora Fim" type="time" :format="format" required></v-text-field>
                                 </v-col>
                             </v-layout>
                         </v-card>
@@ -102,7 +110,7 @@
                     prepend-icon="mdi-magnify"
                     color="#009263"
                     single-line
-                    ></v-text-field>
+                ></v-text-field>
                 <v-data-table
                     class="elevation-4"
                     :headers="headers"
@@ -154,6 +162,8 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         filtrar:"",
         dataInicio: "2019-09-01",
         dataFim: "2020-09-01",
+        horaInicio: "00:00",
+        horaFim:"23:59",
         turmaSel: "",
         utilizador : {},
         alunos:[],
@@ -230,6 +240,12 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
               else aux.push(this.appsInfo[i].tema)
           }
           this.apps = aux
+          if(this.app == "Todas") this.atualizaConteudo()
+          else if(this.apps.find(element => element == this.app)) this.atualizaConteudo()
+          else {
+              this.app = ""
+              this.items = []
+          }
       },
       onTurmaChange: async function(item){
           if(this.turmaSel && this.turmaSel != ""){
@@ -261,8 +277,18 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       onDataFimChange: async function(item){
           if(this.dataFim){
               this.atualizaApps()
-              this.atualizaConteudo()
+              //this.atualizaConteudo()
           }
+      },
+      onHorarioInChange: async function(item){
+          if(this.horaInicio){
+              //this.atualizaConteudo()
+          }  
+      },
+      onHorarioFimChange: async function(item){
+          if(this.horaInicio){
+              this.atualizaConteudo()
+          }  
       },
       atualizaConteudo: async function(){
             if(this.app != "" && this.dataFim != "" && this.dataInicio != "" && this.turmaSel != ""){
@@ -271,6 +297,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
 
                     var response = await axios.get(hostApps + "turmas/" + this.turmaSel
                                             + "/?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                            + "&horaInicio=" + this.horaInicio + "&horaFim=" + this.horaFim
                                             + "&codProf=" + this.codProf + "&token=" + this.token)
             
                     this.items = response.data
@@ -283,8 +310,9 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
                         // é um dos temas
                         var response = await axios.get(hostApps + "turmas/" + this.turmaSel
                                             + "/?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                            + "&codProf=" + this.codProf + "&codtema=" + appInfo.codtema +
-                                            "&token=" + this.token)
+                                            + "&codProf=" + this.codProf + "&codtema=" + appInfo.codtema
+                                            + "&horaInicio=" + this.horaInicio + "&horaFim=" + this.horaFim
+                                            + "&token=" + this.token)
                         
                         this.items = response.data
                     }
@@ -294,8 +322,9 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
                         if(appInfo){
                               var response = await axios.get(hostApps + "turmas/" + this.turmaSel
                                             + "/?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                            + "&codProf=" + this.codProf + "&codtema=" + appInfo.codtema +
-                                            "&codsubtema=" + appInfo.codsubtema + "&token=" + this.token)
+                                            + "&codProf=" + this.codProf + "&codtema=" + appInfo.codtema
+                                            + "&horaInicio=" + this.horaInicio + "&horaFim=" + this.horaFim
+                                            + "&codsubtema=" + appInfo.codsubtema + "&token=" + this.token)
                         
                             this.items = response.data
                         }

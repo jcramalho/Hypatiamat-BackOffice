@@ -302,16 +302,21 @@ router.get('/calcrapid/turmas/:turma', passport.authenticate('jwt', {session: fa
   var dataFim = req.query.dataFim
   var turma = req.params.turma
   var escola = req.query.escola
-  if(tipo && tipo.length > 0){
-    Calcrapid.getTiposCalcRapidTurmas(dataInicio, dataFim, tipo.split(','), escola, turma)
-              .then(dados => res.jsonp(dados))
-              .catch(erro => res.status(500).jsonp(erro))
+  var horaInicio = req.query.horaInicio
+  var horaFim = req.query.horaFim
+  if(dataInicio && dataFim && escola && horaInicio && horaFim){
+    if(tipo && tipo.length > 0){
+      Calcrapid.getTiposCalcRapidTurmas(dataInicio, dataFim, tipo.split(','), escola, turma, horaInicio, horaFim)
+                .then(dados => res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp(erro))
+    }
+    else{
+      Calcrapid.getTodosCalcRapidTurmas(dataInicio, dataFim, escola, turma, horaInicio, horaFim)
+                .then(dados => res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp(erro))
+    }
   }
-  else{
-    Calcrapid.getTodosCalcRapidTurmas(dataInicio, dataFim, escola, turma)
-              .then(dados => res.jsonp(dados))
-              .catch(erro => res.status(500).jsonp(erro))
-  }
+  else res.status(400).send('Faltam parâmetros...')
 });
 
 router.get('/minutenew/turmas/:turma', passport.authenticate('jwt', {session: false}), verifyToken.verifyTurma3(), function(req, res, next) {
@@ -321,26 +326,31 @@ router.get('/minutenew/turmas/:turma', passport.authenticate('jwt', {session: fa
   var tipos = req.query.tipos
   var turma = req.params.turma
   var escola = req.query.escola
-  if(tipos && niveis){
-    Calculus.getTiposNiveisMinuteNewTurma(turma, escola, dataInicio, dataFim, niveis.split(","), tipos)
-              .then(dados => res.jsonp(dados))
-              .catch(erro => res.status(500).jsonp(erro))
+  var horaInicio = req.query.horaInicio
+  var horaFim = req.query.horaFim
+  if(dataInicio && dataFim && escola && horaInicio && horaFim){
+    if(tipos && niveis){
+      Calculus.getTiposNiveisMinuteNewTurma(turma, escola, dataInicio, dataFim, niveis.split(","), tipos, horaInicio, horaFim)
+                .then(dados => res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp(erro))
+    }
+    else if(tipos){
+      Calculus.getTiposMinuteNewTurma(turma, escola, dataInicio, dataFim, tipos, horaInicio, horaFim)
+                .then(dados => res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp(erro)) 
+    }
+    else if(niveis){
+      Calculus.getNiveisMinuteNewTurma(turma, escola, dataInicio, dataFim, niveis.split(","), horaInicio, horaFim)
+                .then(dados => res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp(erro)) 
+    }
+    else{
+      Calculus.getTodosMinuteNewTurma(turma, escola, dataInicio, dataFim, horaInicio, horaFim)
+                .then(dados => res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp(erro))
+    }
   }
-  else if(tipos){
-    Calculus.getTiposMinuteNewTurma(turma, escola, dataInicio, dataFim, tipos)
-              .then(dados => res.jsonp(dados))
-              .catch(erro => res.status(500).jsonp(erro)) 
-  }
-  else if(niveis){
-    Calculus.getNiveisMinuteNewTurma(turma, escola, dataInicio, dataFim, niveis.split(","))
-              .then(dados => res.jsonp(dados))
-              .catch(erro => res.status(500).jsonp(erro)) 
-  }
-  else{
-    Calculus.getTodosMinuteNewTurma(turma, escola, dataInicio, dataFim)
-              .then(dados => res.jsonp(dados))
-              .catch(erro => res.status(500).jsonp(erro))
-  }
+  else res.status(400).send('Faltam parâmetros...')
 });
 
 // Devolve todos as estatísticas de um jogo de uma turma
@@ -351,14 +361,16 @@ router.get('/:tableJogo/turmas/:turma', passport.authenticate('jwt', {session: f
   var dataFim = req.query.dataFim
   var jogoTipo = req.query.jogoTipo
   var escola = req.query.escola
-  if(dataInicio && dataFim && escola){
+  var horaInicio = req.query.horaInicio
+  var horaFim = req.query.horaFim
+  if(dataInicio && dataFim && escola && horaInicio && horaFim){
     if(tableJogo != "Todos"){
-      JogosGerais.getJogoFromTurma(dataInicio, dataFim, jogoTipo, tableJogo, turma, escola)
+      JogosGerais.getJogoFromTurma(dataInicio, dataFim, jogoTipo, tableJogo, turma, escola, horaInicio, horaFim)
                 .then(dados => res.jsonp(dados))
                 .catch(erro => res.status(500).jsonp(erro))
     }
     else{
-      Jogos.getAllJogosTurma(dataInicio, dataFim, turma, escola)
+      Jogos.getAllJogosTurma(dataInicio, dataFim, turma, escola, horaInicio, horaFim)
             .then(dados => res.jsonp(dados))
             .catch(erro => res.status(500).jsonp(erro))
     }

@@ -156,7 +156,7 @@ Professor.getPassword = function (id) {
 Professor.getProfessoresByEscola = function (escola) {
     return new Promise(function(resolve, reject) {
         sql.query(`Select id, codigo, nome, escola, email, confirmacao, premium, validade, socionum, projeto
-        from professores where escola=? and confirmacao=1`, escola, function(err, res){
+        from professores where escola=? and confirmacao=1 and premium=1`, escola, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

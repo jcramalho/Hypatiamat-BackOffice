@@ -26,7 +26,7 @@
                         <td>{{row.item.codigo}}</td>
                         <td>{{row.item.nome}}</td>
                         <td>
-                        <v-icon @click="verTurmas(row.item.id)"> mdi-eye </v-icon>
+                        <v-icon color="#009263" @click="verTurmas(row.item.codigo)"> mdi-eye </v-icon>
                         </td>
                     </tr>
                     </template>
@@ -74,43 +74,10 @@ const h = require("@/config/hosts").hostAPI
         this.professores = responseProf.data
     },
     methods: {
-      verProfessor : function(id){
-          this.$router.push({name: "Ver Professor", params: { id : id } })
-      },
-      editarProfessor : function(id){
-          this.$router.push({name: "Editar Professor", params: { id : id } })
-      },
-      apagarProfessor: async function(id){
-        Swal.fire({
-          title: "De certeza que deseja apagar este professor?",
-          showDenyButton: true,
-          confirmButtonColor: '#009263',
-          confirmButtonText: `Sim`,
-          denyButtonText: `Não`,
-        }).then(async (result) => {
-          if (result.isConfirmed) {
-            var a = await axios.delete(h + "professores/" + id + "?token=" + this.token)
-              var apagado = a.data
-              if(apagado.removed){
-                var response = await axios.get(h + "professores?token=" + this.token)
-                this.professores = response.data
-              }
-              else{
-                Swal.fire({
-                  icon: 'error',
-                  text: apagado.message,
-                  confirmButtonColor: '#009263'
-                })
-              }
-          }
-        })
-      },
-      criarProfessor: async function(){
-        this.$router.push({name:"Criar Professor"})
-      },
-      verTurmas: async function(){
+      
+      verTurmas: async function(codigo){
         //this.$router.push({name:''})
-        alert('Ainda não funcional.')
+        this.$router.push({name: 'Turmas Professor', params:{codigo: codigo}})
       }
     }
   }

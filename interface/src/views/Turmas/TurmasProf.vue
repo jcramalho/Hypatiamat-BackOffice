@@ -5,36 +5,13 @@
         <v-card class="pa-5">
             <v-container>
                 <v-card-title primary-title class="justify-center green--text">
-                    Gestão de Alunos
+                    Turmas do Professor(a)
                 </v-card-title>
                 <center>
-                  <v-btn v-if="!show" text @click="show=!show"><span>Mostrar Ajuda</span><v-icon color="#009263"> mdi-help-circle </v-icon> </v-btn>
-                  <v-btn v-else text @click="show=!show">Esconder Ajuda</v-btn> 
+                    <span><b>{{professor.nome}}</b></span>
                 </center>
                 <br>
-                <center>
-                <v-btn class="white--text" style="background-color: #009263;" @click="criarAluno()"> 
-                  <v-icon> mdi-book-plus </v-icon> Criar Aluno 
-                </v-btn>
-                </center>
-                <v-slide-y-transition>
-                      <v-card v-show="show" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
-                        <v-row >
-                          <v-col cols="12">
-                          <span> 1. Se desejar visualizar as suas turmas antigas, pode fazê-lo através da seleção de um ano letivo diferente ou de todos (<v-icon>mdi-counter</v-icon>). </span>
-                          </v-col>
-                          <v-col cols="12">
-                          <span> 2. Caso deseje visualizar os alunos pertencentes a uma turma e eventualmente editar as informações dos mesmos, clique em  <v-icon> mdi-eye </v-icon>
-                          da respetiva turma. </span>
-                          </v-col>
-                          <v-col cols="12">
-                          <span> 3. Caso deseje efetuar transferências de alunos no qual envolvam uma determinada turma, clique em 
-                            <v-icon> mdi-cog-transfer-outline </v-icon> da respetiva turma. </span> 
-                          </v-col>
-                        </v-row>
-                      </v-card>
-                  </v-slide-y-transition>
-                  <br v-if="show">
+
                 <v-combobox
                     id="anoletivo"
                     label="Ano Letivo"
@@ -76,7 +53,7 @@
                             <span>Visualizar os alunos pertencentes à turma.</span>
                         </v-tooltip>
                         </td>
-                        <td class="justify-center">
+                        <td v-if="utilizador.type==50" class="justify-center">
                         <v-tooltip top>
                           <template v-slot:activator="{ on, attrs }">
                             <v-btn
@@ -116,15 +93,14 @@ const anosletivos1 = require("@/config/confs").anosletivos
         token: "",
         turmas: [],
         show:false,
-        limiteTurmas: 4,
         anosletivos:["Todos"],
         anoletivo:anoletivoAtual,
         utilizador : {},
+        professor:{},
          header_turmas: [
             {text: "Turma", value: 'turma', class: 'subtitle-1'},
             {text: "Ano Letivo", value: 'anoletivo', class: 'subtitle-1'},
             {text: "Ver Alunos", sortable:false, class: 'subtitle-1'},
-            {text: "Transferência de Alunos", sortable:false, class: 'subtitle-1',},
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
@@ -132,57 +108,45 @@ const anosletivos1 = require("@/config/confs").anosletivos
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
-        turmasAnoLetivo: 0
+        codProf:""
       }
     },
     created: async function(){
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
-        var anoAux = this.anoletivo.split("/")
-        var ano = anoAux[0]
-        var response = await axios.get(h + "professores/" + this.utilizador.codigo + "/turmas?token=" + this.token + "&ano=" + ano)
-        this.turmas = response.data
-        if(this.utilizador.limiteTurmas) this.limiteTurmas = this.utilizador.limiteTurmas
-        else this.limiteTurmas = nTurmas
-        this.calculaTurmasAnoLetivo();
+        this.codProf = this.$route.params.codigo
+        if(this.utilizador.type == 50){
+
+        }
+        else{
+
+        }
         for(var i = 0; i < anosletivos1.length; i++){
           this.anosletivos.push(anosletivos1[i])
         }
+        var anoAux = this.anoletivo.split("/")
+        var ano = anoAux[0]
+        var responseProf = await axios.get(h + "professores/codigos/" + this.codProf + "?token=" + this.token)
+        this.professor = responseProf.data
+        var response = await axios.get(h + "professores/" + this.codProf + "/turmas?token=" + this.token + "&ano=" + ano)
+        this.turmas = response.data
     },
     methods: {
       getTurmas: async function(){
         if(this.anoletivo != "Todos"){
           var anoAux = this.anoletivo.split("/")
           var ano = anoAux[0]
-          var response = await axios.get(h + "professores/" + this.utilizador.codigo + "/turmas?token=" + this.token + "&ano=" + ano)
+          var response = await axios.get(h + "professores/" + this.codProf + "/turmas?token=" + this.token + "&ano=" + ano)
           this.turmas = response.data
         }
         else{
-          var response = await axios.get(h + "professores/" + this.utilizador.codigo + "/turmas?token=" + this.token)
+          var response = await axios.get(h + "professores/" + this.codProf + "/turmas?token=" + this.token)
           this.turmas = response.data
         }
       },
       verTurma : function(id){
-        this.$router.push({name:"Ver Turma", params:{ id : id }})
+        this.$router.push({name:"Ver Turma", params:{ id : id, codigo: this.codProf }})
       },
-      editarTurma : function(id){
-        this.$router.push({name: "Editar Minha Turma", params: { id : id } })
-      },
-
-      criarAluno: function(){
-        this.$router.push({name: "Criar Aluno"})
-      },
-      calculaTurmasAnoLetivo: function(){
-        this.turmasAnoLetivo = 0;
-        this.turmas.forEach(t => {if(t.anoletivo == anoletivoAtual) this.turmasAnoLetivo++})
-      },
-      getPassaporte : function(turma, passportPassword){
-        var passwords = false;
-        if(passportPassword) passwords = true
-        var codprofessor = this.utilizador.codigo
-        console.log(this.utilizador.agrupamento)
-        Passaport.getPassaporteTurma( turma, codprofessor, this.utilizador.agrupamento.split(",")[0] )
-      }
     }
   }
 </script>

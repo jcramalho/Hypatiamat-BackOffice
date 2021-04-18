@@ -14,14 +14,6 @@
             </center>
             <v-container>
               <v-card class="pa-3">
-                <v-combobox
-                    id="escola"
-                    label="Agrupamento de Escolas"
-                    v-model="escola"
-                    color="green"
-                    :items="agrupamentos"
-                    @change="onAgrupamentoChange"
-                ></v-combobox>
                     <v-combobox
                     v-if="professores.length > 0"
                     id="professor"
@@ -170,51 +162,29 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         niveisSel:["1","2","3","4","5"],
         tiposCalculusSel:["0 - Todas as combinações"],
         tiposCalculusSelAnterior:["0 - Todas as combinações"],
-        agrupamentos: [],
-        agrupamentosIds: [],
         professores: [],
         escola: "",
-        escolaId: "",
-        escolaIdOriginal:"",
       }
     },
     created: async function(){
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
-        this.agrupamentos = await this.getAgrupamentos()
+        //this.agrupamentos = await this.getAgrupamentos()
+        this.escolaIdOriginal = this.escola = this.utilizador.escola
+        this.getProfessores()
         
     },
     methods: {
-      getAgrupamentos: async function(item){
-        var response = await axios.get(h + "escolas/localidades/" + this.utilizador.infoEscola.localidade + "?token=" + this.token)
-        this.agrupamentosIds = response.data
-        var aux = []
-        for(var i = 0; i < this.agrupamentosIds.length; i++){
-          aux.push(this.agrupamentosIds[i].nome)
-        }
-        return aux
-      },
       getProfessores: async function(item){
-        if(this.escola != "" && this.escola){
           this.turmaSel = ""
           this.jogo = ""
           this.jogos = []
-          var responseProfs = await axios.get(h + "escolas/" + this.escolaId + "/professores/?token=" + this.token)
+          var responseProfs = await axios.get(h + "escolas/" + this.escola + "/professores/?token=" + this.token)
           var aux = []
           for(var i = 0; i < responseProfs.data.length; i++){
             aux.push(responseProfs.data[i].codigo)
           }
           this.professores = aux
-        }
-      },
-      onAgrupamentoChange: async function(item){
-        if(item != null && item != ""){
-          this.idprofessor = ""
-          this.turmaSel = ""
-          this.items = []
-          this.escolaIdOriginal = this.escolaId = this.agrupamentosIds.find(e => e.nome == this.escola).cod
-          this.getProfessores()
-        }
       },
       getTurmas: async function(){
           if(this.idprofessor && this.idprofessor != ""){
@@ -241,7 +211,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
                   var auxEscola = escolas.find(a => a.escola == responseAlunos.data[i].escola)
                   if(auxEscola) auxEscola.numero++;
                   else escolas.push({escola: responseAlunos.data[i].escola, numero:1})
-            }
+              }
             if(escolas.length > 1){
                 var res = Math.max.apply(Math, escolas.map(function(o){return o.numero;}))
                 var escolaAux = escolas.find(function(o){ return o.numero == res; })

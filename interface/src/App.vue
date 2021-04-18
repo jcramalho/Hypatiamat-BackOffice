@@ -1,6 +1,6 @@
 <template>
 
-  <v-app id="app" :key="viewKey">
+  <v-app id="app"  :key="viewKey">
     
     <Auth v-if="loggedIn" @refreshLogout="refreshLogout" />
  

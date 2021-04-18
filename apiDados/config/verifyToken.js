@@ -114,7 +114,12 @@ module.exports.verifyUserProf2 = function(){
         if( ((u.type == 50) || (u.codigo.toUpperCase() === codigo.toUpperCase())) && u.type != 10  ) next()
         else if(u.type == 30){
             var professor = await Professores.getProfessorByCodigo(codigo)
-            if(u.escolas.find(e => e.cod == professor.escola)) next()
+            if(professor && u.escolas.find(e => e.cod == professor.escola)) next()
+            else res.status(403).jsonp("Não tem permissão.")
+        }
+        else if(u.type == 40){
+            var professor = await Professores.getProfessorByCodigo(codigo)
+            if(professor && u.escola == professor.escola) next()
             else res.status(403).jsonp("Não tem permissão.")
         }
         else res.status(403).jsonp("Não tem permissão.")
@@ -127,9 +132,28 @@ module.exports.verifyTurma = function(){
         var idTurma = req.params.id
 
         if( u.type == 50 ) next()
-        else if( u.type != 10){
+        else if( u.type == 20){
             var turmas = await Turmas.getTurmasByProfessor(u.codigo)
             if(turmas.find(e => e.id == idTurma)) next()
+            else res.status(403).jsonp("Não tem permissão.")
+        }
+        else if(u.type == 30){
+            var turma = await Turmas.getTurmaById(idTurma)
+            if(turma){
+                prof = await Professores.getProfessorByCodigo(turma.idprofessor)
+                if(u.escolas.find(e => e.cod == prof.escola)) next()
+                else res.status(403).jsonp("Não tem permissão.")
+            } 
+            else res.status(403).jsonp("Não tem permissão.")
+            
+        }
+        else if(u.type == 40){
+            var turma = await Turmas.getTurmaById(idTurma)
+            if(turma){
+                prof = await Professores.getProfessorByCodigo(turma.idprofessor)
+                if(prof && prof.escola == u.escola) next()
+                else res.status(403).jsonp("Não tem permissão.")
+            } 
             else res.status(403).jsonp("Não tem permissão.")
         }
         else res.status(403).jsonp("Não tem permissão.")
@@ -226,6 +250,16 @@ module.exports.verifyAluno2 = function(){
 
         if(u.type == 50) next()
         else if(user && u.type == 10 && u.user == user.user) next()
+        else res.status(403).jsonp("Não tem permissão.")
+    }
+}
+module.exports.verifyAdminProf = function(){
+    return async function(req, res, next) {
+        var u = req.user.user
+        var codprof = req.body.codprofessor
+
+        if(u.type == 50) next()
+        else if(u.type == 20 && codprof && u.codigo == codprof) next()
         else res.status(403).jsonp("Não tem permissão.")
     }
 }

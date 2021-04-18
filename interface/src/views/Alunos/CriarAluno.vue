@@ -6,12 +6,14 @@
         <v-container style="position: relative;top: 15%; width: 80%;" class="text-xs-center">
           <v-card class="pa-5">
             <v-form>
-            <v-text-field prepend-icon="mdi-card-account-details" v-model="codigo" name="Username (Código)" label="Username (Código)" :rules="[string15, existeCodigo]" required></v-text-field>
-            <v-text-field prepend-icon="mdi-account" v-model="nome" name="Nome" label="Nome" required></v-text-field>
-            <v-text-field prepend-icon="mdi-email" v-model="email" name="Email" label="Email" :rules="[emailValido, existeEmail]" required></v-text-field>
-            <v-text-field prepend-icon="mdi-calendar" v-model="datanasc" name="Data de Nascimento" label="Data de Nascimento" type="date" required></v-text-field>
-            <v-text-field prepend-icon="mdi-bank" v-model="pais" name="País" label="País" required></v-text-field>
+            <v-text-field color="#009263" prepend-icon="mdi-card-account-details" v-model="codigo" name="Username (Código)" label="Username (Código)" :rules="[string15, existeCodigo]" required></v-text-field>
+            <v-text-field color="#009263" prepend-icon="mdi-account" v-model="nome" name="Nome" label="Nome" required></v-text-field>
+            <v-text-field color="#009263" prepend-icon="mdi-email" v-model="email" name="Email" label="Email" :rules="[emailValido, existeEmail]" required></v-text-field>
+            <v-text-field color="#009263" prepend-icon="mdi-calendar" v-model="datanasc" name="Data de Nascimento" label="Data de Nascimento" type="date" required></v-text-field>
+            <v-text-field color="#009263" prepend-icon="mdi-bank" v-model="pais" name="País" label="País" required></v-text-field>
             <v-combobox
+                color="#009263"
+                v-if="utilizador.type == 50"
                 id="escola"
                 prepend-icon="mdi-school"
                 label="Agrupamento de Escolas"
@@ -19,7 +21,18 @@
                 :items="escolas"
                 @change="onEscolaChange"
             ></v-combobox>
+            <v-text-field
+              v-else
+              color="#009263"
+              id="escola"
+              prepend-icon="mdi-school"
+              label="Agrupamento de Escolas"
+              v-model="escola"
+              disabled
+              ></v-text-field>
             <v-combobox
+                v-if="utilizador.type == 50"
+                color="#009263"
                 id="professor"
                 prepend-icon="mdi-teach"
                 label="Professor"
@@ -27,18 +40,36 @@
                 :items="professores"
                 @change="onProfessorChange"
             ></v-combobox>
-            <v-combobox
-                id="turma"
-                prepend-icon="mdi-book-account"
-                label="Turma"
-                v-model="turma"
-                :items="turmas"
-            ></v-combobox>
-            <v-text-field prepend-icon="mdi-numeric-1-box-multiple-outline" v-model="numero" name="Número" label="Número" type="number" required></v-text-field>
-            <v-text-field prepend-icon="mdi-key" v-model="password" name="Password" label="Password" type="password" required></v-text-field>
-            <v-text-field prepend-icon="mdi-key" v-model="password2" name="Confirmação Password" label="Confirmação Password" type="password" required></v-text-field>
+            <v-text-field
+                v-else
+                color="#009263"
+                id="professor"
+                prepend-icon="mdi-teach"
+                label="Professor"
+                v-model="codprofessor"
+                disabled
+            ></v-text-field>
+            <div>
+              <v-combobox
+                  class="ma-0 pa-0"
+                  id="turma"
+                  color="#009263"
+                  prepend-icon="mdi-book-account"
+                  label="Turma"
+                  v-model="turma"
+                  :error="(this.alunosTurma && this.alunosTurma.length >= this.limiteAlunos)"
+                  :items="turmas"
+                  @change="onTurmaChange"
+              ></v-combobox>
+              <span class="caption red--text ml-4 pl-4" v-if="(this.alunosTurma && this.alunosTurma.length >= this.limiteAlunos)">
+                Atingiu o limite máximo de alunos nesta turma ({{this.limiteAlunos}}). Escolha outra por favor.
+              </span>
+            </div>
+            <v-text-field color="#009263" prepend-icon="mdi-numeric-1-box-multiple-outline" v-model="numero" name="Número" label="Número" type="number" required></v-text-field>
+            <v-text-field color="#009263" prepend-icon="mdi-key" v-model="password" name="Password" label="Password" type="password" required></v-text-field>
+            <v-text-field color="#009263" prepend-icon="mdi-key" v-model="password2" name="Confirmação Password" label="Confirmação Password" type="password" required></v-text-field>
             <v-card-actions>
-              <v-btn class="white--text" :disabled="disabledCodigo || disabledEmail" primary large block style="background-color: #009263;" @click="registarAluno">Confirmar</v-btn>
+              <v-btn class="white--text" :disabled="disabledCodigo || disabledEmail || (this.alunosTurma && this.alunosTurma.length >= this.limiteAlunos)" primary large block style="background-color: #009263;" @click="registarAluno">Confirmar</v-btn>
             </v-card-actions>
             </v-form>
           </v-card>
@@ -54,17 +85,23 @@
   import Swal from 'sweetalert2'
   import axios from "axios"
   import moment from 'moment';
+  const anoletivoAtual = require("@/config/confs").anoletivo
+  const alunosLim = require("@/config/confs").limiteAlunos
+
 
   export default {
     data(){
       return {
+        utilizador:[],
         codigos:[],
         nome : "",
         escola : "",
+        limiteAlunos: alunosLim,
+        alunosTurma: [],
         escolas: [],
         escolasIds : [],
         email : "",
-        pais: "",
+        pais: "Portugal",
         codprofessor:"",
         datanasc:"",
         codigo : "",
@@ -106,17 +143,39 @@
           if(v != "" && this.reg.test(v)) {this.disabledEmail = false; return true}
           else {this.disabledEmail = true; return false}
         },
+        turmaValida: v =>{
+          
+        }
       }
     },
     created : async function() {
         try {
           this.token = localStorage.getItem("token")
-          var response = await axios.get(h + "escolas")
-          this.escolasIds = response.data
-          var i
-          for(i = 0; i < this.escolasIds.length; i++){
-            var string = this.escolasIds[i].localidade + " - " + this.escolasIds[i].nome 
-            this.escolas.push(string)
+          this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
+          console.log("oi")
+          console.log(this.utilizador)
+          if(this.utilizador.type == 50){
+            /*
+            conosle.log("Admin")
+            var response = await axios.get(h + "escolas")
+            this.escolasIds = response.data
+            var i
+            for(i = 0; i < this.escolasIds.length; i++){
+              var string = this.escolasIds[i].localidade + " - " + this.escolasIds[i].nome 
+              this.escolas.push(string)
+            }*/
+
+          }
+          else {
+            console.log("Prof")
+            var response = await axios.get(h + "professores/" + this.utilizador.id + "?token=" + this.token)
+            this.utilizador = response.data
+            this.escola = this.utilizador.agrupamento
+            this.codprofessor = this.utilizador.codigo
+            var anoAux = anoletivoAtual.split("/")
+            var ano = anoAux[0]
+            var response = await axios.get(h + "professores/" + this.utilizador.codigo + "/turmas?token=" + this.token + "&ano=" + ano)
+            response.data.forEach(element => this.turmas.push(element.turma))
           }
           this.getCodigos()
         } catch (e) {
@@ -151,9 +210,16 @@
               listaP.forEach(element => this.turmas.push(element.turma))
           }
       },
-       login: function(){
-         this.$emit("login");
-       },
+      onTurmaChange: function(item){
+        if(this.turmas.find(e => e == this.turma)){
+          axios.get(h + "turmas/" + this.turma + "/alunos?atuais=true&codprofessor=" + this.codprofessor + 
+                                          "&token=" + this.token)
+                .then( (response) => {
+                  this.alunosTurma = response.data
+                })
+        }
+        else {this.turma = ""; this.alunosTurma = [];}
+      },
       registarAluno: function () {
         
         /* var args = [aluno.user, aluno.numero, aluno.nome, aluno.datanascimento, 
@@ -164,10 +230,15 @@
             && this.password2 && this.pais != "" && this.codprofessor != "" && this.numero != "" && this.datanasc != ""
             && this.turma != ""){ 
           if(this.password == this.password2){
-            var aux = this.escola.split(" - ")
             var date = this.datanasc.split("-")
             var dataNascimento = date[2] + "/" + date[1] + "/" + date[0]
-            var escolaEscolhida = this.escolasIds.find(element => element.nome == aux[1]).cod
+            
+            if(this.utilizador.type == 50){
+              var aux = this.escola.split(" - ")
+              var escolaEscolhida = this.escolasIds.find(element => element.nome == aux[1]).cod
+            }
+            else var escolaEscolhida = this.utilizador.escola
+            
             let data = {
                 numero: this.numero,
                 nome : this.nome,

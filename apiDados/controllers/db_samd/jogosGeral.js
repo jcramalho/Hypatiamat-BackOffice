@@ -136,13 +136,16 @@ JogosGerais.getJogoProfessoresFreq = async function(jogoTable, jogoTipo, dataIni
     })
 }
 
-JogosGerais.getJogoFromTurma  = function (dataInicio, dataFim, jogoTipo, tableJogo, turma, escola){
+JogosGerais.getJogoFromTurma  = function (dataInicio, dataFim, jogoTipo, tableJogo, turma, escola, horaInicio, horaFim){
+    var args = [jogoTipo, turma, escola, dataInicio, dataFim, horaInicio, horaFim]
     return new Promise(function(resolve, reject) {
-        sql.query(`Select al.numero, jogo.idaluno, al.nome, Round(AVG(jogo.pontuacao), 0) as media, MAX(jogo.pontuacao) as maximo, MIN(jogo.pontuacao) as minimo, count(jogo.pontuacao) as count 
-        from (select idaluno, pontuacao from ${bdSAMD}.${tableJogo} where tipo = ? and turma = ? and idescola = ? and (data between ? and ?) ) jogo, 
+        sql.query(`Select al.numero, jogo.idaluno, al.nome, Round(AVG(jogo.pontuacao), 0) as media, 
+                MAX(jogo.pontuacao) as maximo, MIN(jogo.pontuacao) as minimo, count(jogo.pontuacao) as count 
+        from (select idaluno, pontuacao from ${bdSAMD}.${tableJogo} 
+                    where tipo = ? and turma = ? and idescola = ? and (data between ? and ?) and (horario between ? and ?) ) jogo, 
             ${bdAplicacoes}.alunos al  
         where al.user = jogo.idaluno
-        Group by idaluno Order by al.numero`, [jogoTipo, turma, escola, dataInicio, dataFim], function(err, res){
+        Group by idaluno Order by al.numero`, args, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -154,13 +157,15 @@ JogosGerais.getJogoFromTurma  = function (dataInicio, dataFim, jogoTipo, tableJo
     })   
 }
 
-JogosGerais.getJogoFromTurmaFreq = function (dataInicio, dataFim, jogoTipo, tableJogo, turma, escola){
+JogosGerais.getJogoFromTurmaFreq = function (dataInicio, dataFim, jogoTipo, tableJogo, turma, escola, horaInicio, horaFim){
+    var args = [jogoTipo, turma, escola, dataInicio, dataFim, horaInicio, horaFim]
     return new Promise(function(resolve, reject) {
         sql.query(`Select al.numero, jogo.idaluno, al.nome, count(jogo.pontuacao) as count 
-        from (select idaluno, pontuacao from ${bdSAMD}.${tableJogo} where tipo = ? and turma = ? and idescola = ? and (data between ? and ?) ) jogo, 
+        from (select idaluno, pontuacao from ${bdSAMD}.${tableJogo} where 
+                tipo = ? and turma = ? and idescola = ? and (data between ? and ?) and (horario between ? and ?) ) jogo, 
         ${bdAplicacoes}.alunos al  
         where al.user = jogo.idaluno 
-        Group by idaluno Order by al.numero`, [jogoTipo, turma, escola, dataInicio, dataFim], function(err, res){
+        Group by idaluno Order by al.numero`, args, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -214,7 +219,7 @@ JogosGerais.getAlunoLast = function(tableJogo, tipo, user){
     return new Promise(function(resolve, reject) {
         sql.query(`select min(pontuacao) as min, max(pontuacao) as max, Round(avg(pontuacao), 0) as media, 
 		count(pontuacao) as frequencia, max(concat(data, ' ', horario)) as lastdate
-		from ${bdSAMD}.${tableJogo} where tipo=? and idaluno=?;`, [tipo, user], function(err, res){
+		from ${bdSAMD}.${tableJogo} where tipo=? and idaluno=? and (data between ? and ?);`, [tipo, user, dataInicioAno, dataFimAno], function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

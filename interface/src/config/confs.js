@@ -1,6 +1,9 @@
 // limite de turmas geral
 module.exports.limiteTurmas = 4
 
+// limite de alunos por Turma geral
+module.exports.limiteAlunos = 30
+
 var date = new Date()
 var anoTotal = date.getFullYear()
 var mes = date.getMonth()

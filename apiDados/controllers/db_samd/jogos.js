@@ -160,12 +160,12 @@ Jogos.getAllJogosProfessores = async function(dataInicio, dataFim, escola){
     return res;
 }
 
-Jogos.getAllJogosTurma = async function(dataInicio, dataFim, turma, escola){
+Jogos.getAllJogosTurma = async function(dataInicio, dataFim, turma, escola, horaInicio, horaFim){
     var jogos = await Jogos.getJogosDB()
     var res = []
 
     for(var i = 0; i < jogos.length; i++){
-        var jogo = await JogosGerais.getJogoFromTurmaFreq(dataInicio, dataFim, jogos[i].tipo, jogos[i].jogotable, turma, escola)
+        var jogo = await JogosGerais.getJogoFromTurmaFreq(dataInicio, dataFim, jogos[i].tipo, jogos[i].jogotable, turma, escola, horaInicio, horaFim)
         for(var j = 0; j < jogo.length; j++){
             var aux = res.find(element => element.idaluno == jogo[j].idaluno)
             
@@ -174,14 +174,14 @@ Jogos.getAllJogosTurma = async function(dataInicio, dataFim, turma, escola){
         }
     }
 
-    var calcRapid = await Calcrapid.getTodosCalcRapidTurmas(dataInicio, dataFim, escola, turma)
+    var calcRapid = await Calcrapid.getTodosCalcRapidTurmas(dataInicio, dataFim, escola, turma, horaInicio, horaFim)
     for(var j = 0; j < calcRapid.length; j++){
         var aux = res.find(element => element.idaluno == calcRapid[j].idaluno)
         if(aux) aux.count += calcRapid[j].frequencia
         else res.push({numero: calcRapid[j].numero, nome: calcRapid[j].nome, codprofessor: calcRapid[j].codigo, count: calcRapid[j].frequencia})
     }
 
-    var calculus = await Calculus.getTodosMinuteNewTurma(turma, escola, dataInicio, dataFim)
+    var calculus = await Calculus.getTodosMinuteNewTurma(turma, escola, dataInicio, dataFim, horaInicio, horaFim)
     for(var j = 0; j < calculus.length; j++){
         var aux = res.find(element => element.idaluno == calculus[j].user)
         if(aux) aux.count += calculus[j].frequencia
