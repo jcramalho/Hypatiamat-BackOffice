@@ -144,6 +144,12 @@
                                             <v-text-field @change="onHorarioFimChange" v-model="horaFim" label="Hora Fim" type="time" :format="format" required></v-text-field>
                                         </v-col>
                                     </v-layout>
+                                    <v-row v-if="alunos.length > 0" class="justify-center align-center">
+                                        <v-btn class="white--text" color="#009263" @click="atualizaConteudo()">
+                                            <v-icon>mdi-refresh</v-icon>
+                                            Atualizar
+                                        </v-btn>
+                                    </v-row>
                                 </v-card>
                                 </v-container>
                             </v-col>
@@ -371,13 +377,10 @@
 
                     <v-dialog
                         v-model="dialogGrafico"
-                        width="50%"
+                        width="80%"
                     >
-                    <v-card class="pa-4">
-                        <v-card-title>
-                            Gráfico
-                        </v-card-title>
-                    </v-card>
+                        <GraficoTurma v-if="dialogGrafico" :jogo="jogo.jogotable" :jogoTipo="jogo.tipo" :turma="turmaSel" 
+                                :escola="escola" :dataInicio="dataInicio" :dataFim="dataFim"/>
                     </v-dialog>
                 </v-container>
             </v-card>
@@ -394,6 +397,7 @@ import jsPDF from 'jspdf'
 import domtoimage from "dom-to-image";
 import 'jspdf-autotable'
 import html2canvas from "html2canvas";
+import GraficoTurma from '@/components/Jogos/GraficoTurma'
 const h = require("@/config/hosts").hostAPI
 const hostJogos = require("@/config/hosts").hostJogos
 const hypatiaImg = require("@/assets/hypatiamat.png")
@@ -401,6 +405,9 @@ const anosletivos2 = require("@/config/confs").anosletivos2
 const anoletivoAtual = require("@/config/confs").anoletivo2
 
   export default {
+    components:{
+        GraficoTurma
+    },
     data(){
       return {
         token: "",
@@ -491,6 +498,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         tiposCalculusSel:["0 - Todas as combinações"],
         tiposCalculusSelAnterior:["0 - Todas as combinações"],
         escolaOriginal: "",
+        nomeProf:"",
         show:false
       }
     },
@@ -512,15 +520,19 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         var i = 0
         for(i = 0; i < response.data.length; i++){
           this.turmas.push(response.data[i].turma)
-        }
+        }        
 
         if(this.$route.params.anoLetivo && this.$route.params.dataInicio && this.$route.params.dataFim){
             this.anoLetivo = this.$route.params.anoLetivo
             this.dataInicio = this.$route.params.dataInicio
             this.dataFim = this.$route.params.dataFim
         }
+        else this.onAnoChange()
+
+        if(response2) this.nomeProf = response2.data.nome
         else{
-            this.onAnoChange()
+            var response2 = await axios.get(h + "professores/codigos/" + this.idprofessor + "/?token=" + this.token )
+            this.nomeProf = response2.data.nome
         }
     },
     methods: {
@@ -671,7 +683,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
               var tipos = await this.parseTiposCalcRapid()
               var response = await axios.get(hostJogos + "calcrapid/turmas/" + this.turmaSel
                                                     + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                                    + "&escola=" + this.escola + "&codprofessor=" + this.idprofessor + 
+                                                    + "&escola=" + this.escola + "&codprofessor=" + this.idprofessor
                                                     + "&horaInicio=" + this.horaInicio + "&horaFim=" + this.horaFim
                                                     + "&tipo=" + tipos + "&token=" + this.token)
               this.alunos = response.data
@@ -801,16 +813,18 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         //doc.text("Jogo:")
         //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
         doc.setFontSize(11)
-        doc.text("Jogo: " + this.jogo.jogo, 15, 50)
-        doc.text("Período: " + this.dataInicio + " a " + this.dataFim, 130, 50)
-        doc.text("Tipos de Operações:", 15, 56)
-        var ytotal1 = 56
+        doc.text("Professor: " + this.nomeProf, 15, 50)
+        doc.text("Turma: " + this.turmaSel, 130, 50)
+        doc.text("Jogo: " + this.jogo.jogo, 130, 56)
+        doc.text("Período: " + this.dataInicio + " (" + this.horaInicio + "h) até " + this.dataFim  + " (" + this.horaFim + "h)", 15, 56)
+        doc.text("Tipos de Operações:", 15, 62)
+        var ytotal1 = 62
         for(var i = 0; i < this.tiposCalculusSel.length; i++){
             ytotal1 += 4
             doc.text(this.tiposCalculusSel[i], 15, ytotal1)
         }
-        doc.text("Níveis Selecionados:", 130, 56)
-        var ytotal2 = 56
+        doc.text("Níveis Selecionados:", 130, 62)
+        var ytotal2 = 62
         for(var i = 0; i < this.niveisSel.length; i++){
             ytotal2 +=4
             doc.text("- Nível " + this.niveisSel[i], 130, ytotal2)
@@ -864,10 +878,12 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         //doc.text("Jogo:")
         //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
         doc.setFontSize(11)
-        doc.text("Jogo: " + this.jogo.jogo, 15, 50)
-        doc.text("Período: " + this.dataInicio + " a " + this.dataFim, 130, 50)
-        doc.text("Tipos de Operações realizadas:", 15, 56)
-        ytotal = 56;
+        doc.text("Professor: " + this.nomeProf, 15, 50)
+        doc.text("Turma: " + this.turmaSel, 130, 50)
+        doc.text("Jogo: " + this.jogo.jogo, 130, 56)
+        doc.text("Período: " + this.dataInicio + " (" + this.horaInicio + "h) até " + this.dataFim  + " (" + this.horaFim + "h)", 15, 56)
+        doc.text("Tipos de Operações realizadas:", 15, 62)
+        ytotal = 62;
         for(var i = 0; i < this.tiposCalc.length; i++){
             ytotal += 4
             doc.text(this.tiposCalc[i], 15, ytotal);
@@ -922,14 +938,14 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         //doc.text("Jogo:")
         //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
         doc.setFontSize(11)
-        doc.text("Professor: " + this.idprofessor, 15, 50)
-        doc.text("Turma: " + this.turmaSel, 15, 60)
-        doc.text("Jogo: " + this.jogo.jogo, 130, 50)
-        doc.text("Período: " + this.dataInicio + " a " + this.dataFim, 130, 60)
+        doc.text("Professor: " + this.nomeProf, 15, 50)
+        doc.text("Turma: " + this.turmaSel, 130, 50)
+        doc.text("Jogo: " + this.jogo.jogo, 130, 56)
+        doc.text("Período: " + this.dataInicio + " (" + this.horaInicio + "h) até " + this.dataFim  + " (" + this.horaFim + "h)", 15, 56)
         var listaRes = []
         var headers = [['N.º', 'Nome', 'Max', "Min", "Média", "#"]]
         var jogo = this.jogo.jogo
-        ytotal += 70
+        ytotal += 65
         if(jogo != "Todos"){
             var auxTotal = ['Todos', "Todos", -1, this.alunos[0].minimo, 0, 0]
             for(var i = 0; i<this.alunos.length; i++){

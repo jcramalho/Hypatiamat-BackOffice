@@ -30,6 +30,7 @@
                       color="green"
                       v-model="idprofessor"
                       :items="professores"
+                      item-text="nome"
                       @change="getTurmas()"
                     ></v-combobox>
                    <v-combobox
@@ -183,7 +184,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       atualizaApps: async function(){
           if(this.turmaSel && this.turmaSel != ""){
             this.apps = undefined
-            var response = await axios.get(hostApps + "turmas/" + this.turmaSel + "/jogou?codprofessor=" + this.idprofessor
+            var response = await axios.get(hostApps + "turmas/" + this.turmaSel + "/jogou?codprofessor=" + this.idprofessor.codigo
                                                 + "&dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim + "&token=" + this.token)
             this.appsInfo = response.data
             this.parseApps()
@@ -203,11 +204,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           this.turmaSel = ""
           this.app = ""
           var responseProfs = await axios.get(h + "escolas/" + this.escolaId + "/professores/?token=" + this.token)
-          var aux = []
-          for(var i = 0; i < responseProfs.data.length; i++){
-            aux.push(responseProfs.data[i].codigo)
-          }
-          this.professores = aux
+          this.professores = responseProfs.data
         }
       },
       onAgrupamentoChange: async function(item){
@@ -222,7 +219,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       getTurmas: async function(){
           if(this.idprofessor && this.idprofessor != ""){
             this.turmaSel = ""
-            var responseTurmas = await axios.get(h + "professores/" + this.idprofessor + "/turmas?token=" + this.token)
+            var responseTurmas = await axios.get(h + "professores/" + this.idprofessor.codigo + "/turmas?token=" + this.token)
             var i = 0
             var aux = []
             for(i = 0; i < responseTurmas.data.length; i++){
@@ -244,7 +241,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           if(this.turmaSel != "" && this.turmaSel){
               this.escolaId = this.escolaIdOriginal
               var responseAlunos = await axios.get(h + "turmas/" + this.turmaSel + 
-                                                      "/alunos?codprofessor=" + this.idprofessor
+                                                      "/alunos?codprofessor=" + this.idprofessor.codigo
                                                       + "&token=" + this.token)
 
               var escolas = []
@@ -289,7 +286,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         var aux = this.tipoRankSel.split(" - ")
         var response = await axios.get(hostApps + "turmas/" + this.turmaSel + "/ranking/" + aux[0]
                                             + "/?anoletivo=" + this.anoLetivo + "&escola=" + this.escolaId
-                                            + "&codProf=" + this.idprofessor + "&token=" + this.token)
+                                            + "&codProf=" + this.idprofessor.codigo + "&token=" + this.token)
             
         this.items = response.data
         this.loading = false
@@ -299,7 +296,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         var aux = this.tipoRankSel.split(" - ")
         var response = await axios.get(hostApps + "turmas/" + this.turmaSel + "/ranking/" + aux[0]
                                             + "/?anoletivo=" + this.anoLetivo + "&escola=" + this.escolaId
-                                            + "&codProf=" + this.idprofessor + "&codtema=" + appInfo.codtema +
+                                            + "&codProf=" + this.idprofessor.codigo + "&codtema=" + appInfo.codtema +
                                             "&token=" + this.token)
                         
         this.items = response.data
@@ -310,7 +307,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         var aux = this.tipoRankSel.split(" - ")
         var response = await axios.get(hostApps + "turmas/" + this.turmaSel + "/ranking/" + aux[0]
                                             + "/?anoletivo=" + this.anoLetivo + "&escola=" + this.escolaId
-                                            + "&codProf=" + this.idprofessor + "&codtema=" + appInfo.codtema +
+                                            + "&codProf=" + this.idprofessor.codigo + "&codtema=" + appInfo.codtema +
                                             "&codsubtema=" + appInfo.codsubtema + "&token=" + this.token)
                         
         this.items = response.data
@@ -350,7 +347,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         //doc.text("Jogo:")
         //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
         doc.setFontSize(11)
-        doc.text("Professor: " + this.codProf, 15, 50)
+        doc.text("Professor: " + this.idprofessor.nome, 15, 50)
         doc.text("Critério: " + this.tipoRankSel, 15, 60)
         doc.text("App: " + this.app, 130, 60)
         doc.text("Turma: " + this.turmaSel, 130, 50)

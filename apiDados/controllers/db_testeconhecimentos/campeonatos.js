@@ -268,6 +268,23 @@ module.exports.getCampeonatoAgrupamento = function(campeonato, escola){
     })
 }
 
+module.exports.getCampeonatoAgrupamentoGerais = function(campeonato, escola){
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT count(distinct al.codprofessor) as nprofessores, sum(camp.njogos) as njogos, count(distinct camp.user) as nusers, 
+                Round(sum(camp.njogos)/count(distinct camp.user), 0) as jogosAluno
+                FROM (select * from ${bdTesteConhecimentos}.campeonatos where campeonatoID=?) camp, (select * from ${bdAplicacoes}.alunos where escola=?) al
+                     where camp.user = al.user;`, [campeonato, escola], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if(res.length > 0 && res[0].nusers > 0) resolve(res[0])
+                else resolve(undefined)
+            }
+        })
+    })
+}
 
 module.exports.getCampeonatoAgrupamentoProfessores = function(campeonato, escola){
     return new Promise(function(resolve, reject) {

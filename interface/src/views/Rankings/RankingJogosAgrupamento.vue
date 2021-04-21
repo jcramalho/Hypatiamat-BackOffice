@@ -21,6 +21,7 @@
                     color="green"
                     v-model="idprofessor"
                     :items="professores"
+                    item-text="nome"
                     @change="getTurmas()"
                 ></v-combobox>
                 <v-combobox
@@ -180,16 +181,12 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           this.jogo = ""
           this.jogos = []
           var responseProfs = await axios.get(h + "escolas/" + this.escola + "/professores/?token=" + this.token)
-          var aux = []
-          for(var i = 0; i < responseProfs.data.length; i++){
-            aux.push(responseProfs.data[i].codigo)
-          }
-          this.professores = aux
+          this.professores = responseProfs.data
       },
       getTurmas: async function(){
           if(this.idprofessor && this.idprofessor != ""){
             this.turmaSel = ""
-            var responseTurmas = await axios.get(h + "professores/" + this.idprofessor + "/turmas?token=" + this.token)
+            var responseTurmas = await axios.get(h + "professores/" + this.idprofessor.codigo + "/turmas?token=" + this.token)
             var i = 0
             var aux = []
             for(i = 0; i < responseTurmas.data.length; i++){
@@ -203,7 +200,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             this.loadingJogos = true
             this.escolaId = this.escolaIdOriginal
             var responseAlunos = await axios.get(h + "turmas/" + this.turmaSel + 
-                                                    "/alunos?codprofessor=" + this.idprofessor
+                                                    "/alunos?codprofessor=" + this.idprofessor.codigo
                                                     + "&token=" + this.token)
 
             var escolas = []
@@ -222,7 +219,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             var dataFim = aux[1] + "-09-01"                                          
             var response2 = await axios.get(h + "turmas/" + this.turmaSel + "/jogos?escola=" 
                                                 + this.escolaId + "&dataInicio=" + dataInicio 
-                                                + "&dataFim=" + dataFim + "&codprofessor=" + this.idprofessor + "&token=" + this.token)
+                                                + "&dataFim=" + dataFim + "&codprofessor=" + this.idprofessor.codigo + "&token=" + this.token)
             this.jogosInfo = response2.data
             this.jogos = []
             this.items = []
@@ -316,7 +313,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           this.loading = true
           var response = await axios.get(hostJogos + "minutenew/turmas/" + this.turmaSel + "/ranking"
                                                     + "?anoletivo=" + this.anoLetivo
-                                                    + "&codprofessor=" + this.idprofessor 
+                                                    + "&codprofessor=" + this.idprofessor.codigo 
                                                     + "&escola=" + this.escolaId + "&token=" + this.token)
           this.items = response.data
           this.loading = false
@@ -327,7 +324,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           var tipos = await this.parseTiposCalculus()
           var response = await axios.get(hostJogos + "minutenew/turmas/" + this.turmaSel + "/ranking"
                                                     + "?anoletivo=" + this.anoLetivo
-                                                    + "&codprofessor=" + this.idprofessor 
+                                                    + "&codprofessor=" + this.idprofessor.codigo 
                                                     + "&tipos=" + tipos + "&escola=" + this.escolaId +"&token=" + this.token)
           this.items = response.data
           this.loading = false
@@ -337,7 +334,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           this.loading = true
           var response = await axios.get(hostJogos + "minutenew/turmas/" + this.turmaSel + "/ranking"
                                                     + "?anoletivo=" + this.anoLetivo
-                                                    + "&codprofessor=" + this.idprofessor 
+                                                    + "&codprofessor=" + this.idprofessor.codigo 
                                                     + "&niveis=" + this.niveisSel + "&escola=" + this.escolaid +"&token=" + this.token)
           this.items = response.data
           this.loading = false
@@ -348,7 +345,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           var tipos = await this.parseTiposCalculus()
           var response = await axios.get(hostJogos + "minutenew/turmas/" + this.turmaSel + "/ranking"
                                                     + "?anoletivo=" + this.anoLetivo + "&escola=" + this.escolaId
-                                                    + "&codprofessor=" + this.idprofessor 
+                                                    + "&codprofessor=" + this.idprofessor.codigo 
                                                     +  "&niveis=" + this.niveisSel + "&tipos=" + tipos + "&token=" + this.token)
           this.items = response.data
           this.loading = false
@@ -361,14 +358,14 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
               var tipos = await this.parseTiposCalcRapid()
               var response = await axios.get(hostJogos + "calcrapid/turmas/" + this.turmaSel + "/ranking"
                                                     + "?anoletivo=" + this.anoLetivo
-                                                    + "&escola=" + this.escolaId + "&codprofessor=" + this.idprofessor + 
+                                                    + "&escola=" + this.escolaId + "&codprofessor=" + this.idprofessor.codigo + 
                                                     "&tipo="+ tipos + "&token=" + this.token)
               this.items = response.data
           }
           else{
             var response = await axios.get(hostJogos + "calcrapid/turmas/" + this.turmaSel + "/ranking"
                                                     + "?anoletivo=" + this.anoLetivo
-                                                    + "&escola=" + this.escolaId + "&codprofessor=" + this.idprofessor + 
+                                                    + "&escola=" + this.escolaId + "&codprofessor=" + this.idprofessor.codigo + 
                                                     "&token=" + this.token)
             this.items = response.data
           }
@@ -392,7 +389,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
                     var response = await axios.get(hostJogos + jogoTable + "/turmas/" + this.turmaSel + "/ranking/" 
                                                         + "?anoletivo=" + this.anoLetivo
                                                         + "&jogoTipo=" + jogoTipo + "&escola=" + idescola
-                                                        + "&codprofessor=" + this.idprofessor
+                                                        + "&codprofessor=" + this.idprofessor.codigo
                                                         + "&token=" + this.token)
                     this.items = response.data
                 }
@@ -412,7 +409,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         //doc.text("Jogo:")
         //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
         doc.setFontSize(11)
-        doc.text("Professor: " + this.idprofessor, 15, 50)
+        doc.text("Professor: " + this.idprofessor.nome, 15, 50)
         doc.text("Turma: " + this.turmaSel, 15, 60)
         doc.text("Jogo: " + aux.jogo, 130, 50)
         var listaRes = []

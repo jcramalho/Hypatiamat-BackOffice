@@ -7,7 +7,6 @@ module.exports.hostCampeonatos = "http://192.168.1.86:3050/campeonatos/"
 module.exports.hostCromos = "http://192.168.1.86:3050/cromos/"
 
 
-
 /*
 module.exports.hostAPI = "https://api.hypatiamat.com/aplicacoes/"
 module.exports.hostJogos = "https://api.hypatiamat.com/jogos/"

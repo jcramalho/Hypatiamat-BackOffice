@@ -107,7 +107,7 @@ export default {
       idUtilizador:"",
       nomeUtilizador:"",
       nome:"",
-      versao: "1.4"
+      versao: "1.6"
     }
   },
   watch: {
@@ -141,7 +141,7 @@ export default {
         { title: 'Monitorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/municipios"},
         { title: 'Monitorização de Apps', icon: 'mdi-apps', href:"/apps/municipios"},
         { title: 'Ranking Jogos', icon: 'mdi-podium', href:"/classificacoes/jogos/admin"},
-        { title: 'Ranking Apps', icon: 'mdi-podium', href:"/classificacoes/apps/admin"},
+        { title: 'Ranking Apps', icon: 'mdi-trophy-award', href:"/classificacoes/apps/admin"},
         { title: 'Outras Estatísticas', icon: 'mdi-home-analytics', href:"/estatisticas/municipios"},
         { title: 'Campeonatos', icon: 'mdi-trophy', href:"/campeonatos/municipios"},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
@@ -158,7 +158,7 @@ export default {
         { title: 'Monitorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/" + utilizador.codigo },
         { title: 'Monitorização de Apps', icon: 'mdi-apps', href:"/apps/" + utilizador.codigo},
         { title: 'Ranking Jogos', icon: 'mdi-podium', href:"/classificacoes/jogos"},
-        { title: 'Ranking Apps', icon: 'mdi-podium', href:"/classificacoes/apps"},
+        { title: 'Ranking Apps', icon: 'mdi-trophy-award', href:"/classificacoes/apps"},
         { title: 'Campeonatos', icon: 'mdi-trophy', href:"/campeonatos/professores/" + utilizador.codigo},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
@@ -183,7 +183,7 @@ export default {
         { title: 'Monitorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/"+ utilizador.infoEscola.localidade +"/escolas" },
         { title: 'Monitorização de Apps', icon: 'mdi-apps', href:"/apps/" + utilizador.infoEscola.localidade + "/escolas"},
         { title: 'Ranking Jogos', icon: 'mdi-podium', href:"/classificacoes/jogos/municipio"},
-        { title: 'Ranking Apps', icon: 'mdi-podium', href:"/classificacoes/apps/municipio"},
+        { title: 'Ranking Apps', icon: 'mdi-trophy-award', href:"/classificacoes/apps/municipio"},
         { title: 'Outras estatísticas', icon:'mdi-home-analytics', href:"/estatisticas/municipios/" + utilizador.infoEscola.localidade},
         { title: 'Campeonatos', icon: 'mdi-trophy', href:"/campeonatos/municipios/" + utilizador.infoEscola.localidade},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
@@ -197,7 +197,7 @@ export default {
         { title: 'Monitorização de Jogos', icon: 'mdi-gamepad-variant', href:"/escolas/"+ utilizador.escola + "/jogos" },        
         { title: 'Monitorização de Apps', icon: 'mdi-apps', href:"/escolas/"+ utilizador.escola + "/apps" },
         { title: 'Ranking Jogos', icon: 'mdi-podium', href:"/classificacoes/jogos/escola"},
-        { title: 'Ranking Apps', icon: 'mdi-podium', href:"/classificacoes/apps/escola"},
+        { title: 'Ranking Apps', icon: 'mdi-trophy-award', href:"/classificacoes/apps/escola"},
         { title: 'Outras estatísticas', icon:'mdi-home-analytics', href:"/estatisticas/escolas/" + utilizador.escola},
         { title: 'Campeonatos', icon: 'mdi-trophy', href:"/campeonatos/escolas/" + utilizador.escola},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}

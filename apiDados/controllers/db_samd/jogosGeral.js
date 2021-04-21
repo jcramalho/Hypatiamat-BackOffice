@@ -137,12 +137,14 @@ JogosGerais.getJogoProfessoresFreq = async function(jogoTable, jogoTipo, dataIni
 }
 
 JogosGerais.getJogoFromTurma  = function (dataInicio, dataFim, jogoTipo, tableJogo, turma, escola, horaInicio, horaFim){
-    var args = [jogoTipo, turma, escola, dataInicio, dataFim, horaInicio, horaFim]
+    var horarioInicio = dataInicio.concat(' ', horaInicio)
+    var horarioFim = dataFim.concat(' ', horaFim + ':59')
+    var args = [jogoTipo, turma, escola, horarioInicio, horarioFim]
     return new Promise(function(resolve, reject) {
         sql.query(`Select al.numero, jogo.idaluno, al.nome, Round(AVG(jogo.pontuacao), 0) as media, 
                 MAX(jogo.pontuacao) as maximo, MIN(jogo.pontuacao) as minimo, count(jogo.pontuacao) as count 
         from (select idaluno, pontuacao from ${bdSAMD}.${tableJogo} 
-                    where tipo = ? and turma = ? and idescola = ? and (data between ? and ?) and (horario between ? and ?) ) jogo, 
+                    where tipo = ? and turma = ? and idescola = ? and (CONCAT(data, ' ', horario) between ? and ?) ) jogo, 
             ${bdAplicacoes}.alunos al  
         where al.user = jogo.idaluno
         Group by idaluno Order by al.numero`, args, function(err, res){
@@ -155,6 +157,88 @@ JogosGerais.getJogoFromTurma  = function (dataInicio, dataFim, jogoTipo, tableJo
             }
         })
     })   
+}
+
+JogosGerais.getFrequenciaPorDiaTurma = function(jogoTipo, tableJogo, turma, escola){
+    var args = [jogoTipo, turma, escola, dataInicioAno, dataFimAno]
+    return new Promise(function(resolve, reject) {
+        sql.query(`select data, count(pontuacao) as freq, count(distinct idaluno) as nalunos
+			from ${bdSAMD}.${tableJogo} 
+                    where tipo = ? and turma = ? and idescola = ? and (data between ? and ?)
+                    group by data;`, args, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                var freqTotal = 0
+                for(var i = 0; i < res.length; i++)
+                    freqTotal += res[i].freq
+                
+                resolve({porDia: res, total: freqTotal})
+            }
+        })
+    })   
+    
+}
+
+JogosGerais.getEstatisticasGraficoTurma = async function(jogoTipo, tableJogo, turma, escola){
+    var freqs = await JogosGerais.getFrequenciaPorDiaTurma(jogoTipo, tableJogo, turma, escola)
+    var dataInicio = dataInicioAno
+    var dataFim 
+    var arrayIntervals = []
+    var media3 = freqs.total/3
+    console.log(media3)
+    var freqAux = 0;
+    var freqConsumida = 0
+    for(var i = 0; i < freqs.porDia.length; i++){
+        freqAux += freqs.porDia[i].freq
+        if(freqAux >= media3){
+            freqConsumida += freqAux
+            if(Math.abs(media3 - freqAux) > Math.abs(media3 - ( (freqs.total - freqConsumida) + freqs.porDia[i].freq) ) && i > 0){
+                dataFim = freqs.porDia[i-1].data
+                arrayIntervals.push({
+                    dataInicio: dataInicio,
+                    dataFim: dataFim,
+                    freq: freqAux - freqs.porDia[i].freq,
+                })
+                freqAux = freqs.porDia[i].freq;
+                var aux = new Date((new Date(dataFim)).getTime() + 86400000)
+                dataInicio = aux.toISOString().split('T')[0]
+            }
+            else{
+                dataFim = freqs.porDia[i].data
+                arrayIntervals.push({
+                    dataInicio: dataInicio,
+                    dataFim: dataFim,
+                    freq: freqAux
+                })
+                freqAux = 0;
+                var aux = new Date((new Date(dataFim)).getTime() + 86400000)
+                dataInicio = aux.toISOString().split('T')[0]
+            }
+        }
+        else if(i == freqs.porDia.length - 1){
+            dataFim = freqs.porDia[i].data
+            arrayIntervals.push({
+                dataInicio: dataInicio,
+                dataFim: dataFim,
+                freq: freqAux
+            })
+        }
+    }
+
+    for(var i = 0; i < arrayIntervals.length; i++){
+        var intervalo = arrayIntervals[i]
+        intervalo.data = await JogosGerais.getJogoFromTurma(intervalo.dataInicio, intervalo.dataFim, jogoTipo, tableJogo, turma, escola, '00:00:00', '23:59:59')
+    }
+
+    return {
+        estatisticas: freqs,
+        intervalos: arrayIntervals
+    }
+
+
 }
 
 JogosGerais.getJogoFromTurmaFreq = function (dataInicio, dataFim, jogoTipo, tableJogo, turma, escola, horaInicio, horaFim){

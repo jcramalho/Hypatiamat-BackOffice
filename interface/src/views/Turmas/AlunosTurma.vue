@@ -44,7 +44,7 @@
                     :search="filtrar"
                     >
                     <template v-slot:item="row" >
-                    <tr :class="row.item.alunoOld ? 'style-AlunoOld' : 'style-AlunoAtual'">
+                    <tr :class="row.item.alunoOld ? 'style-AlunoOld' : row.item.confirmacao ? 'style-AlunoAtual' : 'style-AlunoNConfirmado'">
                         <td>{{row.item.numero}}</td>
                         <td>{{row.item.nome}}</td>
                         <td>{{row.item.user}}</td>
@@ -167,7 +167,9 @@ const h = require("@/config/hosts").hostAPI
 .style-AlunoAtual {
   background-color: white
 }
-
+.style-AlunoNConfirmado{
+ background-color: #d9d7d2
+}
 .mydialog {
     align-self: flex-end;
   }

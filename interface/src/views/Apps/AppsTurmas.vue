@@ -96,6 +96,12 @@
                                     <v-text-field @change="onHorarioFimChange" v-model="horaFim" label="Hora Fim" type="time" :format="format" required></v-text-field>
                                 </v-col>
                             </v-layout>
+                            <v-row v-if="items.length > 0" class="justify-center align-center">
+                                <v-btn class="white--text" color="#009263" @click="atualizaConteudo()">
+                                    <v-icon>mdi-refresh</v-icon>
+                                    Atualizar
+                                </v-btn>
+                            </v-row>
                         </v-card>
                         </v-container>
                         </center>
@@ -192,6 +198,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         turmas:[],
         turmaSel:"",
         show: false,
+        nomeProf:""
       }
     },
     created: async function(){
@@ -208,6 +215,9 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           this.turmas.push(response.data[i].turma)
         }
         
+        var response2 = await axios.get(h + "professores/codigos/" + this.codProf + "/?token=" + this.token )
+        this.nomeProf = response2.data.nome
+
         if(this.$route.params.anoLetivo && this.$route.params.dataInicio && this.$route.params.dataFim){
             this.dataInicio = this.$route.params.dataInicio
             this.dataFim = this.$route.params.dataFim
@@ -345,10 +355,11 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         //doc.text("Jogo:")
         //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
         doc.setFontSize(11)
-        doc.text("App de Conteúdos: " + this.app, 15, 50)
-        doc.text("Professor: " + this.codProf, 130, 50)
-        doc.text("Turma: " + this.turmaSel, 15, 60)
-        doc.text("Período: " + this.dataInicio + " a " + this.dataFim, 130, 60)
+        
+        doc.text("Professor: " + this.nomeProf, 15, 50)
+        doc.text("Turma: " + this.turmaSel, 130, 50)
+        doc.text("Período: " + "Período: " + this.dataInicio + " (" + this.horaInicio + "h) até " + this.dataFim  + " (" + this.horaFim + "h)", 15, 56)
+        doc.text("App de Conteúdos: " + this.app, 15, 62)
         var listaRes = []
         var total =["Todos", "Todos", 0, 0, 0, 0, 0, 0]
         for(var i = 0; i<this.items.length; i++){
@@ -369,13 +380,13 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
 
             listaRes.push(aux)
         }
-        total[4] = ((total[2]/total[3]) * 100).toFixed(2)
+        total[4] = Math.round((total[2]/total[3]) * 100)
         listaRes.push(total)
         doc.autoTable({
             head: [['N.º', "Nome", 'NTRC', "NTR", "Acerto(%)", "DP", "FP", "#"]],
             body: listaRes,
             headStyles: { fillColor: [0, 146, 99] },
-            margin:{top: 75, bottom: 30},
+            margin:{top: 70, bottom: 30},
             didDrawPage: function (data) {
                     // Reseting top margin. The change will be reflected only after print the first page.
                     data.settings.margin.top = 10;

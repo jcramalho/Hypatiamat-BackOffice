@@ -76,6 +76,8 @@
                         <EstatisticasGeraisCampeonato v-if="this.estatisticasGerais" :estatisticasGerais="this.estatisticasGerais"/>
                         <center><span v-if="this.estastisticasMunicipio"> <b> Neste campeonato em {{this.municipio}}: </b> </span> </center>
                         <CampeonatoMunicipio v-if="this.estastisticasMunicipio" :estatisticasGerais="this.estastisticasMunicipio"/>
+                        <center><span v-if="this.estatisticasAgrupamento"> <b> Neste campeonato no seu Agrupamento de Escolas: </b> </span> </center>
+                        <CampeonatoAgrupamento v-if="this.estatisticasAgrupamento" :estatisticasGerais="this.estatisticasAgrupamento"/>
                 <v-container v-if="loading">
                     <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
                 </v-container>
@@ -129,6 +131,7 @@ import Swal from 'sweetalert2'
 import 'jspdf-autotable'
 import EstatisticasGeraisCampeonato from '@/components/Campeonatos/EstatisticasGeraisCampeonato.vue'
 import CampeonatoMunicipio from '@/components/Campeonatos/CampeonatoMunicipio.vue'
+import CampeonatoAgrupamento from '@/components/Campeonatos/CampeonatoAgrupamento.vue'
 const h = require("@/config/hosts").hostAPI
 const hostCampeonatos = require("@/config/hosts").hostCampeonatos
 const hypatiaImg = require("@/assets/hypatiamat.png")
@@ -136,7 +139,8 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
   export default {
     components:{
          EstatisticasGeraisCampeonato,
-         CampeonatoMunicipio
+         CampeonatoMunicipio,
+         CampeonatoAgrupamento
     },
     data(){
       return {
@@ -167,6 +171,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         escolaOriginal: "",
         estatisticasGerais: undefined,
         estastisticasMunicipio: undefined,
+        estatisticasAgrupamento: undefined,
         municipio:"",
         turmaSel: "",
         turmas:[],
@@ -209,7 +214,6 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
           if(this.turmaSel && this.turmaSel != ''){
             var response = await axios.get(hostCampeonatos + "turmas/" + this.turmaSel + "/campeonatos/?codprofessor=" + this.codprofessor + "&token=" + this.token)
             this.campeonatos = response.data
-            console.log(this.campeonatos)
             this.onCampeonatoChange()
           }
       },
@@ -226,7 +230,6 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
       onTurmaChange: async function(item){
           if(this.turmaSel != "" && this.turmaSel){
             this.escola = this.escolaOriginal
-            console.log(this.escola)
             var responseAlunos = await axios.get(h + "turmas/" + this.turmaSel + 
                                                     "/alunos?codprofessor=" + this.codprofessor
                                                     + "&token=" + this.token)
@@ -251,12 +254,19 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
       atualizaEstatisticas: async function(){
           this.estatisticasGerais = await this.atualizaEstatisticasGerais()
           this.estastisticasMunicipio = await this.atualizaEstatisticasGeraisMunicipio()
+          this.estatisticasAgrupamento = await this.atualizaEstatisticasGeraisAgrupamento()
       },
       atualizaEstatisticasGeraisMunicipio: async function(){
         if(this.campeonato){
             var response = await axios.get(hostCampeonatos + this.campeonato.campeonatoID + "/municipios/" + this.municipio +"/gerais?token=" + this.token)
         }
         return response.data
+      },
+      atualizaEstatisticasGeraisAgrupamento: async function(){
+        if(this.campeonato){
+            var response = await axios.get(hostCampeonatos + this.campeonato.campeonatoID + "/escolas/" + this.escola +"/gerais?token=" + this.token)
+            return response.data
+        }
       },
       atualizaEstatisticasGerais: async function(){
           if(this.campeonato){

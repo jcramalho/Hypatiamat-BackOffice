@@ -291,10 +291,12 @@ Calculus.getNiveisMinuteNewProfessores = async function(escola, dataInicio, data
 
 // por cada aluno de uma turma e todos os tipos e niveis do jogo minutenew
 Calculus.getTodosMinuteNewTurma = async function(turma, escola, dataInicio, dataFim, horaInicio, horaFim){
-    var args = [escola, turma, dataInicio, dataFim, horaInicio, horaFim, escola]
+    var horarioInicio = dataInicio.concat(' ', horaInicio)
+    var horarioFim = dataFim.concat(' ', horaFim + ':59')
+    var args = [escola, turma, horarioInicio, horarioFim, escola]
     return new Promise(function(resolve, reject) {
         sql.query(`select jogo.user, al.numero, al.nome, sum(jogo.numcertas) as numcertas, sum(jogo.numerradas) as numerradas, sum(jogo.pontos) as pontos, count(jogo.pontos) as frequencia
-		from (select * from ${bdSAMD}.minutenew where escola = ? and turma=? and (data between ? and ?) and (horario between ? and ?)) jogo, 
+		from (select * from ${bdSAMD}.minutenew where escola = ? and turma=? and (CONCAT(data, ' ', horario) between ? and ?) ) jogo, 
         (select * from ${bdAplicacoes}.alunos where escola=?) as al
         where jogo.user = al.user Group By jogo.user Order by al.numero;`, args, function (err, res) {            
                 if(err) {
@@ -309,10 +311,12 @@ Calculus.getTodosMinuteNewTurma = async function(turma, escola, dataInicio, data
 }
 
 Calculus.getTiposNiveisMinuteNewTurma = async function(turma, escola, dataInicio, dataFim, niveis, tipo, horaInicio, horaFim){
-    var args = [dataInicio, dataFim, escola, turma, niveis, tipo, horaInicio, horaFim, escola]
+    var horarioInicio = dataInicio.concat(' ', horaInicio)
+    var horarioFim = dataFim.concat(' ', horaFim + ':59')
+    var args = [escola, turma, niveis, tipo, horarioInicio, horarioFim, escola]
     return new Promise(function(resolve, reject) {
         sql.query(`select jogo.user, al.numero, al.nome, sum(jogo.numcertas) as numcertas, sum(jogo.numerradas) as numerradas, sum(jogo.pontos) as pontos, count(jogo.pontos) as frequencia
-		from (select * from ${bdSAMD}.minutenew where (data between ? and ?) and escola = ? and turma=? and nivel in (?) and op=? and (horario between ? and ?) ) jogo, 
+		from (select * from ${bdSAMD}.minutenew where escola = ? and turma=? and nivel in (?) and op=? and (CONCAT(data, ' ', horario) between ? and ?) ) jogo, 
         (select * from ${bdAplicacoes}.alunos where escola=?) as al
         where jogo.user = al.user Group By jogo.user Order by al.numero;`, args, function (err, res) {            
                 if(err) {
@@ -327,10 +331,12 @@ Calculus.getTiposNiveisMinuteNewTurma = async function(turma, escola, dataInicio
 }
 
 Calculus.getNiveisMinuteNewTurma = async function(turma, escola, dataInicio, dataFim, niveis, horaInicio, horaFim){
-    var args = [dataInicio, dataFim, escola, turma, niveis, horaInicio, horaFim, escola]
+    var horarioInicio = dataInicio.concat(' ', horaInicio)
+    var horarioFim = dataFim.concat(' ', horaFim + ':59')
+    var args = [escola, turma, niveis, horarioInicio, horarioFim, escola]
     return new Promise(function(resolve, reject) {
         sql.query(`select jogo.user, al.numero, al.nome, sum(jogo.numcertas) as numcertas, sum(jogo.numerradas) as numerradas, sum(jogo.pontos) as pontos, count(jogo.pontos) as frequencia
-		from (select * from ${bdSAMD}.minutenew where (data between ? and ?) and escola = ? and turma=? and nivel in (?) and (horario between ? and ?) ) jogo, 
+		from (select * from ${bdSAMD}.minutenew where escola = ? and turma=? and nivel in (?) and (CONCAT(data, ' ', horario) between ? and ?) ) jogo, 
         (select * from ${bdAplicacoes}.alunos where escola=?) as al
         where jogo.user = al.user Group By jogo.user Order by al.numero;`, args, function (err, res) {            
                 if(err) {
@@ -345,10 +351,12 @@ Calculus.getNiveisMinuteNewTurma = async function(turma, escola, dataInicio, dat
 }
 
 Calculus.getTiposMinuteNewTurma = async function(turma, escola, dataInicio, dataFim, tipo, horaInicio, horaFim){
-    var args = [dataInicio, dataFim, escola, turma, tipo, horaInicio, horaFim, escola]
+    var horarioInicio = dataInicio.concat(' ', horaInicio)
+    var horarioFim = dataFim.concat(' ', horaFim + ':59')
+    var args = [escola, turma, tipo, horarioInicio, horarioFim, escola]
     return new Promise(function(resolve, reject) {
         sql.query(`select jogo.user, al.numero, al.nome, sum(jogo.numcertas) as numcertas, sum(jogo.numerradas) as numerradas, sum(jogo.pontos) as pontos, count(jogo.pontos) as frequencia
-		from (select * from ${bdSAMD}.minutenew where (data between ? and ?) and escola = ? and turma=? and op = ? and (horario between ? and ?)) jogo, 
+		from (select * from ${bdSAMD}.minutenew where escola = ? and turma=? and op = ? and (CONCAT(data, ' ', horario) between ? and ?) ) jogo, 
         (select * from ${bdAplicacoes}.alunos where escola=?) as al
         where jogo.user = al.user Group By jogo.user Order by al.numero;`, args, function (err, res) {            
                 if(err) {

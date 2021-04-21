@@ -6,7 +6,7 @@ var Professores = require('../controllers/db_aplicacoes/professor');
 var Escolas = require('../controllers/db_aplicacoes/escolas')
 
 const jwtKey = "tese-hypatiamat2020"
-const jwtExpirySeconds = 60 * 60
+const jwtExpirySeconds = 90 * 60
 const jwtExpirySecondsAdmin = 90 * 60
 
 generateToken = function(user, time){

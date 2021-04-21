@@ -212,6 +212,14 @@ router.get('/:campeonato/escolas/:escola', passport.authenticate('jwt', {session
                .catch(erro => res.status(500).jsonp(erro))
 });
 
+router.get('/:campeonato/escolas/:escola/gerais', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var campeonato = req.params.campeonato;
+    var escola = req.params.escola;
+    Campeonatos.getCampeonatoAgrupamentoGerais(campeonato, escola)
+               .then(dados =>res.jsonp(dados))
+               .catch(erro => res.status(500).jsonp(erro))
+});
+
 router.get('/:campeonato/turmas/:turma', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     var campeonato = req.params.campeonato;
     var turma = req.params.turma;

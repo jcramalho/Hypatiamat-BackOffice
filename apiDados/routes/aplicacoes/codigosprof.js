@@ -34,7 +34,7 @@ router.post('/', passport.authenticate('jwt', {session: false}), verifyToken.ver
 
 router.post('/lista', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), async function(req, res, next) {
     var codigos = req.body.codigos;
-    if(codigos && Array.isArray(codigo)){
+    if(codigos && Array.isArray(codigos)){
       var inseridos = 0
       for(var i = 0; i < codigos.length; i++){
         var codigo = await Codigos.getCodigo2(codigos[i].codigo)

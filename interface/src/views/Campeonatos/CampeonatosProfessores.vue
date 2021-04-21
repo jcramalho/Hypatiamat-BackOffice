@@ -28,6 +28,8 @@
                         <EstatisticasGeraisCampeonato v-if="this.estatisticasGerais" :estatisticasGerais="this.estatisticasGerais"/>
                         <center><span v-if="this.estastisticasMunicipio"> <b> Neste campeonato em {{this.municipio}}: </b> </span> </center>
                         <CampeonatoMunicipio v-if="this.estastisticasMunicipio" :estatisticasGerais="this.estastisticasMunicipio"/>
+                        <center><span v-if="this.estatisticasAgrupamento"> <b>Neste campeonato no Agrupamento de Escolas:</b></span></center>
+                        <CampeonatoAgrupamento v-if="this.estatisticasAgrupamento" :estatisticasGerais="this.estatisticasAgrupamento"/>
                 <v-container v-if="loading">
                     <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
                 </v-container>
@@ -84,6 +86,7 @@ import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 import EstatisticasGeraisCampeonato from '@/components/Campeonatos/EstatisticasGeraisCampeonato.vue'
 import CampeonatoMunicipio from '@/components/Campeonatos/CampeonatoMunicipio.vue'
+import CampeonatoAgrupamento from '@/components/Campeonatos/CampeonatoAgrupamento.vue'
 const h = require("@/config/hosts").hostAPI
 const hostCampeonatos = require("@/config/hosts").hostCampeonatos
 const hypatiaImg = require("@/assets/hypatiamat.png")
@@ -91,7 +94,8 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
   export default {
     components:{
          EstatisticasGeraisCampeonato,
-         CampeonatoMunicipio
+         CampeonatoMunicipio,
+         CampeonatoAgrupamento
     },
     data(){
       return {
@@ -124,6 +128,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         nomeEscola:"",
         estatisticasGerais: undefined,
         estastisticasMunicipio: undefined,
+        estatisticasAgrupamento: undefined,
         municipio:""
       }
     },
@@ -191,14 +196,10 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
           }
           else this.campeonatoId = undefined
       },
-      onEscolaChange: function(item){
-          if(this.escolas.find(e => e == this.escola)){
-              this.atualizaConteudo()
-          }
-      },
       atualizaEstatisticas: async function(){
           this.estatisticasGerais = await this.atualizaEstatisticasGerais()
           this.estastisticasMunicipio = await this.atualizaEstatisticasGeraisMunicipio()
+          this.estatisticasAgrupamento = await this.atualizaEstatisticasGeraisAgrupamento()
       },
       atualizaEstatisticasGeraisMunicipio: async function(){
         if(this.campeonatoId){
@@ -206,9 +207,18 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         }
         return response.data
       },
+      atualizaEstatisticasGeraisAgrupamento: async function(){
+        if(this.campeonatoId && this.escola){
+            var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/escolas/" + this.escola +"/gerais?token=" + this.token)
+            return response.data
+        }
+        else return undefined
+      },
       atualizaEstatisticasGerais: async function(){
-          var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/municipios/gerais?token=" + this.token)
-          return response.data
+          if(this.campeonatoId){
+            var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/municipios/gerais?token=" + this.token)
+            return response.data
+          }
       },
       atualizaConteudo: async function(){
           if(this.campeonatoId && this.escola){

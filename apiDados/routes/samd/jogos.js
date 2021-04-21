@@ -479,6 +479,19 @@ router.get('/:jogo/turmas/:turma/ranking', passport.authenticate('jwt', {session
 
 });
 
+router.get('/:jogo/turmas/:turma/intervalos', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  var turma = req.params.turma
+  var escola = req.query.escola
+  var jogo = req.params.jogo 
+  var jogoTipo = req.query.jogoTipo
+  if(turma && escola && jogo && jogoTipo){
+      JogosGerais.getEstatisticasGraficoTurma(jogoTipo, jogo, turma, escola)
+                 .then(dados => res.jsonp(dados))
+                 .catch(error => { console.log(error); res.status(500).jsonp("Error")})
+  }
+  else res.status(400).jsonp("Faltam parâmetros.")
+});
+
 router.get('/alunos/:user/last10', passport.authenticate('jwt', {session: false}), function(req, res, next) {
   var user = req.params.user
   Jogos.getLast10FromAluno(user)

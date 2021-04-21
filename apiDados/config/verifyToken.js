@@ -225,9 +225,9 @@ module.exports.verifyProfTurmas = function(){
         else {
             var professor = await Professores.getProfessorByCodigo(codigo)
             // agrupamento
-            if(u.type == 40 && u.escola == professor.escola) next()
+            if(u.type == 40 && professor && u.escola == professor.escola) next()
             // municipio
-            else if (u.type == 30 && u.escolas.find(esc => esc.cod == professor.escola)) next()
+            else if (u.type == 30 && professor && u.escolas.find(esc => esc.cod == professor.escola)) next()
             else res.status(403).jsonp("Não tem permissão.")
         }              
     }

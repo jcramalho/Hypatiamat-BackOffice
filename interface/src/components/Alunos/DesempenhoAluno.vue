@@ -237,9 +237,6 @@
             <JogoDiaAluno v-if="dialogJogoDia && jogoAtual != 'Calculus'" :resultados="jogoPorDia" :jogo="jogoAtual"/>
             <CalculusDiaAluno v-else-if="dialogJogoDia" :resultados="jogoPorDia" :jogo="jogoAtual"/>
           </v-dialog>
-          <v-dialog v-model="editarAluno" width="75%">
-            <EditarAlunoAluno v-if="editarAluno" :idProp="aluno.id" @alteracao="atualizaInfo"/>
-          </v-dialog>
     </v-card>
 </template>
 
@@ -254,7 +251,6 @@ const hostCampeonatos = require("@/config/hosts").hostCampeonatos
 import AppDiaAluno from "@/components/Apps/AppDiaAluno.vue"
 import JogoDiaAluno from "@/components/Jogos/JogoDiaAluno.vue"
 import CalculusDiaAluno from "@/components/Jogos/CalculusDiaAluno.vue"
-import EditarAlunoAluno from "@/components/Alunos/EditarAluno.vue"
 import ClassificacaoAluno from '@/components/Campeonatos/ClassificacaoAluno.vue'
 import Cromos from '@/components/Alunos/CromosVisualizacao.vue'
 
@@ -263,7 +259,6 @@ import Cromos from '@/components/Alunos/CromosVisualizacao.vue'
       AppDiaAluno,
       JogoDiaAluno,
       CalculusDiaAluno,
-      EditarAlunoAluno,
       ClassificacaoAluno,
       Cromos
     },

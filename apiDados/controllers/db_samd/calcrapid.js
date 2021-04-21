@@ -176,11 +176,13 @@ calcRapid.getCalcRapidTipoAgrupamentos = async function(dataInicio, dataFim, tip
 
 // por cada aluno de uma turma de um professor e todos os tipos do calcrapid
 calcRapid.getTodosCalcRapidTurmas = async function(dataInicio, dataFim, escola, turma, horaInicio, horaFim){
-    var args = [ escola, turma, dataInicio, dataFim, horaInicio, horaFim, escola]
+    var horarioInicio = dataInicio.concat(' ', horaInicio)
+    var horarioFim = dataFim.concat(' ', horaFim + ':59')
+    var args = [ escola, turma, horarioInicio, horarioFim, escola]
     return new Promise(function(resolve, reject) {
         sql.query(`select jogo.idaluno, al.numero, al.nome, sum(pontcerta) as pontcerta, sum(ponterrada) as ponterrada,  sum(n) as oprealizadas, sum(f) as frequencia 
 		from (select * from ${bdSAMD}.calcRapidHypatia 
-        where idescola = ? and turma = ? and (data BETWEEN ? and ?) and (horario between ? and ?)) as jogo, 
+        where idescola = ? and turma = ? and (CONCAT(data, ' ', horario) between ? and ?) ) as jogo, 
         (select * from ${bdAplicacoes}.alunos where escola = ?) as al
         where al.user = jogo.idaluno Group By jogo.idaluno Order by al.numero;`, args, function (err, res) {            
                 if(err) {
@@ -196,11 +198,13 @@ calcRapid.getTodosCalcRapidTurmas = async function(dataInicio, dataFim, escola, 
 
 // por cada aluno de uma turma de um professor e por uma lista de tipos do calcrapid
 calcRapid.getTiposCalcRapidTurmas = async function(dataInicio, dataFim, tipo, escola, turma, horaInicio, horaFim){
-    var args = [dataInicio, dataFim, tipo, escola, turma, horaInicio, horaFim, escola]
+    var horarioInicio = dataInicio.concat(' ', horaInicio)
+    var horarioFim = dataFim.concat(' ', horaFim + ':59')
+    var args = [tipo, escola, turma, horarioInicio, horarioFim, escola]
     return new Promise(function(resolve, reject) {
         sql.query(`select jogo.idaluno, al.numero, al.nome, sum(pontcerta) as pontcerta, sum(ponterrada) as ponterrada,  sum(n) as oprealizadas, sum(f) as frequencia 
 		from (select * from ${bdSAMD}.calcRapidHypatia 
-        where (data BETWEEN ? and ?) and tipo in (?) and idescola = ? and turma=? and (horario between ? and ?)) as jogo, 
+        where tipo in (?) and idescola = ? and turma=? and (CONCAT(data, ' ', horario) between ? and ?) ) as jogo, 
         (select * from ${bdAplicacoes}.alunos where escola=?) as al
         where al.user = jogo.idaluno Group By jogo.idaluno Order by al.numero;`, args, function (err, res) {            
                 if(err) {

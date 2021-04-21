@@ -145,12 +145,14 @@ module.exports.getAllAppsFromEscola = function(escola, dataInicio, dataFim){
 }
 
 module.exports.getAllAppsFromTurma = function(turma, codprofessor, dataInicio, dataFim, horaInicio, horaFim){
-    var args = [turma, codprofessor, dataInicio, dataFim, horaInicio, horaFim]
+    var horarioInicio = dataInicio.concat(' ', horaInicio)
+    var horarioFim = dataFim.concat(' ', horaFim + ':59')
+    var args = [turma, codprofessor, horarioInicio, horarioFim]
     return new Promise(function(resolve, reject) {
         sql.query(`SELECT al.numero, apps.userid, al.nome, SUM(apps.ncertas) as ncertas, SUM(apps.ntotal) as ntotal, round( sum(apps.ncertas)/sum(apps.ntotal) *100, 0) as acerto, 
         SUM(apps.onpeak) as onpeak, SUM(apps.offpeak) as offpeak, (SUM(apps.onpeak) + SUM(apps.offpeak)) as frequencia FROM 
         (select * from ${bdTesteConhecimentos}.appsinfoall WHERE  turma = ? AND 
-                    codProf = ? AND (lastdate between ? and ?) and (horario between ? and ?)) as apps, 
+                    codProf = ? AND (CONCAT(lastdate, ' ', horario) between ? and ?) ) as apps, 
         ${bdAplicacoes}.alunos al 
         WHERE al.user = apps.userid 
         GROUP BY apps.userid Order by al.numero;`, args ,function(err, res){
@@ -313,12 +315,14 @@ module.exports.getAppFromEscolaSubTema = function(codtema, codsubtema, escola, d
 }
 
 module.exports.getAppFromTurma = function(codtema, turma, codprofessor, dataInicio, dataFim, horaInicio, horaFim){
-    var args = [turma, codprofessor, dataInicio, dataFim, codtema, horaInicio, horaFim]
+    var horarioInicio = dataInicio.concat(' ', horaInicio)
+    var horarioFim = dataFim.concat(' ', horaFim + ':59')
+    var args = [turma, codprofessor, codtema, horarioInicio, horarioFim]
     return new Promise(function(resolve, reject) {
         sql.query(`SELECT al.numero, apps.userid, al.nome, SUM(apps.ncertas) as ncertas, SUM(apps.ntotal) as ntotal, round( sum(apps.ncertas)/sum(apps.ntotal) *100, 0) as acerto, 
         SUM(apps.onpeak) as onpeak, SUM(apps.offpeak) as offpeak, (SUM(apps.onpeak) + SUM(apps.offpeak)) as frequencia FROM 
         (select * from ${bdTesteConhecimentos}.appsinfoall WHERE  turma = ? AND 
-                    codProf = ? AND (lastdate between ? and ?) and grupo=? and (horario between ? and ?)) as apps, 
+                    codProf = ? and grupo=? and (CONCAT(lastdate, ' ', horario) between ? and ?) ) as apps, 
         ${bdAplicacoes}.alunos al 
         WHERE al.user = apps.userid 
         GROUP BY apps.userid Order by al.numero;`, args ,function(err, res){
@@ -334,12 +338,14 @@ module.exports.getAppFromTurma = function(codtema, turma, codprofessor, dataInic
 }
 
 module.exports.getAppFromTurmaSubTema = function(codtema, codsubtema, turma, codprofessor, dataInicio, dataFim, horaInicio, horaFim){
-    var args = [turma, codprofessor, dataInicio, dataFim, codtema, codsubtema, horaInicio, horaFim] 
+    var horarioInicio = dataInicio.concat(' ', horaInicio)
+    var horarioFim = dataFim.concat(' ', horaFim + ':59')
+    var args = [turma, codprofessor, codtema, codsubtema, horarioInicio, horarioFim] 
     return new Promise(function(resolve, reject) {
         sql.query(`SELECT al.numero, apps.userid, al.nome, SUM(apps.ncertas) as ncertas, SUM(apps.ntotal) as ntotal, round( sum(apps.ncertas)/sum(apps.ntotal) *100, 0) as acerto, 
         SUM(apps.onpeak) as onpeak, SUM(apps.offpeak) as offpeak, (SUM(apps.onpeak) + SUM(apps.offpeak)) as frequencia FROM 
         (select * from ${bdTesteConhecimentos}.appsinfoall WHERE  turma = ? AND 
-                    codProf = ? AND (lastdate between ? and ?) and grupo=? and appid=? and (horario between ? and ?)) as apps, 
+                    codProf = ? and grupo=? and appid=? and (CONCAT(lastdate, ' ', horario) between ? and ?) ) as apps, 
         ${bdAplicacoes}.alunos al 
         WHERE al.user = apps.userid 
         GROUP BY apps.userid Order by al.numero;`, args,function(err, res){

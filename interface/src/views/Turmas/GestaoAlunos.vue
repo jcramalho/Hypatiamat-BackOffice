@@ -12,11 +12,6 @@
                   <v-btn v-else text @click="show=!show">Esconder Ajuda</v-btn> 
                 </center>
                 <br>
-                <center>
-                <v-btn class="white--text" style="background-color: #009263;" @click="criarAluno()"> 
-                  <v-icon> mdi-book-plus </v-icon> Criar Aluno 
-                </v-btn>
-                </center>
                 <v-slide-y-transition>
                       <v-card v-show="show" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
                         <v-row >
@@ -35,6 +30,11 @@
                       </v-card>
                   </v-slide-y-transition>
                   <br v-if="show">
+                <center>
+                <v-btn class="white--text" style="background-color: #009263;" @click="criarAluno()"> 
+                  <v-icon> mdi-book-plus </v-icon> Criar Aluno 
+                </v-btn>
+                </center>
                 <v-combobox
                     id="anoletivo"
                     label="Ano Letivo"
