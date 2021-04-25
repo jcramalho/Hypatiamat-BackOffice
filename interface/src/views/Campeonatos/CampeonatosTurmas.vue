@@ -175,7 +175,8 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         municipio:"",
         turmaSel: "",
         turmas:[],
-        show:false
+        show:false,
+        nomeProf:""
       }
     },
     created: async function(){
@@ -190,6 +191,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         else{
             if(this.utilizador.type != 20){
                 var response2 = await axios.get(h + "professores/codigos/" + this.codprofessor + "/?token=" + this.token )
+                this.nomeProf = response2.data.nome
                 this.escola = response2.data.escola
                 this.escolaOriginal = response2.data.escola
                 
@@ -205,6 +207,10 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         }
         this.atualizaCampeonatos()
         this.onCampeonatoChange()  
+        if(!response2){
+            var response2 = await axios.get(h + "professores/codigos/" + this.codprofessor + "/?token=" + this.token )
+            this.nomeProf = response2.data.nome
+        }
     },
     methods: {
       format(value, event) {
@@ -297,6 +303,8 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
         doc.setFontSize(11)
         doc.text(this.campeonato.descricaoBackOffice, 15, 50)
+        doc.text("Professor: " + this.nomeProf, 15, 56)
+        doc.text("Turma: " + this.turmaSel, 130, 56)
         var listaRes = []
         //var total = ["Todos", 0, 0, 0, 0, 0, 0]
         for(var i = 0; i<this.items.length; i++){

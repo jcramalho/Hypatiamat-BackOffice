@@ -189,7 +189,8 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         loading: false,
         tipoRankSel: "NTRC - Número de tarefas resolvidas corretamente",
         tiposRanking: ["NTRC - Número de tarefas resolvidas corretamente", "Acerto - Percentagem de acerto"],
-        show:false
+        show:false,
+        nomeProf: ""
       }
     },
     created: async function(){
@@ -206,7 +207,10 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         for(i = 0; i < response.data.length; i++){
           this.turmas.push(response.data[i].turma)
         }
-        this.escola = this.escolaOriginal = this.utilizador.escola        
+        this.escola = this.escolaOriginal = this.utilizador.escola   
+        
+        var responseProf = await axios.get(h + "professores/codigos/" + this.codProf + "?token=" + this.token)
+        this.nomeProf = responseProf.data.nome
 
     },
     methods: {
@@ -337,7 +341,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         //doc.text("Jogo:")
         //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
         doc.setFontSize(11)
-        doc.text("Professor: " + this.codProf, 15, 50)
+        doc.text("Professor: " + this.nomeProf, 15, 50)
         doc.text("Critério: " + this.tipoRankSel, 15, 60)
         doc.text("App: " + this.app, 130, 60)
         doc.text("Turma: " + this.turmaSel, 130, 50)

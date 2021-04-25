@@ -63,15 +63,23 @@
                                 :items="turmas"
                                 @change="onTurmaChange"
                             ></v-combobox>
-                            <v-combobox
-                                v-if="apps"
-                                id="apps"
-                                v-model="app"
-                                label="App"
-                                color="green"
-                                :items="apps"
-                                @change="onAppChange"
-                            ></v-combobox>
+                            <v-row v-if="apps" class="align-center">
+                                <v-col cols="11">
+                                    <v-combobox
+                                        id="apps"
+                                        v-model="app"
+                                        label="App"
+                                        color="green"
+                                        :items="apps"
+                                        @change="onAppChange"
+                                    ></v-combobox>
+                                </v-col>
+                                <v-col v-if="turmaSel && turmaSel != ''" cols="1">
+                                    <v-btn icon color="#009263" @click="atualizaApps()">
+                                        <v-icon>mdi-refresh</v-icon>
+                                    </v-btn>
+                                </v-col>
+                            </v-row>
                             <v-combobox
                                 id="anos"
                                 v-model="anoLetivo"

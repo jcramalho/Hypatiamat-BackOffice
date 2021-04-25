@@ -187,7 +187,8 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         niveisSel:["1","2","3","4","5"],
         tiposCalculusSel:["0 - Todas as combinações"],
         tiposCalculusSelAnterior:["0 - Todas as combinações"],
-        show: false
+        show: false,
+        nomeProf: ""
       }
     },
     created: async function(){
@@ -207,6 +208,9 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         for(i = 0; i < response.data.length; i++){
           this.turmas.push(response.data[i].turma)
         }
+
+        var responseProf = await axios.get(h + "professores/codigos/" + this.idprofessor + "?token=" + this.token)
+        this.nomeProf = responseProf.data.nome
     },
     methods: {
       onTurmaChange: async function(item){
@@ -424,7 +428,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         //doc.text("Jogo:")
         //doc.text("Estatisticas dos alunos sobre o jogo " + this.jogo + "da turma " + this.turmaSel, doc.internal.pageSize.getWidth() / 2, 8, null, null, 'center')
         doc.setFontSize(11)
-        doc.text("Professor: " + this.idprofessor, 15, 50)
+        doc.text("Professor: " + this.nomeProf, 15, 50)
         doc.text("Turma: " + this.turmaSel, 15, 60)
         doc.text("Jogo: " + aux.jogo, 130, 50)
         var listaRes = []

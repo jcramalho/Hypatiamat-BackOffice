@@ -155,7 +155,7 @@
                                         </v-col>
                                         <v-col cols="2">
                                             <v-icon v-if="visto.visto" color="#009263">mdi-eye-check</v-icon>
-                                            <v-icon v-else color="#009263">mdi-eye-remove</v-icon>
+                                            <v-icon v-else color="red">mdi-eye-remove</v-icon>
                                         </v-col>
                                     </v-list-item-content>
                                 </v-row>

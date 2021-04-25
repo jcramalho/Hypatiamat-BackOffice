@@ -4,7 +4,7 @@
        <v-card-title class="justify-center green--text">
            <span :style="styleP">Gráfico</span>
        </v-card-title>
-       <v-row class="justify-center align-center no-gutters" v-model="intervalos.intervalos">
+       <v-row v-if="intervalos && intervalos.intervalos.length > 0" class="justify-center align-center no-gutters" v-model="intervalos.intervalos">
             <v-col cols="12" md="6" xl="4" class="justify-center" v-for="(intervalo, index) in intervalos.intervalos" v-bind:key="index">
                 <v-card class="pa-2 ma-2 elevation-2" outlined>
                     <center><span class="green--text"> Período {{index+1}}</span></center>
@@ -22,12 +22,15 @@
                     </v-list-item-content>
                 </v-card>
             </v-col>
+            <v-col cols="12">
+                O gráfico
+                <Grafico :height="250"/>
+            </v-col>
         </v-row>
-
-        <v-container>
-            O gráfico
-            <Grafico/>
+        <v-container v-else>
+            <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
         </v-container>
+            
    </v-card> 
 </div> 
 </template>
@@ -62,7 +65,7 @@ import Grafico from '@/components/Jogos/Grafico'
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
-        intervalos: [],
+        intervalos: undefined,
         styleP: 'font-size:20px',
         styleF: 'font-size:15px',
         widthParams: 'width:70%',

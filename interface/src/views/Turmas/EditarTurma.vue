@@ -61,7 +61,7 @@
                     <v-icon large color="#009263" @click="alteraTurma"> mdi-arrow-right-box </v-icon>
                     </v-btn>
                   </template>
-                  <span>Irá transferir os alunos selecionados da turma {{turma.turma}} para a {{turma2}}</span>
+                  <span>Irá transferir os alunos selecionados da turma {{turma.turma}} para a turma {{turma2}}</span>
                 </v-tooltip>
               </center>
               <br>
@@ -76,7 +76,7 @@
                     <v-icon  large color="#009263" @click="alteraTurma2"> mdi-arrow-left-box </v-icon>
                     </v-btn>
                   </template>
-                  <span>Irá transferir os alunos selecionados da turma {{turma2}} para a {{turma.turma}}</span>
+                  <span>Irá transferir os alunos selecionados da turma {{turma2}} para a turma {{turma.turma}}</span>
                 </v-tooltip>
               </center>
             </v-container>

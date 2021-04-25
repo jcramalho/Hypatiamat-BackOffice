@@ -258,7 +258,10 @@
                     title: 'Aluno registado com sucesso.',
                     confirmButtonColor: '#009263'
                   })
-                   this.$router.push({name: "Alunos"})
+                   if(this.utilizador.type == 50) this.$router.push({name: "Alunos"})
+                   else{
+                     this.$router.push({name: "Gestão de Alunos"})
+                   }
                  })
                 .catch(erro=> console.log(erro))
           }

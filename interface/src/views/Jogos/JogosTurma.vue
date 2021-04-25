@@ -57,7 +57,8 @@
                             @click="getEstatisticas()"> <v-icon> mdi-home-analytics </v-icon> Estatísticas Globais 
                             </v-btn></center>
                         </v-col>
-                        <v-col v-if="false" cols="12" xs="12" sm="12" md="4" lg="4" xl="4">
+                        <v-col v-if="false" 
+                            cols="12" xs="12" sm="12" md="4" lg="4" xl="4">
                             <center><v-btn class="white--text" style="background-color: #009263;" @click="verGrafico()"> <v-icon> mdi-chart-bar-stacked </v-icon> Visualizar Gráfico </v-btn></center>
                         </v-col>
                         <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4" v-if="alunos.length>0">
@@ -77,16 +78,24 @@
                                         :items="turmas"
                                         @change="onTurmaChange"
                                     ></v-combobox>
-                                    <v-combobox
-                                        v-if="!loadingJogos"
-                                        id="jogos"
-                                        v-model="jogo"
-                                        label="Jogo"
-                                        color="green"
-                                        item-text="jogo"
-                                        :items="jogosInfo"
-                                        @change="onJogoChange"
-                                    ></v-combobox>
+                                    <v-row class="align-center" v-if="!loadingJogos">
+                                        <v-col cols="11">
+                                        <v-combobox
+                                            id="jogos"
+                                            v-model="jogo"
+                                            label="Jogo"
+                                            color="green"
+                                            item-text="jogo"
+                                            :items="jogosInfo"
+                                            @change="onJogoChange"
+                                        ></v-combobox>
+                                        </v-col>
+                                        <v-col v-if="turmaSel && turmaSel != ''" cols="1">
+                                            <v-btn icon color="#009263" @click="atualizaJogos()">
+                                                <v-icon>mdi-refresh</v-icon>
+                                            </v-btn>
+                                        </v-col>
+                                    </v-row>
                                     <v-combobox
                                         id="tiposCalcRapid"
                                         chips
@@ -566,13 +575,28 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
                 this.jogosInfo.push(response2.data[i])
             }
             this.loadingJogos = false
-            if(this.jogo != "" && this.jogosInfo.find(e => e.jogo == this.jogo.jogo)) this.atualizaConteudo()
+            if(this.jogo && this.jogo != "" && this.jogosInfo.find(e => e.jogo == this.jogo.jogo)) this.atualizaConteudo()
             else{
                 this.jogo = ""
                 this.alunos = []
             }
           }
 
+      },
+      atualizaJogos: async function(){
+            this.loadingJogos = true
+            var response2 = await axios.get(h + "turmas/" + this.turmaSel + "/jogos?escola=" 
+                                                + this.escola + "&dataInicio=" + this.dataInicio 
+                                                + "&dataFim=" + this.dataFim + "&codprofessor=" + this.idprofessor + "&token=" + this.token)
+            this.jogosInfo = [{jogo:"Todos"}]
+            for(var i = 0; i < response2.data.length; i++){
+                this.jogosInfo.push(response2.data[i])
+            }
+            this.loadingJogos = false
+            if(!(this.jogo && this.jogo != "" && this.jogosInfo.find(e => e.jogo == this.jogo.jogo))){
+                this.jogo = ""
+                this.alunos = []
+            }
       },
       onAnoChange: async function(item){
           if(this.anoLetivo != ""){
@@ -586,6 +610,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           if(this.jogo && this.jogo != "" && this.jogosInfo.find(e => e.jogo == this.jogo.jogo)){
               this.atualizaConteudo()
           }
+          else this.jogo = ""
       },
       onDataInChange: async function(item){
           if(this.dataInicio){
