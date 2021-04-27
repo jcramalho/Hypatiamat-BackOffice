@@ -142,9 +142,13 @@
                             <td>{{row.item.onpeak}}</td>
                             <td>{{row.item.offpeak}}</td>
                             <td>{{row.item.frequencia}}</td>
-                         </tr>
+                            <td v-if="appTarefa"><v-icon color="grey-lighten-1" @click="showTarefas(row.item)">mdi-eye</v-icon></td>
+                        </tr>
                     </template>
                 </v-data-table>
+                <v-dialog v-model="dialogTarefas" width="75%">
+                    <TarefasApps v-if="dialogTarefas" :propsTarefas="propsTarefas"/>
+                </v-dialog>
                 </v-container>
                 </v-container>
             </v-card>
@@ -161,18 +165,25 @@ import jsPDF from 'jspdf'
 import domtoimage from "dom-to-image";
 import 'jspdf-autotable'
 import html2canvas from "html2canvas";
+import TarefasApps from "@/components/Apps/TarefasRealizadas.vue"
+
 const h = require("@/config/hosts").hostAPI
 const hostApps = require("@/config/hosts").hostApps
 const hypatiaImg = require("@/assets/hypatiamat.png")
 const anosletivos2 = require("@/config/confs").anosletivos2
 const anoletivoAtual = require("@/config/confs").anoletivo2
 
+
   export default {
+    components:{
+        TarefasApps
+    },
     data(){
       return {
         token: "",
         loading: false,
         app:"",
+        appTarefa: undefined,
         filtrar:"",
         dataInicio: "2019-09-01",
         dataFim: "2020-09-01",
@@ -191,6 +202,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         anoLetivo: anoletivoAtual,
         apps:[],
         appsInfo:[],
+        appsComTarefas: [],
         headers:[
             {text: "N.º", value: 'numero', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},
@@ -201,12 +213,35 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             {text: "FP", value: 'offpeak', class: 'subtitle-1'},
             {text: "#", value:'frequencia', class:"subtitle-1"}
         ],
+        headersApps:[
+            {text: "N.º", value: 'numero', class: 'subtitle-1'},
+            {text: "Nome", value: 'nome', class: 'subtitle-1'},
+            {text: "NTRC", value: 'ncertas', class: 'subtitle-1'},
+            {text: "NTR", value: 'ntotal', class: 'subtitle-1'},
+            {text: "Acerto(%)", value: 'acerto', class: 'subtitle-1'},
+            {text: "DP", value: 'onpeak', class: 'subtitle-1'},
+            {text: "FP", value: 'offpeak', class: 'subtitle-1'},
+            {text: "#", value:'frequencia', class:"subtitle-1"}
+        ],
+        headersTarefas:[
+            {text: "N.º", value: 'numero', class: 'subtitle-1'},
+            {text: "Nome", value: 'nome', class: 'subtitle-1'},
+            {text: "NTRC", value: 'ncertas', class: 'subtitle-1'},
+            {text: "NTR", value: 'ntotal', class: 'subtitle-1'},
+            {text: "Acerto(%)", value: 'acerto', class: 'subtitle-1'},
+            {text: "DP", value: 'onpeak', class: 'subtitle-1'},
+            {text: "FP", value: 'offpeak', class: 'subtitle-1'},
+            {text: "#", value:'frequencia', class:"subtitle-1"},
+            {text: "Ver", class:"subtitle-1"}
+        ],
         items:[],
         codProf:"",
         turmas:[],
         turmaSel:"",
         show: false,
-        nomeProf:""
+        nomeProf:"",
+        propsTarefas: undefined,
+        dialogTarefas: false,
       }
     },
     created: async function(){
@@ -215,6 +250,8 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         this.codProf = this.$route.params.idprofessor
         var response = await axios.get(hostApps + "temas/?token=" + this.token)
         this.appsInfo = response.data
+        var responseT = await axios.get(hostApps + "tarefas/?token=" + this.token)
+        this.appsComTarefas = responseT.data
         this.parseApps()
 
         var response = await axios.get(h + "professores/" + this.codProf + "/turmas?token=" + this.token)
@@ -283,8 +320,26 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       },
       onAppChange: async function(item){
           if(this.app && this.app != ''){
+            this.atualizaHeaders()
             this.atualizaConteudo()
           }
+      },
+      atualizaHeaders: async function(){
+          var appInfo = this.appsInfo.find(element => element.tema == this.app)
+          if(appInfo){
+              if((this.appTarefa = this.appsComTarefas.find(e => e.codtema == appInfo.codtema))) this.headers = this.headersTarefas
+              else {this.appTarefa = false; this.headers = this.headersApps}
+          }
+          else{
+              appInfo = this.appsInfo.find(element => element.subtema == this.app)
+              if(appInfo){
+                  if((this.appTarefa = this.appsComTarefas.find(e => e.codtema == appInfo.codtema && e.codsubtema == appInfo.codsubtema)))
+                      this.headers = this.headersTarefas
+                  else {this.appTarefa = undefined; this.headers = this.headersApps}
+              }
+              else {this.appTarefa = undefined; this.headers = this.headersApps}
+          }
+          
       },
       onDataInChange: async function(item){
           if(this.dataInicio){
@@ -422,7 +477,22 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         doc.save(pdfName)
        
       },
+      showTarefas: function(utilizador){
+        this.propsTarefas = {
+            app: this.app,
+            table: this.appTarefa.tabela,
+            codtema: this.appTarefa.codtema,
+            codsubtema: this.appTarefa.codsubtema,
+            userid: utilizador.userid,
+            nome: utilizador.nome,
+            numero: utilizador.numero,
+            dataInicio: this.dataInicio,
+            dataFim: this.dataFim
+        }
+        this.dialogTarefas = true
+      }
     },
+    
       
   }
 </script>

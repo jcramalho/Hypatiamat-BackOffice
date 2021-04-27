@@ -34,7 +34,7 @@ var novidadesRouter = require('./routes/aplicacoes/novidades');
 var trofeusRouter = require('./routes/testeconhecimentos/trofeus');
 var mensagensRouter = require('./routes/aplicacoes/mensagens');
 var emailsRouter = require('./routes/aplicacoes/email');
-
+var appstarefasRouter = require('./routes/testeconhecimentos/appstarefas');
 
 
 var extractFromQS = function(req){
@@ -113,6 +113,7 @@ app.use('/aplicacoes/login', loginRouter)
 app.use('/aplicacoes/quarentenas', quarentenasRouter)
 app.use('/jogos', jogosRouter)
 app.use('/apps', appsRouter)
+app.use('/apps/tarefas', appstarefasRouter)
 app.use('/campeonatos', campeonatosRouter)
 app.use('/trofeus', trofeusRouter)
 app.use('/cromos', cromosRouter)

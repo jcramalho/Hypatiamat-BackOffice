@@ -114,7 +114,7 @@ Cromos.diasConsecutivosFreqApps = async function(infoDias, ndias, freq){
 Cromos.checkCromoAppAluno = async function(cromo, infoDias, infoGeral){
     if(cromo.dias){
         // para testar, depois colocar dias normais
-        var res = await this.diasConsecutivosFreqApps(infoDias, cromo.dias-1, cromo.apps)
+        var res = await this.diasConsecutivosFreqApps(infoDias, cromo.dias, cromo.apps)
         if(res.freq > 0){
             res.idcromo = cromo.id
             res.numero = cromo.numero
@@ -208,7 +208,7 @@ Cromos.diasConsecutivosFreqJogos = async function(infoDias, ndias, freq){
 Cromos.checkCromoJogoAluno = async function(cromo, infoDias, infoGeral){
     if(cromo.dias){
         // para testar, depois colocar dias normais
-        var res = await this.diasConsecutivosFreqJogos(infoDias, cromo.dias-1, cromo.jogos)
+        var res = await this.diasConsecutivosFreqJogos(infoDias, cromo.dias, cromo.jogos)
         if(res.freq > 0){
             res.idcromo = cromo.id
             res.nome = cromo.nome

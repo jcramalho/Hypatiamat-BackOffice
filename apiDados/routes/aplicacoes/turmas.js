@@ -6,8 +6,6 @@ var Alunos = require('../../controllers/db_aplicacoes/alunos')
 var Turmas = require('../../controllers/db_aplicacoes/turmas')
 var TurmasOld = require('../../controllers/db_aplicacoes/turmasold')
 var verifyToken = require('../../config/verifyToken');
-const { getAllJogosMunicipios } = require('../../controllers/db_aplicacoes/escolas');
-var anoAtual = "21"
 
 // Todas as turmas
 router.get('/', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {

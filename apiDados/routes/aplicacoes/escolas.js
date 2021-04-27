@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('passport')
-var anoletivoAtual = "20/21"
+const anoletivoAtual = require('../../config/confs').anoletivo
 
 var Alunos = require('../../controllers/db_aplicacoes/alunos')
 var Professores = require('../../controllers/db_aplicacoes/professor')

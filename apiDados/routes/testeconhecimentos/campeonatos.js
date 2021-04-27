@@ -9,7 +9,6 @@ const verifyToken = require('../../config/verifyToken')
 const Campeonatos = require('../../controllers/db_testeconhecimentos/campeonatos');
 const CampeonatosCRUD = require('../../controllers/db_testeconhecimentos/campeonatosCRUD');
 const Campeonatos_Certificados = require('../../controllers/db_testeconhecimentos/campeonatos_certificados');
-const { getCromosCampeonatosCompletadosFromAluno } = require('../../controllers/db_testeconhecimentos/cromos_alunos');
 
 const root = __dirname + "/../../" 
 
