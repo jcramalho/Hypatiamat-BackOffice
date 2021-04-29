@@ -35,7 +35,7 @@ Email.sendEmail=  async function(senderNome, destinatarios, texto){
 Email.sendEmailRegisto = async function(assunto, texto){
   var email = {
     from: fromHypatia,
-    to: 'a82298@alunos.uminho.pt, lguilhermem@hotmail.com, luis15945@agvv.edu.pt',
+    to: fromHypatia.address,
     subject: assunto,
     text: texto
   };

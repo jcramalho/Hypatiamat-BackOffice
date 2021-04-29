@@ -33,6 +33,9 @@
             <v-form v-if="isProfessor">
             <v-row no-gutters>
             <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
+              <v-text-field prepend-icon="mdi-barcode" v-model="codigoHypatia" color="#009263" name="Código Hypatiamat" label="Código Hypatiamat" required></v-text-field>
+            </v-col>
+            <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
             <v-text-field prepend-icon="mdi-card-account-details" v-model="codigo" color="#009263" name="Username (Código)" label="Username (Código)" :rules="[string15, codigoProfExistente]" required></v-text-field>
             </v-col>
             <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
@@ -130,6 +133,7 @@
       return {
         isProfessor: true,
         nome : "",
+        codigoHypatia: "",
         codigosprofs:[],
         codigosalunos:[],
         disabledEmail: false,
@@ -217,11 +221,12 @@
       registarProfessor: function () {
         
         
-        if (this.nome != "" && this.email != "" && this.codigo != "" && this.escola != "" && this.password != "" && this.password2){ 
+        if (this.nome != "" && this.email != "" && this.codigo != "" && this.escola != "" && this.password != "" && this.password2 && this.codigoHypatia){ 
           if(this.password == this.password2){
             var aux = this.escola.split(" - ")
             var escolaEscolhida = this.escolasIds.find(element => element.nome == aux[1]).cod
             let data = {
+                codigoHypatia: this.codigoHypatia,
                 nome : this.nome,
                 email : this.email,
                 codigo : this.codigo,
@@ -229,14 +234,24 @@
                 password : this.password
             }
             axios.post(h + "quarentenas/", data)
-                 .then(()=>{
+                 .then((dados)=>{
                    Swal.fire({
                     icon: 'success',
                     text: 'O seu pedido de inscrição está realizado! \n Aguarde agora pela autorização necessária.',
                     confirmButtonColor: '#009263'
-                  })
-                   axios.post(h + "emails/registo", {user:{nome:this.nome, email: this.email, codigo: this.codigo, escola: this.escola}})
-                   this.$emit("login")
+                   })
+                  if(dados.data.inserido){
+                    axios.post(h + "emails/registo", {user:{nome:this.nome, email: this.email, codigo: this.codigo, escola: this.escola}})
+                    this.$emit("login")
+                  }
+                  else{
+                    this.codigoHypatia = ""
+                    Swal.fire({
+                      icon: 'error',
+                      html: dados.data.message.replaceAll('\n', '<br>'),
+                      confirmButtonColor: '#009263'
+                    })
+                  }
                  })
                 .catch(erro=> console.log(erro))
           }

@@ -230,7 +230,7 @@ import EditarAluno from '@/components/Alunos/EditarAluno.vue'
         var response = await axios.get(h + "turmas/" + this.id + "?token=" + this.token)
         this.turma = response.data
         this.anoLetivoTurma1 = parseInt(this.turma.turma.split("-")[1])
-        response = await axios.get(h + "turmas/" + this.turma.turma + "/alunos?codprofessor="+ this.turma.idprofessor + "&token=" + this.token)
+        response = await axios.get(h + "turmas/" + this.turma.turma + "/alunos?codprofessor="+ this.turma.idprofessor + "&atuais=true" + "&token=" + this.token)
         this.alunosTurmaAtual = response.data
         var responseProf = await axios.get(h + "professores/codigos/" + this.idprofessor + "/?token=" + this.token)
         this.escolaId = responseProf.data.escola
@@ -270,7 +270,7 @@ import EditarAluno from '@/components/Alunos/EditarAluno.vue'
         if(item != null && this.idprofessor2 != "" && item != ""){
          this.anoLetivoTurma2 = parseInt(this.turma2.split("-")[1])
          this.turma2 = item
-         let response = await axios.get(h + "turmas/" + this.turma2 + "/alunos?codprofessor="+ this.idprofessor2 + "&token=" + this.token)
+         let response = await axios.get(h + "turmas/" + this.turma2 + "/alunos?codprofessor="+ this.idprofessor2 + "&atuais=true" + "&token=" + this.token)
          this.alunosOutraTurma = response.data
          this.selected2 = []
         }

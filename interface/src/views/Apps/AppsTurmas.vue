@@ -162,9 +162,7 @@
 <script>
 import axios from "axios"
 import jsPDF from 'jspdf' 
-import domtoimage from "dom-to-image";
 import 'jspdf-autotable'
-import html2canvas from "html2canvas";
 import TarefasApps from "@/components/Apps/TarefasRealizadas.vue"
 
 const h = require("@/config/hosts").hostAPI
@@ -487,7 +485,9 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             nome: utilizador.nome,
             numero: utilizador.numero,
             dataInicio: this.dataInicio,
-            dataFim: this.dataFim
+            dataFim: this.dataFim,
+            turma: this.turmaSel,
+            nomeProf: this.nomeProf
         }
         this.dialogTarefas = true
       }

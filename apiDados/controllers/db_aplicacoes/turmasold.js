@@ -13,7 +13,7 @@ TurmaOld.insertTurmaOld = function (turma) {
     sql.query("INSERT INTO turmasold (`codAluno`,  `turma`, `codProfessor`, `anoletivo`) VALUES (?, ?, ?, ?)", 
                 args, function (err, res) {
             if(err) {
-                console.log("error: ", err);
+                //console.log("error: ", err);
                 reject(err);
             }
             else{

@@ -57,7 +57,7 @@
                             @click="getEstatisticas()"> <v-icon> mdi-home-analytics </v-icon> Estatísticas Globais 
                             </v-btn></center>
                         </v-col>
-                        <v-col v-if="false" 
+                        <v-col v-if="alunos.length>0 && this.jogo && this.jogo.jogo != 'Calculus' && this.jogo.jogo != 'Calcrapid' && this.jogo.jogo != 'Todos'" 
                             cols="12" xs="12" sm="12" md="4" lg="4" xl="4">
                             <center><v-btn class="white--text" style="background-color: #009263;" @click="verGrafico()"> <v-icon> mdi-chart-bar-stacked </v-icon> Visualizar Gráfico </v-btn></center>
                         </v-col>
@@ -389,7 +389,8 @@
                         width="80%"
                     >
                         <GraficoTurma v-if="dialogGrafico" :jogo="jogo.jogotable" :jogoTipo="jogo.tipo" :turma="turmaSel" 
-                                :escola="escola" :dataInicio="dataInicio" :dataFim="dataFim"/>
+                                :escola="escola" :dataInicio="dataInicio" :dataFim="dataFim" :numerosTurma="numerosTurma"
+                                :idprofessor="idprofessor" :estatisticas="estatisticas"/>
                     </v-dialog>
                 </v-container>
             </v-card>
@@ -508,6 +509,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         tiposCalculusSelAnterior:["0 - Todas as combinações"],
         escolaOriginal: "",
         nomeProf:"",
+        numerosTurma:[],
         show:false
       }
     },
@@ -548,6 +550,14 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
       format(value, event) {
         return moment(value).format('YYYY-MM-DD')
       },
+      getNumerosTurma(alunos){
+        var aux = []
+        for(var i = 0; i < alunos.length; i++){
+            var n = alunos[i].numero 
+            if(!aux.find(e => e == n)) aux.push(n)
+        }
+        this.numerosTurma = aux
+      },
       onTurmaChange: async function(item){
           if(this.turmaSel != "" && this.turmaSel && this.dataInicio && this.dataFim){
             this.loadingJogos = true
@@ -555,7 +565,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             var responseAlunos = await axios.get(h + "turmas/" + this.turmaSel + 
                                                     "/alunos?codprofessor=" + this.idprofessor
                                                     + "&token=" + this.token)
-
+            this.getNumerosTurma(responseAlunos.data)
             var escolas = []
             for(var i = 0; i < responseAlunos.data.length; i++){
                 var auxEscola = escolas.find(a => a.escola == responseAlunos.data[i].escola)
@@ -1040,6 +1050,14 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
        
       },
       verGrafico: async function(){
+          var idescola = this.escola
+            var response = await axios.get(h + "turmas/" + this.turmaSel + "/jogos/" + this.jogo.jogotable + "/estatisticasGlobais"
+                                            + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                            + "&jogoTipo=" + this.jogo.tipo + "&escola=" + idescola
+                                            + "&codprofessor=" + this.idprofessor 
+                                            + "&token=" + this.token)
+            this.estatisticas = response.data
+            console.log(this.estatisticas)
           this.dialogGrafico = true
       } 
     }

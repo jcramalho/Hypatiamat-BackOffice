@@ -4,27 +4,32 @@
        <v-card-title class="justify-center green--text">
            <span :style="styleP">Gráfico</span>
        </v-card-title>
-       <v-row v-if="intervalos && intervalos.intervalos.length > 0" class="justify-center align-center no-gutters" v-model="intervalos.intervalos">
+       <v-row v-if="intervalos && intervalos.intervalos.length > 0" class="justify-center align-center no-gutters">
             <v-col cols="12" md="6" xl="4" class="justify-center" v-for="(intervalo, index) in intervalos.intervalos" v-bind:key="index">
                 <v-card class="pa-2 ma-2 elevation-2" outlined>
                     <center><span class="green--text"> Período {{index+1}}</span></center>
                     <v-list-item-content>
                         <v-row class="justify-center">
                             <v-col cols="12" sm="6" >
-                                <v-text-field label="Data Início" v-model="intervalo.dataInicio" type="date">
+                                <v-text-field label="Data Início" v-model="intervalo.dataInicio" @change="onDataInicioChange($event, index)" type="date">
                                 </v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6">
-                                <v-text-field label="Data Fim" v-model="intervalo.dataFim" type="date">
+                                <v-text-field label="Data Fim" v-model="intervalo.dataFim" @change="onDataFimChange($event, index)" type="date">
                                 </v-text-field>
+                            </v-col>
+                            <v-col cols="4">
+                                    <h4>Frequência: {{intervalo.freq}}</h4>
                             </v-col>
                         </v-row>
                     </v-list-item-content>
                 </v-card>
             </v-col>
             <v-col cols="12">
-                O gráfico
-                <Grafico :height="250"/>
+                <Grafico v-if="showChart" :labels="numerosTurma" :chartData="chartData" :height="250"/>
+                <v-container v-else>
+                    <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
+                </v-container>
             </v-col>
         </v-row>
         <v-container v-else>
@@ -70,10 +75,12 @@ import Grafico from '@/components/Jogos/Grafico'
         styleF: 'font-size:15px',
         widthParams: 'width:70%',
         color1:"#009263",
-        color2:"#3ab040"
+        color2:"#3ab040",
+        showChart:false,
+        chartData: []
       }
     },
-    props:["jogoTipo", "dataInicio", "dataFim", "jogo", "escola", "turma"],
+    props:["jogoTipo", "dataInicio", "dataFim", "jogo", "escola", "turma", "numerosTurma", "idprofessor", "estatisticas"],
     created: async function(){
         this.resize()
         this.token = localStorage.getItem("token")
@@ -81,7 +88,8 @@ import Grafico from '@/components/Jogos/Grafico'
         var response = await axios.get(hostJogos + this.jogo + "/turmas/" + this.turma + "/intervalos?escola=" 
                         + this.escola + "&jogoTipo=" + this.jogoTipo + "&token=" + this.token)
         this.intervalos = response.data
-        console.log(this.intervalos)
+        await this.atualizaChartData()
+        this.showChart = true
     },
     mounted: function(){
         window.onresize = () => {
@@ -116,6 +124,87 @@ import Grafico from '@/components/Jogos/Grafico'
                                         + "&token=" + this.token)
         this.resultadosTotal = response.data
         this.verTotal = true
+      },
+      onDataInicioChange: function(event, index){
+          var intervalo = this.intervalos.intervalos[index]
+          if(intervalo.dataInicio && intervalo.dataInicio != ""){
+              this.atualizaIntervalo(index)
+          }
+      },
+      onDataFimChange: function(event, index){
+          var intervalo = this.intervalos.intervalos[index]
+          if(intervalo.dataFim && intervalo.dataFim != ""){
+              this.atualizaIntervalo(index)
+          }
+      },
+      atualizaIntervalo: async function(index){
+          var intervalo = this.intervalos.intervalos[index]
+          if(intervalo.dataInicio && intervalo.dataInicio != "" && intervalo.dataFim && intervalo.dataFim != ""){
+              this.showChart = false
+              console.log("A atualizar intervalo...")
+
+              var auxFreq = 0
+              var response = await axios.get(hostJogos + this.jogo + "/turmas/" + this.turma
+                                                + "?dataInicio=" + intervalo.dataInicio + "&dataFim=" + intervalo.dataFim
+                                                + "&codprofessor=" + this.idprofessor + "&horaInicio=00:00"
+                                                + "&horaFim=23:59" + "&jogoTipo=" + this.jogoTipo
+                                                + "&escola=" + this.escola + "&token=" + this.token)
+              console.log(response.data)
+              for(var i = 0; i < response.data.length; i++){
+                  auxFreq += response.data[i].count
+              }
+              intervalo.freq = auxFreq
+              intervalo.data = response.data
+              await this.atualizaChartData()
+              this.showChart = true
+          }
+      },
+      atualizaChartData: function(){
+          var datasets = []
+          
+              var colors = ['grey', 'purple', 'red', 'yellow', 'orange', '#009263']
+              for(var i = 0; i < this.intervalos.intervalos.length && i < 3; i++){
+                if(this.intervalos.intervalos[i].data.length > 0){
+                    datasets.push({
+                        label: 'Período ' + (i+1),
+                        backgroundColor: colors[i],
+                        pointRadius: 5,
+                        data: this.intervalos.intervalos[i].data,
+                        showLine: false
+                    })
+                }
+            }  
+            var objTurma = {
+                label: 'Média da Turma',
+                borderColor: colors[3],
+                data: [],
+                pointRadius: 0, 
+                fill: false
+            }
+            var objEscola = {
+                label: 'Média do Agrupamento',
+                borderColor: colors[4],
+                data: [],
+                pointRadius: 0, 
+                fill: false
+            }
+            var objHypatia = {
+                label: 'Média do Hypatiamat',
+                borderColor: colors[5],
+                data: [],
+                pointRadius: 0, 
+                fill: false
+            }
+              for(var i = 0; i < this.numerosTurma.length; i++){
+                  objHypatia.data.push(this.estatisticas.hypatia.media)
+                  objEscola.data.push(this.estatisticas.escola.media)
+                  objTurma.data.push(this.estatisticas.turma.media)
+              } 
+              datasets.push(objTurma)
+              datasets.push(objEscola)
+              datasets.push(objHypatia)
+              this.chartData = {labels: this.numerosTurma, datasets: datasets} 
+              return true
       }
     }
   }

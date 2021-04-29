@@ -1,12 +1,21 @@
 
 <script>
-import { Line } from "vue-chartjs";
+import { Line, mixins } from "vue-chartjs";
+
 export default {
   extends: Line,
   data() {
     return {
       gradient: null
     };
+  },
+  mixins: [mixins.reactiveProp],
+  props:["labels", "datasets"],
+  watch:{
+    datasets : function(newVal, oldVal) { // watch it
+      console.log('Prop changed: ', newVal, ' | was: ', oldVal)
+      this._chart.destroy();
+    }
   },
   /*
   props: {
@@ -20,75 +29,90 @@ export default {
     }
   },*/
   mounted() {
-      /*
+    /*
     this.gradient = this.$refs.canvas
       .getContext("2d")
       .createLinearGradient(0, 0, 0, 450);
     this.gradient.addColorStop(0, "rgba(255, 0,0, 0.5)");
     this.gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.25)");
-    this.gradient.addColorStop(1, "rgba(255, 0, 0, 0)");*/
-    this.renderChart({
-      labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-      datasets: [
-        {
-          label: 'Período 1',
-          backgroundColor: 'red',
-          pointRadius: 4,
-          data: [40, 20, 12, 39, 10, 40, 39, 80, 40, 20, 12, 11],
-          showLine: false 
-        },
-        {
-          label: 'Período 2',
-          backgroundColor: 'blue',
-          pointRadius: 4,
-          data: [100, 40, 30, 22, 21, 49, 69, 40, 20, 30, 32, 31],
-          showLine: false 
-        },
-        {
-          label: 'Período 3',
-          backgroundColor: 'green',
-          pointRadius: 4,
-          
-          data: [80, 100, 102, 49, 30, 52, 49, 30, 19, 29, 22, 21],
-          showLine: false 
-        },
-        {
-            label: "My second dataset",
-            fillColor: "rgba(220,220,220,0.5)",
-            strokeColor: "rgba(220,220,220,0.8)",
-            //highlightFill: "rgba(220,220,220,0.75)",
-            //highlightStroke: "rgba(220,220,220,1)",
-            showTooltip: true, //TO USE JUST ADD THIS NEW OPTION ONLY REALLY NEEDS TO PRESENT IF SETTING TO FALSE
-            data: [null, 100, null]
+    this.gradient.addColorStop(1, "rgba(255, 0, 0, 0)");
+    
+     {
+          label: 'Média da Turma',
+          data: [55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55],
+          pointRadius: 0, 
+          fill: false
             
         }
 
-      ]
-    },
-    { 
-        animation: {
-            /*
-            onComplete: e => {
-                var ctx = chart.chart.ctx;
-                var data =  chart.config.data.datasets[0].data;
-                if (data[0] == null) {
-                var xAxis = chart.scales['x-axis-0'];
-                var yAxis = chart.scales['y-axis-0']; 
-                var y = yAxis.getPixelForValue(data[1]);         
-                ctx.save();           
-                ctx.globalCompositeOperation='destination-over';
-                ctx.strokeStyle = 'blue'          
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(xAxis.left, y);             
-                ctx.lineTo(xAxis.right, y);
-                ctx.stroke();
-                ctx.restore();       
-                }    
-            }*/
-        }
-    }
+    */
+    this.renderChart(
+        this.chartData
+      ,
+      {
+          tooltips: {
+              callbacks: {
+                  label(tooltipItem, data) {
+                    //tooltipItem.label = data.datasets[tooltipItem.index].data[tooltipItem.index].nome
+                    var result = []
+                    var aux = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]
+                    if(aux.nome){
+                      var nome = "Nome: " + aux.nome 
+                      var media = "Média: " + aux.y
+                      var max = "Máximo: " + aux.maximo
+                      var min = "Mínimo: " + aux.minimo
+                      var freq = "Frequência: " + aux.count
+                      result = [nome, media, max, min, freq]
+                    }
+                    
+
+                    return [nome, media, max, min, freq];
+                  }
+              }
+          },
+      }
     )
+    
+  },
+  methods:{
+    makeChart(){
+      var datasets = []
+      var colors = ['#009263', 'purple', 'red']
+      for(var i = 0; i < this.datasets.length && i < 3; i++){
+        if(this.datasets[i].data.length > 0){
+          datasets.push({
+            label: 'Período ' + (i+1),
+            backgroundColor: colors[i],
+            pointRadius: 5,
+            data: this.datasets[i].data,
+            showLine: false
+          })
+        }
+      }
+
+      this.renderChart({
+        labels: this.labels,
+        datasets: datasets
+      },
+      {
+          tooltips: {
+              callbacks: {
+                  label(tooltipItem, data) {
+                    //tooltipItem.label = data.datasets[tooltipItem.index].data[tooltipItem.index].nome
+                    var aux = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]
+                    var nome = "Nome: " + aux.nome 
+                    var media = "Média: " + aux.y
+                    var max = "Máximo: " + aux.maximo
+                    var min = "Mínimo: " + aux.minimo
+                    var freq = "Frequência: " + aux.count
+
+                    return [nome, media, max, min, freq];
+                  }
+              }
+          },
+      }
+    )
+    }
   }
 };
 </script>

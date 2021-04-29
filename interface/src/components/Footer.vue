@@ -42,7 +42,7 @@
       </v-card-text>
 
       <v-card-text class="white--text pt-0">
-        Hypatiamat.
+        Hypatiamat
       </v-card-text>
 
       <v-divider></v-divider>
@@ -74,14 +74,14 @@
           <v-col cols="9" >
             <v-card outlined>
                 <center><span class="green--text">Orientadores:</span></center>
-                <center><span>José Ramalho</span></center>
-                <center><span>Ricardo Pinto</span></center>
+                <center><span>José Carlos Leite Ramalho</span></center>
+                <center><span>Ricardo Manuel Neves Pinto</span></center>
             </v-card>
           </v-col>
           <v-col cols="9" >
             <v-card outlined>
                 <center><span class="green--text">Desenvolvimento:</span></center>
-                <center><span>Luís Martins</span></center>
+                <center><span>Luís Guilherme Gonçalves Macedo da Silva Martins</span></center>
             </v-card>
           </v-col>
         </v-row>
@@ -93,6 +93,7 @@
 </template>
 
 <script>
+
   export default {
     data: () => ({
       icons: [

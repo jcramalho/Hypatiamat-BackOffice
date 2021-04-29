@@ -92,6 +92,7 @@ const h = require("@/config/hosts").hostAPI
     components:{
          EditarAluno
     },
+    props: ["idProp"],
     data(){
       return {
         token: "",
@@ -126,7 +127,7 @@ const h = require("@/config/hosts").hostAPI
         if(response) this.turma = response.data
         else this.$router.push({name: "Meu Perfil"})
         
-        if(this.utilizador.type != 20){
+        if(this.utilizador.type != 20 && this.utilizador.type != 50){
           this.header_alunos = [
             {text: "Número", value: 'numero', class: 'subtitle-1'},
             {text: "Nome", value: 'nome', class: 'subtitle-1'},

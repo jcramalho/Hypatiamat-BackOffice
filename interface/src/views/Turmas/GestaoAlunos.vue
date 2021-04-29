@@ -31,7 +31,7 @@
                   </v-slide-y-transition>
                   <br v-if="show">
                 <center>
-                <v-btn class="white--text" style="background-color: #009263;" @click="criarAluno()"> 
+                <v-btn class="white--text" style="background-color: #009263;" @click="dialogCriarAluno = true"> 
                   <v-icon> mdi-book-plus </v-icon> Criar Aluno 
                 </v-btn>
                 </center>
@@ -95,6 +95,15 @@
                     </v-data-table>
             </v-container>
         </v-card>
+        <v-dialog v-model="dialogCriarAluno" width="80%"> 
+          <CriarAluno v-if="dialogCriarAluno" @inserido="dialogCriarAluno = false"/>
+        </v-dialog>
+        <v-dialog v-model="dialogVerTurma" width="80%"> 
+          <AlunosTurma v-if="dialogVerTurma" :idProp="idTurmaSel"/>
+        </v-dialog>
+        <v-dialog v-model="dialogEditarTurma" width="85%"> 
+          <EditarMinhaTurma v-if="dialogEditarTurma" :idProp="idTurmaSel"/>
+        </v-dialog>
       </v-container>
     </v-main>
 </v-app>
@@ -105,12 +114,20 @@
 <script>
 import axios from "axios"
 import {Passaport} from '@/config/passport'
+import CriarAluno from '@/components/Alunos/CriarAluno.vue'
+import AlunosTurma from '@/components/Turmas/AlunosTurma.vue'
+import EditarMinhaTurma from '@/components/Turmas/EditarMinhaTurma.vue'
 const h = require("@/config/hosts").hostAPI
 const nTurmas = require("@/config/confs").limiteTurmas
 const anoletivoAtual = require("@/config/confs").anoletivo
 const anosletivos1 = require("@/config/confs").anosletivos
 
   export default {
+    components:{
+      CriarAluno,
+      AlunosTurma,
+      EditarMinhaTurma
+    },
     data(){
       return {
         token: "",
@@ -132,7 +149,11 @@ const anosletivos1 = require("@/config/confs").anosletivos
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
-        turmasAnoLetivo: 0
+        turmasAnoLetivo: 0,
+        dialogCriarAluno: false,
+        dialogVerTurma: false,
+        dialogEditarTurma: false,
+        idTurmaSel: -1
       }
     },
     created: async function(){
@@ -163,10 +184,13 @@ const anosletivos1 = require("@/config/confs").anosletivos
         }
       },
       verTurma : function(id){
-        this.$router.push({name:"Ver Turma", params:{ id : id }})
+        //this.$router.push({name:"Ver Turma", params:{ id : id }})
+        this.idTurmaSel = id
+        this.dialogVerTurma = true 
       },
       editarTurma : function(id){
-        this.$router.push({name: "Editar Minha Turma", params: { id : id } })
+        this.idTurmaSel = id
+        this.dialogEditarTurma = true
       },
 
       criarAluno: function(){

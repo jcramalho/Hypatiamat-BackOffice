@@ -2,8 +2,10 @@ var express = require('express');
 var router = express.Router();
 var passport = require('passport')
 
-var Quarentena = require('../../controllers/db_aplicacoes/quarentena');
-var Escolas = require('../../controllers/db_aplicacoes/escolas');
+const Quarentena = require('../../controllers/db_aplicacoes/quarentena');
+const Escolas = require('../../controllers/db_aplicacoes/escolas');
+const CodigosProf = require('../../controllers/db_aplicacoes/codigosprof');
+
 var verifyToken = require('../../config/verifyToken')
 
 
@@ -31,17 +33,22 @@ router.get('/:id', passport.authenticate('jwt', {session: false}), verifyToken.v
 /* POST Inserção de um pedido de inscrição. */
 router.post('/', async function(req, res, next) {
    var pedido = req.body
-   if(pedido.codigo && pedido.nome && pedido.escola && pedido.email && pedido.password){
+   if(pedido.codigo && pedido.nome && pedido.escola && pedido.email && pedido.password && pedido.codigoHypatia){
     var escola = await Escolas.getEscola(pedido.escola)
     if(escola){
-        Quarentena.insertPedido(pedido)
-                .then(response => res.jsonp(response)) 
+        var codigoHypatia = await CodigosProf.getCodigo2(pedido.codigoHypatia)
+        if(codigoHypatia){
+            await CodigosProf.deleteCodigo(codigoHypatia.id)
+            Quarentena.insertPedido(pedido)
+                .then(response => res.jsonp({res: response, inserido: true})) 
                 .catch(erro =>{
                     console.log(erro)
                     res.status(500).jsonp('Error')
                 })
+        }    
+        else res.jsonp({inserido: false, message: "Código Hypatiamat inexistente!\nSe não possuí um código Hypatiamat fornecido pela Associação, não se pode registar."})
     }
-    else res.status(400).send('Código de escola inexistente.')
+    else res.jsonp({inserido: false, message: "Código de Escola inexistente."})
    }
    else res.status(400).send('Faltam parâmetros.')
 });

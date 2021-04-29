@@ -128,6 +128,8 @@
         var escolaEscolhida = this.escolasIds.find(element => element.nome == aux[1]).cod
         var response = await axios.get(h + "escolas/" + escolaEscolhida + "/turmas/?token=" + this.token + "&ano=" + (parseInt(this.anoAtual)-1))
         this.turmas = response.data
+        this.professores = []
+        this.codigo = ""
         console.log("Turmas: " + this.turmas)
         var responseP = await axios.get(h + "escolas/" + escolaEscolhida + "/professores/?token=" + this.token)
         responseP.data.forEach(element =>{

@@ -146,7 +146,7 @@ router.put('/turmas/:turma', passport.authenticate('jwt', {session: false}), ver
             anoletivo : turmaAntiga.anoletivo
           }
           await TurmasOld.insertTurmaOld(alunoTurmaOld) 
-                   .catch(error => console.log(error))
+                   .catch(error => {if(!(error.code === 'ER_DUP_ENTRY')) console.log(error)})
           if(codescola){
             await Alunos.updateTurmaEscola(username, codTurmaNova, codprofessorNovo, codescola)
                       .catch(erro => console.log(erro))

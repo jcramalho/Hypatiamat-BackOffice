@@ -41,7 +41,7 @@ router.get('/:id', passport.authenticate('jwt', {session: false}), verifyToken.v
 router.get('/:turma/alunos', passport.authenticate('jwt', {session: false}), verifyToken.verifyTurma2(), async function(req, res){
     var turma = req.params.turma
     var codprofessor = req.query.codprofessor
-    var alunosAtuaisQuery = req.query.alunosAtuais
+    var alunosAtuaisQuery = (req.query.atuais || req.query.alunosAtuais)
     var aux
     if(( aux = turma.split("-") )){
       if(req.query.codprofessor){

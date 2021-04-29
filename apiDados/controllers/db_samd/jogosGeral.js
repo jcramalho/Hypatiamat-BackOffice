@@ -142,7 +142,8 @@ JogosGerais.getJogoFromTurma  = function (dataInicio, dataFim, jogoTipo, tableJo
     var args = [jogoTipo, turma, escola, horarioInicio, horarioFim]
     return new Promise(function(resolve, reject) {
         sql.query(`Select al.numero, jogo.idaluno, al.nome, Round(AVG(jogo.pontuacao), 0) as media, 
-                MAX(jogo.pontuacao) as maximo, MIN(jogo.pontuacao) as minimo, count(jogo.pontuacao) as count 
+                MAX(jogo.pontuacao) as maximo, MIN(jogo.pontuacao) as minimo, count(jogo.pontuacao) as count, al.numero as x, 
+                Round(AVG(jogo.pontuacao), 0) as y 
         from (select idaluno, pontuacao from ${bdSAMD}.${tableJogo} 
                     where tipo = ? and turma = ? and idescola = ? and (CONCAT(data, ' ', horario) between ? and ?) ) jogo, 
             ${bdAplicacoes}.alunos al  
@@ -230,6 +231,7 @@ JogosGerais.getEstatisticasGraficoTurma = async function(jogoTipo, tableJogo, tu
 
     for(var i = 0; i < arrayIntervals.length; i++){
         var intervalo = arrayIntervals[i]
+        intervalo.label = "Período " + (i+1)
         intervalo.data = await JogosGerais.getJogoFromTurma(intervalo.dataInicio, intervalo.dataFim, jogoTipo, tableJogo, turma, escola, '00:00:00', '23:59:59')
     }
 

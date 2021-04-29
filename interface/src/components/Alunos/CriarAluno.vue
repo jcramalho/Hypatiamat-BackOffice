@@ -1,10 +1,7 @@
 <template>
- <v-app id="inspire">
-  <v-main class="grey lighten-3">
-  <v-container>
+<v-card class="pa-5">
     <v-layout row class="text-xs-center">
-        <v-container style="position: relative;top: 15%; width: 80%;" class="text-xs-center">
-          <v-card class="pa-5">
+        <v-container  class="text-xs-center">
             <v-form>
             <v-text-field color="#009263" prepend-icon="mdi-card-account-details" v-model="codigo" name="Username (Código)" label="Username (Código)" :rules="[string15, existeCodigo]" required></v-text-field>
             <v-text-field color="#009263" prepend-icon="mdi-account" v-model="nome" name="Nome" label="Nome" required></v-text-field>
@@ -72,12 +69,9 @@
               <v-btn class="white--text" :disabled="disabledCodigo || disabledEmail || (this.alunosTurma && this.alunosTurma.length >= this.limiteAlunos)" primary large block style="background-color: #009263;" @click="registarAluno">Confirmar</v-btn>
             </v-card-actions>
             </v-form>
-          </v-card>
         </v-container>
     </v-layout>
-  </v-container>
-  </v-main>
- </v-app>
+</v-card>
 </template>
 
 <script>

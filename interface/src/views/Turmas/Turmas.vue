@@ -72,6 +72,7 @@
                           </template>
                           <span>Gerar um passaporte (PDF) à cerca dos alunos da turma.</span>
                         </v-tooltip>
+                        <v-icon @click="verTurma(row.item.id)"> mdi-eye </v-icon>
                         <v-icon @click="editarTurma(row.item.id, row.item.idprofessor)"> mdi-pencil </v-icon>
                         <v-icon @click="apagarTurma(row.item.turma, row.item.idprofessor)"> mdi-delete </v-icon>
                         </td>
@@ -133,6 +134,9 @@ import {Passaport} from '@/config/passport'
     methods: {
       criarTurma : function(){
           this.$router.push({name: "Criar Turma",  params:{isAdmin:true} })
+      },
+      verTurma: function(id){
+        this.$router.push({name:"Ver Turma", params:{ id : id }})
       },
       getTurmas : async function(){
         if(this.escola!="" && this.escola){
