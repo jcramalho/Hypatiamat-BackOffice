@@ -213,6 +213,46 @@ router.get('/turmas/:turma/jogou', passport.authenticate('jwt', {session: false}
 })
 
 // Todas os resultados de uma app ou de todas as apps de uma turma
+router.get('/turmas/:turma/grafico', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var turma = req.params.turma
+    var codProf = req.query.codProf
+    var codtema = req.query.codtema
+    var codsubtema = req.query.codsubtema
+
+    if(turma && codProf){
+        if(codtema){
+            // é um tema
+            if(codsubtema){
+                // com subtema
+                Apps.getEstatisticasGraficoTurmaAppSubtema(codtema, codsubtema, turma, codProf)
+                    .then(dados =>{
+                        res.jsonp(dados)
+                    })
+                    .catch(erro => res.status(500).jsonp(erro))
+            }
+            else{
+                // sem subtema
+                console.log('oi')
+                Apps.getEstatisticasGraficoTurmaApp(codtema, turma, codProf)
+                    .then(dados =>{
+                        res.jsonp(dados)
+                    })
+                    .catch(erro => res.status(500).jsonp(erro))
+            }
+        }
+        else{
+            Apps.getEstatisticasGraficoTurmaAllApps(turma, codProf)
+                .then(dados =>{
+                    res.jsonp(dados)
+                })
+                .catch(erro => res.status(500).jsonp(erro))
+        }    
+    }      
+    else res.status(400).jsonp('Faltam parâmetros')
+});
+
+
+// Todas os resultados de uma app ou de todas as apps de uma turma
 router.get('/alunos/:user', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     var dataInicio = req.query.dataInicio;
     var dataFim = req.query.dataFim;

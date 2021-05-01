@@ -186,17 +186,22 @@ JogosGerais.getFrequenciaPorDiaTurma = function(jogoTipo, tableJogo, turma, esco
 JogosGerais.getEstatisticasGraficoTurma = async function(jogoTipo, tableJogo, turma, escola){
     var freqs = await JogosGerais.getFrequenciaPorDiaTurma(jogoTipo, tableJogo, turma, escola)
     var dataInicio = dataInicioAno
+    if(freqs.porDia.length > 0 ) dataInicio = freqs.porDia[0].data
     var dataFim 
     var arrayIntervals = []
-    var media3 = freqs.total/3
-    console.log(media3)
+    var intervalosFreqsIdeais = [freqs.total*0.15, freqs.total*0.7, freqs.total*0.15]
+    var intervaloAtual = 0
     var freqAux = 0;
     var freqConsumida = 0
     for(var i = 0; i < freqs.porDia.length; i++){
         freqAux += freqs.porDia[i].freq
-        if(freqAux >= media3){
+        var freqPretendida = intervalosFreqsIdeais[intervaloAtual]
+        if(freqAux >= freqPretendida){
             freqConsumida += freqAux
-            if(Math.abs(media3 - freqAux) > Math.abs(media3 - ( (freqs.total - freqConsumida) + freqs.porDia[i].freq) ) && i > 0){
+            //console.log("Diferença com tudo (Periodo " + (intervaloAtual +1)  + " ): " + Math.abs(freqPretendida - freqAux))
+            //console.log("Diferença 2 (Periodo " + (intervaloAtual +1)  + " ): " +Math.abs(freqPretendida - (freqAux - freqs.porDia[i].freq)))
+
+            if(Math.abs(freqPretendida - freqAux) > Math.abs(freqPretendida - (freqAux - freqs.porDia[i].freq) ) && i > 0){
                 dataFim = freqs.porDia[i-1].data
                 arrayIntervals.push({
                     dataInicio: dataInicio,
@@ -206,6 +211,7 @@ JogosGerais.getEstatisticasGraficoTurma = async function(jogoTipo, tableJogo, tu
                 freqAux = freqs.porDia[i].freq;
                 var aux = new Date((new Date(dataFim)).getTime() + 86400000)
                 dataInicio = aux.toISOString().split('T')[0]
+                intervaloAtual++
             }
             else{
                 dataFim = freqs.porDia[i].data
@@ -217,6 +223,7 @@ JogosGerais.getEstatisticasGraficoTurma = async function(jogoTipo, tableJogo, tu
                 freqAux = 0;
                 var aux = new Date((new Date(dataFim)).getTime() + 86400000)
                 dataInicio = aux.toISOString().split('T')[0]
+                intervaloAtual++
             }
         }
         else if(i == freqs.porDia.length - 1){
@@ -226,6 +233,7 @@ JogosGerais.getEstatisticasGraficoTurma = async function(jogoTipo, tableJogo, tu
                 dataFim: dataFim,
                 freq: freqAux
             })
+            intervaloAtual++
         }
     }
 

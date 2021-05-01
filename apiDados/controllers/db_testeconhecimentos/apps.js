@@ -150,7 +150,8 @@ module.exports.getAllAppsFromTurma = function(turma, codprofessor, dataInicio, d
     var args = [turma, codprofessor, horarioInicio, horarioFim]
     return new Promise(function(resolve, reject) {
         sql.query(`SELECT al.numero, apps.userid, al.nome, SUM(apps.ncertas) as ncertas, SUM(apps.ntotal) as ntotal, round( sum(apps.ncertas)/sum(apps.ntotal) *100, 0) as acerto, 
-        SUM(apps.onpeak) as onpeak, SUM(apps.offpeak) as offpeak, (SUM(apps.onpeak) + SUM(apps.offpeak)) as frequencia FROM 
+        SUM(apps.onpeak) as onpeak, SUM(apps.offpeak) as offpeak, (SUM(apps.onpeak) + SUM(apps.offpeak)) as frequencia, al.numero as x,  
+        round( sum(apps.ncertas)/sum(apps.ntotal) *100, 0) as y FROM 
         (select * from ${bdTesteConhecimentos}.appsinfoall WHERE  turma = ? AND 
                     codProf = ? AND (CONCAT(lastdate, ' ', horario) between ? and ?) ) as apps, 
         ${bdAplicacoes}.alunos al 
@@ -320,7 +321,8 @@ module.exports.getAppFromTurma = function(codtema, turma, codprofessor, dataInic
     var args = [turma, codprofessor, codtema, horarioInicio, horarioFim]
     return new Promise(function(resolve, reject) {
         sql.query(`SELECT al.numero, apps.userid, al.nome, SUM(apps.ncertas) as ncertas, SUM(apps.ntotal) as ntotal, round( sum(apps.ncertas)/sum(apps.ntotal) *100, 0) as acerto, 
-        SUM(apps.onpeak) as onpeak, SUM(apps.offpeak) as offpeak, (SUM(apps.onpeak) + SUM(apps.offpeak)) as frequencia FROM 
+        SUM(apps.onpeak) as onpeak, SUM(apps.offpeak) as offpeak, (SUM(apps.onpeak) + SUM(apps.offpeak)) as frequencia, al.numero as x, 
+        round( sum(apps.ncertas)/sum(apps.ntotal) *100, 0) as y FROM 
         (select * from ${bdTesteConhecimentos}.appsinfoall WHERE  turma = ? AND 
                     codProf = ? and grupo=? and (CONCAT(lastdate, ' ', horario) between ? and ?) ) as apps, 
         ${bdAplicacoes}.alunos al 
@@ -343,7 +345,8 @@ module.exports.getAppFromTurmaSubTema = function(codtema, codsubtema, turma, cod
     var args = [turma, codprofessor, codtema, codsubtema, horarioInicio, horarioFim] 
     return new Promise(function(resolve, reject) {
         sql.query(`SELECT al.numero, apps.userid, al.nome, SUM(apps.ncertas) as ncertas, SUM(apps.ntotal) as ntotal, round( sum(apps.ncertas)/sum(apps.ntotal) *100, 0) as acerto, 
-        SUM(apps.onpeak) as onpeak, SUM(apps.offpeak) as offpeak, (SUM(apps.onpeak) + SUM(apps.offpeak)) as frequencia FROM 
+        SUM(apps.onpeak) as onpeak, SUM(apps.offpeak) as offpeak, (SUM(apps.onpeak) + SUM(apps.offpeak)) as frequencia, al.numero as x,
+        round( sum(apps.ncertas)/sum(apps.ntotal) *100, 0) as y FROM 
         (select * from ${bdTesteConhecimentos}.appsinfoall WHERE  turma = ? AND 
                     codProf = ? and grupo=? and appid=? and (CONCAT(lastdate, ' ', horario) between ? and ?) ) as apps, 
         ${bdAplicacoes}.alunos al 
@@ -628,3 +631,274 @@ module.exports.getAllAcertoFromAluno = async function(user){
     })
 }
 
+module.exports.getFrequenciaPorDiaTurmaApp = function(tema, turma, codprofessor){
+    var args = [tema, turma, codprofessor, dataInicioAno, dataFimAno]
+    return new Promise(function(resolve, reject) {
+        sql.query(`select lastdate as data, sum(ntotal) as freq, count(distinct userid) as nalunos
+			from ${bdTesteConhecimentos}.appsinfoall 
+                    where grupo = ? and turma = ? and codProf = ? and (lastdate between ? and ?)
+                    group by lastdate;`, args, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                var freqTotal = 0
+                for(var i = 0; i < res.length; i++)
+                    freqTotal += res[i].freq
+                
+                resolve({porDia: res, total: freqTotal})
+            }
+        })
+    })      
+}
+
+module.exports.getFrequenciaPorDiaTurmaAppSubtema = function(tema, subtema, turma, codprofessor){
+    var args = [tema, subtema, turma, codprofessor, dataInicioAno, dataFimAno]
+    return new Promise(function(resolve, reject) {
+        sql.query(`select lastdate as data, sum(ntotal) as freq, count(distinct userid) as nalunos
+			from ${bdTesteConhecimentos}.appsinfoall 
+                    where grupo = ? and appid = ? and turma = ? and codProf = ? and (lastdate between ? and ?)
+                    group by lastdate;`, args, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                var freqTotal = 0
+                for(var i = 0; i < res.length; i++)
+                    freqTotal += res[i].freq
+                
+                resolve({porDia: res, total: freqTotal})
+            }
+        })
+    })      
+}
+
+module.exports.getFrequenciaPorDiaTurmaAllApps = function(turma, codprofessor){
+    var args = [turma, codprofessor, dataInicioAno, dataFimAno]
+    return new Promise(function(resolve, reject) {
+        sql.query(`select lastdate as data, sum(ntotal) as freq, count(distinct userid) as nalunos
+			from ${bdTesteConhecimentos}.appsinfoall 
+                    where turma = ? and codProf = ? and (lastdate between ? and ?)
+                    group by lastdate;`, args, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                var freqTotal = 0
+                for(var i = 0; i < res.length; i++)
+                    freqTotal += res[i].freq
+                
+                resolve({porDia: res, total: freqTotal})
+            }
+        })
+    })      
+}
+
+module.exports.getEstatisticasGraficoTurmaAllApps = async function(turma, codprofessor){
+    var freqs = await this.getFrequenciaPorDiaTurmaAllApps(turma, codprofessor)
+    console.log("Vou calcular intervalos..")
+    var dataInicio = dataInicioAno
+    if(freqs.porDia.length > 0 ) dataInicio = freqs.porDia[0].data
+    var dataFim 
+    var arrayIntervals = []
+    var intervalosFreqsIdeais = [freqs.total*0.15, freqs.total*0.7, freqs.total*0.15]
+    var intervaloAtual = 0
+    var freqAux = 0;
+    var freqConsumida = 0
+    for(var i = 0; i < freqs.porDia.length; i++){
+        freqAux += freqs.porDia[i].freq
+        var freqPretendida = intervalosFreqsIdeais[intervaloAtual]
+        if(freqAux >= freqPretendida){
+            freqConsumida += freqAux
+            //console.log("Diferença com tudo (Periodo " + (intervaloAtual +1)  + " ): " + Math.abs(freqPretendida - freqAux))
+            //console.log("Diferença 2 (Periodo " + (intervaloAtual +1)  + " ): " +Math.abs(freqPretendida - (freqAux - freqs.porDia[i].freq)))
+
+            if(Math.abs(freqPretendida - freqAux) > Math.abs(freqPretendida - (freqAux - freqs.porDia[i].freq) ) && i > 0){
+                dataFim = freqs.porDia[i-1].data
+                arrayIntervals.push({
+                    dataInicio: dataInicio,
+                    dataFim: dataFim,
+                    freq: freqAux - freqs.porDia[i].freq,
+                })
+                freqAux = freqs.porDia[i].freq;
+                var aux = new Date((new Date(dataFim)).getTime() + 86400000)
+                dataInicio = aux.toISOString().split('T')[0]
+                intervaloAtual++
+            }
+            else{
+                dataFim = freqs.porDia[i].data
+                arrayIntervals.push({
+                    dataInicio: dataInicio,
+                    dataFim: dataFim,
+                    freq: freqAux
+                })
+                freqAux = 0;
+                var aux = new Date((new Date(dataFim)).getTime() + 86400000)
+                dataInicio = aux.toISOString().split('T')[0]
+                intervaloAtual++
+            }
+        }
+        else if(i == freqs.porDia.length - 1){
+            dataFim = freqs.porDia[i].data
+            arrayIntervals.push({
+                dataInicio: dataInicio,
+                dataFim: dataFim,
+                freq: freqAux
+            })
+            intervaloAtual++
+        }
+    }
+
+    for(var i = 0; i < arrayIntervals.length; i++){
+        var intervalo = arrayIntervals[i]
+        intervalo.label = "Período " + (i+1)
+        intervalo.data = await this.getAllAppsFromTurma(turma, codprofessor, intervalo.dataInicio, intervalo.dataFim, '00:00:00', '23:59:59')
+    }
+
+    return {
+        estatisticas: freqs,
+        intervalos: arrayIntervals
+    }
+
+
+}
+
+module.exports.getEstatisticasGraficoTurmaApp = async function(codtema, turma, codprofessor){
+    var freqs = await this.getFrequenciaPorDiaTurmaApp(codtema, turma, codprofessor)
+    var dataInicio = dataInicioAno
+    if(freqs.porDia.length > 0 ) dataInicio = freqs.porDia[0].data
+    var dataFim 
+    var arrayIntervals = []
+    var intervalosFreqsIdeais = [freqs.total*0.15, freqs.total*0.7, freqs.total*0.15]
+    var intervaloAtual = 0
+    var freqAux = 0;
+    var freqConsumida = 0
+    for(var i = 0; i < freqs.porDia.length; i++){
+        freqAux += freqs.porDia[i].freq
+        var freqPretendida = intervalosFreqsIdeais[intervaloAtual]
+        if(freqAux >= freqPretendida){
+            freqConsumida += freqAux
+            //console.log("Diferença com tudo (Periodo " + (intervaloAtual +1)  + " ): " + Math.abs(freqPretendida - freqAux))
+            //console.log("Diferença 2 (Periodo " + (intervaloAtual +1)  + " ): " +Math.abs(freqPretendida - (freqAux - freqs.porDia[i].freq)))
+
+            if(Math.abs(freqPretendida - freqAux) > Math.abs(freqPretendida - (freqAux - freqs.porDia[i].freq) ) && i > 0){
+                dataFim = freqs.porDia[i-1].data
+                arrayIntervals.push({
+                    dataInicio: dataInicio,
+                    dataFim: dataFim,
+                    freq: freqAux - freqs.porDia[i].freq,
+                })
+                freqAux = freqs.porDia[i].freq;
+                var aux = new Date((new Date(dataFim)).getTime() + 86400000)
+                dataInicio = aux.toISOString().split('T')[0]
+                intervaloAtual++
+            }
+            else{
+                dataFim = freqs.porDia[i].data
+                arrayIntervals.push({
+                    dataInicio: dataInicio,
+                    dataFim: dataFim,
+                    freq: freqAux
+                })
+                freqAux = 0;
+                var aux = new Date((new Date(dataFim)).getTime() + 86400000)
+                dataInicio = aux.toISOString().split('T')[0]
+                intervaloAtual++
+            }
+        }
+        else if(i == freqs.porDia.length - 1){
+            dataFim = freqs.porDia[i].data
+            arrayIntervals.push({
+                dataInicio: dataInicio,
+                dataFim: dataFim,
+                freq: freqAux
+            })
+            intervaloAtual++
+        }
+    }
+    for(var i = 0; i < arrayIntervals.length; i++){
+        var intervalo = arrayIntervals[i]
+        intervalo.label = "Período " + (i+1)
+        intervalo.data = await this.getAppFromTurma(codtema, turma, codprofessor, intervalo.dataInicio, intervalo.dataFim, '00:00:00', '23:59:59')
+    }
+
+    return {
+        estatisticas: freqs,
+        intervalos: arrayIntervals
+    }
+
+
+}
+
+
+module.exports.getEstatisticasGraficoTurmaAppSubtema = async function(codtema, codsubtema, turma, codprofessor){
+    var freqs = await this.getFrequenciaPorDiaTurmaAppSubtema(codtema, codsubtema, turma, codprofessor)
+                          .catch(erro => console.log(erro))
+    var dataInicio = dataInicioAno
+    if(freqs.porDia.length > 0 ) dataInicio = freqs.porDia[0].data
+    var dataFim 
+    var arrayIntervals = []
+    var intervalosFreqsIdeais = [freqs.total*0.15, freqs.total*0.7, freqs.total*0.15]
+    var intervaloAtual = 0
+    var freqAux = 0;
+    var freqConsumida = 0
+    for(var i = 0; i < freqs.porDia.length; i++){
+        freqAux += freqs.porDia[i].freq
+        var freqPretendida = intervalosFreqsIdeais[intervaloAtual]
+        if(freqAux >= freqPretendida){
+            freqConsumida += freqAux
+            //console.log("Diferença com tudo (Periodo " + (intervaloAtual +1)  + " ): " + Math.abs(freqPretendida - freqAux))
+            //console.log("Diferença 2 (Periodo " + (intervaloAtual +1)  + " ): " +Math.abs(freqPretendida - (freqAux - freqs.porDia[i].freq)))
+
+            if(Math.abs(freqPretendida - freqAux) > Math.abs(freqPretendida - (freqAux - freqs.porDia[i].freq) ) && i > 0){
+                dataFim = freqs.porDia[i-1].data
+                arrayIntervals.push({
+                    dataInicio: dataInicio,
+                    dataFim: dataFim,
+                    freq: freqAux - freqs.porDia[i].freq,
+                })
+                freqAux = freqs.porDia[i].freq;
+                var aux = new Date((new Date(dataFim)).getTime() + 86400000)
+                dataInicio = aux.toISOString().split('T')[0]
+                intervaloAtual++
+            }
+            else{
+                dataFim = freqs.porDia[i].data
+                arrayIntervals.push({
+                    dataInicio: dataInicio,
+                    dataFim: dataFim,
+                    freq: freqAux
+                })
+                freqAux = 0;
+                var aux = new Date((new Date(dataFim)).getTime() + 86400000)
+                dataInicio = aux.toISOString().split('T')[0]
+                intervaloAtual++
+            }
+        }
+        else if(i == freqs.porDia.length - 1){
+            dataFim = freqs.porDia[i].data
+            arrayIntervals.push({
+                dataInicio: dataInicio,
+                dataFim: dataFim,
+                freq: freqAux
+            })
+            intervaloAtual++
+        }
+    }
+
+    for(var i = 0; i < arrayIntervals.length; i++){
+        var intervalo = arrayIntervals[i]
+        intervalo.label = "Período " + (i+1)
+        intervalo.data = await this.getAppFromTurmaSubTema(codtema, codsubtema, turma, codprofessor, intervalo.dataInicio, intervalo.dataFim, '00:00:00', '23:59')
+    }
+
+    return {
+        estatisticas: freqs,
+        intervalos: arrayIntervals
+    }
+
+
+}

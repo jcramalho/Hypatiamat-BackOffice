@@ -17,35 +17,7 @@ export default {
       this._chart.destroy();
     }
   },
-  /*
-  props: {
-    chartdata: {
-      type: Object,
-      default: null
-    },
-    title: {
-      type: String,
-      default: null
-    }
-  },*/
   mounted() {
-    /*
-    this.gradient = this.$refs.canvas
-      .getContext("2d")
-      .createLinearGradient(0, 0, 0, 450);
-    this.gradient.addColorStop(0, "rgba(255, 0,0, 0.5)");
-    this.gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.25)");
-    this.gradient.addColorStop(1, "rgba(255, 0, 0, 0)");
-    
-     {
-          label: 'Média da Turma',
-          data: [55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55],
-          pointRadius: 0, 
-          fill: false
-            
-        }
-
-    */
     this.renderChart(
         this.chartData
       ,
@@ -53,7 +25,6 @@ export default {
           tooltips: {
               callbacks: {
                   label(tooltipItem, data) {
-                    //tooltipItem.label = data.datasets[tooltipItem.index].data[tooltipItem.index].nome
                     var result = []
                     var aux = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]
                     if(aux.nome){
@@ -66,7 +37,7 @@ export default {
                     }
                     
 
-                    return [nome, media, max, min, freq];
+                    return result;
                   }
               }
           },

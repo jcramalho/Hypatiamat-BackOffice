@@ -72,12 +72,14 @@
                         </v-container>
                         </center>
                         <br>
+                        <div v-if="campeonato">
                         <center><span v-if="this.estatisticasGerais"> <b>Neste campeonato:</b></span></center>
                         <EstatisticasGeraisCampeonato v-if="this.estatisticasGerais" :estatisticasGerais="this.estatisticasGerais"/>
                         <center><span v-if="this.estastisticasMunicipio"> <b> Neste campeonato em {{this.municipio}}: </b> </span> </center>
                         <CampeonatoMunicipio v-if="this.estastisticasMunicipio" :estatisticasGerais="this.estastisticasMunicipio"/>
                         <center><span v-if="this.estatisticasAgrupamento"> <b> Neste campeonato no seu Agrupamento de Escolas: </b> </span> </center>
                         <CampeonatoAgrupamento v-if="this.estatisticasAgrupamento" :estatisticasGerais="this.estatisticasAgrupamento"/>
+                        </div>
                 <v-container v-if="loading">
                     <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
                 </v-container>

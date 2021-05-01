@@ -386,11 +386,12 @@
 
                     <v-dialog
                         v-model="dialogGrafico"
-                        width="80%"
+                        width="85%"
                     >
                         <GraficoTurma v-if="dialogGrafico" :jogo="jogo.jogotable" :jogoTipo="jogo.tipo" :turma="turmaSel" 
                                 :escola="escola" :dataInicio="dataInicio" :dataFim="dataFim" :numerosTurma="numerosTurma"
-                                :idprofessor="idprofessor" :estatisticas="estatisticas"/>
+                                :idprofessor="idprofessor" :estatisticas="estatisticas" :nomeProf="nomeProf" 
+                                :nomeJogo="jogo.jogo"/>
                     </v-dialog>
                 </v-container>
             </v-card>

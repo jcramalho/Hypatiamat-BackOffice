@@ -7,7 +7,7 @@
        <v-row v-if="intervalos && intervalos.intervalos.length > 0" class="justify-center align-center no-gutters">
             <v-col cols="12" md="6" xl="4" class="justify-center" v-for="(intervalo, index) in intervalos.intervalos" v-bind:key="index">
                 <v-card class="pa-2 ma-2 elevation-2" outlined>
-                    <v-row class="justify-center pa-3">
+                    <v-row class="justify-center pa-3" >
                         <center><span class="green--text"> Período {{index+1}}</span></center>
                         <v-spacer v-if="intervalos.intervalos.length > 1"></v-spacer>
                         <v-icon v-if="intervalos.intervalos.length > 1" @click="removeIntervalo(index)">mdi-close-octagon-outline</v-icon>
@@ -23,7 +23,7 @@
                                 </v-text-field>
                             </v-col>
                             <v-col cols="12">
-                                   <center> <h4>Frequência: {{intervalo.freq}}</h4></center>
+                                   <center> <h4>NTR: {{intervalo.freq}}</h4></center>
                             </v-col>
                         </v-row>
                     </v-list-item-content>
@@ -45,7 +45,7 @@
                 </center>
             </v-col>
             <v-col cols="12">
-                <Grafico id="grafico" v-if="showChart" :labels="numerosTurma" :chartData="chartData" :height="180"/>
+                <Grafico id="grafico" v-if="showChart" :labels="props.numerosTurma" :chartData="chartData" :height="180"/>
                 <v-container v-else>
                     <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
                 </v-container>
@@ -62,10 +62,10 @@
 <script>
 import axios from "axios"
 const h = require("@/config/hosts").hostAPI
-const hostJogos = require("@/config/hosts").hostJogos
+const hostApps = require("@/config/hosts").hostApps
 const anosletivos2 = require("@/config/confs").anosletivos2
 const anoletivoAtual = require("@/config/confs").anoletivo2
-import Grafico from '@/components/Jogos/Grafico'
+import Grafico from '@/components/Apps/Grafico'
 import Exporter from "vue-chartjs-exporter";
 const hypatiaImg = require("@/assets/hypatiamat.png")
 
@@ -102,17 +102,12 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         chartData: []
       }
     },
-    props:["jogoTipo", "dataInicio", "dataFim", "jogo", "escola", "turma", 
-    "numerosTurma", "idprofessor", "estatisticas", "nomeProf", "nomeJogo"],
+    props:["props"],
     created: async function(){
         this.resize()
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
-        var response = await axios.get(hostJogos + this.jogo + "/turmas/" + this.turma + "/intervalos?escola=" 
-                        + this.escola + "&jogoTipo=" + this.jogoTipo + "&token=" + this.token)
-        this.intervalos = response.data
-        await this.atualizaChartData()
-        this.showChart = true
+        this.atualizaDados()
     },
     mounted: function(){
         window.onresize = () => {
@@ -137,17 +132,11 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
           else if(this.$vuetify.breakpoint.sm) {this.styleP= 'font-size:17px'; this.widthParams = 'width:100%';}
           else this.styleP ='font-size:20px'
       },
+      
       format(value, event) {
         return moment(value).format('YYYY-MM-DD')
       },
-      verTodos: async function(){
-        var response = await axios.get(h + "alunos/" + this.utilizador.user + "/jogos/" + this.jogo.jogotable 
-                                        + "?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                        + "&jogoTipo=" + this.jogo.tipo
-                                        + "&token=" + this.token)
-        this.resultadosTotal = response.data
-        this.verTotal = true
-      },
+
       onDataInicioChange: function(event, index){
           var intervalo = this.intervalos.intervalos[index]
           if(intervalo.dataInicio && intervalo.dataInicio != ""){
@@ -160,21 +149,55 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
               this.atualizaIntervalo(index)
           }
       },
+      atualizaDados: async function(){
+          var response
+          this.showChart = false
+          if(this.props.codtema && this.props.codsubtema){
+              response = await axios.get(hostApps + "turmas/" + this.props.turmaSel + "/grafico?codProf="
+                         + this.props.codProf + "&codtema=" + this.props.codtema +
+                         "&codsubtema=" + this.props.codsubtema + "&token=" + this.token)
+          }
+          else if(this.props.codtema){
+              response = await axios.get(hostApps + "turmas/" + this.props.turmaSel + "/grafico?codProf="
+                         + this.props.codProf + "&codtema=" + this.props.codtema + "&token=" + this.token)
+          }
+          else{
+             response = await axios.get(hostApps + "turmas/" + this.props.turmaSel + "/grafico?codProf="
+                         + this.props.codProf + "&token=" + this.token)
+          }
+          this.intervalos = response.data
+          await this.atualizaChartData()
+          this.showChart = true
+      },
       atualizaIntervalo: async function(index){
           var intervalo = this.intervalos.intervalos[index]
           if(intervalo.dataInicio && intervalo.dataInicio != "" && intervalo.dataFim && intervalo.dataFim != ""){
               this.showChart = false
               console.log("A atualizar intervalo...")
-
+              var response
               var auxFreq = 0
-              var response = await axios.get(hostJogos + this.jogo + "/turmas/" + this.turma
-                                                + "?dataInicio=" + intervalo.dataInicio + "&dataFim=" + intervalo.dataFim
-                                                + "&codprofessor=" + this.idprofessor + "&horaInicio=00:00"
-                                                + "&horaFim=23:59" + "&jogoTipo=" + this.jogoTipo
-                                                + "&escola=" + this.escola + "&token=" + this.token)
-              console.log(response.data)
+              if(this.props.codtema && this.props.codsubtema){
+                  response = await axios.get(hostApps + "turmas/" + this.props.turmaSel
+                                            + "/?dataInicio=" + intervalo.dataInicio + "&dataFim=" + intervalo.dataFim
+                                            + "&codProf=" + this.props.codProf + "&codtema=" + this.props.codtema
+                                            + "&horaInicio=00:00&horaFim=23:59"
+                                            + "&codsubtema=" + this.props.codsubtema + "&token=" + this.token)
+              }
+              else if(this.props.codtema){
+                  response = await axios.get(hostApps + "turmas/" + this.props.turmaSel
+                                            + "/?dataInicio=" + intervalo.dataInicio + "&dataFim=" + intervalo.dataFim
+                                            + "&codProf=" + this.props.codProf + "&codtema=" + this.props.codtema
+                                            + "&horaInicio=00:00&horaFim=23:59&token=" + this.token)
+              }
+              else{
+                  response = await axios.get(hostApps + "turmas/" + this.props.turmaSel
+                                            + "/?dataInicio=" + intervalo.dataInicio + "&dataFim=" + intervalo.dataFim
+                                            + "&codProf=" + this.props.codProf + "&horaInicio=00:00&horaFim=23:59&token=" 
+                                            + this.token)
+              }
+
               for(var i = 0; i < response.data.length; i++){
-                  auxFreq += response.data[i].count
+                  auxFreq += response.data[i].ntotal
               }
               intervalo.freq = auxFreq
               intervalo.data = response.data
@@ -197,6 +220,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
                     })
                 }
             }  
+            /*
             var objTurma = {
                 label: 'Média da Turma',
                 borderColor: colors[3],
@@ -225,8 +249,8 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
               } 
               datasets.push(objTurma)
               datasets.push(objEscola)
-              datasets.push(objHypatia)
-              this.chartData = {labels: this.numerosTurma, datasets: datasets} 
+              datasets.push(objHypatia)*/
+              this.chartData = {labels: this.props.numerosTurma, datasets: datasets} 
               return true
       },
       removeIntervalo: function(index){
@@ -250,19 +274,19 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
           let grafico = document.getElementById("grafico");
           const exp = new Exporter([grafico]);
             exp.export_pdf().then((doc) => {
-                var pdfName = this.nomeJogo + "-" + this.turma + "-grafico.pdf"
+                var pdfName = this.props.app + "-" + this.props.turmaSel + "-grafico.pdf"
                 var xImage = doc.internal.pageSize.getWidth() / 3
                 doc.addImage(hypatiaImg, 'PNG', xImage, 4);
                 doc.setFontSize(11)
-                doc.text("Professor: " + this.nomeProf, 25, doc.internal.pageSize.getHeight()-90)
-                doc.text("Turma: " + this.turma, 25, doc.internal.pageSize.getHeight()-80)
-                doc.text("Jogo: " + this.nomeJogo, 25, doc.internal.pageSize.getHeight()-70)
-                doc.text("Períodos:", 250, doc.internal.pageSize.getHeight() - 90)
+                doc.text("Professor: " + this.props.nomeProf, 25, doc.internal.pageSize.getHeight()-90)
+                doc.text("Turma: " + this.props.turmaSel, 25, doc.internal.pageSize.getHeight()-80)
+                doc.text("App: " + this.props.app, 25, doc.internal.pageSize.getHeight()-70)
+                doc.text("Períodos:", 350, doc.internal.pageSize.getHeight() - 90)
                 var ytotal1 = doc.internal.pageSize.getHeight() - 80
-                var xtotal = 250
+                var xtotal = 350
                 for(var i = 0; i < this.intervalos.intervalos.length; i++){
                     var periodo = "- Período " + (i+1) +" ("
-                    doc.text(periodo + this.intervalos.intervalos[i].dataInicio + " até " + this.intervalos.intervalos[i].dataFim + ") Frequência: " + 
+                    doc.text(periodo + this.intervalos.intervalos[i].dataInicio + " até " + this.intervalos.intervalos[i].dataFim + ") NTR: " + 
                     this.intervalos.intervalos[i].freq, xtotal, ytotal1)
                     ytotal1 +=10
                 }

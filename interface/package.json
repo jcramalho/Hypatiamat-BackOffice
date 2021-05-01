@@ -19,6 +19,7 @@
     "sweetalert2": "^10.12.5",
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.1",
+    "vue-chartjs-exporter": "^1.0.2",
     "vue-jwt-decode": "^0.1.0",
     "vue-responsive-components": "^0.2.3",
     "vue-router": "^3.2.0",

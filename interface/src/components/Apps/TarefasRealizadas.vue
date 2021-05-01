@@ -22,6 +22,12 @@
                 <v-text-field @change="atualizaTarefas" v-model="dataFim" label="Data Fim" type="date" required></v-text-field>
             </v-col>
         </v-layout>
+        <v-row v-if="items.length > 0" class="justify-center align-center">
+            <v-btn class="white--text" color="#009263" @click="atualizaTarefas()">
+                <v-icon>mdi-refresh</v-icon>
+                Atualizar
+            </v-btn>
+        </v-row>
         <v-container v-if="loading">
             <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
         </v-container>
@@ -32,6 +38,14 @@
             :items="items"
             :footer-props="footer_props"
             >
+            <template v-slot:item="row">
+                <tr :class="row.item.acerto>=50 ? 'style-positivo' : 'style-negativo'">
+                    <td>{{row.item.frame}}</td>
+                    <td>{{row.item.ncertas}}</td>
+                    <td>{{row.item.ntotal}}</td>
+                    <td>{{row.item.acerto}}</td>
+                </tr>
+            </template>
             </v-data-table>
         </v-container>
 
@@ -159,3 +173,12 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
     }
   }
 </script>
+
+<style>
+.style-negativo {
+  background-color: #f26755
+}
+.style-positivo {
+  background-color: #10de16
+}
+</style>

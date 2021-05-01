@@ -7,7 +7,7 @@
                     <v-card-title primary-title class="justify-center green--text">
                         Monitorização de Apps por turmas do professor ({{this.codProf}})
                     </v-card-title>
-                    <center><v-btn v-if="items.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn></center>
+                    
                     <br>
                     <center>
                         <v-btn v-if="!show" text @click="show=!show"><span>Mostrar Ajuda</span><v-icon color="#009263"> mdi-help-circle </v-icon> </v-btn>
@@ -52,6 +52,15 @@
                       </v-card>
                     </v-slide-y-transition>
                         <br v-if="items.length>0">
+                        <v-row class="justify-center align-center">
+                        <v-col v-if="items.length>0" 
+                            cols="12" xs="12" sm="12" md="4" lg="4" xl="4">
+                            <center><v-btn class="white--text" style="background-color: #009263;" @click="verGrafico()"> <v-icon> mdi-chart-bar-stacked </v-icon> Visualizar Gráfico </v-btn></center>
+                        </v-col>
+                        <v-col>
+                            <center><v-btn v-if="items.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn></center>
+                        </v-col>
+                        </v-row>
                         <center>
                         <v-container style="width:80%">
                         <v-card class="pa-5" >
@@ -94,14 +103,6 @@
                                 </v-col>
                                 <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="6">
                                     <v-text-field @change="onDataFimChange" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
-                                </v-col>
-                            </v-layout>
-                            <v-layout row class="text-xs-center" justify-center align-center>
-                                <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="6">
-                                <v-text-field @change="onHorarioInChange" v-model="horaInicio" label="Hora Inicio" type="time" :format="format" required></v-text-field>
-                                </v-col>
-                                <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="6">
-                                    <v-text-field @change="onHorarioFimChange" v-model="horaFim" label="Hora Fim" type="time" :format="format" required></v-text-field>
                                 </v-col>
                             </v-layout>
                             <v-row v-if="items.length > 0" class="justify-center align-center">
@@ -149,6 +150,9 @@
                 <v-dialog v-model="dialogTarefas" width="75%">
                     <TarefasApps v-if="dialogTarefas" :propsTarefas="propsTarefas"/>
                 </v-dialog>
+                <v-dialog v-model="dialogGrafico" width="80%">
+                    <GraficoTurma v-if="dialogGrafico" :props="propsGrafico"/>
+                </v-dialog>
                 </v-container>
                 </v-container>
             </v-card>
@@ -164,6 +168,7 @@ import axios from "axios"
 import jsPDF from 'jspdf' 
 import 'jspdf-autotable'
 import TarefasApps from "@/components/Apps/TarefasRealizadas.vue"
+import GraficoTurma from '../../components/Apps/GraficoTurma.vue'
 
 const h = require("@/config/hosts").hostAPI
 const hostApps = require("@/config/hosts").hostApps
@@ -174,7 +179,8 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
 
   export default {
     components:{
-        TarefasApps
+        TarefasApps,
+        GraficoTurma
     },
     data(){
       return {
@@ -240,6 +246,9 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         nomeProf:"",
         propsTarefas: undefined,
         dialogTarefas: false,
+        propsGrafico: {},
+        dialogGrafico: false,
+        numerosTurma: []
       }
     },
     created: async function(){
@@ -275,6 +284,14 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
     methods: {
       format(value, event) {
         return moment(value).format('YYYY-MM-DD')
+      },
+      getNumerosTurma(){
+        var aux = []
+        for(var i = 0; i < this.items.length; i++){
+            var n = this.items[i].numero 
+            if(!aux.find(e => e == n)) aux.push(n)
+        }
+        this.numerosTurma = aux
       },
       atualizaApps: async function(){
           if(this.turmaSel && this.turmaSel != ""){
@@ -401,6 +418,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
                         }
                     }
                 }
+                this.getNumerosTurma()
                 this.loading = false
           } 
       },
@@ -490,8 +508,35 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             nomeProf: this.nomeProf
         }
         this.dialogTarefas = true
-      }
+      },
+      verGrafico: async function(){
+        this.propsGrafico = {
+            codProf : this.codProf,
+            turmaSel: this.turmaSel,
+            nomeProf: this.nomeProf,
+            numerosTurma: this.numerosTurma,
+            app : this.app
+        }
+        if(this.app != "Todas"){
+            var appInfo = this.appsInfo.find(element => element.tema == this.app)
+            if(appInfo) this.propsGrafico.codtema = appInfo.codtema
+            else{
+                appInfo = this.appsInfo.find(element => element.subtema == this.app)
+                if(appInfo){
+                    this.propsGrafico.codtema = appInfo.codtema
+                    this.propsGrafico.codsubtema = appInfo.codsubtema
+                }
+            }
+        }
+        console.log(this.propsGrafico)
+        this.dialogGrafico = true
+        /*
+        var response = await axios.get(hostApps + "turmas/" + this.turmaSel + "/grafico?codProf=" + this.codProf
+                            + "&token=" + this.token)
+        console.log(response.data)*/
+        }
     },
+    
     
       
   }
