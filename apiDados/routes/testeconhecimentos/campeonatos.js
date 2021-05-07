@@ -163,15 +163,41 @@ router.get('/:campeonato/municipios', passport.authenticate('jwt', {session: fal
 router.get('/:campeonato/municipios/totais', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     var campeonato = req.params.campeonato;
     var comunidade = req.query.comunidade;
+    var municipio = req.query.municipio;
+
     if(comunidade){
         // por uma comunidade
         Campeonatos.getCampeonatoComunidadeTotais(campeonato, comunidade)
                    .then(dados =>res.jsonp(dados))
                    .catch(erro => res.status(500).jsonp(erro))
     }
+    else if(municipio){
+        Campeonatos.getCampeonatoMunicipioTotais(campeonato, municipio)
+                   .then(dados =>res.jsonp(dados))
+                   .catch(erro => res.status(500).jsonp(erro))
+    }
     else{
         // por todos os municipios
         Campeonatos.getCampeonatoMunicipiosTotais(campeonato)
+                   .then(dados =>res.jsonp(dados))
+                   .catch(erro => res.status(500).jsonp(erro))
+    }
+});
+
+// Estatísticas totais por cada jogo
+router.get('/:campeonato/municipios/jogo', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var campeonato = req.params.campeonato;
+    var comunidade = req.query.comunidade;
+
+    if(comunidade){
+        // por uma comunidade
+        Campeonatos.getCampeonatoComunidadeTotaisPorJogo(campeonato, comunidade)
+                   .then(dados =>res.jsonp(dados))
+                   .catch(erro => res.status(500).jsonp(erro))
+    }
+    else{
+        // por todos os municipios
+        Campeonatos.getCampeonatoMunicipiosTotaisPorJogo(campeonato)
                    .then(dados =>res.jsonp(dados))
                    .catch(erro => res.status(500).jsonp(erro))
     }
@@ -186,11 +212,13 @@ router.get('/:campeonato/municipios/gerais', passport.authenticate('jwt', {sessi
     
 });
 
-// Estatísticas de um campeonato por todos os agrupamentos de um municipio ou um só agrupamento
+// Estatísticas de um campeonato por todos os agrupamentos de um municipio ou um só agrupamento e por cada jogo
 router.get('/:campeonato/municipios/:municipio', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     var campeonato = req.params.campeonato;
     var municipio = req.params.municipio
     var escola = req.query.escola;
+    //var modo = req.query.modo
+
     if(escola){
         Campeonatos.getCampeonatoAgrupamento(campeonato, escola)
                    .then(dados =>res.jsonp(dados))
@@ -203,12 +231,62 @@ router.get('/:campeonato/municipios/:municipio', passport.authenticate('jwt', {s
     }
 });
 
+// Estatísticas de todos os jogos do campeonato por todos os agrupamentos de um municipio
+router.get('/:campeonato/municipios/:municipio/totais', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var campeonato = req.params.campeonato;
+    var municipio = req.params.municipio
+    var escola = req.query.escola;
+    
+    if(escola){
+        Campeonatos.getCampeonatoAgrupamentoTotais(campeonato, escola)
+                   .then(dados =>res.jsonp(dados))
+                   .catch(erro => res.status(500).jsonp(erro))
+    }
+    else{
+        Campeonatos.getCampeonatoMunicipioAgrupamentosTotais(campeonato, municipio)
+                   .then(dados =>res.jsonp(dados))
+                   .catch(erro => res.status(500).jsonp(erro))
+    }
+});
+
+// Estatísticas de todos os jogos do campeonato por todos os agrupamentos de um municipio
+router.get('/:campeonato/municipios/:municipio/jogo', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var campeonato = req.params.campeonato;
+    var municipio = req.params.municipio
+    var escola = req.query.escola;
+    
+    if(escola){
+        Campeonatos.getCampeonatoAgrupamentoJogo(campeonato, escola)
+                   .then(dados =>res.jsonp(dados))
+                   .catch(erro => res.status(500).jsonp(erro))
+    }
+    else{
+        Campeonatos.getCampeonatoMunicipio(campeonato, municipio)
+                   .then(dados =>res.jsonp(dados))
+                   .catch(erro => res.status(500).jsonp(erro))
+    }
+});
+
 router.get('/:campeonato/escolas/:escola', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     var campeonato = req.params.campeonato;
     var escola = req.params.escola;
-    Campeonatos.getCampeonatoAgrupamentoProfessores(campeonato, escola)
-               .then(dados =>res.jsonp(dados))
-               .catch(erro => res.status(500).jsonp(erro))
+    var professor = req.query.professor;
+    var jogos = req.query.jogos
+    if(professor){
+        Campeonatos.getCampeonatoAgrupamentoProfessoresTotalProf(campeonato, escola)
+                .then(dados =>res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp(erro))
+    }
+    else if(jogos){
+        Campeonatos.getCampeonatoAgrupamentoProfessoresTotalJogo(campeonato, escola)
+                .then(dados =>res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp(erro))
+    }
+    else{
+        Campeonatos.getCampeonatoAgrupamentoProfessores(campeonato, escola)
+                .then(dados =>res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp(erro))
+    }
 });
 
 router.get('/:campeonato/escolas/:escola/gerais', passport.authenticate('jwt', {session: false}), function(req, res, next) {

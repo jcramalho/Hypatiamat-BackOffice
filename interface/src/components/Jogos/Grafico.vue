@@ -65,7 +65,7 @@ export default {
         labels: this.labels,
         datasets: datasets
       },
-      {
+      { responsive: true, maintainAspectRatio: false,
           tooltips: {
               callbacks: {
                   label(tooltipItem, data) {

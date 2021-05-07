@@ -8,7 +8,7 @@
             <v-col cols="12" md="6" xl="4" class="justify-center" v-for="(intervalo, index) in intervalos.intervalos" v-bind:key="index">
                 <v-card class="pa-2 ma-2 elevation-2" outlined>
                     <v-row class="justify-center pa-3">
-                        <center><span class="green--text"> Período {{index+1}}</span></center>
+                        <center><span class="green--text"> Momento {{index+1}}</span></center>
                         <v-spacer v-if="intervalos.intervalos.length > 1"></v-spacer>
                         <v-icon v-if="intervalos.intervalos.length > 1" @click="removeIntervalo(index)">mdi-close-octagon-outline</v-icon>
                     </v-row>
@@ -45,7 +45,7 @@
                 </center>
             </v-col>
             <v-col cols="12">
-                <Grafico id="grafico" v-if="showChart" :labels="numerosTurma" :chartData="chartData" :height="180"/>
+                <Grafico id="grafico" v-if="showChart" :labels="numerosTurma" :chartData="chartData" :height="200"/>
                 <v-container v-else>
                     <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
                 </v-container>
@@ -252,7 +252,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
             exp.export_pdf().then((doc) => {
                 var pdfName = this.nomeJogo + "-" + this.turma + "-grafico.pdf"
                 var xImage = doc.internal.pageSize.getWidth() / 3
-                doc.addImage(hypatiaImg, 'PNG', xImage, 4);
+                doc.addImage(hypatiaImg, 'PNG', xImage, 0, 52.916667, 52.916667);
                 doc.setFontSize(11)
                 doc.text("Professor: " + this.nomeProf, 25, doc.internal.pageSize.getHeight()-90)
                 doc.text("Turma: " + this.turma, 25, doc.internal.pageSize.getHeight()-80)

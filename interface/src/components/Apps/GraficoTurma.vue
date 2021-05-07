@@ -8,7 +8,7 @@
             <v-col cols="12" md="6" xl="4" class="justify-center" v-for="(intervalo, index) in intervalos.intervalos" v-bind:key="index">
                 <v-card class="pa-2 ma-2 elevation-2" outlined>
                     <v-row class="justify-center pa-3" >
-                        <center><span class="green--text"> Período {{index+1}}</span></center>
+                        <center><span class="green--text"> Momento {{index+1}}</span></center>
                         <v-spacer v-if="intervalos.intervalos.length > 1"></v-spacer>
                         <v-icon v-if="intervalos.intervalos.length > 1" @click="removeIntervalo(index)">mdi-close-octagon-outline</v-icon>
                     </v-row>

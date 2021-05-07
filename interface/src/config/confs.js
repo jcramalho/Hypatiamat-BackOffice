@@ -56,3 +56,9 @@ module.exports.anosletivos2 = anosletivos2
 module.exports.campeonatosAnos = [{ano:1, jogos:[0, 8]}, {ano:2, jogos:[1, 2, 9]}, {ano:3, jogos:[3, 4]},
                                     {ano:4, jogos:[5]}, {ano:5, jogos:[6]}, {ano:6, jogos:[6]},
                                     {ano:7, jogos:[7]}, {ano:8, jogos:[7]}, {ano:9, jogos:[7]}]
+
+module.exports.opcoesCampeonatosMunicipios = [
+    {nome: "Por Jogo e Município", value: ""},
+    {nome: "Totais Por Município", value: "totais"},
+    {nome: "Totais Por Jogo", value: "jogo"}
+]

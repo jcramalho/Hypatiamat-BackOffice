@@ -20,6 +20,15 @@
                                 :items="campeonatos"
                                 @change="onCampeonatoChange"
                             ></v-combobox>
+                            <v-combobox
+                                id="opcaoCampeonato"
+                                label="Tipo de Monitorização"
+                                item-text="nome"
+                                v-model="opcaoCampeonato"
+                                color="#009263"
+                                :items="opcoesCampeonatos"
+                                @change="onOpcaoCampeonatoChange" 
+                            ></v-combobox>
                         </v-card>
                         </v-container>
                         </center>
@@ -49,8 +58,35 @@
                     :search="filtrar"
                 >
                     <template v-slot:item="row">
-                        <tr @click="goToTurmas(row.item)">
+                        <tr @click="goToTurmas(row.item)" v-if="opcaoCampeonato.value==''">
                             <td>{{row.item.nome}}</td>
+                            <td v-if="row.item.jogo == 0"> ADD (1.º ano)</td>
+                            <td v-else-if="row.item.jogo == 1">ADD (2.º ano)</td>
+                            <td v-else-if="row.item.jogo == 2">SAM (2.º ano)</td>
+                            <td v-else-if="row.item.jogo == 3">SAM (3.º ano)</td>
+                            <td v-else-if="row.item.jogo == 4">SAMD (3.º ano)</td>
+                            <td v-else-if="row.item.jogo == 5">SAMD (4.º ano)</td>
+                            <td v-else-if="row.item.jogo == 6">SAMD (5/6.º ano)</td>
+                            <td v-else-if="row.item.jogo == 7">SAMD (7/8/9.º ano)</td>
+                            <td v-else-if="row.item.jogo == 8">SUBADD (1.º ano)</td>
+                            <td v-else>SUBADD (2.º ano)</td>
+                            <td>{{row.item.max}}</td>
+                            <td>{{row.item.min}}</td>
+                            <td>{{row.item.media}}</td>
+                            <td>{{row.item.njogos}}</td>
+                            <td>{{row.item.nusers}}</td>
+                            <td>{{row.item.jogosAluno}}</td>
+                        </tr>
+                        <tr @click="goToTurmas(row.item)" v-else-if="opcaoCampeonato.value=='totais'">
+                            <td>{{row.item.nome}}</td>
+                            <td>{{row.item.max}}</td>
+                            <td>{{row.item.min}}</td>
+                            <td>{{row.item.media}}</td>
+                            <td>{{row.item.njogos}}</td>
+                            <td>{{row.item.nusers}}</td>
+                            <td>{{row.item.jogosAluno}}</td>
+                        </tr>
+                        <tr v-else>
                             <td v-if="row.item.jogo == 0"> ADD (1.º ano)</td>
                             <td v-else-if="row.item.jogo == 1">ADD (2.º ano)</td>
                             <td v-else-if="row.item.jogo == 2">SAM (2.º ano)</td>
@@ -119,6 +155,34 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
             {text: "#Alunos", value: 'nusers', class: 'subtitle-1'},
             {text: "#Jogos/#Alunos", value: 'jogosAluno', class: 'subtitle-1'},
         ],
+        headers_jogo:[
+            {text: "Professor", value: 'nome', class: 'subtitle-1'},
+            {text: "Jogo", value: 'jogo', class: 'subtitle-1'},
+            {text: "Max", value: 'max', class: 'subtitle-1'},
+            {text: "Min", value: 'min', class: 'subtitle-1'},
+            {text: "Média", value: 'media', class: 'subtitle-1'},
+            {text: "#Jogos", value: 'njogos', class: 'subtitle-1'},
+            {text: "#Alunos", value: 'nusers', class: 'subtitle-1'},
+            {text: "#Jogos/#Alunos", value: 'jogosAluno', class: 'subtitle-1'},
+        ],
+        headers_totais:[
+            {text: "Professor", value: 'nome', class: 'subtitle-1'},
+            {text: "Max", value: 'max', class: 'subtitle-1'},
+            {text: "Min", value: 'min', class: 'subtitle-1'},
+            {text: "Média", value: 'media', class: 'subtitle-1'},
+            {text: "#Jogos", value: 'njogos', class: 'subtitle-1'},
+            {text: "#Alunos", value: 'nusers', class: 'subtitle-1'},
+            {text: "#Jogos/#Alunos", value: 'jogosAluno', class: 'subtitle-1'},
+        ],
+        headers_totais_jogo:[
+            {text: "Jogo", value: 'jogo', class: 'subtitle-1'},
+            {text: "Max", value: 'max', class: 'subtitle-1'},
+            {text: "Min", value: 'min', class: 'subtitle-1'},
+            {text: "Média", value: 'media', class: 'subtitle-1'},
+            {text: "#Jogos", value: 'njogos', class: 'subtitle-1'},
+            {text: "#Alunos", value: 'nusers', class: 'subtitle-1'},
+            {text: "#Jogos/#Alunos", value: 'jogosAluno', class: 'subtitle-1'},
+        ],
         items:[],
         campeonatos:[],
         campeonatosInfo:[],
@@ -129,13 +193,20 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         estatisticasGerais: undefined,
         estastisticasMunicipio: undefined,
         estatisticasAgrupamento: undefined,
-        municipio:""
+        municipio:"",
+        opcoesCampeonatos:[
+            {nome: 'Por Professores e Jogos', value: ''},
+            {nome: 'Totais Por Professor', value: 'totais'},
+            {nome: 'Totais Por Jogo', value: 'jogo'},
+        ],
+        opcaoCampeonato:""
       }
     },
     created: async function(){
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
         this.escola = this.$route.params.escola 
+        this.opcaoCampeonato = this.opcoesCampeonatos[0]
         var responseCamp = await axios.get(hostCampeonatos + "?token=" + this.token)
              
         if(this.$route.params.campeonato && this.$route.params.municipio){
@@ -186,6 +257,12 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
               this.escolas.push(this.escolasId[i].nome)
           }
       },
+      onOpcaoCampeonatoChange(){
+          if(this.opcoesCampeonatos.find(e => e.value == this.opcaoCampeonato.value)){
+              this.atualizaConteudo()
+          }
+          else this.opcaoCampeonato = undefined
+      },
       onCampeonatoChange: function(item){
           var camp = this.campeonatos.find(e => e == this.campeonato)
           if(camp){
@@ -223,7 +300,19 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
       atualizaConteudo: async function(){
           if(this.campeonatoId && this.escola){
                this.loading = true
-               var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/escolas/" + this.escola + "?token=" + this.token)
+               if(this.opcaoCampeonato.value == ''){
+                   this.headers = this.headers_jogo
+                   var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/escolas/" + this.escola + "?token=" + this.token)
+               }
+               else if(this.opcaoCampeonato.value == 'totais'){
+                   this.headers = this.headers_totais
+                   var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/escolas/" + this.escola + "?professor=true&token=" + this.token)
+               }
+               else{
+                   this.headers = this.headers_totais_jogo
+                   var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/escolas/" + this.escola + "?jogos=true&token=" + this.token)
+               }
+
                this.items = response.data
                this.loading = false
           }
@@ -250,17 +339,19 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         //var total = ["Todos", 0, 0, 0, 0, 0, 0]
         for(var i = 0; i<this.items.length; i++){
             var aux = [];
-            aux.push(this.items[i].nome)
-            if(this.items[i].jogo == 0) aux.push("ADD (1.º)")
-            else if(this.items[i].jogo == 1) aux.push("ADD (2.º)")
-            else if(this.items[i].jogo == 2) aux.push("SAM (2.º)")
-            else if(this.items[i].jogo == 3) aux.push("SAM (3.º)")
-            else if(this.items[i].jogo == 4) aux.push("SAMD (3.º)")
-            else if(this.items[i].jogo == 5) aux.push("SAMD (4.º)")
-            else if(this.items[i].jogo == 6) aux.push("SAMD (5/6.º)")
-            else if(this.items[i].jogo == 7) aux.push("SAMD (7/8/9.º)")
-            else if(this.items[i].jogo == 8) aux.push("SUBADD (1.º)")
-            else aux.push("SUBADD (2.º)")
+            if(this.opcaoCampeonato.value == '' || this.opcaoCampeonato.value == 'totais') aux.push(this.items[i].nome)
+            if(this.opcaoCampeonato.value == '' || this.opcaoCampeonato.value == 'jogo'){
+                if(this.items[i].jogo == 0) aux.push("ADD (1.º)")
+                else if(this.items[i].jogo == 1) aux.push("ADD (2.º)")
+                else if(this.items[i].jogo == 2) aux.push("SAM (2.º)")
+                else if(this.items[i].jogo == 3) aux.push("SAM (3.º)")
+                else if(this.items[i].jogo == 4) aux.push("SAMD (3.º)")
+                else if(this.items[i].jogo == 5) aux.push("SAMD (4.º)")
+                else if(this.items[i].jogo == 6) aux.push("SAMD (5/6.º)")
+                else if(this.items[i].jogo == 7) aux.push("SAMD (7/8/9.º)")
+                else if(this.items[i].jogo == 8) aux.push("SUBADD (1.º)")
+                else aux.push("SUBADD (2.º)")
+            }
             aux.push(this.items[i].max)
             aux.push(this.items[i].min)
             aux.push(this.items[i].media)
@@ -270,9 +361,12 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
 
             listaRes.push(aux)
         }
+        var headers = [['Professor', 'Jogo', "Max", "Min", "Média", "#Jogos", "#Alunos", '#J/#A']]
+        if(this.opcaoCampeonato.value == 'totais') headers = [['Professor', "Max", "Min", "Média", "#Jogos", "#Alunos", '#J/#A']]
+        else if(this.opcaoCampeonato.value == 'jogo') headers = [['Jogo', "Max", "Min", "Média", "#Jogos", "#Alunos", '#J/#A']]
         doc.setFontSize(10)
         doc.autoTable({
-            head: [['Professor', 'Jogo', "Max", "Min", "Média", "#Jogos", "#Alunos", '#J/#A']],
+            head: headers,
             body: listaRes,
             headStyles: { fillColor: [0, 146, 99] },
             styles:{fontSize:9},
