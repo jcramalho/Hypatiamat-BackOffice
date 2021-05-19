@@ -2,8 +2,11 @@
 
   <v-app id="app"  :key="viewKey">
     
-    <Auth v-if="loggedIn" @refreshLogout="refreshLogout" />
- 
+    <router-view v-if="this.$route.name=='Novidades'"> 
+    </router-view>
+
+    <Auth v-else-if="loggedIn" @refreshLogout="refreshLogout" />
+
     <Login v-else-if="!mode"  @refreshLogout="refreshLogout" @registar="registar"  />
      
     <Registar v-else @login="login"/>
@@ -17,6 +20,7 @@ import Swal from 'sweetalert2'
 import Auth from '@/views/AuthApp.vue'
 import Login from '@/views/Login.vue'
 import Registar from '@/views/Registar.vue'
+import Novidades from '@/views/Novidades/Novidades.vue'
 import axios from 'axios'
 import { ResponsiveDirective } from "vue-responsive-components"
 
@@ -27,7 +31,8 @@ export default {
     components: {
     Auth,
     Login,
-    Registar
+    Registar,
+    Novidades,
     },
     directives: {
     responsive: ResponsiveDirective
@@ -73,6 +78,11 @@ export default {
       this.refreshLogout()
     },
     methods: {
+          teste(){
+            console.log(this.$route)
+            console.log(this.$route.name)
+            return true
+          },
           isLogged: function(){
             var token = localStorage.getItem("token")
             if (token == null) return false

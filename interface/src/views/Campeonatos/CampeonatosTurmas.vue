@@ -228,6 +228,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
       onCampeonatoChange: function(item){
           if(this.campeonato){
             var camp = this.campeonatos.find(e => e.campeonatoID == this.campeonato.campeonatoID)
+            this.campeonato = camp
             if(camp){
                 this.atualizaEstatisticas()
                 this.atualizaConteudo()

@@ -89,6 +89,7 @@ import RankingAppsAgrupamento from '../views/Rankings/RankingAppsAgrupamento.vue
 
 
 import GestaoNovidades from '../views/Novidades/GestaoNovidades.vue'
+import Novidades from '../views/Novidades/Novidades.vue'
 
 
 import Comunidades from '../views/Comunidades/Comunidades.vue'
@@ -136,7 +137,7 @@ const routes = [
   },
   {
     path: '/novidades',
-    name: 'Novidades',
+    name: 'Gestão Novidades',
     component: GestaoNovidades,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
@@ -147,6 +148,11 @@ const routes = [
         next({name: "Meu Perfil"})
       }
     }
+  },
+  {
+    path: '/novidades/lista',
+    name: 'Novidades',
+    component: Novidades,
   },
   {
     path: '/profspendentes',

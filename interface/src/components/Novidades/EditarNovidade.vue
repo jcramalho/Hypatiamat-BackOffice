@@ -7,6 +7,11 @@
                     v-model="novidade.titulo" name="Título da Novidade" :rules="[string70]" label="Título da Novidade" 
                     required
                 ></v-text-field>
+                <v-text-field prepend-icon="mdi-card-account-details" color="#009263"
+                    v-model="novidade.data" name="Data da Novidade" label="Data da Novidade" 
+                    type="date"
+                    required
+                ></v-text-field>
                 <v-text-field prepend-icon="mdi-link-variant" color="#009263"
                     v-model="novidade.link" name="Link da Novidade" label="Link da Novidade"
                 ></v-text-field>
@@ -129,8 +134,8 @@ const h = require("@/config/hosts").hostAPI
       },
       updateNovidade: async function(){
           var novidade
-          if(this.novidade.link != "") novidade = {id: this.idEditar, titulo: this.novidade.titulo, link: this.novidade.link}
-          else novidade = {id: this.idEditar, titulo: this.novidade.titulo}
+          if(this.novidade.link != "") novidade = {id: this.idEditar, titulo: this.novidade.titulo, data: this.novidade.data, link: this.novidade.link}
+          else novidade = {id: this.idEditar, data: this.novidade.data, titulo: this.novidade.titulo}
           await axios.put(h + "novidades/" + this.idEditar + "?token=" + this.token, novidade)
           Swal.fire({
             icon: 'success',

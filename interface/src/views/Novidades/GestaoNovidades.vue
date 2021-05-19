@@ -47,6 +47,11 @@
                                         v-model="novaNovidade.titulo" name="Título da Novidade" :rules="[string70]" label="Título da Novidade" 
                                         required
                                     ></v-text-field>
+                                    <v-text-field prepend-icon="mdi-card-account-details" color="#009263"
+                                        v-model="novaNovidade.data" name="Data da Novidade" label="Data da Novidade" 
+                                        type="date"
+                                        required
+                                    ></v-text-field>
                                     <v-text-field prepend-icon="mdi-link-variant" color="#009263"
                                         v-model="novaNovidade.link" name="Link da Novidade" label="Link da Novidade"
                                     ></v-text-field>
@@ -127,6 +132,7 @@ const h = require("@/config/hosts").hostAPI
         novaNovidade:{
             titulo: "",
             link: "",
+            data: (new Date()).toISOString().split("T")[0],
             subnovidades:[]
         },
         subnovidade:"",
@@ -185,7 +191,7 @@ const h = require("@/config/hosts").hostAPI
         this.dialogEditar = true;
       },
       insertNovidade: async function(){
-        var novidade = {titulo: this.novaNovidade.titulo}
+        var novidade = {titulo: this.novaNovidade.titulo, data: this.novaNovidade.data}
         if(this.novaNovidade.link != "") novidade.link = this.novaNovidade.link 
         var response = await axios.post(h + "novidades/?token=" + this.token, novidade)
         var idNovidade = response.data.insertId
@@ -193,7 +199,7 @@ const h = require("@/config/hosts").hostAPI
             await axios.post(h + "novidades/" + idNovidade + "/subnovidade?token="+this.token, {subnovidade: this.novaNovidade.subnovidades[i].subnovidade})
         }
         this.atualizaNovidades()
-        this.novaNovidade = {titulo: "", link: "", subnovidades:[]}
+        this.novaNovidade = {titulo: "", link: "", subnovidades:[], data: (new Date()).toISOString().split("T")[0]}
         this.dialogCriar = false
         Swal.fire({
             icon: 'success',
@@ -225,6 +231,7 @@ const h = require("@/config/hosts").hostAPI
         this.novidades[this.indexEditar].titulo = novidade.titulo
         if(novidade.link) this.novidades[this.indexEditar].link = novidade.link
         else {this.novidades[this.indexEditar].link = null}
+        this.novidades[this.indexEditar].data = novidade.data
         this.dialogEditar = false
       },
       atualizaSubNovidades: async function(subnovidades){

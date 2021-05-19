@@ -189,7 +189,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
               for(var i = 0; i < this.intervalos.intervalos.length && i < 3; i++){
                 if(this.intervalos.intervalos[i].data.length > 0){
                     datasets.push({
-                        label: 'Período ' + (i+1),
+                        label: 'Momento ' + (i+1),
                         backgroundColor: colors[i],
                         pointRadius: 5,
                         data: this.intervalos.intervalos[i].data,
@@ -257,11 +257,11 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
                 doc.text("Professor: " + this.nomeProf, 25, doc.internal.pageSize.getHeight()-90)
                 doc.text("Turma: " + this.turma, 25, doc.internal.pageSize.getHeight()-80)
                 doc.text("Jogo: " + this.nomeJogo, 25, doc.internal.pageSize.getHeight()-70)
-                doc.text("Períodos:", 250, doc.internal.pageSize.getHeight() - 90)
+                doc.text("Momentos:", 250, doc.internal.pageSize.getHeight() - 90)
                 var ytotal1 = doc.internal.pageSize.getHeight() - 80
                 var xtotal = 250
                 for(var i = 0; i < this.intervalos.intervalos.length; i++){
-                    var periodo = "- Período " + (i+1) +" ("
+                    var periodo = "- Momento " + (i+1) +" ("
                     doc.text(periodo + this.intervalos.intervalos[i].dataInicio + " até " + this.intervalos.intervalos[i].dataFim + ") Frequência: " + 
                     this.intervalos.intervalos[i].freq, xtotal, ytotal1)
                     ytotal1 +=10

@@ -121,14 +121,17 @@
         </v-col>
     </v-row>
   </v-container>
+  <Footer/>
 </div>
 </template>
 
 <script>
   const h = require("@/config/hosts").hostAPI
   import Swal from 'sweetalert2'
+  import Footer from '../components/Footer.vue';
   import axios from "axios"
   export default {
+    components: { Footer },
     data(){
       return {
         isProfessor: true,

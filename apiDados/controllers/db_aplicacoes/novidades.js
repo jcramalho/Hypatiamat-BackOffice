@@ -8,12 +8,12 @@ Novidades.insertNovidade = function (novidade) {
     return new Promise(function(resolve, reject) {
     var args, sqlquery
     if(novidade.link) {
-        args = [novidade.titulo, novidade.link]
-        sqlquery = "INSERT INTO novidades (`titulo`, `data`, `link`) VALUES (?, now(), ?)"
+        args = [novidade.titulo, novidade.data, novidade.link]
+        sqlquery = "INSERT INTO novidades (`titulo`, `data`, `link`) VALUES (?, ?, ?)"
     }
     else {
-        args = [novidade.titulo]
-        sqlquery = "INSERT INTO novidades (`titulo`, `data`, `link`) VALUES (?, now(), null)"
+        args = [novidade.titulo, novidade.data,]
+        sqlquery = "INSERT INTO novidades (`titulo`, `data`, `link`) VALUES (?, ?, null)"
     }
     sql.query(sqlquery, args, function (err, res) {
             if(err) {
@@ -47,7 +47,7 @@ Novidades.getNovidades = function(){
     return new Promise(function(resolve, reject) {
         sql.query(`Select nov.id, nov.titulo, nov.data, nov.link,
             (select count(sub.id) from subnovidades sub where sub.idNovidade=nov.id) as subnovidades 
-            from novidades nov Order by nov.id desc`, function(err, res){
+            from novidades nov Order by nov.data desc, nov.id desc`, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -107,9 +107,8 @@ Novidades.getSubNovidades = function(idNovidade){
 
 Novidades.updateNovidade = function(id, novidade){
     return new Promise(function(resolve, reject) {
-        
-        if(novidade.link) {var query = `Update novidades Set titulo=?, link=? where id=?`; var args= [novidade.titulo, novidade.link, id]}
-        else {var query = `Update novidades Set titulo=?, link=null where id=?`; var args= [novidade.titulo, id]}
+        if(novidade.link) {var query = `Update novidades Set titulo=?, link=?, data=? where id=?`; var args= [novidade.titulo, novidade.link, novidade.data, id]}
+        else {var query = `Update novidades Set titulo=?, link=null, data=? where id=?`; var args= [novidade.titulo, novidade.data, id]}
         
         sql.query(query, args, function(err, res){
             if(err){

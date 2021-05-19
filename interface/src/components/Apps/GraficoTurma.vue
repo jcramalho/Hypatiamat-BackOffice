@@ -281,11 +281,11 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
                 doc.text("Professor: " + this.props.nomeProf, 25, doc.internal.pageSize.getHeight()-90)
                 doc.text("Turma: " + this.props.turmaSel, 25, doc.internal.pageSize.getHeight()-80)
                 doc.text("App: " + this.props.app, 25, doc.internal.pageSize.getHeight()-70)
-                doc.text("Períodos:", 350, doc.internal.pageSize.getHeight() - 90)
+                doc.text("Momentos:", 350, doc.internal.pageSize.getHeight() - 90)
                 var ytotal1 = doc.internal.pageSize.getHeight() - 80
                 var xtotal = 350
                 for(var i = 0; i < this.intervalos.intervalos.length; i++){
-                    var periodo = "- Período " + (i+1) +" ("
+                    var periodo = "- Momento " + (i+1) +" ("
                     doc.text(periodo + this.intervalos.intervalos[i].dataInicio + " até " + this.intervalos.intervalos[i].dataFim + ") NTR: " + 
                     this.intervalos.intervalos[i].freq, xtotal, ytotal1)
                     ytotal1 +=10
