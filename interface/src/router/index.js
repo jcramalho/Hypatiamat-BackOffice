@@ -94,6 +94,8 @@ import Novidades from '../views/Novidades/Novidades.vue'
 
 import Comunidades from '../views/Comunidades/Comunidades.vue'
 
+import GestaoCromos from '../views/Cromos/GestaoCromos.vue'
+
 
 Vue.use(VueRouter)
 
@@ -246,6 +248,24 @@ const routes = [
     path: '/gestao/campeonatos',
     name: 'Gestão Campeonatos',
     component: GestaoCampeonatos,
+    beforeEnter: (to, from, next) => {
+      let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if((utilizador.type == 50)){
+        next()
+      }
+      else{
+        next({name: "Meu Perfil"})
+      }
+    },
+    meta: {
+      title: "Jogos",
+      icon:"../assets/logo.png" 
+    }
+  },
+  {
+    path: '/gestao/cromos',
+    name: 'Gestão Cromos',
+    component: GestaoCromos,
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50)){

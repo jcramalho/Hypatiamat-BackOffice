@@ -54,6 +54,7 @@
 import axios from "axios"
 const h = require("@/config/hosts").hostAPI
 const anoletivo = require("@/config/confs").anoletivo
+const anosletivos = require('@/config/confs').anosletivos
 import Swal from 'sweetalert2'
 import jsPDF from 'jspdf' 
 import 'jspdf-autotable'
@@ -67,7 +68,7 @@ import TotalEstatisticasMunicipios from '@/components/Estatisticas/TotalEstatist
         loading:false,
         ano:anoletivo,
         estatisticas:[],
-        anos: ["20/21", "19/20", "18/19", "17/18", "16/17", "15/16", "14/15" ],
+        anos: anosletivos,
         escolas: [],
         header_estatisticas: [
             {text: "Professor", value: 'nome', class: 'subtitle-1'},

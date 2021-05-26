@@ -8,7 +8,7 @@ var date = new Date()
 var anoTotal = date.getFullYear()
 var mes = date.getMonth()
 var ano
-if(mes < 9){
+if(mes+1 < 9){
     ano = anoTotal.toString()
 }
 else{
@@ -35,6 +35,8 @@ var N = 7
 
 // ultimos N anos letivos (ex: ["20/21", "19/20", ...])
 var anosletivos = []
+var anosCromos = []
+var anosCromos2 = []
 
 for(var i = 0; i < N; i++){
     var aux = (intAno-1-i) + "/" + (intAno-i)
@@ -42,6 +44,21 @@ for(var i = 0; i < N; i++){
 }
 
 module.exports.anosletivos = anosletivos
+
+for(var i = 1; i < N/2; i++){
+    var aux = (intAno-1-i) + "/" + (intAno-i)
+    anosCromos.push(aux)
+}
+
+for(var i = 0; i < N/2; i++){
+    var aux = (intAno-1+i) + "/" + (intAno+i)
+    var aux2 = intAno+i
+    anosCromos.push(aux)
+    anosCromos2.push(aux2)
+}
+
+module.exports.anosCromos = anosCromos
+module.exports.anosCromos2 = anosCromos2
 
 // ultimos N anos letivos 2 (ex: ["2020/2021", "2019/2020", ...])
 var anosletivos2 = []

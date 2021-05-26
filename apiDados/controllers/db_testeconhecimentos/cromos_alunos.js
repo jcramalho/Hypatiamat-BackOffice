@@ -141,3 +141,17 @@ Cromos.getUserFromoCromoId = function(id){
         })
     })
 }
+
+Cromos.isCromoCompletado = function(id){
+    return new Promise(function(resolve, reject) {
+        sql.query(`Select count(*) as users from cromos_alunos where idcromo=?;`, [id], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res[0].users > 0)
+            }
+        })
+    })
+}

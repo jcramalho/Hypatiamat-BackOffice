@@ -9,6 +9,44 @@ const maxFreq = 6
 var dataInicioAno = require('../../config/confs').dataInicio1
 var dataFimAno = require('../../config/confs').dataFim1
 
+
+Cromos.insertCromo = function(cromo){
+    var args = [cromo.numero, cromo.nome, cromo.descricao, cromo.imagem, 
+                cromo.campeonatos, cromo.apps, cromo.jogos, cromo.dias,
+                cromo.diferentes, cromo.estrelas, cromo.anoletivo]
+    return new Promise(function(resolve, reject) {
+        sql.query("INSERT INTO cromosdb (`numero`, `nome`, `descricao`, `imagem`, `campeonatos`, `apps`, `jogos`, `dias`, `diferentes`, `estrelas`, `anoletivo`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+                    args, function (err, res) {  
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    })
+}
+
+Cromos.updateCromo = function(id, cromo){
+    var args = [cromo.numero, cromo.nome, cromo.descricao, cromo.imagem, 
+                cromo.campeonatos, cromo.apps, cromo.jogos, cromo.dias,
+                cromo.diferentes, cromo.estrelas, cromo.anoletivo, id]
+    return new Promise(function(resolve, reject) {
+        sql.query("Update cromosdb Set numero=?, nome=?, descricao=?, imagem=?, campeonatos=?, apps=?, jogos=?, dias=?, diferentes=?, estrelas=?, anoletivo=? where id=?", 
+                    args, function (err, res) {  
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    })
+}
+
+
 Cromos.getCromosDB= function(){
     return new Promise(function(resolve, reject) {
         sql.query(`SELECT * FROM cromosdb where anoletivo=? Order by numero;`, anoletivo, function(err, res){
@@ -18,6 +56,35 @@ Cromos.getCromosDB= function(){
             }
             else{
                 resolve(res)
+            }
+        })
+    })
+}
+
+Cromos.getCromosDB2 = function(anoletivoSel){
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT * FROM cromosdb where anoletivo=? Order by numero;`, anoletivoSel, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+Cromos.getCromo = function(id){
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT * FROM cromosdb where id=? Order by numero;`, id, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if(res.length > 0) resolve(res[0])
+                else resolve(undefined)
             }
         })
     })
@@ -312,3 +379,31 @@ Cromos.getNovosCromos = function(user){
                   .catch(erro => {console.log(erro); reject(erro)})    
 }
 
+Cromos.deleteCromo = async function(id){
+    sql.query("Delete From cromosdb where id = ?", id, function (err, res) {
+        if(err) {
+            console.log("error: ", err);
+            reject(err);
+        }
+        else{
+            return true
+        }
+    });   
+}
+
+Cromos.apagarCromo = async function(id){
+    var teste = await CromosAlunos.isCromoCompletado(id)
+    if(teste){
+        return {
+            removed: false,
+            message: "O cromo já foi conquistado por alguns alunos!"
+        }
+    }
+    else{
+        await this.deleteCromo(id)
+        return{
+            removed: true,
+            message: "Cromo removido com sucesso."
+        }
+    }
+}

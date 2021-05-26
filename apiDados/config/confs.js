@@ -5,7 +5,7 @@ var date = new Date()
 var anoTotal = date.getFullYear()
 var mes = date.getMonth()
 var ano
-if(mes < 9){
+if(mes+1 < 9){
     ano = anoTotal.toString()
 }
 else{

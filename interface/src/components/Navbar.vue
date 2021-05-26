@@ -107,7 +107,7 @@ export default {
       idUtilizador:"",
       nomeUtilizador:"",
       nome:"",
-      versao: "2.3"
+      versao: "2.4"
     }
   },
   watch: {
@@ -138,6 +138,7 @@ export default {
         { title: 'Comunidades', icon: 'mdi-google-circles-communities', href:"/comunidades" },
         { title: 'Gestão de Campeonatos', icon: 'mdi-table-edit', href:"/gestao/campeonatos"},
         { title: 'Gestão de Novidades', icon: 'mdi-newspaper', href:"/novidades" },
+        { title: 'Gestão de Cromos', icon: 'mdi-book-open-page-variant-outline', href:"/gestao/cromos" },
         { title: 'Monitorização de Jogos', icon: 'mdi-gamepad-variant', href:"/jogos/municipios"},
         { title: 'Monitorização de Apps', icon: 'mdi-apps', href:"/apps/municipios"},
         { title: 'Ranking Jogos', icon: 'mdi-podium', href:"/classificacoes/jogos/admin"},

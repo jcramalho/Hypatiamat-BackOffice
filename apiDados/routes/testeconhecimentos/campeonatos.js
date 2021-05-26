@@ -355,7 +355,7 @@ router.post('/', passport.authenticate('jwt', {session: false}), verifyToken.ver
                    .catch(erro => res.status(500).jsonp(erro))
 });
 
-router.post('/:cod/certificados', upload.single('file'), passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), async function(req, res){
+router.post('/:cod/certificados', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), upload.single('file'), async function(req, res){
     let campeonato = req.params.cod
     let jogo = req.query.jogo
     let posicao = req.query.posicao
