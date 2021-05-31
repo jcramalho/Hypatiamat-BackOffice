@@ -6,9 +6,9 @@ const Campeonatos = module.exports
 Campeonatos.insertCampeonato = function(campeonato){
     return new Promise(function(resolve, reject) {
         var args = [campeonato.cod, campeonato.di, campeonato.horai, campeonato.df, campeonato.horaf, campeonato.frase1,
-                    campeonato.frase2, campeonato.municipio, campeonato.comunidade, campeonato.descricaoBackOffice]
-        sql.query("Insert into campeonatosID (`cod`, `datains`, `di`, `horai`, `df`, `horaf`, `frase1`, `frase2`, `municipio`, `comunidade`, `descricaoBackOffice`) "+
-        "values (?, now(), ?, ?, ?, ?, ?, ?, ?, ?, ?);", args, function(err, res){
+                    campeonato.frase2, campeonato.municipio, campeonato.comunidade, campeonato.descricaoBackOffice, campeonato.anoletivo]
+        sql.query("Insert into campeonatosID (`cod`, `datains`, `di`, `horai`, `df`, `horaf`, `frase1`, `frase2`, `municipio`, `comunidade`, `descricaoBackOffice`, `anoletivo`) "+
+        "values (?, now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", args, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

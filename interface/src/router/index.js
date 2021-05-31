@@ -113,6 +113,7 @@ const routes = [
     path: '/professores',
     name: 'Professores',
     component: Professores,
+    meta: {title: 'Escritório - Professores Ativos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 50){
@@ -127,6 +128,7 @@ const routes = [
     path: '/comunidades',
     name: 'Comunidades',
     component: Comunidades,
+    meta: {title: 'Escritório - Comunidades'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 50){
@@ -141,6 +143,7 @@ const routes = [
     path: '/novidades',
     name: 'Gestão Novidades',
     component: GestaoNovidades,
+    meta: {title: 'Escritório - Gestão de Novidades'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 50){
@@ -155,11 +158,13 @@ const routes = [
     path: '/novidades/lista',
     name: 'Novidades',
     component: Novidades,
+    meta: {title: 'Hypatiamat - Novidades'}
   },
   {
     path: '/profspendentes',
     name: 'Professores Pendentes',
     component: Pendentes2,
+    meta: {title: 'Escritório - Professores Pendentes'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 50){
@@ -174,6 +179,7 @@ const routes = [
     path: '/codigosprof',
     name: 'Códigos Professores',
     component: CodigosProfessores,
+    meta: {title: 'Escritório - Códigos Professores'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 50){
@@ -188,6 +194,7 @@ const routes = [
     path: '/gestaoTurmas',
     name: 'Gestão de Turmas',
     component: GestaoTurmas,
+    meta: {title: 'Escritório - Gestão de Turmas'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 20){
@@ -202,6 +209,7 @@ const routes = [
     path: '/gestaoAlunos',
     name: 'Gestão de Alunos',
     component: GestaoAlunos,
+    meta: {title: 'Escritório - Gestão de Alunos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 20){
@@ -216,6 +224,7 @@ const routes = [
     path: '/agrupamentos',
     name: 'Agrupamentos',
     component: Agrupamentos,
+    meta: {title: 'Escritório - Agrupamentos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 30){
@@ -230,6 +239,7 @@ const routes = [
     path: '/jogos',
     name: 'Jogos',
     component: Jogos,
+    meta: {title: 'Escritório - Jogos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if( utilizador.type == 20 ){
@@ -239,15 +249,12 @@ const routes = [
         next({name: "Meu Perfil"})
       }
     },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
-    }
   },
   {
     path: '/gestao/campeonatos',
     name: 'Gestão Campeonatos',
     component: GestaoCampeonatos,
+    meta: {title: 'Escritório - Gestão de Campeonatos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50)){
@@ -257,15 +264,12 @@ const routes = [
         next({name: "Meu Perfil"})
       }
     },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
-    }
   },
   {
     path: '/gestao/cromos',
     name: 'Gestão Cromos',
     component: GestaoCromos,
+    meta: {title: 'Escritório - Gestão de Cromos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50)){
@@ -274,16 +278,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/classificacoes/jogos',
     name: 'Ranking Jogos',
     component: RankingJogos,
+    meta: {title: 'Escritório - Ranking Jogos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50 || utilizador.type == 20)){
@@ -292,16 +293,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/classificacoes/jogos/admin',
     name: 'Ranking Jogos Admin',
     component: RankingJogosAdmin,
+    meta: {title: 'Escritório - Ranking Jogos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50)){
@@ -311,15 +309,12 @@ const routes = [
         next({name: "Meu Perfil"})
       }
     },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
-    }
   },
   {
     path: '/classificacoes/jogos/municipio',
     name: 'Ranking Jogos Município',
     component: RankingJogosMunicipio,
+    meta: {title: 'Escritório - Ranking Jogos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 30)){
@@ -329,15 +324,12 @@ const routes = [
         next({name: "Meu Perfil"})
       }
     },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
-    }
   },
   {
     path: '/classificacoes/jogos/escola',
     name: 'Ranking Jogos Agrupamento',
     component: RankingJogosAgrupamento,
+    meta: {title: 'Escritório - Ranking Jogos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 40)){
@@ -346,16 +338,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/classificacoes/apps',
     name: 'Ranking Apps',
     component: RankingApps,
+    meta: {title: 'Escritório - Ranking Apps'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50 || utilizador.type == 20)){
@@ -364,16 +353,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/classificacoes/apps/admin',
     name: 'Ranking Apps Admin',
     component: RankingAppsAdmin,
+    meta: {title: 'Escritório - Ranking Apps'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50)){
@@ -382,16 +368,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/classificacoes/apps/municipio',
     name: 'Ranking Apps Municipio',
     component: RankingAppsMunicipio,
+    meta: {title: 'Escritório - Ranking Apps'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 30)){
@@ -400,16 +383,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/classificacoes/apps/escola',
     name: 'Ranking Apps Agrupamento',
     component: RankingAppsAgrupamento,
+    meta: {title: 'Escritório - Ranking Apps'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 40)){
@@ -418,16 +398,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/jogos/municipios',
     name: 'Jogos Municipio',
     component: JogosMunicipios,
+    meta: {title: 'Escritório - Jogos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50)){
@@ -436,16 +413,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/estatisticas/municipios',
     name: 'Estatisticas Municipio',
     component: EstatisticasMunicipios,
+    meta: {title: 'Escritório - Estatísticas'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50)){
@@ -454,16 +428,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Esatísticas",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/estatisticas/municipios/:municipio',
     name: 'Estatisticas Agrupamentos',
     component: EstatisticasAgrupamentos,
+    meta: {title: 'Escritório - Estatísticas'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.infoEscola.localidade == to.params.municipio)){
@@ -472,16 +443,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Esatísticas",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/estatisticas/escolas/:escola',
     name: 'Estatisticas Professores',
     component: EstatisticasProfessores,
+    meta: {title: 'Escritório - Estatísticas'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.escolas.find(e => e.cod == to.params.escola)) 
@@ -491,16 +459,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Esatísticas",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/apps/municipios',
     name: 'Apps Municipios',
     component: AppsMunicipios,
+    meta: {title: 'Escritório - Aplicações'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50)){
@@ -509,16 +474,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/campeonatos/municipios',
     name: 'Campeonatos Municipios',
     component: CampeonatosMunicipios,
+    meta: {title: 'Escritório - Campeonatos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50)){
@@ -527,16 +489,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/campeonatos/geral',
     name: 'Ranking Geral Campeonatos',
     component: CampeonatosGeralAdmin,
+    meta: {title: 'Escritório - Campeonatos Geral'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50)){
@@ -545,16 +504,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/professores/mensagens',
     name: 'Enviar Mensagens',
     component: EnviarMensagem,
+    meta: {title: 'Escritório - Enviar Mensagem'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 20)){
@@ -563,16 +519,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/alunos/mensagens',
     name: 'Mensagens',
     component: MensagensAluno,
+    meta: {title: 'Escritório - Mensagens'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 10)){
@@ -581,16 +534,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/alunos/cromos',
     name: 'Caderneta',
     component: Cromos,
+    meta: {title: 'Escritório - Caderneta de Cromos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 10)){
@@ -599,16 +549,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/campeonatos/municipios/:municipio',
     name: 'Campeonatos Agrupamentos',
     component: CampeonatosAgrupamentos,
+    meta: {title: 'Escritório - Campeonatos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.infoEscola.localidade == to.params.municipio) ){
@@ -617,16 +564,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/campeonatos/escolas/:escola',
     name: 'Campeonatos Professores',
     component: CampeonatosProfessores,
+    meta: {title: 'Escritório - Campeonatos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.escolas.find(e => e.cod == to.params.escola)) ||
@@ -636,16 +580,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/campeonatos/professores/:codprofessor',
     name: 'Campeonatos Turmas',
     component: CampeonatosTurmas,
+    meta: {title: 'Escritório - Campeonatos'},
     beforeEnter: async (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       let token = localStorage.getItem("token")
@@ -663,16 +604,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/campeonatos/alunos/:user',
     name: 'Campeonatos Alunos',
     component: DesempenhoAluno,
+    meta: {title: 'Escritório - Campeonatos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 10 && utilizador.user == to.params.user){
@@ -681,16 +619,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/jogos/:idprofessor',
     name: 'Jogos Turma',
     component: JogosTurma,
+    meta: {title: 'Escritório - Jogos'},
     beforeEnter: async (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       let token = localStorage.getItem("token")
@@ -707,16 +642,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/apps/:idprofessor',
     name: 'Apps Turmas',
     component: AppsTurmas,
+    meta: {title: 'Escritório - Aplicações'},
     beforeEnter: async (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       let token = localStorage.getItem("token")
@@ -733,16 +665,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Apps",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/jogos/:municipio/escolas',
     name: 'Jogos Escolas',
     component: JogosEscolas,
+    meta: {title: 'Escritório - Jogos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       // fazer algo para garantir que o municipio apenas entre para ver escolas do seu municipio e não de outros municipios
@@ -752,16 +681,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/apps/:municipio/escolas',
     name: 'Apps Escolas',
     component: AppsEscolas,
+    meta: {title: 'Escritório - Aplicações'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       // fazer algo para garantir que o municipio apenas entre para ver escolas do seu municipio e não de outros municipios
@@ -771,16 +697,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/escolas/:id/jogos',
     name: 'Jogos Professores',
     component: JogosProfessores,
+    meta: {title: 'Escritório - Jogos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       // fazer algo para garantir que o municipio apenas entre para ver escolas do seu municipio e não de outros municipios
@@ -791,16 +714,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Jogos",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/escolas/:escola/apps',
     name: 'Apps Professores',
     component: AppsProfessores,
+    meta: {title: 'Escritório - Aplicações'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       // fazer algo para garantir que o municipio apenas entre para ver escolas do seu municipio e não de outros municipios
@@ -811,16 +731,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Apps Escola",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/escolas/:escola/professores',
     name: 'Professores Agrupamento',
     component: AgrupamentoProfessores,
+    meta: {title: 'Escritório - Aplicações'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       // fazer algo para garantir que o municipio apenas entre para ver escolas do seu municipio e não de outros municipios
@@ -831,16 +748,13 @@ const routes = [
       else{
         next({name: "Meu Perfil"})
       }
-    },
-    meta: {
-      title: "Professores Agrupamento",
-      icon:"../assets/logo.png" 
     }
   },
   {
     path: '/monotorizacaojogos',
     name: 'Monotorizacao Jogos',
     component: MonotorizacaoJogos,
+    meta: {title: 'Escritório - Jogos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 50){
@@ -850,15 +764,12 @@ const routes = [
         next({name: "Meu Perfil"})
       }
     },
-    meta: {
-      title: "Monotorização",
-      icon:"../assets/logo.png" 
-    }
   },
   {
     path: '/apps',
     name: 'Apps',
     component: Apps,
+    meta: {title: 'Escritório - Aplicações'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 20){
@@ -868,15 +779,12 @@ const routes = [
         next({name: "Meu Perfil"})
       }
     },
-    meta: {
-      title: "Apps",
-      icon:"../assets/logo.png" 
-    }
   },
   {
     path: '/jogosAluno',
     name: 'Jogos Alunos',
     component: JogosAluno,
+    meta: {title: 'Escritório - Jogos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 10){
@@ -891,6 +799,7 @@ const routes = [
     path: '/appsAluno',
     name: 'Apps Alunos',
     component: AppsAluno,
+    meta: {title: 'Escritório - Aplicações'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 10){
@@ -905,6 +814,7 @@ const routes = [
     path: '/alunos',
     name: 'Alunos',
     component: Alunos,
+    meta: {title: 'Escritório - Alunos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 50){
@@ -919,6 +829,7 @@ const routes = [
     path: '/escolas',
     name: 'Escolas',
     component: Escolas,
+    meta: {title: 'Escritório - Agrupamentos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 50){
@@ -933,6 +844,7 @@ const routes = [
     path: '/turmas',
     name: 'Turmas',
     component: Turmas,
+    meta: {title: 'Escritório - Turmas'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 50){
@@ -952,6 +864,7 @@ const routes = [
     path: '/editarAluno/:id',
     name: 'Editar Aluno',
     component: EditarAluno,
+    meta: {title: 'Escritório - Editar Aluno'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 50 || (utilizador.type == 20) || (utilizador.type == 10 && utilizador.id == to.params.id)){
@@ -966,6 +879,7 @@ const routes = [
     path: '/editarEscola/:id',
     name: 'Editar Escola',
     component: EditarEscola,
+    meta: {title: 'Escritório - Editar Agrupamento'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 50){
@@ -980,6 +894,7 @@ const routes = [
     path: '/editarTurma/:idprofessor/:turma',
     name: 'Editar Turma',
     component: EditarTurma,
+    meta: {title: 'Escritório - Editar Turma'},
     beforeEnter: async (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       let token = localStorage.getItem("token")
@@ -998,6 +913,7 @@ const routes = [
     path: '/editarMinhaTurma/:id',
     name: 'Editar Minha Turma',
     component: EditarMinhaTurma,
+    meta: {title: 'Escritório - Editar Turma'},
     beforeEnter: async (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       let token = localStorage.getItem("token")
@@ -1016,6 +932,7 @@ const routes = [
     path: '/verTurma/:id',
     name: 'Ver Turma',
     component: AlunosTurma,
+    meta: {title: 'Escritório - Alunos Turma'},
     beforeEnter: async (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       let token = localStorage.getItem("token")
@@ -1052,6 +969,7 @@ const routes = [
     path: '/criarTurma',
     name: 'Criar Turma',
     component: CriarTurma,
+    meta: {title: 'Escritório - Criar Turma'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 50 || utilizador.type == 20){
@@ -1066,6 +984,7 @@ const routes = [
     path: '/criarProfessor',
     name: 'Criar Professor',
     component: CriarProfessor,
+    meta: {title: 'Escritório - Criar Professor'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 50){
@@ -1080,6 +999,7 @@ const routes = [
     path: '/criarEscola',
     name: 'Criar Escola',
     component: CriarEscola,
+    meta: {title: 'Escritório - Criar Agrupamento'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 50){
@@ -1094,6 +1014,7 @@ const routes = [
     path: '/criarAluno',
     name: 'Criar Aluno',
     component: CriarAluno,
+    meta: {title: 'Escritório - Criar Aluno'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 50 || utilizador.type == 20){
@@ -1108,6 +1029,7 @@ const routes = [
     path: '/pendentes',
     name: 'Pendentes',
     component: Pendentes,
+    meta: {title: 'Escritório - Professores Pendentes'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 50){
@@ -1122,6 +1044,7 @@ const routes = [
     path: '/professores/:codigo/turmas',
     name: 'Turmas Professor',
     component: TurmasProf,
+    meta: {title: 'Escritório - Turmas'},
     beforeEnter: async (to, from, next) => {
       let token = localStorage.getItem('token')
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
@@ -1143,6 +1066,7 @@ const routes = [
     path: '/desempenho/:codprofessor/turmas',
     name: 'Desempenho Geral',
     component: DesempenhoTurmas,
+    meta: {title: 'Escritório - Desempenho Geral'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(utilizador.type == 20 && utilizador.codigo == to.params.codprofessor){
@@ -1172,5 +1096,14 @@ const router = new VueRouter({
     return { x: 0, y: 0 }
   },
 })
+
+const DEFAULT_TITLE = 'Hypatiamat - Escritório';
+router.afterEach((to, from) => {
+    // Use next tick to handle router history correctly
+    // see: https://github.com/vuejs/vue-router/issues/914#issuecomment-384477609
+    Vue.nextTick(() => {
+        document.title = to.meta.title || DEFAULT_TITLE;
+    });
+});
 
 export default router

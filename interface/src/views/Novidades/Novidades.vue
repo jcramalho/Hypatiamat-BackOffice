@@ -1,24 +1,25 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
-    <v-toolbar class="fixed-bar align-center" flat height="90">
+    <v-toolbar class="fixed-bar align-center" flat :height="(mobile || small) ? 150 : 90">
         <v-row class="align-center">
-        <v-col cols="6">
-        <a href="https://hypatiamat.com">
-            <img :src="require('@/assets/hypatiamat.png')" height="60" class="logo" style="margin-left:3%;"/>
-        </a>
+        <v-col cols="12" md="5">
+            <a href="https://hypatiamat.com">
+                <img :src="require('@/assets/logo6.png')" height="60" class="logo" />
+            </a>
+        </v-col>
+        <v-col cols="12" md="7">
+
+            <span style="font-size:40px; color: #30bc8c; "><b> Novidades </b></span>
         </v-col>
         </v-row>
     </v-toolbar>
         <v-card>
-            <v-card class="pa-5" width="100%" color="#30bc8c">
-                <center><span class="white--text" style="font-size:30px"><b> Novidades </b></span></center>
-            </v-card>
             <!--<v-list v-model="novidades" 
                 <v-list-item v-for="novidade in novidades" v-bind:key="novidade.id">-->
             <div style='background-color:#009263'>
                 <v-row v-for="novidade in novidadesView" v-bind:key="novidade.id">
-                    <v-card class="elevation-3 ma-3 ml-md-16 ml-xs-1 pa-5" outlined color="#30bc8c" :min-width="mobile ? 100 : (small ? 450 : 750)">
+                    <v-card class="elevation-3 ma-3 ml-md-16 ml-xs-1 pa-5 mr-md-16" outlined color="#30bc8c" :min-width="mobile ? 100 :  '93%'" :max-width="mobile ? '100%' : '100%'">
                         <v-row no-gutters v-if="mobile">
                             <v-col cols="12" sm="3">
                                 <b style="color: #10381b;">[{{novidade.data}}]</b> 
@@ -31,13 +32,13 @@
                             </v-col>
                         </v-row>
                         <v-list-item-title v-else>
-                            <span style="color: #10381b; font-size:20px"><b>[{{novidade.data}}] </b> <span>{{novidade.titulo}}</span> <span v-if="novidade.link" @click="goToLink(novidade.link)"> [+] Ver</span></span>
+                            <span style="color: #10381b; font-size:22px"><b>[{{novidade.data}}] </b> <span>{{novidade.titulo}}</span> <span v-if="novidade.link" @click="goToLink(novidade.link)"> [+] Ver</span></span>
                         </v-list-item-title>
                         <v-list-item-group class="white--text">
                             <div>
                                 <ul>
                                     <li class="white--text" v-for="subnovidade in novidade.subnovidades" v-bind:key="subnovidade.id">
-                                        <span class="white-text" style="font-size:18px">{{subnovidade.subnovidade}}</span>
+                                        <span class="white-text" style="font-size:20px">{{subnovidade.subnovidade}}</span>
                                     </li>
                                 </ul>
                             </div>
@@ -45,6 +46,7 @@
                     </v-card>
                 </v-row>
                 <v-row>
+                    <center>
                     <v-btn
                     class="text-none white--text ma-3 ml-md-16 ml-xs-1 pa-5"
                     v-if="pagination.total > pagination.page"
@@ -56,6 +58,7 @@
                     >
                     Ver novidades mais antigas
                     </v-btn>
+                    </center>
                 </v-row>
             </div>
                <!-- </v-list-item>
@@ -72,9 +75,9 @@
                 class="white--text"
                 >
                     
-                <v-row class="pa-4" no-gutters>
+                <v-row class="pa-4 ml-4" no-gutters>
                     <v-col cols="12" sm="6" md="2" lg="2">
-                        <h3>SOBRE</h3>
+                        <h2>SOBRE</h2>
                         <ul class="no-bullets">
                             <li><a class="li-color"  href="https://www.hypatiamat.com/projeto.php">O projeto</a></li>
                             <li><a class="li-color" href="https://www.hypatiamat.com/equipa.php">A equipa</a></li>
@@ -85,18 +88,18 @@
                         </ul>
                     </v-col>
                     <v-col cols="12" sm="6" md="2" lg="2">
-                        <h3>AJUDA</h3>
+                        <h2>AJUDA</h2>
                         <ul class="no-bullets">
                             <li><a class="li-color" href="https://www.hypatiamat.com/faqs.php">Faqs</a></li>
                         </ul>
                         <br v-if="!mobile && !small">
-                        <h3>CONTACTOS</h3>
+                        <h2>CONTACTOS</h2>
                         <ul class="no-bullets">
                             <li><a class="li-color" href="https://www.hypatiamat.com/contacto.php">Contacto</a></li>
                         </ul>
                     </v-col>
                     <v-col cols="12" sm="6" md="2" lg="2">
-                        <h3>CONTRIBUTOS</h3>
+                        <h2>CONTRIBUTOS</h2>
                         <ul class="no-bullets">
                             <li><a class="li-color" href="https://www.hypatiamat.com/contributos.php">Contributos</a></li>
                             <!--<li><a href="#">Voluntários</a></li>
@@ -104,13 +107,13 @@
                         </ul>
                         <br v-if="!mobile && !small">
                         <span style="color:white "></span>
-                        <h3>FORMAÇÃO</h3>
+                        <h2>FORMAÇÃO</h2>
                         <ul class="no-bullets">
                             <li><a class="li-color" href="https://www.hypatiamat.com/formacaopalestrasworkshops.php">Formação, Palestras e Workshops</a></li>
                         </ul>
                     </v-col>
                     <v-col cols="12" sm="6" md="2" lg="2">
-                        <h3>SOCIAL</h3>
+                        <h2>SOCIAL</h2>
                         <ul class="no-bullets">
                             <li><a class="li-color" href="https://www.facebook.com/hypatiamat" target="_blank">Facebook</a></li>
                             <li><a class="li-color" href="https://www.youtube.com/channel/UCk3CN9sYSXY60jtaIQreMzw" target="_blank">Youtube</a></li>
@@ -118,21 +121,21 @@
                         </ul>
                     </v-col>
                     <v-col cols="12" sm="6" md="2" lg="2">
-                        <h3>TERMOS E CONDIÇÕES</h3>
+                        <h2>TERMOS E CONDIÇÕES</h2>
                         <ul class="no-bullets">
                             <li><a class="li-color" href="https://www.hypatiamat.com/termosCondicoes.php" target="_blank">Termos e condições</a></li>
                             <li><a class="li-color" href="https://www.hypatiamat.com/termosCondicoes.php" target="_blank">Política de Privacidade</a></li>
                         </ul>
                         <br v-if="!mobile && !small">
-                        <h3>HINO</h3>
+                        <h2>HINO</h2>
                         <ul class="no-bullets">
                             <li><a class="li-color" href="https://youtu.be/TD0Y0r5lLvc" target="_blank">Hino do Hypatiamat</a></li>
                         </ul>
                     </v-col>
-                    <v-col cols="12" sm="6" md="3" lg="2">
+                    <v-col class="pt-4" cols="12" sm="6" md="3" lg="2">
                         <center>
                         <div>
-                            <img :src="require('@/assets/hypatia-icon2.png')" width="150"/>
+                            <img :src="require('@/assets/hypatia-icon2.png')" width="160"/>
                         </div>
                         </center>
                     </v-col>
@@ -168,7 +171,7 @@ const h = require("@/config/hosts").hostAPI
         pagination: {
             page: 1,
             total: 0,
-            perPage: 8,
+            perPage: 6,
         },
       }
     },
@@ -233,7 +236,7 @@ ul.no-bullets {
 a.li-color {
     color: #009263;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 </style>

@@ -23,8 +23,8 @@ import Registar from '@/views/Registar.vue'
 import Novidades from '@/views/Novidades/Novidades.vue'
 import axios from 'axios'
 import { ResponsiveDirective } from "vue-responsive-components"
-
-
+import bifrostCors from "bifrost-cors"
+import jwt_decode from "jwt-decode";
 
 
 export default {
@@ -44,6 +44,7 @@ export default {
           viewKey: 0,
           loggedIn : false,
           mode : false,
+          bifrostCors: '',
         }
     },
     watch: {
@@ -64,6 +65,7 @@ export default {
           localStorage.removeItem("token")
           localStorage.removeItem("type")
           localStorage.removeItem("utilizador")
+          //this.bifrostCors.deleteLocalStorage(["token", "type", "utilizador"])
           Swal.fire({
                   icon: 'info',
                   text: "A sua sessão expirou.",
@@ -74,7 +76,8 @@ export default {
         }
 
       });
-      
+
+      //this.bifrostCors = new bifrostCors("https://www.hypatiamat.com/", false)
       this.refreshLogout()
     },
     methods: {
@@ -85,7 +88,18 @@ export default {
           },
           isLogged: function(){
             var token = localStorage.getItem("token")
-            if (token == null) return false
+            if (token == null) {
+              /*
+              //var token2 = this.bifrostCors.getLocalStorage("token")
+              if(token2 == null) return false
+              else{
+                var aux = jwt_decode(token2)
+                localStorage.setItem("utilizador", JSON.stringify(aux.user))
+                localStorage.setItem("type", JSON.stringify(aux.user.type))
+                localStorage.setItem("token", JSON.stringify(token2))
+              }*/
+              return false
+            }
             else return true
           },
           refreshLogout: function(){

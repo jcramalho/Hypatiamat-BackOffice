@@ -350,9 +350,14 @@ router.put('/:codigo', passport.authenticate('jwt', {session: false}), verifyTok
 });
 
 router.post('/', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
-    CampeonatosCRUD.insertCampeonato(req.body)
+    var campeonato = req.body
+    if(campeonato.cod && campeonato.di && campeonato.horai && campeonato.df && campeonato.horaf && campeonato.frase1 &&
+        campeonato.frase2 && campeonato.descricaoBackOffice && campeonato.anoletivo){
+            CampeonatosCRUD.insertCampeonato(campeonato)
                    .then(dados =>res.jsonp(dados))
                    .catch(erro => res.status(500).jsonp(erro))
+    }
+    else res.status(400).send('Faltam parâmetros.')
 });
 
 router.post('/:cod/certificados', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), upload.single('file'), async function(req, res){

@@ -6,6 +6,10 @@
             <v-form>
                 <v-row>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
+                <v-text-field color="#009263" 
+                    v-model="campeonato.anoletivo" name="Ano Letivo" label="Ano Letivo" 
+                    required
+                ></v-text-field>
                 <v-text-field color="#009263" :rules="[string20, campeonatoExiste]"
                     v-model="campeonato.cod" name="Código do Campeonato" label="Código do Campeonato" 
                     required
@@ -74,6 +78,8 @@ import axios from "axios"
 import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
 const hostCampeonatos = require("@/config/hosts").hostCampeonatos
+const anoletivo = require("@/config/confs").anoletivo
+const anosletivos2 = require('@/config/confs').anosCromos2
 
   export default {
     components:{
@@ -91,7 +97,8 @@ const hostCampeonatos = require("@/config/hosts").hostCampeonatos
             frase2:"",
             municipio:"",
             comunidade:"",
-            descricaoBackOffice:""
+            descricaoBackOffice:"",
+            anoletivo: anoletivo
         },
         loading:false,
         diHora:"",
@@ -101,6 +108,7 @@ const hostCampeonatos = require("@/config/hosts").hostCampeonatos
         disabled:true,
         municipios:[],
         comunidades:[],
+        anosletivos: anosletivos2,
         filtrar : "",
         filtrar2 : "",
         string20: v =>{
@@ -144,9 +152,10 @@ const hostCampeonatos = require("@/config/hosts").hostCampeonatos
                 frase2: this.campeonato.frase2,
                 descricaoBackOffice: this.campeonato.descricaoBackOffice,
                 comunidade: null,
-                municipio: null
+                municipio: null,
+                anoletivo: this.campeonato.anoletivo
             }
-          if(this.campeonato.municipio.localidade && this.campeonato.municipio.localidade != ""){
+          if(this.campeonato.municipio && this.campeonato.municipio.localidade && this.campeonato.municipio.localidade != ""){
             if(this.campeonato.comunidade && this.campeonato.comunidade != ""){
                 campeonatoNovo.comunidade = this.campeonato.comunidade.codigo
                 campeonatoNovo.municipio = this.campeonato.municipio.localidade

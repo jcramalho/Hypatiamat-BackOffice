@@ -80,6 +80,7 @@
 <script>
 import VueJwtDecode from "vue-jwt-decode";
 import Swal from 'sweetalert2'
+import bifrostCors from "bifrost-cors"
 const host = require("@/config/hosts").host
 export default {
   props:[
@@ -107,7 +108,8 @@ export default {
       idUtilizador:"",
       nomeUtilizador:"",
       nome:"",
-      versao: "2.4"
+      bifrostCors:"",
+      versao: "2.5"
     }
   },
   watch: {
@@ -123,7 +125,6 @@ export default {
     else this.idUtilizador = utilizador.codigo
     this.nomeUtilizador = utilizador.nome
     this.$emit("miniEvent", this.mini)
-    console.log(this.mensagensLer)
     if(utilizador.type == 50){
       // Admin   
       this.items = [
@@ -204,6 +205,7 @@ export default {
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }
+    //this.bifrostCors = new bifrostCors("https://www.hypatiamat.com/", false)
   },
   computed: {
     bg () {
@@ -224,6 +226,7 @@ export default {
             localStorage.removeItem("utilizador");
             localStorage.removeItem("type");
             localStorage.removeItem("token");
+            //this.bifrostCors.deleteLocalStorage(["token", "type", "utilizador"])
             this.$emit('refreshLogout')
             this.color = "#900001"
           }

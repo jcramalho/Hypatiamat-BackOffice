@@ -98,7 +98,7 @@
                                 <v-img width="150px" :src="require('@/assets/cromos/estrela'+cromosCompletados.find(e => e.idcromo == cromo.id).estrelasGanhas+'.png')">
                                 </v-img>
                               </div>
-                              <v-img :src="require('@/assets/cromos/cromo' + cromo.numero + '.png')" width="150px" heigth="150px" @click="abreCromo(cromo.id)">
+                              <v-img :src="hostImages + cromo.imagem" width="150px" heigth="150px" @click="abreCromo(cromo.id)">
                               </v-img>
                               <span class="caption">Clique no cromo, ganhou uma estrela.</span>   
                             </div>
@@ -116,11 +116,11 @@
                               <div v-if="cromo.estrelas">
                                 <v-img width="150px" :src="require('@/assets/cromos/estrela'+cromosCompletados.find(e => e.idcromo == cromo.id).estrelasGanhas+'.png')">
                                 </v-img>
-                                <v-img  :src="require('@/assets/cromos/cromo' + cromo.numero + '.png')" width="150px" heigth="150px">
+                                <v-img  :src="hostImages + cromo.imagem" width="150px" heigth="150px">
                                 </v-img>
                               </div>
                               <div v-else style="margin-top:55px">
-                                <v-img  :src="require('@/assets/cromos/cromo' + cromo.numero + '.png')" width="150px" heigth="150px">
+                                <v-img  :src="hostImages + cromo.imagem" width="150px" heigth="150px">
                                 </v-img>
                               </div>
                             </div>
@@ -157,6 +157,7 @@
 import axios from "axios"
 import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
+const host = require("@/config/hosts").host
 const hostCromos = require("@/config/hosts").hostCromos
 
   export default {
@@ -168,6 +169,7 @@ const hostCromos = require("@/config/hosts").hostCromos
         cromosCompletados: [],
         numeroCromosCompletados:0,
         totalCromos:0,
+        hostImages: host + 'cromos_imgs/',
       }
     },
     props:["idProp"],
