@@ -110,12 +110,18 @@ function pertence(turmas, idTurma){
 
 const routes = [
   {
+    path: '/login',
+    name: 'Login',
+    component: AuthApp
+  },
+  {
     path: '/professores',
     name: 'Professores',
     component: Professores,
     meta: {title: 'Escritório - Professores Ativos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if(utilizador.type == 50){
         next()
       }
@@ -131,6 +137,7 @@ const routes = [
     meta: {title: 'Escritório - Comunidades'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if(utilizador.type == 50){
         next()
       }
@@ -146,6 +153,7 @@ const routes = [
     meta: {title: 'Escritório - Gestão de Novidades'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if(utilizador.type == 50){
         next()
       }
@@ -167,6 +175,7 @@ const routes = [
     meta: {title: 'Escritório - Professores Pendentes'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if(utilizador.type == 50){
         next()
       }
@@ -182,6 +191,7 @@ const routes = [
     meta: {title: 'Escritório - Códigos Professores'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if(utilizador.type == 50){
         next()
       }
@@ -197,7 +207,8 @@ const routes = [
     meta: {title: 'Escritório - Gestão de Turmas'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if(utilizador.type == 20){
+      if(!utilizador) {next({name: "Login"});}
+      if(utilizador.type == 20 || utilizador.type == 5){
         next()
       }
       else{
@@ -212,7 +223,8 @@ const routes = [
     meta: {title: 'Escritório - Gestão de Alunos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if(utilizador.type == 20){
+      if(!utilizador) {next({name: "Login"});}
+      if(utilizador.type == 20 || utilizador.type == 5){
         next()
       }
       else{
@@ -227,6 +239,7 @@ const routes = [
     meta: {title: 'Escritório - Agrupamentos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if(utilizador.type == 30){
         next()
       }
@@ -242,7 +255,8 @@ const routes = [
     meta: {title: 'Escritório - Jogos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if( utilizador.type == 20 ){
+      if(!utilizador) {next({name: "Login"});}
+      if( utilizador.type == 20 || utilizador.type == 5){
         next()
       }
       else{
@@ -257,6 +271,7 @@ const routes = [
     meta: {title: 'Escritório - Gestão de Campeonatos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if((utilizador.type == 50)){
         next()
       }
@@ -272,6 +287,7 @@ const routes = [
     meta: {title: 'Escritório - Gestão de Cromos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if((utilizador.type == 50)){
         next()
       }
@@ -287,7 +303,8 @@ const routes = [
     meta: {title: 'Escritório - Ranking Jogos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if((utilizador.type == 50 || utilizador.type == 20)){
+      if(!utilizador) {next({name: "Login"});}
+      if((utilizador.type == 50 || utilizador.type == 20 || utilizador.type == 5)){
         next()
       }
       else{
@@ -302,6 +319,7 @@ const routes = [
     meta: {title: 'Escritório - Ranking Jogos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if((utilizador.type == 50)){
         next()
       }
@@ -317,6 +335,7 @@ const routes = [
     meta: {title: 'Escritório - Ranking Jogos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if((utilizador.type == 30)){
         next()
       }
@@ -332,6 +351,7 @@ const routes = [
     meta: {title: 'Escritório - Ranking Jogos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if((utilizador.type == 40)){
         next()
       }
@@ -347,7 +367,8 @@ const routes = [
     meta: {title: 'Escritório - Ranking Apps'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if((utilizador.type == 50 || utilizador.type == 20)){
+      if(!utilizador) {next({name: "Login"});}
+      if((utilizador.type == 50 || utilizador.type == 20 || utilizador.type == 5)){
         next()
       }
       else{
@@ -362,6 +383,7 @@ const routes = [
     meta: {title: 'Escritório - Ranking Apps'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if((utilizador.type == 50)){
         next()
       }
@@ -377,6 +399,7 @@ const routes = [
     meta: {title: 'Escritório - Ranking Apps'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if((utilizador.type == 30)){
         next()
       }
@@ -392,6 +415,7 @@ const routes = [
     meta: {title: 'Escritório - Ranking Apps'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if((utilizador.type == 40)){
         next()
       }
@@ -407,6 +431,7 @@ const routes = [
     meta: {title: 'Escritório - Jogos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if((utilizador.type == 50)){
         next()
       }
@@ -422,6 +447,7 @@ const routes = [
     meta: {title: 'Escritório - Estatísticas'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if((utilizador.type == 50)){
         next()
       }
@@ -437,6 +463,7 @@ const routes = [
     meta: {title: 'Escritório - Estatísticas'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.infoEscola.localidade == to.params.municipio)){
         next()
       }
@@ -452,6 +479,7 @@ const routes = [
     meta: {title: 'Escritório - Estatísticas'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.escolas.find(e => e.cod == to.params.escola)) 
             || (utilizador.type == 40 && utilizador.escola == to.params.escola) ){
         next()
@@ -468,6 +496,7 @@ const routes = [
     meta: {title: 'Escritório - Aplicações'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if((utilizador.type == 50)){
         next()
       }
@@ -483,6 +512,7 @@ const routes = [
     meta: {title: 'Escritório - Campeonatos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if((utilizador.type == 50)){
         next()
       }
@@ -498,6 +528,7 @@ const routes = [
     meta: {title: 'Escritório - Campeonatos Geral'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if((utilizador.type == 50)){
         next()
       }
@@ -513,7 +544,8 @@ const routes = [
     meta: {title: 'Escritório - Enviar Mensagem'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if((utilizador.type == 20)){
+      if(!utilizador) {next({name: "Login"});}
+      if((utilizador.type == 20 || utilizador.type == 5)){
         next()
       }
       else{
@@ -528,7 +560,8 @@ const routes = [
     meta: {title: 'Escritório - Mensagens'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if((utilizador.type == 10)){
+      if(!utilizador) {next({name: "Login"});}
+      if((utilizador.type == 10 || utilizador.type == 3)){
         next()
       }
       else{
@@ -543,7 +576,8 @@ const routes = [
     meta: {title: 'Escritório - Caderneta de Cromos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if((utilizador.type == 10)){
+      if(!utilizador) {next({name: "Login"});}
+      if((utilizador.type == 10 || utilizador.type == 3)){
         next()
       }
       else{
@@ -558,6 +592,7 @@ const routes = [
     meta: {title: 'Escritório - Campeonatos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.infoEscola.localidade == to.params.municipio) ){
         next()
       }
@@ -573,6 +608,7 @@ const routes = [
     meta: {title: 'Escritório - Campeonatos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.escolas.find(e => e.cod == to.params.escola)) ||
          (utilizador.type == 40 && utilizador.escola == to.params.escola)){
         next()
@@ -590,6 +626,7 @@ const routes = [
     beforeEnter: async (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       let token = localStorage.getItem("token")
+      if(!utilizador) {next({name: "Login"});}
       var professor
       if(utilizador.type == 40 || utilizador.type == 30){
         var response = await axios.get(h + "professores/codigos/" + to.params.codprofessor + "?token=" + token)
@@ -597,7 +634,7 @@ const routes = [
         professor = response.data
       }
     
-      if((utilizador.type == 50) || (utilizador.type == 20 && utilizador.codigo == to.params.codprofessor)
+      if((utilizador.type == 50) || ((utilizador.type == 20 || utilizador.type == 5) && utilizador.codigo == to.params.codprofessor)
         || (utilizador.type == 30 && professor) || (utilizador.type == 40 && professor.escola == utilizador.escola)){
         next()
       }
@@ -613,7 +650,8 @@ const routes = [
     meta: {title: 'Escritório - Campeonatos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if(utilizador.type == 10 && utilizador.user == to.params.user){
+      if(!utilizador) {next({name: "Login"});}
+      if((utilizador.type == 10 || utilizador.type == 3) && utilizador.user == to.params.user){
         next()
       }
       else{
@@ -629,6 +667,7 @@ const routes = [
     beforeEnter: async (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       let token = localStorage.getItem("token")
+      if(!utilizador) {next({name: "Login"});}
       var professor
       if(utilizador.type == 30 || utilizador.type == 40){
         var response = await axios.get(h + "professores/codigos/" + to.params.idprofessor + "?token=" + token)
@@ -636,7 +675,7 @@ const routes = [
         professor = response.data
       }
       if( utilizador.type == 50 || (utilizador.type == 30 && professor) || (utilizador.type == 40 && professor) ||
-        (utilizador.type == 20 && utilizador.codigo == to.params.idprofessor)){
+        ((utilizador.type == 20 || utilizador.type == 5) && utilizador.codigo == to.params.idprofessor)){
         next()
       }
       else{
@@ -652,13 +691,14 @@ const routes = [
     beforeEnter: async (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       let token = localStorage.getItem("token")
+      if(!utilizador) {next({name: "Login"});}
       var professores = []
       if(utilizador.type == 40){
         var response = await axios.get(h + "escolas/" + utilizador.escola + "/professores?token=" + token)
         professores = response.data
       }
       if( utilizador.type == 50 || utilizador.type == 30 || 
-            (utilizador.type == 20 && utilizador.codigo == to.params.idprofessor)
+            ((utilizador.type == 20 || utilizador.type == 5) && utilizador.codigo == to.params.idprofessor)
               || (utilizador.type == 40 && professores.find(element=> element.codigo == to.params.idprofessor))){
         next()
       }
@@ -674,6 +714,7 @@ const routes = [
     meta: {title: 'Escritório - Jogos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       // fazer algo para garantir que o municipio apenas entre para ver escolas do seu municipio e não de outros municipios
       if((utilizador.type == 50) || (utilizador.type == 30 || to.params.municipio == utilizador.infoEscola.localidade)){
         next()
@@ -690,6 +731,7 @@ const routes = [
     meta: {title: 'Escritório - Aplicações'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       // fazer algo para garantir que o municipio apenas entre para ver escolas do seu municipio e não de outros municipios
       if((utilizador.type == 50) || (utilizador.type == 30 && to.params.municipio == utilizador.infoEscola.localidade)){
         next()
@@ -706,6 +748,7 @@ const routes = [
     meta: {title: 'Escritório - Jogos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       // fazer algo para garantir que o municipio apenas entre para ver escolas do seu municipio e não de outros municipios
       if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.escolas.find(element => element.cod == to.params.id)) 
                     || (utilizador.type == 40 && utilizador.escola == to.params.id)){
@@ -723,6 +766,7 @@ const routes = [
     meta: {title: 'Escritório - Aplicações'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       // fazer algo para garantir que o municipio apenas entre para ver escolas do seu municipio e não de outros municipios
       if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.escolas.find(element=>element.cod == to.params.escola)) 
           || (utilizador.type == 40 && utilizador.escola == to.params.escola)){
@@ -740,6 +784,7 @@ const routes = [
     meta: {title: 'Escritório - Aplicações'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       // fazer algo para garantir que o municipio apenas entre para ver escolas do seu municipio e não de outros municipios
       if((utilizador.type == 50) || (utilizador.type == 30 && utilizador.escolas.find(element=>element.cod == to.params.escola)) 
           || (utilizador.type == 40 && utilizador.escola == to.params.escola)){
@@ -757,6 +802,7 @@ const routes = [
     meta: {title: 'Escritório - Jogos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if(utilizador.type == 50){
         next()
       }
@@ -772,7 +818,8 @@ const routes = [
     meta: {title: 'Escritório - Aplicações'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if(utilizador.type == 20){
+      if(!utilizador) {next({name: "Login"});}
+      if(utilizador.type == 20 || utilizador.type == 5){
         next()
       }
       else{
@@ -787,7 +834,8 @@ const routes = [
     meta: {title: 'Escritório - Jogos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if(utilizador.type == 10){
+      if(!utilizador) {next({name: "Login"});}
+      if(utilizador.type == 10 || utilizador.type == 3){
         next()
       }
       else{
@@ -802,7 +850,8 @@ const routes = [
     meta: {title: 'Escritório - Aplicações'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if(utilizador.type == 10){
+      if(!utilizador) {next({name: "Login"});}
+      if(utilizador.type == 10 || utilizador.type == 3){
         next()
       }
       else{
@@ -817,6 +866,7 @@ const routes = [
     meta: {title: 'Escritório - Alunos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if(utilizador.type == 50){
         next()
       }
@@ -832,6 +882,7 @@ const routes = [
     meta: {title: 'Escritório - Agrupamentos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if(utilizador.type == 50){
         next()
       }
@@ -847,6 +898,7 @@ const routes = [
     meta: {title: 'Escritório - Turmas'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if(utilizador.type == 50){
         next()
       }
@@ -867,7 +919,8 @@ const routes = [
     meta: {title: 'Escritório - Editar Aluno'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if(utilizador.type == 50 || (utilizador.type == 20) || (utilizador.type == 10 && utilizador.id == to.params.id)){
+      if(!utilizador) {next({name: "Login"});}
+      if(utilizador.type == 50 || (utilizador.type == 20) || ((utilizador.type == 10 || utilizador.type == 3) && utilizador.id == to.params.id)){
         next()
       }
       else{
@@ -882,6 +935,7 @@ const routes = [
     meta: {title: 'Escritório - Editar Agrupamento'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if(utilizador.type == 50){
         next()
       }
@@ -898,10 +952,11 @@ const routes = [
     beforeEnter: async (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       let token = localStorage.getItem("token")
+      if(!utilizador) {next({name: "Login"});}
       // falta permitir um professor que possua turma puder alterar
       //var response = await axios.get(h + "professores/" + utilizador.codigo + "/turmas?token=" + token)
       //console.log(response.data)
-      if(utilizador.type == 50 || (utilizador.type == 20 && (pertence(response.data, to.params.id)))){
+      if(utilizador.type == 50 || ((utilizador.type == 20 || utilizador.type == 5) && (pertence(response.data, to.params.id)))){
         next()
       }
       else{
@@ -917,10 +972,11 @@ const routes = [
     beforeEnter: async (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       let token = localStorage.getItem("token")
+      if(!utilizador) {next({name: "Login"});}
       // falta permitir um professor que possua turma puder alterar
       var response = await axios.get(h + "professores/" + utilizador.codigo + "/turmas?token=" + token)
       //console.log(response.data)
-      if(utilizador.type == 50 || (utilizador.type == 20 && (pertence(response.data, to.params.id)))){
+      if(utilizador.type == 50 || ((utilizador.type == 20 || utilizador.type == 5) && (pertence(response.data, to.params.id)))){
         next()
       }
       else{
@@ -936,12 +992,13 @@ const routes = [
     beforeEnter: async (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       let token = localStorage.getItem("token")
+      if(!utilizador) {next({name: "Login"});}
       var response
       if(utilizador.type==20) response = await axios.get(h + "professores/" + utilizador.codigo + "/turmas?token=" + token)
      // else if(utilizador.type==30) response = await axios.get(h + "professores/codigos/" + to.params.codigo + "?token=" + token) 
        //                                                  .catch(() => next({name: "Meu Perfil"}))
       //console.log(response.data)
-      if(utilizador.type == 50 || (utilizador.type == 20 && (pertence(response.data, to.params.id))) ||
+      if(utilizador.type == 50 || ((utilizador.type == 20 || utilizador.type == 5) && (pertence(response.data, to.params.id))) ||
          (utilizador.type == 30) || (utilizador.type == 40)){
         next()
       }
@@ -972,7 +1029,8 @@ const routes = [
     meta: {title: 'Escritório - Criar Turma'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if(utilizador.type == 50 || utilizador.type == 20){
+      if(!utilizador) {next({name: "Login"});}
+      if(utilizador.type == 50 || utilizador.type == 20 || utilizador.type == 5){
         next()
       }
       else{
@@ -987,6 +1045,7 @@ const routes = [
     meta: {title: 'Escritório - Criar Professor'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if(utilizador.type == 50){
         next()
       }
@@ -1002,6 +1061,7 @@ const routes = [
     meta: {title: 'Escritório - Criar Agrupamento'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if(utilizador.type == 50){
         next()
       }
@@ -1017,7 +1077,8 @@ const routes = [
     meta: {title: 'Escritório - Criar Aluno'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if(utilizador.type == 50 || utilizador.type == 20){
+      if(!utilizador) {next({name: "Login"});}
+      if(utilizador.type == 50 || utilizador.type == 20 || utilizador.type == 5){
         next()
       }
       else{
@@ -1032,6 +1093,7 @@ const routes = [
     meta: {title: 'Escritório - Professores Pendentes'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       if(utilizador.type == 50){
         next()
       }
@@ -1048,6 +1110,7 @@ const routes = [
     beforeEnter: async (to, from, next) => {
       let token = localStorage.getItem('token')
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      if(!utilizador) {next({name: "Login"});}
       var professor
       if(utilizador.type == 40 || utilizador.type == 30){
         var response = await axios.get(h + "professores/codigos/" + to.params.codigo + "?token=" + token)
@@ -1069,7 +1132,8 @@ const routes = [
     meta: {title: 'Escritório - Desempenho Geral'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if(utilizador.type == 20 && utilizador.codigo == to.params.codprofessor){
+      if(!utilizador) {next({name: "Login"});}
+      if((utilizador.type == 20 || utilizador.type == 5) && utilizador.codigo == to.params.codprofessor){
         next()
       }
       else{
@@ -1098,12 +1162,12 @@ const router = new VueRouter({
 })
 
 const DEFAULT_TITLE = 'Hypatiamat - Escritório';
+
 router.afterEach((to, from) => {
-    // Use next tick to handle router history correctly
-    // see: https://github.com/vuejs/vue-router/issues/914#issuecomment-384477609
     Vue.nextTick(() => {
         document.title = to.meta.title || DEFAULT_TITLE;
     });
 });
+
 
 export default router

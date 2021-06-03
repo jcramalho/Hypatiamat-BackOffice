@@ -51,7 +51,7 @@
                 <v-text-field v-else prepend-icon="mdi-book-account" v-model="turma" 
                         name="Nome da Turma" label="Nome da Turma" :rules="[formatoTurma]" required></v-text-field>
                 <v-card-actions>
-                  <v-btn class="white--text" primary large block style="background-color: #009263;" @click="criarTurma">Confirmar</v-btn>
+                  <v-btn class="white--text" primary large block style="background-color: #009263;" @click="criarTurma" :disabled="utilizador.type == 5">Confirmar</v-btn>
                 </v-card-actions>
                 </v-form>
             </v-container>

@@ -6,6 +6,16 @@ var Professores = require('../controllers/db_aplicacoes/professor');
 var Escolas = require('../controllers/db_aplicacoes/escolas')
 
 const jwtKey = "tese-hypatiamat2020"
+
+/*
+const profExperimental = 'hprof2'
+const alunoExperimental = 'aluno1'
+*/
+
+const profExperimental = 'hypatiat'
+const alunoExperimental = 'h21082f109'
+
+const jwtExpirySecondsExperimental = 30 * 60
 const jwtExpirySeconds = 90 * 60
 const jwtExpirySecondsAdmin = 90 * 60
 
@@ -18,6 +28,39 @@ generateToken = function(user, time){
 
     return token
 } 
+
+module.exports.getTokenProfExperimental = async function(){
+    var utilizadorAux = await Professores.getProfessorByCodigo(profExperimental)
+    var utilizador = {
+        id : utilizadorAux.id,
+        codigo : utilizadorAux.codigo,
+        email : utilizadorAux.email,
+        escola: utilizadorAux.escola,
+        type: 5
+      }
+    return {
+        type : 5,
+        authentication : true, 
+        token : generateToken(utilizador, jwtExpirySecondsExperimental)
+    }
+}
+
+module.exports.getTokenAlunoExperimental = async function(){
+    var utilizadorAux = await Alunos.getAlunoByUser(alunoExperimental)
+    var utilizador = {
+        agrupamento: await Escolas.getEscola(utilizadorAux.escola).nome,
+        id : utilizadorAux.id,
+        user : utilizadorAux.user,
+        email: utilizadorAux.email,
+        escola: utilizadorAux.escola,
+        type: 3
+    }
+    return {
+        type : 3,
+        authentication : true, 
+        token : generateToken(utilizador, jwtExpirySecondsExperimental)
+    }
+}
 
 module.exports.login = async function(user, password){
   var md5Password = md5(password)

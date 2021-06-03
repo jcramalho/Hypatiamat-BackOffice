@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+</head>
+
+
+<body>
+<h1>Simulação</h1>
+<p>Envio de token para o <a href="http://localhost:8080">Escritório</a>.</p>
+<script type="text/javascript" src="hub.js"></script>
+<script type="text/javascript" src="client.js"></script>
+<script>
+    const hostHub = 'https://backoffice.hypatiamat.com/'
+    var storage = new CrossStorageClient(hostHub, {timeout: 10000});
+</script>
+<script>
+    storage.onConnect().then(function(){
+        return storage.set('token', token);
+    })
+</script>
+</body>
+</html>

@@ -66,7 +66,7 @@
             <v-text-field color="#009263" prepend-icon="mdi-key" v-model="password" name="Password" label="Password" type="password" required></v-text-field>
             <v-text-field color="#009263" prepend-icon="mdi-key" v-model="password2" name="Confirmação Password" label="Confirmação Password" type="password" required></v-text-field>
             <v-card-actions>
-              <v-btn class="white--text" :disabled="disabledCodigo || disabledEmail || (this.alunosTurma && this.alunosTurma.length >= this.limiteAlunos)" primary large block style="background-color: #009263;" @click="registarAluno">Confirmar</v-btn>
+              <v-btn class="white--text" :disabled="disabledCodigo || disabledEmail || (this.alunosTurma && this.alunosTurma.length >= this.limiteAlunos) || utilizador.type == 5" primary large block style="background-color: #009263;" @click="registarAluno">Confirmar</v-btn>
             </v-card-actions>
             </v-form>
         </v-container>
@@ -146,6 +146,7 @@
         try {
           this.token = localStorage.getItem("token")
           this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
+          var type = this.utilizador.type
           if(this.utilizador.type == 50){
             
             var response = await axios.get(h + "escolas")
@@ -160,6 +161,7 @@
           else {
             var response = await axios.get(h + "professores/" + this.utilizador.id + "?token=" + this.token)
             this.utilizador = response.data
+            this.utilizador.type = type
             this.escola = this.utilizador.agrupamento
             this.codprofessor = this.utilizador.codigo
             var anoAux = anoletivoAtual.split("/")

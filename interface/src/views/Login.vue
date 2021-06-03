@@ -48,7 +48,17 @@
               </v-col>
               </v-row>
               <v-card-actions>
-                <v-btn class="white--text" primary large block style="background-color: #009263;" @click="login">Login</v-btn>
+                <v-row no-gutters>
+                  <v-col cols="12">
+                    <v-btn class="white--text" primary large block style="background-color: #009263;" @click="login">Login</v-btn>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-btn class="text-none" block style="color: #009263;" text @click="loginAlunoVisitante">Entrar como aluno visitante</v-btn>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-btn class="text-none" block style="color: #009263;" text @click="loginProfVisitante">Entrar como professor visitante</v-btn>
+                  </v-col>
+                </v-row>
               </v-card-actions>
               </v-form>
               <center><span> Ainda não possuí conta? </span> <span class="font-weight-bold green--text" @click="registar()" style="cursor: pointer;" > Registe-se aqui! </span></center>
@@ -136,7 +146,25 @@ import Footer from '../components/Footer.vue';
        catch (err) {
         this.password = ""
         alert(err)
-      }
+        }
+      },
+      loginAlunoVisitante: async function(){
+        let response = await axios.get(h + "login/aluno/visitante");
+        localStorage.setItem("type", JSON.stringify(response.data.type))
+        var aux = jwt_decode(response.data.token)
+        localStorage.setItem("token", response.data.token)
+        localStorage.setItem("utilizador", JSON.stringify(aux.user))
+        this.$emit("refreshLogout")
+        this.$router.push({name: "Meu Perfil"})
+      },
+      loginProfVisitante: async function(){
+        let response = await axios.get(h + "login/professor/visitante");
+        localStorage.setItem("type", JSON.stringify(response.data.type))
+        var aux = jwt_decode(response.data.token)
+        localStorage.setItem("token", response.data.token)
+        localStorage.setItem("utilizador", JSON.stringify(aux.user))
+        this.$emit("refreshLogout")
+        this.$router.push({name: "Meu Perfil"})
       },
       registar: function(){
         this.$emit("registar");

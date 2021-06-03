@@ -108,7 +108,7 @@
                             <td>{{row.item.pontuacao}}</td>
                             <td>{{row.item.njogos}}</td>
                             <td>
-                                <v-btn class="text-none white--text" rounded small color="#009263" @click="download(row.item.posHypatia, row.item.user)">
+                                <v-btn class="text-none white--text" rounded small color="#009263" @click="download(row.item.posHypatia, row.item.user)" :disabled="utilizador.type == 5">
                                     <v-icon color="white"> mdi-download </v-icon> Certificado
                                 </v-btn>
                             </td>

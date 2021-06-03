@@ -194,7 +194,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
     created: async function(){
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
-        if(this.utilizador.type != 20){
+        if(this.utilizador.type == 50){
           var response2 = await axios.get(h + "professores/codigos/" + this.idprofessor + "/?token=" + this.token )
           this.escola = response2.data.escola
           this.escolaOriginal = response2.data.escola

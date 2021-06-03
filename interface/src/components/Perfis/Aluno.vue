@@ -80,7 +80,7 @@
               </v-slide-y-transition>
             </v-col>
             <v-col v-if="!small && !this.idAluno" cols="12" xs="12" sm="3" md="3" lg="3" xl="3" >
-              <center><v-btn class="white--text" style="background-color: #009263;" @click="editarAluno=true" rounded> Editar dados pessoais </v-btn></center>
+              <center><v-btn class="white--text" style="background-color: #009263;" @click="editarAluno=true" :disabled="aluno.type != 10" rounded> Editar dados pessoais </v-btn></center>
             </v-col>
             <v-col v-if="!this.idAluno" cols="12" xs="12" sm="12" md="6" lg="6" xl="6">
               <center>
@@ -90,10 +90,10 @@
               </center>
             </v-col>
             <v-col v-if="small && !this.idAluno" cols="12" xs="12" sm="12" md="3" lg="3" xl="3">
-              <center><v-btn class="white--text" style="background-color: #009263;" @click="editarAluno = true" rounded> Editar dados pessoais </v-btn></center>
+              <center><v-btn class="white--text" style="background-color: #009263;" @click="editarAluno = true" :disabled="aluno.type != 10" rounded> Editar dados pessoais </v-btn></center>
             </v-col>
             <v-col v-if="!this.idAluno" cols="12" xs="12" sm="12" md="3" lg="3" xl="3">
-              <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true" rounded> Alterar password </v-btn></center>
+              <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true" :disabled="aluno.type != 10" rounded> Alterar password </v-btn></center>
             </v-col>
           <v-row class="mx-auto" v-if="!this.idAluno">
             <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="4">
@@ -387,17 +387,20 @@ import ClassificacaoAluno from '@/components/Campeonatos/ClassificacaoAluno.vue'
     },
     created: async function(){
         this.token = localStorage.getItem("token")
+        let type = localStorage.getItem("type")
         if(!this.idAluno){
           var aluno = JSON.parse(localStorage.getItem("utilizador"))
           var response = await axios.get(h + "alunos/" + aluno.id + "?token=" + this.token)
           this.aluno = response.data
           this.aluno.id = aluno.id
+          this.aluno.type = type
           this.aluno.nomeType = "Aluno"
         }
         else{
           var response = await axios.get(h + "alunos/" + this.idAluno + "?token=" + this.token)
           this.aluno = response.data
           this.aluno.id = this.idAluno
+          this.aluno.type = type
           this.aluno.nomeType = "Aluno"
         }
         this.getTrofeus()

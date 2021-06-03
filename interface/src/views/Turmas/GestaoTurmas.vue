@@ -108,6 +108,7 @@
                               icon
                               v-bind="attrs" 
                               v-on="on"
+                              :disabled="utilizador.type==5"
                             >
                             <v-icon @click="apagarTurma(row.item.id, row.item.turma)"> mdi-delete </v-icon>
                             </v-btn>

@@ -70,8 +70,10 @@
                         icon
                         v-bind="attrs" 
                         v-on="on"
+                        :disabled="utilizador.type == 5"
+                        @click="alteraTurma"
                       >
-                      <v-icon large color="#009263" @click="alteraTurma"> mdi-arrow-right-box </v-icon>
+                      <v-icon large color="#009263" > mdi-arrow-right-box </v-icon>
                       </v-btn>
                     </template>
                     <span>Irá transferir os alunos selecionados da turma {{turma.turma}} para a turma {{turma2}}</span>
@@ -85,6 +87,8 @@
                         icon
                         v-bind="attrs" 
                         v-on="on"
+                        :disabled="utilizador.type == 5"
+                        @click="alteraTurma2"
                       >
                       <v-icon  large color="#009263" @click="alteraTurma2"> mdi-arrow-left-box </v-icon>
                       </v-btn>

@@ -66,10 +66,10 @@
           </v-col>
           
           <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
-          <center><v-btn class="white--text" style="background-color: #009263;" @click="editarProfessor()"> Editar dados pessoais </v-btn></center>
+          <center><v-btn class="white--text" style="background-color: #009263;" @click="editarProfessor()" :disabled="type == 5"> Editar dados pessoais </v-btn></center>
           </v-col>
           <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
-          <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true"> Alterar password </v-btn></center>
+          <center><v-btn class="white--text" style="background-color: #009263;" @click="dialogPassword = true" :disabled="type == 5"> Alterar password </v-btn></center>
           </v-col>
         </v-row>
           

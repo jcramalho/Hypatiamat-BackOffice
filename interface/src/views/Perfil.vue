@@ -3,10 +3,10 @@
     <v-main class="grey lighten-3">
       <v-container>
             <!-- ALUNO !-->
-            <Aluno v-if="type == 10"/>
+            <Aluno v-if="type == 10 || type == 3"/>
         
             <!-- PROFESSOR !-->
-            <Professor v-else-if="type == 20"/>
+            <Professor v-else-if="type == 20 || type == 5"/>
           
             <!-- MUNICIPIO !-->
             <Municipio v-else-if="type == 30"/>

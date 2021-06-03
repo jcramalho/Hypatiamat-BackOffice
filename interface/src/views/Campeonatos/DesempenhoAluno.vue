@@ -70,7 +70,7 @@
                         </v-container>
                         <v-container v-else>
                             <center>
-                              <v-btn v-if="items.length > 0" class="text-none white--text" rounded color="#009263" @click="download()">
+                              <v-btn v-if="items.length > 0" class="text-none white--text" rounded color="#009263" @click="download()" :disabled="utilizador.type != 10">
                                   <v-icon color="white"> mdi-download </v-icon> Certificado
                               </v-btn>
                             </center>

@@ -150,7 +150,7 @@ const hostCampeonatos = require("@/config/hosts").hostCampeonatos
           if (result.isConfirmed) {
             var res = await axios.delete(hostCampeonatos + codigo + "?token=" + this.token)
             if(res.data.deleted){
-                this.campeonatos.splice(index, index+1)
+                this.campeonatos.splice(index, 1)
                 Swal.fire({
                     icon: 'success',
                     title: 'Campeonato apagado com sucesso.',

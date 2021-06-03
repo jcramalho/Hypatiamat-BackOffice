@@ -46,14 +46,16 @@
               :to="item.href"
             >
               <v-list-item-icon>
-                <v-icon v-if="item.title != 'Terminar Sessão' && item.title != 'Mensagens'" >{{ item.icon }} </v-icon>
+                <v-icon v-if="item.title != 'Terminar Sessão' && item.title != 'Mensagens' && item.title != 'TPC Hypatiamat'" >{{ item.icon }} </v-icon>
                 <v-icon v-else-if="item.title == 'Terminar Sessão'" @click="logout()" style="cursor: pointer;">{{ item.icon }}</v-icon>
+                <v-icon v-else-if="item.title == 'TPC Hypatiamat'" @click="goToTPC()" style="cursor: pointer;">{{ item.icon }}</v-icon>
                 <v-icon v-else-if="item.title == 'Mensagens'">{{ item.icon }}</v-icon>
               </v-list-item-icon>
   
               <v-list-item-content>
-                <v-list-item-title v-if=" item.title != 'Terminar Sessão' && item.title != 'Mensagens' " >{{ item.title }}</v-list-item-title>
+                <v-list-item-title v-if=" item.title != 'Terminar Sessão' && item.title != 'Mensagens' && item.title != 'TPC Hypatiamat'" >{{ item.title }}</v-list-item-title>
                 <v-list-item-title v-else-if="item.title == 'Terminar Sessão'" @click="logout()" style="cursor: pointer;">{{ item.title }}</v-list-item-title>
+                <v-list-item-title v-else-if="item.title == 'TPC Hypatiamat'" @click="goToTPC()" style="cursor: pointer;">{{ item.title }}</v-list-item-title>
                 <v-list-item-title v-else-if="item.title == 'Mensagens'">{{ item.title }} 
                   <v-icon v-if="mensagensLer > 0 && mensagensLer < 9"> mdi-numeric-{{mensagensLer}}-circle-outline </v-icon>
                   <v-icon class="pr-0" v-else-if="mensagensLer > 0">mdi-numeric-9-plus-circle-outline</v-icon>
@@ -80,7 +82,6 @@
 <script>
 import VueJwtDecode from "vue-jwt-decode";
 import Swal from 'sweetalert2'
-import bifrostCors from "bifrost-cors"
 const host = require("@/config/hosts").host
 export default {
   props:[
@@ -108,8 +109,7 @@ export default {
       idUtilizador:"",
       nomeUtilizador:"",
       nome:"",
-      bifrostCors:"",
-      versao: "2.5"
+      versao: "2.6"
     }
   },
   watch: {
@@ -146,10 +146,11 @@ export default {
         { title: 'Ranking Apps', icon: 'mdi-trophy-award', href:"/classificacoes/apps/admin"},
         { title: 'Outras Estatísticas', icon: 'mdi-home-analytics', href:"/estatisticas/municipios"},
         { title: 'Campeonatos', icon: 'mdi-trophy', href:"/campeonatos/municipios"},
+        { title: 'TPC Hypatiamat', icon: 'mdi-web', ref:"https://tpc.hypatiamat.com/"},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }
-    else if(utilizador.type == 20) {
+    else if(utilizador.type == 20 || utilizador.type == 5) {
       // Professor
       this.items = [
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
@@ -162,10 +163,11 @@ export default {
         { title: 'Ranking Jogos', icon: 'mdi-podium', href:"/classificacoes/jogos"},
         { title: 'Ranking Apps', icon: 'mdi-trophy-award', href:"/classificacoes/apps"},
         { title: 'Campeonatos', icon: 'mdi-trophy', href:"/campeonatos/professores/" + utilizador.codigo},
+        { title: 'TPC Hypatiamat', icon: 'mdi-web', ref:"https://tpc.hypatiamat.com/"}, 
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }
-    else if(utilizador.type == 10){
+    else if(utilizador.type == 10 || utilizador.type == 3){
       // Aluno
       this.items = [
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
@@ -174,6 +176,7 @@ export default {
         { title: 'Campeonatos', icon: 'mdi-podium', href:"/campeonatos/alunos/" + utilizador.user},
         { title: 'Mensagens', icon: 'mdi-message-reply-text-outline', href:"/alunos/mensagens"},
         { title: 'Caderneta de Cromos', icon: 'mdi-book-open-page-variant-outline', href:"/alunos/cromos"},
+        { title: 'TPC Hypatiamat', icon: 'mdi-web', ref:"https://tpc.hypatiamat.com/"},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }
@@ -188,6 +191,7 @@ export default {
         { title: 'Ranking Apps', icon: 'mdi-trophy-award', href:"/classificacoes/apps/municipio"},
         { title: 'Outras estatísticas', icon:'mdi-home-analytics', href:"/estatisticas/municipios/" + utilizador.infoEscola.localidade},
         { title: 'Campeonatos', icon: 'mdi-trophy', href:"/campeonatos/municipios/" + utilizador.infoEscola.localidade},
+        { title: 'TPC Hypatiamat', icon: 'mdi-web', ref:"https://tpc.hypatiamat.com/"},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }
@@ -202,10 +206,10 @@ export default {
         { title: 'Ranking Apps', icon: 'mdi-trophy-award', href:"/classificacoes/apps/escola"},
         { title: 'Outras estatísticas', icon:'mdi-home-analytics', href:"/estatisticas/escolas/" + utilizador.escola},
         { title: 'Campeonatos', icon: 'mdi-trophy', href:"/campeonatos/escolas/" + utilizador.escola},
+        { title: 'TPC Hypatiamat', icon: 'mdi-web', ref:"https://tpc.hypatiamat.com/"},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }
-    //this.bifrostCors = new bifrostCors("https://www.hypatiamat.com/", false)
   },
   computed: {
     bg () {
@@ -234,13 +238,16 @@ export default {
     },
     isLogged: function(){
       if (localStorage.getItem("token") == null) {
-      return false
+        return false
       } else {
-      return true
+       return true
       }
     },
     navBarAberta: function(){
 
+    },
+    goToTPC: function(){
+      window.open('https://tpc.hypatiamat.com')
     }
   }
 }

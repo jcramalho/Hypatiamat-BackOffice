@@ -23,9 +23,10 @@ import Registar from '@/views/Registar.vue'
 import Novidades from '@/views/Novidades/Novidades.vue'
 import axios from 'axios'
 import { ResponsiveDirective } from "vue-responsive-components"
-import bifrostCors from "bifrost-cors"
 import jwt_decode from "jwt-decode";
-
+//var CrossStorageClient = require('cross-storage').CrossStorageClient;
+var CrossStorageHub = require('cross-storage').CrossStorageHub;
+const host = require('@/config/hosts').host
 
 export default {
     components: {
@@ -44,17 +45,18 @@ export default {
           viewKey: 0,
           loggedIn : false,
           mode : false,
-          bifrostCors: '',
+          storage: '',
+          storageConnected: false,
         }
     },
     watch: {
-  /* $route(to) {
-     document.title = `${to.meta.title}`;
-     const link = document.querySelector("[rel='icon']")
-     link.setAttribute('href',to.meta.icon)
-  }*/
-},
-    created: function(){
+      '$route'() {
+        // TODO: react to navigation event.
+        // params cotains the current route parameters
+        this.refreshLogout()
+      }
+    },
+    created: async function(){
       var aux = false
       var self = this
       axios.interceptors.response.use((response) => {
@@ -74,11 +76,19 @@ export default {
           self.refreshLogout()
           window.location.href = './';
         }
-
       });
 
-      //this.bifrostCors = new bifrostCors("https://www.hypatiamat.com/", false)
+      CrossStorageHub.init([
+       //{origin: /localhost:8081$/, allow: ['get', 'set', 'del', 'getKeys', 'clear']},
+        {origin: /hypatiamat.com$/, allow: ['get', 'set', 'del', 'clear']},
+      ]);
+
       this.refreshLogout()
+    },
+    computed:{
+      haveToken(){
+        return localStorage.getItem('token') != null
+      }
     },
     methods: {
           teste(){
@@ -89,18 +99,21 @@ export default {
           isLogged: function(){
             var token = localStorage.getItem("token")
             if (token == null) {
-              /*
-              //var token2 = this.bifrostCors.getLocalStorage("token")
-              if(token2 == null) return false
-              else{
-                var aux = jwt_decode(token2)
-                localStorage.setItem("utilizador", JSON.stringify(aux.user))
-                localStorage.setItem("type", JSON.stringify(aux.user.type))
-                localStorage.setItem("token", JSON.stringify(token2))
-              }*/
               return false
             }
-            else return true
+            else{ 
+              var utilizador = localStorage.getItem("utilizador")
+              if(utilizador) return true
+              else{ 
+                var decode_token = jwt_decode(token)
+                if(decode_token.user && decode_token.user.type){
+                  localStorage.setItem('utilizador', JSON.stringify(decode_token.user))
+                  localStorage.setItem('type', decode_token.user.type)
+                  return true
+                }
+                else return false
+              }
+            }
           },
           refreshLogout: function(){
             this.loggedIn = this.isLogged()

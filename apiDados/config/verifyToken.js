@@ -35,7 +35,7 @@ module.exports.verifyAdmin_Municipio_Agrupamento = function(){
         // municipio
         else if(u.type == 30 && u.escolas.find(e => e.cod == escola)) next()
         // professor
-        else if(u.type == 20 && u.escola == escola) next()
+        else if((u.type == 5 || u.type == 20) && u.escola == escola) next()
         else res.status(403).jsonp("Não tem permissão.")
     }
 }
@@ -47,9 +47,9 @@ module.exports.verifyAdmin_Professor_Aluno = function(){
         // admin
         if(u.type == 50) next()
         // aluno
-        else if(u.type == 10 && u.id == id) next()
+        else if( (u.type == 10 || u.type == 3) && u.id == id) next()
         // professor
-        else if(u.type == 20){
+        else if((u.type == 5 || u.type == 20)){
             var aluno = await Alunos.getAluno(id)
             if(aluno && u.codigo.toUpperCase() == aluno.codprofessor.toUpperCase()) next()
             else res.status(403).jsonp("Não tem permissão.")
@@ -65,9 +65,9 @@ module.exports.verifyAdmin_Professor_Aluno2 = function(){
         // admin
         if(u.type == 50) next()
         // aluno
-        else if(u.type == 10 && u.user == user) next()
+        else if( (u.type == 10 || u.type == 3) && u.user == user) next()
         // professor
-        else if(u.type == 20){
+        else if((u.type == 5 || u.type == 20)){
             var aluno = await Alunos.getAlunoByUser(user)
             if(aluno && u.codigo.toUpperCase() === aluno.codprofessor.toUpperCase()) next()
             else res.status(403).jsonp("Não tem permissão.")
@@ -81,7 +81,7 @@ module.exports.verifyAdmin_Professor = function(){
         var u = req.user.user
         var codprofessor = req.body.codprofessor;
 
-        if(u.type == 50 || (u.type == 20 && u.codigo.toUpperCase() === codprofessor.toUpperCase())) next()
+        if(u.type == 50 || ((u.type == 5 || u.type == 20) && u.codigo.toUpperCase() === codprofessor.toUpperCase())) next()
         else res.status(403).jsonp("Não tem permissão.")
     }
 }
@@ -91,7 +91,7 @@ module.exports.verifyAdmin_Professor2 = function(){
         var u = req.user.user
         var codprofessor = req.body.idprofessor;
 
-        if(u.type == 50 || (u.type == 20 && u.codigo.toUpperCase() === codprofessor.toUpperCase())) next()
+        if(u.type == 50 || ((u.type == 5 || u.type == 20) && u.codigo.toUpperCase() === codprofessor.toUpperCase())) next()
         else res.status(403).jsonp("Não tem permissão.")
     }
 }
@@ -101,7 +101,7 @@ module.exports.verifyUserProf = function(){
         var u = req.user.user
         var id = req.params.id
 
-        if( ((u.type == 50) || (u.id == id)) && u.type != 10  ) next()
+        if( ((u.type == 50) || (u.id == id)) && u.type != 10 && u.type != 3 ) next()
         else res.status(403).jsonp("Não tem permissão.")
     }
 }
@@ -111,7 +111,7 @@ module.exports.verifyUserProf2 = function(){
         var u = req.user.user
         var codigo = req.params.codigo
 
-        if( ((u.type == 50) || (u.codigo.toUpperCase() === codigo.toUpperCase())) && u.type != 10  ) next()
+        if( ((u.type == 50) || (u.codigo.toUpperCase() === codigo.toUpperCase())) && u.type != 10 && u.type != 3 ) next()
         else if(u.type == 30){
             var professor = await Professores.getProfessorByCodigo(codigo)
             if(professor && u.escolas.find(e => e.cod == professor.escola)) next()
@@ -132,7 +132,7 @@ module.exports.verifyTurma = function(){
         var idTurma = req.params.id
 
         if( u.type == 50 ) next()
-        else if( u.type == 20){
+        else if( (u.type == 5 || u.type == 20)){
             var turmas = await Turmas.getTurmasByProfessor(u.codigo)
             if(turmas.find(e => e.id == idTurma)) next()
             else res.status(403).jsonp("Não tem permissão.")
@@ -169,7 +169,7 @@ module.exports.verifyTurma2 = function(){
 
         if( u.type == 50 ) next()
         // professor
-        else if( u.type == 20 && u.codigo == codprofessor ) next()
+        else if( (u.type == 5 || u.type == 20) && u.codigo == codprofessor ) next()
         else {
             var professor = await Professores.getProfessorByCodigo(codprofessor)
             // agrupamento
@@ -193,7 +193,7 @@ module.exports.verifyTurma3 = function(){
 
         if( u.type == 50 ) next()
         // professor
-        else if( u.type == 20 && u.codigo == codprofessor) next() 
+        else if( (u.type == 5 || u.type == 20) && u.codigo == codprofessor) next() 
         // agrupamento
         else if(u.type == 40 && u.escola == escola) next()
         // municipio
@@ -209,7 +209,7 @@ module.exports.verifyTurma4 = function(){
         var codprofessor = req.query.codprofessor
 
         if( u.type == 50 ) next()
-        else if( u.type == 20 && u.codigo == codprofessor ) next()
+        else if( (u.type == 5 || u.type == 20) && u.codigo == codprofessor ) next()
         else res.status(403).jsonp("Não tem permissão.")
     }
 }
@@ -221,7 +221,7 @@ module.exports.verifyProfTurmas = function(){
 
         if( u.type == 50 ) next()
         // professor
-        else if( u.type == 20 && u.codigo == codigo) next()
+        else if( (u.type == 5 || u.type == 20) && u.codigo == codigo) next()
         else {
             var professor = await Professores.getProfessorByCodigo(codigo)
             // agrupamento
@@ -238,7 +238,7 @@ module.exports.verifyAluno = function(){
         var u = req.user.user
         var user = req.params.user
         if(u.type == 50) next()
-        else if(u.type == 10 && u.user == user) next()
+        else if((u.type == 10 || u.type == 3) && u.user == user) next()
         else res.status(403).jsonp("Não tem permissão.")
     }
 }
@@ -249,7 +249,7 @@ module.exports.verifyAluno2 = function(){
         var user = await CromosAlunos.getUserFromoCromoId(req.params.id)
 
         if(u.type == 50) next()
-        else if(user && u.type == 10 && u.user == user.user) next()
+        else if(user && (u.type == 10 || u.type == 3) && u.user == user.user) next()
         else res.status(403).jsonp("Não tem permissão.")
     }
 }
@@ -259,7 +259,7 @@ module.exports.verifyAdminProf = function(){
         var codprof = req.body.codprofessor
 
         if(u.type == 50) next()
-        else if(u.type == 20 && codprof && u.codigo == codprof) next()
+        else if( (u.type == 5 || u.type == 20) && codprof && u.codigo == codprof) next()
         else res.status(403).jsonp("Não tem permissão.")
     }
 }

@@ -89,7 +89,7 @@
                             label="Enviar Email"
                             :ripple="false"
                         ></v-checkbox>
-                        <center><v-btn :disabled="novaMensagem.alunos.length <= 0 || novaMensagem.text.length == 0" 
+                        <center><v-btn :disabled="novaMensagem.alunos.length <= 0 || novaMensagem.text.length == 0 || utilizador.type == 5" 
                             class="pa-0 white--text" block color="#009263" @click="enviaMensagem">Enviar</v-btn>
                         </center>
                     </v-card>
