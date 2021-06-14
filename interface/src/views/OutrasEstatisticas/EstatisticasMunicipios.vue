@@ -11,24 +11,34 @@
                     <center><v-btn v-if="!loading && estatisticas.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> 
                       <v-icon> mdi-pdf-box </v-icon> Exportar 
                     </v-btn></center>
-                    <v-combobox
-                      id="anoletivo"
-                      label="Ano Letivo"
-                      prepend-icon="mdi-counter"
-                      v-model="ano"
-                      color="#009263"
-                      :items="anos"
-                      @change="getEstatisticas()" 
-                    ></v-combobox>
-                    <v-combobox
-                      id="comunidade"
-                      label="Comunidade"
-                      prepend-icon="mdi-google-circles-communities"
-                      v-model="comunidade"
-                      color="#009263"
-                      :items="comunidades"
-                      @change="getEstatisticas()" 
-                    ></v-combobox>
+                    <v-container style="width:80%">
+                    <v-card class="pa-5" >
+                      <v-combobox
+                        id="anoletivo"
+                        label="Ano Letivo"
+                        prepend-icon="mdi-counter"
+                        v-model="ano"
+                        color="#009263"
+                        :items="anos"
+                        @change="getEstatisticas()" 
+                      ></v-combobox>
+                      <v-combobox
+                        id="comunidade"
+                        label="Comunidade"
+                        prepend-icon="mdi-google-circles-communities"
+                        v-model="comunidade"
+                        color="#009263"
+                        :items="comunidades"
+                        @change="getEstatisticas()" 
+                      ></v-combobox>
+                      <v-row class="justify-center align-center">
+                          <v-btn class="white--text" color="#009263" @click="getEstatisticas()">
+                              <v-icon>mdi-refresh</v-icon>
+                              Atualizar
+                          </v-btn>
+                      </v-row>
+                    </v-card>
+                    </v-container>
                     <v-container v-if="loading">
                       <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
                     </v-container>
@@ -152,7 +162,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
       },
       goToAgrupamentos: async function(item){
           var municipio = item.localidade
-          this.$router.push({name: "Estatisticas Agrupamentos", params: { municipio : municipio, ano: this.ano } })
+          this.$router.push({name: "Estatisticas Agrupamentos", params: { municipio : municipio }, query: {ano: this.ano} })
       },
       parseEstatisticas: async function(){
         var listaRes = []

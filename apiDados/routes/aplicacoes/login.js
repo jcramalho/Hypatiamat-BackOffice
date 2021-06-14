@@ -43,4 +43,15 @@ router.get('/aluno/visitante', function(req, res, next) {
      
 });
 
+router.get('/interface', function(req, res, next){
+    Login.getTokenInterface()
+        .then(response =>{
+            res.jsonp(response)
+        }) 
+        .catch(erro =>{
+            console.log(erro)
+            res.status(500).jsonp(erro)
+        })
+})
+
 module.exports = router

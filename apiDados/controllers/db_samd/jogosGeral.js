@@ -14,7 +14,7 @@ JogosGerais.getJogoMunicipios = async function(jogoTable, jogoTipo, dataInicio, 
 		    FROM (select idescola, pontuacao from ${bdSAMD}.${jogoTable} where turma!='99' and tipo=? and (data BETWEEN ? and ?)) jogo, 
             ${bdAplicacoes}.Escolas esc 
             WHERE jogo.idescola=esc.cod  
-            Group by esc.localidade Order by number;`, args, function (err, res) {
+            Group by esc.localidade Order by number DESC;`, args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
                     reject(err);

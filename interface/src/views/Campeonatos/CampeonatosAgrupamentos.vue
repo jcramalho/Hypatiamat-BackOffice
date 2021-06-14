@@ -37,6 +37,12 @@
                                 :items="opcoesCampeonatos"
                                 @change="onOpcaoCampeonatoChange" 
                             ></v-combobox>
+                            <v-row class="justify-center align-center">
+                                <v-btn class="white--text" color="#009263" @click="atualizaConteudo()">
+                                    <v-icon>mdi-refresh</v-icon>
+                                    Atualizar
+                                </v-btn>
+                            </v-row>
                         </v-card>
                         </v-container>
                         </center>
@@ -136,6 +142,7 @@ const hostCampeonatos = require("@/config/hosts").hostCampeonatos
 const hypatiaImg = require("@/assets/hypatiamat.png")
 
   export default {
+    name:'CampeonatosAgrupamentos',    
     components:{
          EstatisticasGeraisCampeonato,
          CampeonatoMunicipio,
@@ -219,8 +226,8 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         var responseCamp = await axios.get(hostCampeonatos + "?token=" + this.token)
         this.campeonatos = await this.parseCampeonatos(responseCamp.data)
         await this.parseEscolas()
-        if(this.$route.params.campeonato){
-            this.campeonato = this.$route.params.campeonato
+        if(this.$route.query.campeonato){
+            this.campeonato = this.$route.query.campeonato
             this.onCampeonatoChange()
         }       
     },
@@ -345,8 +352,9 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
           }
       },
       goToProfessores: function(item){
-          var params = {municipio: this.municipio, campeonato: this.campeonato, escola: item.cod, nomeEscola: item.nome}
-          this.$router.push({name: 'Campeonatos Professores', params:params})
+          var params = {escola: item.cod}
+          var query = { municipio: this.municipio, campeonato: this.campeonato, nomeEscola: item.nome }
+          this.$router.push({name: 'Campeonatos Professores', params: params, query: query})
       },
       exportPDF: async function(){
         var doc = new jsPDF({

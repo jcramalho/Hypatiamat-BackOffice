@@ -69,44 +69,43 @@
             <v-form v-else>
               <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
-                  <v-text-field prepend-icon="mdi-card-account-details" v-model="user" name="Username (Código)" label="Username (Código)" :rules="[string15, codigoAlunoExistente]" required></v-text-field>
+                  <v-text-field prepend-icon="mdi-card-account-details" v-model="user" color="#009263" name="Username (Código)" label="Username (Código)" :rules="[string15, codigoAlunoExistente]" required></v-text-field>
                 </v-col>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">  
-                  <v-text-field prepend-icon="mdi-account" v-model="nome" name="Nome" label="Nome" required></v-text-field>
+                  <v-text-field prepend-icon="mdi-account" v-model="nome" name="Nome" color="#009263" label="Nome" required></v-text-field>
                 </v-col>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
-                  <v-text-field prepend-icon="mdi-bank" v-model="pais" name="País" label="País" required></v-text-field>
+                  <v-text-field prepend-icon="mdi-bank" v-model="pais" name="País" color="#009263" label="País" required></v-text-field>
                 </v-col>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
-                  <v-text-field prepend-icon="mdi-calendar" v-model="datanascimento" name="Data de Nascimento" label="Data de Nascimento" type="date" :format="format" required></v-text-field>
+                  <v-text-field prepend-icon="mdi-calendar" v-model="datanascimento" color="#009263" name="Data de Nascimento" label="Data de Nascimento" type="date" :format="format" required></v-text-field>
                 </v-col>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
-                  <v-text-field prepend-icon="mdi-email" v-model="email" name="Email" label="Email" :rules="[emailValido, emailAlunoExistente]" required></v-text-field>
+                  <v-text-field prepend-icon="mdi-email" v-model="email" name="Email" color="#009263" label="Email" :rules="[emailValido, emailAlunoExistente]" required></v-text-field>
+                </v-col>
+                <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
+                  <v-text-field @change="onProfessorChange" prepend-icon='mdi-teach' v-model="codprofessor" color="#009263" name="Código do Professor" label="Código do seu Professor" :rules="[codigoProfessorAluno]" required></v-text-field>
                 </v-col>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
                   <v-combobox
-                      id="escola"
-                      prepend-icon="mdi-school"
-                      label="Agrupamento de Escolas"
-                      :return-object="true"
-                      v-model="escola"
-                      :items="escolas"
+                    id="turma"
+                    prepend-icon="mdi-book-account"
+                    label="Turma"
+                    :return-object="true"
+                    v-model="turma"
+                    color="#009263"
+                    item-text="turma"
+                    :items="turmas"
                   ></v-combobox>
                 </v-col>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
-                  <v-text-field prepend-icon='mdi-teach' v-model="codprofessor" name="Código do Professor" label="Código do seu Professor" :rules="[codigoProfessorAluno]" required></v-text-field>
+                  <v-text-field prepend-icon="mdi-numeric-1-box-multiple-outline" v-model="numero" color="#009263" name="Número" label="Número" type="number" required></v-text-field>
                 </v-col>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
-                  <v-text-field prepend-icon="mdi-book-account" v-model="turma" name="Turma" label="Turma" required></v-text-field>
+                  <v-text-field prepend-icon="mdi-key" v-model="password" color="#009263" name="Password" label="Password" type="password" required></v-text-field>
                 </v-col>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
-                  <v-text-field prepend-icon="mdi-numeric-1-box-multiple-outline" v-model="numero" name="Número" label="Número" type="number" required></v-text-field>
-                </v-col>
-                <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
-                  <v-text-field prepend-icon="mdi-key" v-model="password" name="Password" label="Password" type="password" required></v-text-field>
-                </v-col>
-                <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
-                  <v-text-field prepend-icon="mdi-key" v-model="password2" name="Confirmação Password" label="Confirmação Password" type="password" required></v-text-field>
+                  <v-text-field prepend-icon="mdi-key" v-model="password2" color="#009263" name="Confirmação Password" label="Confirmação Password" type="password" required></v-text-field>
                 </v-col>
               </v-row>
             <v-card-actions>
@@ -127,6 +126,7 @@
 
 <script>
   const h = require("@/config/hosts").hostAPI
+  const anoAtual = require("@/config/confs").anoAtual
   import Swal from 'sweetalert2'
   import Footer from '../components/Footer.vue';
   import axios from "axios"
@@ -134,6 +134,7 @@
     components: { Footer },
     data(){
       return {
+        token: "",
         isProfessor: true,
         nome : "",
         codigoHypatia: "",
@@ -152,6 +153,7 @@
         user:"",
         codprofessor:"",
         turma:"",
+        turmas:[],
         numero:"",
         password : "",
         password2 : "",
@@ -181,7 +183,7 @@
         },
         emailAlunoExistente: v =>{
           if(this.codigosalunos.find(e => e.email == v) || this.codigosprofs.find(e => e.email == v)) {this.disabledEmail = true; return 'Email já utilizado. Escolha outro por favor.'}
-          else {this.disabledEmail = true; return true}
+          else {this.disabledEmail = false; return true}
         },
         codigoProfessorAluno: v=>{
           if(this.codigosprofs.find(e => e.codigo == v)) {this.disabledCodProfAluno = false; return true;}
@@ -197,11 +199,12 @@
     },
     created : async function() {
         try {
-          var response = await axios.get(h + "escolas")
+          this.token = localStorage.getItem("tokenInterface")
+          var response = await axios.get(h + "escolas?token=" + this.token)
           this.escolasIds = response.data
-          var responseProf = await axios.get(h + "professores/codigos")
+          var responseProf = await axios.get(h + "professores/codigos?token=" + this.token)
           this.codigosprofs = responseProf.data
-          var responseAlunos = await axios.get(h + "alunos/codigos")
+          var responseAlunos = await axios.get(h + "alunos/codigos?token=" + this.token)
           this.codigosalunos = responseAlunos.data
           var i
           var aux = []
@@ -275,13 +278,25 @@
                   })
         }
       },
+      onProfessorChange: async function(){
+        if(!this.disabledCodProfAluno && this.codprofessor != ""){
+          axios.get(h + "professores/" + this.codprofessor + "/turmas?ano=" + (anoAtual-1) + "&token=" + this.token)
+               .then(response => this.turmas = response.data)
+               .catch(async () => {
+                 var resToken = await axios.get(h + "login/interface")
+                 localStorage.setItem("tokenInterface", resToken.data.token)
+                 this.token = resToken.data.token
+               })
+        }
+        else {this.turma = ""; this.turmas = []}
+      }, 
       registarAluno : async function(){
         /*
         [aluno.user, aluno.numero, aluno.nome, aluno.datanascimento, 
                 aluno.escola, aluno.turma, aluno.email, md5(aluno.password), 
                 aluno.codprofessor, aluno.pais]  */
         if(this.user != "" && this.numero != "" && this.nome != "" && this.datanascimento != "" &&
-            this.escola != "" && this.turma != "" && this.email != "" && this.password != "" && this.codprofessor != "" 
+            this.turma != "" && this.email != "" && this.password != "" && this.codprofessor != "" 
             && this.pais != ""){
             if(this.password2 != this.password){
               Swal.fire({
@@ -292,8 +307,6 @@
               
             }
             else{
-              var aux = this.escola.split(" - ")
-              var escolaEscolhida = this.escolasIds.find(element => element.nome == aux[1]).cod
               var date = this.datanascimento.split("-")
               var dataNascimento = date[2] + "/" + date[1] + "/" + date[0]
               let aluno = {
@@ -301,15 +314,14 @@
                 numero: this.numero,
                 nome: this.nome,
                 datanascimento: dataNascimento,
-                escola: escolaEscolhida,
-                turma: this.turma,
+                turma: this.turma.turma,
                 email: this.email,
                 password: this.password,
                 codprofessor: this.codprofessor,
                 pais: this.pais,
                 confirmacao: 0
               }
-              axios.post(h + "alunos", aluno)
+              axios.post(h + "alunos?token=" + this.token, aluno)
                    .then(()=>{
                       Swal.fire({
                         icon: 'success',

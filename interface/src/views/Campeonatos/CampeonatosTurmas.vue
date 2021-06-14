@@ -68,6 +68,12 @@
                                 :items="campeonatos"
                                 @change="onCampeonatoChange"
                             ></v-combobox>
+                            <v-row class="justify-center align-center">
+                                <v-btn class="white--text" color="#009263" @click="atualizaConteudo()">
+                                    <v-icon>mdi-refresh</v-icon>
+                                    Atualizar
+                                </v-btn>
+                            </v-row>
                         </v-card>
                         </v-container>
                         </center>
@@ -139,6 +145,7 @@ const hostCampeonatos = require("@/config/hosts").hostCampeonatos
 const hypatiaImg = require("@/assets/hypatiamat.png")
 
   export default {
+    name:'CampeonatosTurmas',   
     components:{
          EstatisticasGeraisCampeonato,
          CampeonatoMunicipio,
@@ -185,10 +192,10 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
         this.codprofessor = this.$route.params.codprofessor 
-        if(this.$route.params.campeonato && this.$route.params.municipio && this.$route.params.escola){
-            this.campeonato = this.$route.params.campeonato
-            this.municipio = this.$route.params.municipio
-            this.escola = this.escolaOriginal = this.$route.params.escola
+        if(this.$route.query.campeonato && this.$route.query.municipio && this.$route.query.escola){
+            this.campeonato = this.$route.query.campeonato
+            this.municipio = this.$route.query.municipio
+            this.escola = this.escolaOriginal = this.$route.query.escola
         } 
         else{
             if(this.utilizador.type != 20){

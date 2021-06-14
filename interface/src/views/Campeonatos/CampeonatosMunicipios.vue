@@ -48,6 +48,12 @@
                                 :items="opcoesCampeonatos"
                                 @change="onOpcaoCampeonatoChange" 
                             ></v-combobox>
+                            <v-row class="justify-center align-center">
+                                <v-btn class="white--text" color="#009263" @click="atualizaConteudo()">
+                                    <v-icon>mdi-refresh</v-icon>
+                                    Atualizar
+                                </v-btn>
+                            </v-row>
                         </v-card>
                         </v-container>
                         </center>
@@ -149,6 +155,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
 const opcoesCampeonatosMunicipios = require('@/config/confs').opcoesCampeonatosMunicipios
 
   export default {
+    name: 'CampeonatosMunicipios',
     components:{
          EstatisticasGeraisCampeonato,
          CampeonatoMunicipio
@@ -385,8 +392,9 @@ const opcoesCampeonatosMunicipios = require('@/config/confs').opcoesCampeonatosM
           }
       },
       goToAgrupamentos: function(item){
-          var params = {municipio: item.localidade, campeonato: this.campeonato}
-          this.$router.push({name: 'Campeonatos Agrupamentos', params:params})
+          var params = {municipio: item.localidade}
+          var query = {campeonato: this.campeonato}
+          this.$router.push({name: 'Campeonatos Agrupamentos', params:params, query: query})
       },
       goToRankingGeral: function(){
           this.$router.push({name: 'Ranking Geral Campeonatos'})

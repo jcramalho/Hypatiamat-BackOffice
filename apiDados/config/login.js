@@ -18,6 +18,7 @@ const alunoExperimental = 'h21082f109'
 const jwtExpirySecondsExperimental = 30 * 60
 const jwtExpirySeconds = 90 * 60
 const jwtExpirySecondsAdmin = 90 * 60
+const jwtExpirySecondsInterface = 180 * 60
 
 generateToken = function(user, time){
 
@@ -59,6 +60,16 @@ module.exports.getTokenAlunoExperimental = async function(){
         type : 3,
         authentication : true, 
         token : generateToken(utilizador, jwtExpirySecondsExperimental)
+    }
+}
+
+module.exports.getTokenInterface = async function(){
+    var utilizador = {
+        type: 0
+    }
+    return {
+        type : 0,
+        token : generateToken(utilizador, jwtExpirySecondsInterface)
     }
 }
 

@@ -4,13 +4,15 @@
     <Navbar @refreshLogout="refreshLogout" @miniEvent="(value)=>{this.mini=value}" :mensagensLer="mensagensLer"/>
 
 
-    <keep-alive v-if="mobile" include="EstatisticasMunicipios">
-      <router-view v-if="mobile" @refreshVistas="mensagensLer = 0"/>
+    <keep-alive :include="cacheItens" :max="10">
+      <router-view :key="$route.fullPath" 
+          @refreshVistas="mensagensLer = 0" @refreshLogout="refreshLogout"></router-view>
     </keep-alive>
+    <!--
     <v-main v-else class="grey lighten-3">
       <p :style="styleP"> Dado que se encontra no telemóvel ou num dispositivo pequeno, para visualizar os dados de forma clara, <b> minimize a barra de navegação </b> através do botão <span :style="styleP">&#8918;</span> . </p> 
     </v-main>
-
+    -->
 </div>
 </template>
 
@@ -38,17 +40,26 @@ export default {
       oldNovasMensagensLer: 0, 
       token: "",
       interval: undefined,
-      utilizador: {}
+      utilizador: {},
+      cacheItens: ['JogosMunicipios', 'JogosEscolas', 'JogosProfessores', 'JogosTurmas',
+                   'AppsMunicipios', 'AppsEscolas', 'AppsProfessores', 'AppsTurmas',
+                   'EstatisticasMunicipios', 'EstatisticasAgrupamentos', 'EstatisticasProfessores',
+                   'CampeonatosMunicipios', 'CampeonatosAgrupamentos', 'CampeonatosProfessores', 'CampeonatosTurmas',
+                   'RankingApps', 'RankingAppsAdmin', 'RankingAppsAgrupamento', 'RankingAppsMunicipio',
+                   'RankingJogos', 'RankingJogosAdmin', 'RankingJogosAgupamento', 'RankingJogosMunicipio']
     }
   },
   computed: {
     mobile() {
-      if (this.$vuetify.breakpoint.xs) return this.mini
-      return true
+      if(localStorage.getItem("token") && localStorage.getItem("utilizador") && localStorage.getItem("type")){
+        if (this.$vuetify.breakpoint.xs) return this.mini
+        return true
+      }
+      else {
+        this.refreshLogout()
+        return true
+      }
     },
-  },
-  watch:{
-
   },
   created: async function(){
     this.utilizador = JSON.parse(localStorage.getItem("utilizador"))

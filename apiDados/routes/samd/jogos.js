@@ -85,7 +85,7 @@ router.get('/:jogo/municipios', passport.authenticate('jwt', {session: false}), 
 });
 
 // Calcrapid por municipios de uma comunidade
-router.get('/calcrapid/comunidades/:comunidade', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/calcrapid/comunidades/:comunidade', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
   var tipo = req.query.tipo
   var dataInicio = req.query.dataInicio
   var dataFim = req.query.dataFim
@@ -107,7 +107,7 @@ router.get('/calcrapid/comunidades/:comunidade', passport.authenticate('jwt', {s
 });
 
 // Calculus por municipios de uma comunidade
-router.get('/minutenew/comunidades/:comunidade', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/minutenew/comunidades/:comunidade', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
   var dataInicio = req.query.dataInicio
   var dataFim = req.query.dataFim
   var niveis = req.query.niveis
@@ -136,7 +136,7 @@ router.get('/minutenew/comunidades/:comunidade', passport.authenticate('jwt', {s
 });
 
 // Jogo da jogosdb por municipios de uma comunidade
-router.get('/:jogo/comunidades/:comunidade', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/:jogo/comunidades/:comunidade', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
   var tipo = req.query.tipo
   var jogo = req.params.jogo
   var dataInicio = req.query.dataInicio
@@ -161,7 +161,7 @@ router.get('/:jogo/comunidades/:comunidade', passport.authenticate('jwt', {sessi
 
 
 // Calcrapid por agrupamentos de um municipio
-router.get('/calcrapid/municipios/:municipio', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/calcrapid/municipios/:municipio', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdminEMunicipio(), function(req, res, next) {
   var tipo = req.query.tipo
   var dataInicio = req.query.dataInicio
   var dataFim = req.query.dataFim
@@ -230,11 +230,11 @@ router.get('/:jogo/municipios/:municipio', passport.authenticate('jwt', {session
 });
 
 // Calcrapid por professor de um agrupamento
-router.get('/calcrapid/escolas/:escola', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/calcrapid/escolas/:codigo', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Municipio_Agrupamento(), function(req, res, next) {
   var tipo = req.query.tipo
   var dataInicio = req.query.dataInicio
   var dataFim = req.query.dataFim
-  var escola = req.params.escola
+  var escola = req.params.codigo
   if(tipo && tipo.length > 0){
     Calcrapid.getTiposCalcRapidProfessores(dataInicio, dataFim, tipo.split(','), escola)
               .then(dados => res.jsonp(dados))
@@ -248,12 +248,12 @@ router.get('/calcrapid/escolas/:escola', passport.authenticate('jwt', {session: 
 });
 
 
-router.get('/minutenew/escolas/:escola', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/minutenew/escolas/:codigo', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Municipio_Agrupamento(), function(req, res, next) {
   var dataInicio = req.query.dataInicio
   var dataFim = req.query.dataFim
   var niveis = req.query.niveis
   var tipos = req.query.tipos
-  var escola = req.params.escola
+  var escola = req.params.codigo
   if(tipos && niveis){
     Calculus.getTiposNiveisMinuteNewProfessores(escola, dataInicio, dataFim, niveis.split(","), tipos)
               .then(dados => res.jsonp(dados))
@@ -378,7 +378,7 @@ router.get('/:tableJogo/turmas/:turma', passport.authenticate('jwt', {session: f
   else res.status(400).send('Faltam parâmetros...')
 })
 
-router.get('/calcrapid/turmas/:turma/ranking', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/calcrapid/turmas/:turma/ranking', passport.authenticate('jwt', {session: false}), verifyToken.verifyTurma3(), function(req, res, next) {
   var turma = req.params.turma
   var escola = req.query.escola
   var codprofessor = req.query.codprofessor
@@ -407,7 +407,7 @@ router.get('/calcrapid/turmas/:turma/ranking', passport.authenticate('jwt', {ses
 });
 
 
-router.get('/minutenew/turmas/:turma/ranking', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/minutenew/turmas/:turma/ranking', passport.authenticate('jwt', {session: false}), verifyToken.verifyTurma3(), function(req, res, next) {
   var turma = req.params.turma
   var escola = req.query.escola
   var codprofessor = req.query.codprofessor
@@ -455,7 +455,7 @@ router.get('/minutenew/turmas/:turma/ranking', passport.authenticate('jwt', {ses
 });
 
 
-router.get('/:jogo/turmas/:turma/ranking', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/:jogo/turmas/:turma/ranking', passport.authenticate('jwt', {session: false}), verifyToken.verifyTurma3(), function(req, res, next) {
   var turma = req.params.turma
   var escola = req.query.escola
   var codprofessor = req.query.codprofessor
@@ -479,7 +479,7 @@ router.get('/:jogo/turmas/:turma/ranking', passport.authenticate('jwt', {session
 
 });
 
-router.get('/:jogo/turmas/:turma/intervalos', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/:jogo/turmas/:turma/intervalos', passport.authenticate('jwt', {session: false}), verifyToken.verifyTurma3(), function(req, res, next) {
   var turma = req.params.turma
   var escola = req.query.escola
   var jogo = req.params.jogo 
@@ -492,14 +492,14 @@ router.get('/:jogo/turmas/:turma/intervalos', passport.authenticate('jwt', {sess
   else res.status(400).jsonp("Faltam parâmetros.")
 });
 
-router.get('/alunos/:user/last10', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/alunos/:user/last10', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2(), function(req, res, next) {
   var user = req.params.user
   Jogos.getLast10FromAluno(user)
         .then(dados => res.jsonp(dados))
         .catch(error => { console.log(error); res.status(500).jsonp("Error")})
 });
 
-router.get('/alunos/:user/jogou', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/alunos/:user/jogou', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2(), function(req, res, next) {
   var user = req.params.user
   var dataInicio = req.query.dataInicio
   var dataFim = req.query.dataFim
@@ -511,7 +511,7 @@ router.get('/alunos/:user/jogou', passport.authenticate('jwt', {session: false})
   else res.status(400).jsonp("Faltam parâmetros (dataInicio ou dataFim).")
 });
 
-router.get('/alunos/:user/frequencia', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/alunos/:user/frequencia', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2(), function(req, res, next) {
   var user = req.params.user
  
   Jogos.getFrequenciaTotalAluno(user)
@@ -519,7 +519,7 @@ router.get('/alunos/:user/frequencia', passport.authenticate('jwt', {session: fa
         .catch(error => { console.log(error); res.status(500).jsonp("Error")})
 });
 
-router.get('/calcrapid/alunos/:user', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/calcrapid/alunos/:user', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2(), function(req, res, next) {
   var user = req.params.user
   var dataInicio = req.query.dataInicio
   var dataFim = req.query.dataFim
@@ -540,7 +540,7 @@ router.get('/calcrapid/alunos/:user', passport.authenticate('jwt', {session: fal
   else res.status(400).jsonp("Faltam parâmetros.")
 });
 
-router.get('/minutenew/alunos/:user', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/minutenew/alunos/:user', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2(), function(req, res, next) {
   var user = req.params.user
   var dataInicio = req.query.dataInicio
   var dataFim = req.query.dataFim
@@ -569,7 +569,7 @@ router.get('/minutenew/alunos/:user', passport.authenticate('jwt', {session: fal
   }
 });
 
-router.get('/minutenew/alunos/:user/dias', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/minutenew/alunos/:user/dias', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2(), function(req, res, next) {
   var user = req.params.user
   Calculus.alunoPorDia(user)
             .then(dados => res.jsonp(dados))
@@ -577,7 +577,7 @@ router.get('/minutenew/alunos/:user/dias', passport.authenticate('jwt', {session
   
 });
 
-router.get('/:jogo/alunos/:user/dias', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/:jogo/alunos/:user/dias', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2(), function(req, res, next) {
   var user = req.params.user
   var jogo = req.params.jogo
   var tipo = req.query.tipo

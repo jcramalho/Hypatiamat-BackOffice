@@ -28,7 +28,7 @@
                                 :items="anosLetivos"
                                 @change="onAnoChange"
                             ></v-combobox>
-                        <v-layout row class="text-xs-center" justify-center align-center>
+                            <v-layout row class="text-xs-center" justify-center align-center>
                                 <v-col cols="12" xs="12" sm="12" md="12" lg="6" xl="6">
                                 <v-text-field @change="onDataInChange" prepend-icon="mdi-calendar" v-model="dataInicio" label="Data Inicio" type="date" :format="format" required></v-text-field>
                                 </v-col>
@@ -36,6 +36,12 @@
                                     <v-text-field @change="onDataFimChange" prepend-icon="mdi-calendar" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
                                 </v-col>
                             </v-layout>
+                            <v-row class="justify-center align-center">
+                                <v-btn class="white--text" color="#009263" @click="atualizaConteudo()">
+                                    <v-icon>mdi-refresh</v-icon>
+                                    Atualizar
+                                </v-btn>
+                            </v-row>
                         </v-card>
                         </v-container>
                         </center>
@@ -87,6 +93,7 @@ import TotalApps from '@/components/Apps/TotalApps.vue'
 
 
   export default {
+    name:'AppsProfessores',
     data(){
       return {
         token: "",
@@ -132,11 +139,11 @@ import TotalApps from '@/components/Apps/TotalApps.vue'
         var response = await axios.get(h + "escolas/" + this.escolaAtual +"/?token=" + this.token)
         this.nomeEscola = response.data.nome
         await this.parseApps()
-        if(this.$route.params.anoLetivo && this.$route.params.dataInicio && this.$route.params.dataFim && this.$route.params.appAtual){
-            this.anoLetivo = this.$route.params.anoLetivo
-            this.dataInicio = this.$route.params.dataInicio
-            this.dataFim = this.$route.params.dataFim
-            this.app = this.$route.params.appAtual
+        if(this.$route.query.anoLetivo && this.$route.query.dataInicio && this.$route.query.dataFim && this.$route.query.appAtual){
+            this.anoLetivo = this.$route.query.anoLetivo
+            this.dataInicio = this.$route.query.dataInicio
+            this.dataFim = this.$route.query.dataFim
+            this.app = this.$route.query.appAtual
             this.atualizaConteudo()
         }
         else{
@@ -237,8 +244,9 @@ import TotalApps from '@/components/Apps/TotalApps.vue'
           } 
       },
       goToTurmas: function(item){
-        this.$router.push({name: 'Apps Turmas', params:{idprofessor: item.codProf, appAtual: this.app, 
-                                                            anoLetivo: this.anoLetivo, dataInicio: this.dataInicio, dataFim: this.dataFim}})
+        this.$router.push({name: 'Apps Turmas', params:{idprofessor: item.codProf}, query: { appAtual: this.app, 
+                                                            anoLetivo: this.anoLetivo, dataInicio: this.dataInicio, dataFim: this.dataFim,
+                                                            }})
 
       },
       exportPDF: async function(){

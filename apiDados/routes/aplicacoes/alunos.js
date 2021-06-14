@@ -181,10 +181,14 @@ router.put('/:id/password', passport.authenticate('jwt', {session: false}), veri
 });
 
 /* POST insere um novo aluno (Registo). */
-router.post('/', async function(req, res, next) {
+router.post('/', passport.authenticate('jwt', {session: false}), async function(req, res, next) {
   var aluno = req.body
-  if(aluno.user && aluno.numero && aluno.nome && aluno.datanascimento && aluno.escola 
+  if(aluno.user && aluno.numero && aluno.nome && aluno.datanascimento
       && aluno.codprofessor && aluno.turma && aluno.email && aluno.password && aluno.pais){
+        var prof = await Professores.getProfessorByCodigo(aluno.codprofessor)
+        if(prof) aluno.escola = prof.escola
+        else aluno.escola = "NNNN"
+        
         var verificacao = await verifyAluno(aluno)
         if(verificacao.response){
           Alunos.insertAluno(aluno)

@@ -44,6 +44,12 @@
                                     <v-text-field @change="onDataFimChange" prepend-icon="mdi-calendar" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
                                 </v-col>
                             </v-layout>
+                            <v-row class="justify-center align-center">
+                                <v-btn class="white--text" color="#009263" @click="atualizaConteudo()">
+                                    <v-icon>mdi-refresh</v-icon>
+                                    Atualizar
+                                </v-btn>
+                            </v-row>
                         </v-card>
                         </v-container>
                         </center>
@@ -94,6 +100,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
 import TotalApps from '@/components/Apps/TotalApps.vue'
 
   export default {
+    name: 'AppsMunicipios',
     data(){
       return {
         token: "",
@@ -286,8 +293,9 @@ import TotalApps from '@/components/Apps/TotalApps.vue'
           } 
       },
       goToEscolas: function(item){
-        this.$router.push({name: 'Apps Escolas', params:{municipio: item.localidade, appAtual: this.app, 
-                                                            anoLetivo: this.anoLetivo, dataInicio: this.dataInicio, dataFim: this.dataFim}})
+        this.$router.push({name: 'Apps Escolas', params:{municipio: item.localidade},
+                                                query:{appAtual: this.app, 
+                                                anoLetivo: this.anoLetivo, dataInicio: this.dataInicio, dataFim: this.dataFim}})
 
       },
       exportPDF: async function(){

@@ -1,6 +1,7 @@
 <template>
   <v-app id="inspire">
     <v-main class="grey lighten-3">
+      <keep-alive>
       <v-container>
         <v-card class="pa-5">
             <v-container>
@@ -73,6 +74,7 @@
             </v-container>
         </v-card>
       </v-container>
+      </keep-alive>
     </v-main>
   </v-app> 
 </template>
@@ -88,6 +90,7 @@ import EditarAluno from '@/components/Alunos/EditarAluno.vue'
 const h = require("@/config/hosts").hostAPI
 
   export default {
+    name:'Alunos',
     components:{
          EditarAluno
     },

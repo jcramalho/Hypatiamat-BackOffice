@@ -91,6 +91,12 @@
                       :items="anosLetivos"
                       @change="onAnoChange"
                   ></v-combobox>
+                  <v-row class="justify-center align-center">
+                        <v-btn class="white--text" color="#009263" @click="atualizaConteudo()">
+                            <v-icon>mdi-refresh</v-icon>
+                            Atualizar
+                        </v-btn>
+                    </v-row>
             </v-card>
             <v-container v-if="loading">
               <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
@@ -135,6 +141,7 @@ const anosletivos2 = require("@/config/confs").anosletivos2
 const anoletivoAtual = require("@/config/confs").anoletivo2
 
   export default {
+    name: 'RankingJogosMunicipio',
     data(){
       return {
         token: "",

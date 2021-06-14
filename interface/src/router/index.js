@@ -5,7 +5,7 @@ const h = require("@/config/hosts").hostAPI
 
 import AuthApp from '../views/AuthApp.vue'
 import Perfil from '../views/Perfil.vue'
-
+import Registar from '../views/Registar.vue'
 
 import Pendentes from '../views/Pendentes/Pendentes.vue'
 import Pendentes2 from '../views/Pendentes/Pendentes2.vue'
@@ -96,6 +96,7 @@ import Comunidades from '../views/Comunidades/Comunidades.vue'
 
 import GestaoCromos from '../views/Cromos/GestaoCromos.vue'
 
+import RefreshLogout from '../views/RefreshLogout.vue'
 
 Vue.use(VueRouter)
 
@@ -112,7 +113,12 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: AuthApp
+    component: RefreshLogout
+  },
+  {
+    path: '/registo',
+    name: 'Registar',
+    component: Registar
   },
   {
     path: '/professores',
@@ -121,7 +127,7 @@ const routes = [
     meta: {title: 'Escritório - Professores Ativos'},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
-      if(!utilizador) {next({name: "Login"});}
+      if(!utilizador) {next({name: "Login"}); return;}
       if(utilizador.type == 50){
         next()
       }
@@ -426,7 +432,7 @@ const routes = [
   },
   {
     path: '/jogos/municipios',
-    name: 'Jogos Municipio',
+    name: 'Jogos Municipios',
     component: JogosMunicipios,
     meta: {title: 'Escritório - Jogos'},
     beforeEnter: (to, from, next) => {
@@ -442,9 +448,9 @@ const routes = [
   },
   {
     path: '/estatisticas/municipios',
-    name: 'Estatisticas Municipio',
+    name: 'EstatisticasMunicipios',
     component: EstatisticasMunicipios,
-    meta: {title: 'Escritório - Estatísticas'},
+    meta: {title: 'Escritório - Estatísticas', keepAlive: true},
     beforeEnter: (to, from, next) => {
       let utilizador = JSON.parse(localStorage.getItem("utilizador"))
       if(!utilizador) {next({name: "Login"});}
@@ -1148,9 +1154,9 @@ const routes = [
 
 const router = new VueRouter({
   mode: 'history',
-  base: process.env.BASE_URL,
+  //base: process.env.BASE_URL,
   routes,
-  scrollBehavior (to, from, savedPosition) {
+  /*scrollBehavior (to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition
     }
@@ -1158,7 +1164,7 @@ const router = new VueRouter({
       return { selector: to.hash }
     }
     return { x: 0, y: 0 }
-  },
+  },*/
 })
 
 const DEFAULT_TITLE = 'Hypatiamat - Escritório';

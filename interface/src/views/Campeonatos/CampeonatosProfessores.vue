@@ -29,6 +29,12 @@
                                 :items="opcoesCampeonatos"
                                 @change="onOpcaoCampeonatoChange" 
                             ></v-combobox>
+                            <v-row class="justify-center align-center">
+                                <v-btn class="white--text" color="#009263" @click="atualizaConteudo()">
+                                    <v-icon>mdi-refresh</v-icon>
+                                    Atualizar
+                                </v-btn>
+                            </v-row>
                         </v-card>
                         </v-container>
                         </center>
@@ -128,6 +134,7 @@ const hostCampeonatos = require("@/config/hosts").hostCampeonatos
 const hypatiaImg = require("@/assets/hypatiamat.png")
 
   export default {
+    name:'CampeonatosProfessores',
     components:{
          EstatisticasGeraisCampeonato,
          CampeonatoMunicipio,
@@ -209,10 +216,10 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         this.opcaoCampeonato = this.opcoesCampeonatos[0]
         var responseCamp = await axios.get(hostCampeonatos + "?token=" + this.token)
              
-        if(this.$route.params.campeonato && this.$route.params.municipio){
-            if(this.$route.params.nomeEscola) this.nomeEscola = this.$route.params.nomeEscola
-            this.campeonato = this.$route.params.campeonato
-            this.municipio = this.$route.params.municipio
+        if(this.$route.query.campeonato && this.$route.query.municipio){
+            if(this.$route.query.nomeEscola) this.nomeEscola = this.$route.query.nomeEscola
+            this.campeonato = this.$route.query.campeonato
+            this.municipio = this.$route.query.municipio
         } 
         else{
             var res = await axios.get(h + "escolas/" + this.escola + "?token=" + this.token)
@@ -318,8 +325,9 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
           }
       },
       goToTurmas: function(item){
-          var params = {escola: this.escola, campeonato: this.campeonato, codprofessor: item.codprofessor, municipio: this.municipio}
-          this.$router.push({name: 'Campeonatos Turmas', params:params})
+          var params = {codprofessor: item.codprofessor}
+          var query = { campeonato: this.campeonato, escola: this.escola, municipio: this.municipio}
+          this.$router.push({name: 'Campeonatos Turmas', params:params, query: query})
       },
       exportPDF: async function(){
         var doc = new jsPDF({

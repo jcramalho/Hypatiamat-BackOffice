@@ -70,6 +70,12 @@
                                     <v-text-field @change="onDataFimChange" prepend-icon="mdi-calendar" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
                                 </v-col>
                             </v-layout>
+                            <v-row class="justify-center align-center">
+                                <v-btn class="white--text" color="#009263" @click="atualizaConteudo()">
+                                    <v-icon>mdi-refresh</v-icon>
+                                    Atualizar
+                                </v-btn>
+                            </v-row>
                         </v-card>
                         </v-container>
                         </center>
@@ -85,6 +91,16 @@
                     <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
                 </v-container>
                 <v-container v-else>
+                <v-row v-if="totalJogos" class="justify-center align-center">
+                    <v-col cols="12" xs="12" sm="12" md="12" lg="3" xl="3">
+                        <v-card class="white--text" color="#009263" style="border: 2px solid black !important;">
+                            <center>
+                                <p> <span> <b>Frequência Total</b> </span> </p>
+                                <span> <b>{{totalJogos}}</b> </span>
+                            </center>
+                        </v-card>
+                    </v-col>
+                </v-row>
                 <v-data-table
                     class="elevation-4"
                     :headers="headers"
@@ -117,6 +133,7 @@ const anosletivos2 = require("@/config/confs").anosletivos2
 const anoletivoAtual = require("@/config/confs").anoletivo2
 
   export default {
+    name: 'JogosEscolas',
     data(){
       return {
         token: "",
@@ -175,6 +192,23 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         tiposCalculusSelAnterior:["0 - Todas as combinações"]
       }
     },
+    computed:{
+        totalJogos(){
+            if(this.items.length <= 0) return undefined
+            var res = 0;
+            if(this.jogo.jogo == 'Calcrapid' || this.jogo.jogo == 'Calculus'){
+                for(var i = 0; i < this.items.length; i++){
+                    res += this.items[i].frequencia
+                }
+            }  
+            else {
+                for(var i = 0; i < this.items.length; i++){
+                    res += this.items[i].number
+                }
+            }
+            return res
+      },
+    },
     created: async function(){
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
@@ -186,16 +220,16 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             this.jogosInfo.push(response2.data[i])
         }
 
-        if(this.$route.params.jogoAtual){
-            this.jogo = this.$route.params.jogoAtual
-            if(this.$route.params.anoLetivo && this.$route.params.dataInicio && this.$route.params.dataFim){
-                this.anoLetivo = this.$route.params.anoLetivo
-                this.dataInicio = this.$route.params.dataInicio
-                this.dataFim = this.$route.params.dataFim
-                if(this.$route.params.tiposCalc) this.tiposCalc = this.$route.params.tiposCalc
-                if(this.$route.params.niveisSel && this.$route.params.tiposCalculusSel){
-                    this.niveisSel = this.$route.params.niveisSel; 
-                    this.tiposCalculusSel = this.$route.params.tiposCalculusSel;
+        if(this.$route.query.jogoAtual){
+            this.jogo = JSON.parse(this.$route.query.jogoAtual)
+            if(this.$route.query.anoLetivo && this.$route.query.dataInicio && this.$route.query.dataFim){
+                this.anoLetivo = this.$route.query.anoLetivo
+                this.dataInicio = this.$route.query.dataInicio
+                this.dataFim = this.$route.query.dataFim
+                if(this.$route.query.tiposCalc) this.tiposCalc = this.$route.query.tiposCalc
+                if(this.$route.query.niveisSel && this.$route.query.tiposCalculusSel){
+                    this.niveisSel = this.$route.query.niveisSel; 
+                    this.tiposCalculusSel = this.$route.query.tiposCalculusSel;
                 }
                 this.atualizaConteudo()
             }
@@ -383,16 +417,17 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           } 
       },
       goToProfessores: function(item){
-          var params = {id: item.cod, jogoAtual: this.jogo, anoLetivo: this.anoLetivo, 
+          var params = {id: item.cod}
+          var query = { jogoAtual: JSON.stringify(this.jogo), anoLetivo: this.anoLetivo, 
                         dataInicio: this.dataInicio, dataFim: this.dataFim}
-          if(this.jogo.jogo == 'Calcrapid' && this.tiposCalc.length > 0) params.tiposCalc = this.tiposCalc
+          if(this.jogo.jogo == 'Calcrapid' && this.tiposCalc.length > 0) query.tiposCalc = this.tiposCalc
           if(this.jogo.jogo == 'Calculus'){
               if(this.tiposCalculusSel.length > 0 && this.niveisSel.length > 0){
-                 params.tiposCalculusSel = this.tiposCalculusSel 
-                 params.niveisSel = this.niveisSel
+                 query.tiposCalculusSel = this.tiposCalculusSel 
+                 query.niveisSel = this.niveisSel
               }
           }
-          this.$router.push({name: 'Jogos Professores', params:params})
+          this.$router.push({name: 'Jogos Professores', params:params, query: query})
       },
       exportPDFCalcRapid: async function(){
         var doc = new jsPDF({

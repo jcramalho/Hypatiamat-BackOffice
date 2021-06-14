@@ -116,7 +116,7 @@ export default {
     mini: function(){
       //console.log(this.mini)
       this.$emit("miniEvent", this.mini)
-    }
+    },
   },
   created: async function(){
     // src="https://www.hypatiamat.com/imagens/images/backofficeAPP.png"

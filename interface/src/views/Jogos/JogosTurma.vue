@@ -153,7 +153,7 @@
                                             <v-text-field @change="onHorarioFimChange" v-model="horaFim" label="Hora Fim" type="time" :format="format" required></v-text-field>
                                         </v-col>
                                     </v-layout>
-                                    <v-row v-if="alunos.length > 0" class="justify-center align-center">
+                                    <v-row class="justify-center align-center">
                                         <v-btn class="white--text" color="#009263" @click="atualizaConteudo()">
                                             <v-icon>mdi-refresh</v-icon>
                                             Atualizar
@@ -416,6 +416,7 @@ const anosletivos2 = require("@/config/confs").anosletivos2
 const anoletivoAtual = require("@/config/confs").anoletivo2
 
   export default {
+    name: 'JogosTurmas',
     components:{
         GraficoTurma
     },
@@ -518,7 +519,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
         this.idprofessor = this.$route.params.idprofessor
-        if(this.$route.params.escola) this.escolaOriginal = this.escola = this.$route.params.escola
+        if(this.$route.query.escola) this.escolaOriginal = this.escola = this.$route.query.escola
         else{ 
            if(this.utilizador.type != 20){
             var response2 = await axios.get(h + "professores/codigos/" + this.idprofessor + "/?token=" + this.token )
@@ -534,10 +535,10 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           this.turmas.push(response.data[i].turma)
         }        
 
-        if(this.$route.params.anoLetivo && this.$route.params.dataInicio && this.$route.params.dataFim){
-            this.anoLetivo = this.$route.params.anoLetivo
-            this.dataInicio = this.$route.params.dataInicio
-            this.dataFim = this.$route.params.dataFim
+        if(this.$route.query.anoLetivo && this.$route.query.dataInicio && this.$route.query.dataFim){
+            this.anoLetivo = this.$route.query.anoLetivo
+            this.dataInicio = this.$route.query.dataInicio
+            this.dataFim = this.$route.query.dataFim
         }
         else this.onAnoChange()
 
@@ -546,6 +547,23 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
             var response2 = await axios.get(h + "professores/codigos/" + this.idprofessor + "/?token=" + this.token )
             this.nomeProf = response2.data.nome
         }
+    },
+    computed:{
+        totalJogos(){
+            if(this.items.length <= 0) return undefined
+            var res = 0;
+            if(this.jogo.jogo == 'Calcrapid' || this.jogo.jogo == 'Calculus'){
+                for(var i = 0; i < this.items.length; i++){
+                    res += this.items[i].frequencia
+                }
+            }  
+            else {
+                for(var i = 0; i < this.items.length; i++){
+                    res += this.items[i].number
+                }
+            }
+            return res
+      },
     },
     methods: {
       format(value, event) {

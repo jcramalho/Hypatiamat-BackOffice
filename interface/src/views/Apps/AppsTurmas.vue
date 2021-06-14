@@ -105,7 +105,7 @@
                                     <v-text-field @change="onDataFimChange" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
                                 </v-col>
                             </v-layout>
-                            <v-row v-if="items.length > 0" class="justify-center align-center">
+                            <v-row class="justify-center align-center">
                                 <v-btn class="white--text" color="#009263" @click="atualizaConteudo()">
                                     <v-icon>mdi-refresh</v-icon>
                                     Atualizar
@@ -178,6 +178,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
 
 
   export default {
+    name: 'AppsTurmas',
     components:{
         TarefasApps,
         GraficoTurma
@@ -270,10 +271,10 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         var response2 = await axios.get(h + "professores/codigos/" + this.codProf + "/?token=" + this.token )
         this.nomeProf = response2.data.nome
 
-        if(this.$route.params.anoLetivo && this.$route.params.dataInicio && this.$route.params.dataFim){
-            this.dataInicio = this.$route.params.dataInicio
-            this.dataFim = this.$route.params.dataFim
-            this.anoLetivo = this.$route.params.anoLetivo
+        if(this.$route.query.anoLetivo && this.$route.query.dataInicio && this.$route.query.dataFim){
+            this.dataInicio = this.$route.query.dataInicio
+            this.dataFim = this.$route.query.dataFim
+            this.anoLetivo = this.$route.query.anoLetivo
         }
         else{
             this.onAnoChange()

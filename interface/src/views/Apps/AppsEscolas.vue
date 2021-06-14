@@ -36,6 +36,12 @@
                                     <v-text-field @change="onDataFimChange" prepend-icon="mdi-calendar" v-model="dataFim" label="Data Fim" type="date" :format="format" required></v-text-field>
                                 </v-col>
                             </v-layout>
+                            <v-row class="justify-center align-center">
+                                <v-btn class="white--text" color="#009263" @click="atualizaConteudo()">
+                                    <v-icon>mdi-refresh</v-icon>
+                                    Atualizar
+                                </v-btn>
+                            </v-row>
                         </v-card>
                         </v-container>
                         </center>
@@ -87,6 +93,7 @@ import TotalApps from '@/components/Apps/TotalApps.vue'
 
 
   export default {
+    name: 'AppsEscolas',
     data(){
       return {
         token: "",
@@ -133,10 +140,10 @@ import TotalApps from '@/components/Apps/TotalApps.vue'
         this.appsInfo = response.data
         await this.parseApps()
         
-        if(this.$route.params.dataInicio && this.$route.params.dataFim && this.$route.params.appAtual){
-            this.dataInicio = this.$route.params.dataInicio
-            this.dataFim = this.$route.params.dataFim
-            this.app = this.$route.params.appAtual
+        if(this.$route.query.dataInicio && this.$route.query.dataFim && this.$route.query.appAtual){
+            this.dataInicio = this.$route.query.dataInicio
+            this.dataFim = this.$route.query.dataFim
+            this.app = this.$route.query.appAtual
             this.atualizaConteudo()
         }
         else{
@@ -233,7 +240,7 @@ import TotalApps from '@/components/Apps/TotalApps.vue'
           } 
       },
       goToProfessores: function(item){
-        this.$router.push({name: 'Apps Professores', params:{escola: item.cod, appAtual: this.app, 
+        this.$router.push({name: 'Apps Professores', params:{escola: item.cod}, query:{appAtual: this.app, 
                                                             anoLetivo: this.anoLetivo, dataInicio: this.dataInicio, dataFim: this.dataFim}})
 
       },

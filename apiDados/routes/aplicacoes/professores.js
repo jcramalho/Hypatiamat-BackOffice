@@ -43,7 +43,7 @@ router.get('/codigos/:codigo', passport.authenticate('jwt', {session: false}), v
 });
 
 /* GET Devolve as turmas de um professor através do seu id (eventualmente pode se passar o ano letivo das turmas). */
-router.get('/:codigo/turmas', passport.authenticate('jwt', {session: false}), verifyToken.verifyProfTurmas(), function(req, res, next) {
+router.get('/:codigo/turmas', passport.authenticate('jwt', {session: false}), function(req, res, next) {
   var ano = req.query.ano
   if(ano){
     var anoletivo = ano + "/" + (parseInt(ano) + 1)

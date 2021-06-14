@@ -11,15 +11,25 @@
                     <center><v-btn v-if="!loading && estatisticas.length>0" class="white--text" style="background-color: #009263;" @click="exportPDF()"> 
                       <v-icon> mdi-pdf-box </v-icon> Exportar 
                     </v-btn></center>
-                    <v-combobox
-                      id="anoletivo"
-                      label="Ano Letivo"
-                      prepend-icon="mdi-counter"
-                      v-model="ano"
-                      color="#009263"
-                      :items="anos"
-                      @change="getEstatisticas()" 
-                    ></v-combobox>
+                    <v-container style="width:80%">
+                    <v-card class="pa-5" >
+                      <v-combobox
+                        id="anoletivo"
+                        label="Ano Letivo"
+                        prepend-icon="mdi-counter"
+                        v-model="ano"
+                        color="#009263"
+                        :items="anos"
+                        @change="getEstatisticas()" 
+                      ></v-combobox>
+                      <v-row class="justify-center align-center">
+                        <v-btn class="white--text" color="#009263" @click="getEstatisticas()">
+                            <v-icon>mdi-refresh</v-icon>
+                            Atualizar
+                        </v-btn>
+                      </v-row>
+                    </v-card>
+                    </v-container>
                     <v-container v-if="loading">
                       <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
                     </v-container>
@@ -62,6 +72,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
 import TotalEstatisticasMunicipios from '@/components/Estatisticas/TotalEstatisticasMunicipios'
 
   export default {
+    name: 'EstatisticasProfessores',
     data(){
       return {
         token: "",
@@ -94,13 +105,13 @@ import TotalEstatisticasMunicipios from '@/components/Estatisticas/TotalEstatist
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
         this.escola = this.$route.params.escola
-        if(this.$route.params.nomeEscola) this.nomeEscola = this.$route.params.nomeEscola
+        if(this.$route.query.nomeEscola) this.nomeEscola = this.$route.query.nomeEscola
         else{
             var response = await axios.get(h + "escolas/" + this.escola + "?token=" + this.token)
             this.nomeEscola = response.data.nome
         }
-        if(this.$route.params.ano){
-            this.ano = this.$route.params.ano
+        if(this.$route.query.ano){
+            this.ano = this.$route.query.ano
         }
         this.getEstatisticas()
     },

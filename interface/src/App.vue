@@ -2,7 +2,7 @@
 
   <v-app id="app"  :key="viewKey">
     
-    <router-view v-if="this.$route.name=='Novidades'"> 
+    <router-view v-if="this.$route.name=='Novidades' || this.$route.name=='Registar'" @login="login"> 
     </router-view>
 
     <Auth v-else-if="loggedIn" @refreshLogout="refreshLogout" />
@@ -27,6 +27,7 @@ import jwt_decode from "jwt-decode";
 //var CrossStorageClient = require('cross-storage').CrossStorageClient;
 var CrossStorageHub = require('cross-storage').CrossStorageHub;
 const host = require('@/config/hosts').host
+const h = require("@/config/hosts").hostAPI
 
 export default {
     components: {
@@ -48,13 +49,6 @@ export default {
           storage: '',
           storageConnected: false,
         }
-    },
-    watch: {
-      '$route'() {
-        // TODO: react to navigation event.
-        // params cotains the current route parameters
-        this.refreshLogout()
-      }
     },
     created: async function(){
       var aux = false
@@ -84,6 +78,11 @@ export default {
       ]);
 
       this.refreshLogout()
+
+      var response = await axios.get(h + "login/interface")
+      localStorage.setItem("tokenInterface", response.data.token)
+
+
     },
     computed:{
       haveToken(){
@@ -123,6 +122,7 @@ export default {
             this.mode = true
           },
           login: function(){
+            if(this.$route.name == 'Registar') this.$router.push({path: "/"})
             this.mode = false
           }
     }

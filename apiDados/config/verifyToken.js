@@ -263,3 +263,53 @@ module.exports.verifyAdminProf = function(){
         else res.status(403).jsonp("Não tem permissão.")
     }
 }
+
+module.exports.verifyAluno3 = function(){
+    return function(req, res, next) {
+        var u = req.user.user
+        var user = req.params.user
+        if((u.type == 10 || u.type == 3) && u.user == user) next()
+        else res.status(403).jsonp("Não tem permissão.")
+    }
+}
+
+module.exports.verifyAluno4 = function(){
+    return function(req, res, next) {
+        var u = req.user.user
+        if((u.type == 10 || u.type == 3)) next()
+        else res.status(403).jsonp("Não tem permissão.")
+    }
+}
+
+
+module.exports.verifyProfessor = function(){
+    return async function(req, res, next) {
+        var u = req.user.user
+        var codigo = req.params.codigo
+
+        // professor
+        if ( (u.type == 5 || u.type == 20) && u.codigo == codigo) next()
+        else res.status(403).jsonp("Não tem permissão.")
+    }
+}
+
+module.exports.verifyProfessor2 = function(){
+    return async function(req, res, next) {
+        var u = req.user.user
+        var codigo = req.body.codprofessor
+
+        // professor
+        if ( (u.type == 5 || u.type == 20) && u.codigo == codigo) next()
+        else res.status(403).jsonp("Não tem permissão.")
+    }
+}
+
+module.exports.verifyProfessor3 = function(){
+    return async function(req, res, next) {
+        var u = req.user.user
+
+        // professor
+        if ( (u.type == 5 || u.type == 20) ) next()
+        else res.status(403).jsonp("Não tem permissão.")
+    }
+}
