@@ -1,0 +1,80 @@
+summary: Devolve o ranking do Calculus de cada aluno de uma turma.
+description: |+
+  Num determinado ano letivo, lista o ranking na turma, agrupamento de escolas e todo o Hypatiamat de cada aluno de uma turma à cerca do jogo Calculus.
+  
+  Utilizadores que podem executar este pedido:
+    - Administrador;
+    - Município ao qual o agrupamento pertence;
+    - Respetivo Agrupamento de Escolas;
+    - Professor da turma.
+tags:
+  - Jogos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: turma
+    schema: 
+      type: string
+    description: "Código da turma."
+    required: true
+  - in: query
+    name: escola
+    schema: 
+      type: string
+    description: "Código do Agrupamento de Escolas."
+    required: true
+  - in: query
+    name: codprofessor
+    schema: 
+      type: string
+    description: "Código do professor da turma."
+    required: true
+  - in: query
+    name: anoletivo
+    schema: 
+      type: string
+    description: "Ano Letivo pretendido (YYYY/YYYY)."
+    example: 2020/2021
+    required: true
+  - in: query
+    name: tipos
+    schema: 
+      type: array
+      items:
+        type: integer
+    description: |+ 
+      Tipos de operações (Interseção de Operações, todas em simultâneo). 
+      
+      Operações possíveis: 
+        - 1 (Adição);
+        - 2 (Subtração); 
+        - 3 (Multiplicação);
+        - 4 (Divisão).
+    required: false
+  - in: query
+    name: niveis
+    schema: 
+      type: array
+      items:
+        type: integer
+    description: |+ 
+      Níveis jogados (União de Níveis). 
+      
+      Níveis Possíveis: 1, 2, 3, 4 e 5.
+    required: false
+responses:
+  200:
+    description: Lista dos rankings de cada aluno da turma.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/calculusTurmaRank'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

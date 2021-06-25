@@ -1,0 +1,20 @@
+type: string
+enum: 
+  - angulosHypatia
+  - samJuniorHypatia
+  - coorHypatia 
+  - plusfireHypatia
+  - batalhanaval
+  - divHypatia 
+  - samdHypatia
+  - addHypatia 
+  - findTheFactor
+  - tabuadaHypatia
+  - jogo24Hypatia
+  - lotosamd
+  - lotofractions
+  - subHypatia
+  - potenciasgame
+  - samdPlusHypatia
+  - division
+  - caminhoHypatia

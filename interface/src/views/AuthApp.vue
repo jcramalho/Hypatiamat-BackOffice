@@ -1,7 +1,7 @@
 <template>
 <div class="grey lighten-3"> 
 
-    <Navbar @refreshLogout="refreshLogout" @miniEvent="(value)=>{this.mini=value}" :mensagensLer="mensagensLer"/>
+    <Navbar @refreshLogout="refreshLogout" @miniEvent="(value)=>{this.mini=value}" :mensagensLer="mensagensLer" :storage="storage"/>
 
 
     <keep-alive :include="cacheItens" :max="10">
@@ -29,6 +29,7 @@ export default {
     Navbar,
     Views
   },
+  props:["storage"],
   data(){
       return {
       color: "#FF0000",

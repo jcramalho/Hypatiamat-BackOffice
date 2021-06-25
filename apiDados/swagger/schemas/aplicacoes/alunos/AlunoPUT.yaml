@@ -10,7 +10,8 @@ properties:
   email:
     type: string
   confirmacao:
-    type: boolean
+    type: integer
+    enum: [1, 0]
 required:
   - numero
   - nome

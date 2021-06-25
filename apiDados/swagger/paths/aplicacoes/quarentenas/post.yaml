@@ -1,12 +1,8 @@
 summary: Insere um novo pedido de inscrição.
 description: |+
   Insere um novo pedido de inscrição.
-  
-  Apenas o administrador pode executar este pedido.
 tags:
   - Quarentena
-security:
-  - tokenQuery: []
 requestBody:
   description: 'Informação do pedido de inscrição a inserir.'
   required: true
@@ -22,9 +18,5 @@ responses:
     description: Pedido de inscrição registado com sucesso.
   400:
     $ref: '#/components/responses/InvalidParameters'
-  401:
-    $ref: '#/components/responses/UnauthorizedToken'
-  403:
-    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro.

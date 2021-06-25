@@ -1,0 +1,12 @@
+type: object
+properties:
+  id:
+    type: integer
+  jogoid:
+    type: integer
+  jogo:
+    type: string
+  jogotable:
+    type: string
+  tipo:
+    type: integer

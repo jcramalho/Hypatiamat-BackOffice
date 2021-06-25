@@ -1,0 +1,34 @@
+summary: Devolve a frequência total de um aluno nos jogos.
+description: |+
+  Devolve a frequência total de um aluno nos jogos no ano letivo atual.
+  
+  Utilizadores que podem executar este pedido:
+    - Administrador;
+    - Professor do aluno;
+    - Respetivo aluno.
+tags:
+  - Jogos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: user
+    schema:
+      type: string
+    description: "Código do aluno."
+    required: true
+responses:
+  200:
+    description: Frequência total do aluno nos jogos.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/jogoAlunoLast10'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

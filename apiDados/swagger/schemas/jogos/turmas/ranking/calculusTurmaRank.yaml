@@ -1,0 +1,25 @@
+type: array
+items:
+  type: object
+  properties:
+    user:
+      type: string
+      description: 'Código do aluno.'
+    numero:
+      type: string
+      description: 'Número do aluno.'
+    nome:
+      type: string
+      description: 'Nome do aluno.'
+    posTurma:
+      type: integer
+      description: 'Posição do aluno na sua turma.'
+    posEscola:
+      type: integer
+      description: 'Posição do aluno no seu Agrupamento de Escolas.'
+    posHypatia:
+      type: integer
+      description: 'Posição do aluno em todo o Hypatiamat.'
+    total:
+      type: integer
+      description: 'Pontuação máxima do aluno no jogo e critério de ordenação.'

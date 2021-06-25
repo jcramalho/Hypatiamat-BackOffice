@@ -1,0 +1,69 @@
+summary: Devolve o ranking do CalcRapid de cada aluno de uma turma.
+description: |+
+  Num determinado ano letivo, lista o ranking na turma, agrupamento de escolas e todo o Hypatiamat de cada aluno de uma turma à cerca do jogo CalcRapid.
+  
+  Utilizadores que podem executar este pedido:
+    - Administrador;
+    - Município ao qual o agrupamento pertence;
+    - Respetivo Agrupamento de Escolas;
+    - Professor da turma.
+tags:
+  - Jogos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: turma
+    schema: 
+      type: string
+    description: "Código da turma."
+    required: true
+  - in: query
+    name: escola
+    schema: 
+      type: string
+    description: "Código do Agrupamento de Escolas."
+    required: true
+  - in: query
+    name: codprofessor
+    schema: 
+      type: string
+    description: "Código do professor da turma."
+    required: true
+  - in: query
+    name: anoletivo
+    schema: 
+      type: string
+    description: "Ano Letivo pretendido (YYYY/YYYY)."
+    example: 2020/2021
+    required: true
+  - in: query
+    name: tipo
+    schema: 
+      type: array
+      items:
+        type: integer
+    description: |+ 
+      Tipos de operações (União de Operações). 
+      
+      Operações possíveis: 
+        - 1 (Adição);
+        - 2 (Subtração); 
+        - 3 (Multiplicação);
+        - 4 (Divisão).
+    required: false
+responses:
+  200:
+    description: Lista dos rankings de cada aluno da turma.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/calcrapidTurmaRank'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

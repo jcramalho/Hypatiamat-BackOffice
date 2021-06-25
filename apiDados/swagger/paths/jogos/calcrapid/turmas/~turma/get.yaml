@@ -1,0 +1,86 @@
+summary: Devolve as estatísticas gerais à cerca do jogo CalcRapid por cada aluno de uma turma.
+description: |+
+  Lista as estatísticas gerais à cerca do jogo CalcRapid por cada aluno de uma turma.
+  
+  Utilizadores que podem executar este pedido:
+    - Administrador;
+    - Município ao qual o agrupamento pertence;
+    - Respetivo Agrupamento de Escolas;
+    - Professor da turma.
+tags:
+  - Jogos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: turma
+    schema: 
+      type: string
+    description: "Código da turma."
+    required: true
+  - in: query
+    name: escola
+    schema: 
+      type: string
+    description: "Código do Agrupamento de Escolas."
+    required: true
+  - in: query
+    name: dataInicio
+    schema: 
+      type: string
+      format: date
+    description: "Data Inicial do intervalo de tempo."
+    example: '2020-09-01'
+    required: true
+  - in: query
+    name: dataFim
+    schema: 
+      type: string
+      format: date
+    description: "Data Final do intervalo de tempo."
+    example: '2021-09-01'
+    required: true
+  - in: query
+    name: horaInicio
+    schema: 
+      type: string
+    description: "Hora Inicial do intervalo de tempo (HH:MM)."
+    example: '00:00'
+    required: true
+  - in: query
+    name: horaFim
+    schema: 
+      type: string
+    description: "Hora Final do intervalo de tempo (HH:MM)."
+    example: '23:59'
+    required: true
+  - in: query
+    name: tipo
+    schema: 
+      type: array
+      items:
+        type: integer
+    description: |+ 
+      Tipos de operações (União de Operações). 
+      
+      Operações possíveis: 
+        - 1 (Adição);
+        - 2 (Subtração); 
+        - 3 (Multiplicação);
+        - 4 (Divisão).
+    required: false
+responses:
+  200:
+    description: Estatísticas gerais do jogo por cada aluno de uma turma.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/calcrapidTurma'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

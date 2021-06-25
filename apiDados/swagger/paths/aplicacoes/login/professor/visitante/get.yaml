@@ -1,0 +1,10 @@
+summary: Executa a autenticação de um professor experimental/visitante no sistema.
+description: |
+  É devolvido um token de acesso para o visitante executar algumas rotas permitidas para este professor experimental.
+tags:
+  - Login
+responses:
+  200:
+    description: É devolvido o token, assim como o código de utilizador do professor experimental.
+  500:
+    description: Erro.

@@ -1,0 +1,17 @@
+type: object
+properties:
+  numero:
+    type: integer
+  idaluno:
+    type: string
+  nome:
+    type: string
+  turma:
+    type: string
+  pontuacao:
+    type: integer
+  data:
+    type: string
+    format: date
+  horario:
+    type: string

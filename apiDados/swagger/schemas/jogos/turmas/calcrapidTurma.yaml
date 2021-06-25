@@ -1,0 +1,25 @@
+type: array
+items:
+  type: object
+  properties:
+    idaluno:
+      type: string
+      description: 'Código do aluno.'
+    numero:
+      type: string
+      description: 'Número do aluno.'
+    nome:
+      type: string
+      description: 'Nome do aluno.'
+    pontcerta:
+      type: integer
+      description: 'Pontuação total acertada pelo município.'
+    ponterrada:
+      type: integer
+      description: 'Pontuação total errada pelo município.'
+    oprealizadas:
+      type: integer
+      description: 'Operações realizadas pelo município.'
+    frequencia:
+      type: integer
+      description: 'Frequência do município.'

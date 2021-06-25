@@ -1,0 +1,57 @@
+summary: Devolve 3 intervalos de tempo (se possível), cada intervalo com dados estatísticos de cada aluno da turma.
+description: |+
+  Lista 3 intervalos de tempo (se possível), cada intervalo com dados estatísticos de cada aluno da turma no ano letivo atual.
+
+  Os 3 intervalos devolvidos irão tentar otimizar a divisão da frequência de cada intervalo, respetivamente, de 15% - 70% - 15% da amostra.
+  
+  Utilizadores que podem executar este pedido:
+    - Administrador;
+    - Município ao qual o agrupamento pertence;
+    - Respetivo Agrupamento de Escolas;
+    - Professor da turma.
+tags:
+  - Jogos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: turma
+    schema:
+      type: string
+    description: "Código da turma."
+    required: true
+  - in: path
+    name: jogo
+    schema:
+      $ref: '#/components/schemas/jogosInfoGeral'
+    description: |+
+      Jogo geral pretendido (todos à exceção do calcrapid ou calculus).
+    required: true
+  - in: query
+    name: escola
+    schema: 
+      type: string
+    description: "Código do Agrupamento de Escolas."
+    required: true
+  - in: query
+    name: jogoTipo
+    schema: 
+      type: integer
+      enum: [null, 1, 2, 3, 4, 5, 6, 7]
+    description: "Obrigatório quando seleciona um jogo. Tipo de jogo (p.e. Caminho 5 -> tipo = 5 ; Jogo Naturais -> tipo = 1; Jogo Inteiros -> tipo = 2)."
+    required: false
+responses:
+  200:
+    description: Lista dos intervalos de tempo da turma.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/jogoGeralTurmaIntervalos'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

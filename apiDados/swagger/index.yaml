@@ -9,6 +9,8 @@ info:
       - Agrupamento;
       - Município;
       - Administrador.
+      
+    Além destes utilizadores, existem 2 utilizadores experimentais com o nível de autorização mais baixo para o aluno e professsor. 
   version: 1.0.0
   title: API de Dados do Hypatiamat
 servers:

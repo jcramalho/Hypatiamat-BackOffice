@@ -1,0 +1,22 @@
+type: array
+items:
+  type: object
+  properties:
+    cod:
+      type: string
+      description: 'Código do Agrupamento de Escolas.'
+    nome:
+      type: string
+      description: 'Nome do Agrupamento de Escolas.'
+    pontcerta:
+      type: integer
+      description: 'Pontuação total acertada pelo município.'
+    ponterrada:
+      type: integer
+      description: 'Pontuação total errada pelo município.'
+    oprealizadas:
+      type: integer
+      description: 'Operações realizadas pelo município.'
+    frequencia:
+      type: integer
+      description: 'Frequência do município.'

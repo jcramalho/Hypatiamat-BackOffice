@@ -1,0 +1,18 @@
+type: array
+items:
+  type: object
+  properties:
+    localidade:
+      type: string
+    pontcerta:
+      type: integer
+      description: 'Pontuação total acertada pelo município.'
+    ponterrada:
+      type: integer
+      description: 'Pontuação total errada pelo município.'
+    oprealizadas:
+      type: integer
+      description: 'Operações realizadas pelo município.'
+    frequencia:
+      type: integer
+      description: 'Frequência do município.'

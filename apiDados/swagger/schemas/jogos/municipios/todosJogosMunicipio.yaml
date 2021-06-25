@@ -1,0 +1,14 @@
+type: array
+description: 'Todos os jogos selecionados.'
+items:
+  type: object
+  properties:
+    cod:
+      type: string
+      description: 'Código do Agrupamento de Escolas.'
+    nome:
+      type: string
+      description: 'Nome do Agrupamento de escolas.'
+    number:
+      type: integer
+      description: 'Frequência do município em todos os jogos.'

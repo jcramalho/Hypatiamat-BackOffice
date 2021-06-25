@@ -1,0 +1,20 @@
+type: object
+properties:
+  numero:
+    type: integer
+  idaluno:
+    type: string
+  nome:
+    type: string
+  media:
+    type: integer
+    description: 'Pontuação média do aluno no jogo.'
+  maximo:
+    type: integer
+    description: 'Pontuação máxima do aluno no jogo.'
+  minimo:
+    type: integer
+    description: 'Pontuação mínima do aluno no jogo.'
+  count:
+    type: integer
+    description: 'Frequência do aluno no jogo.'

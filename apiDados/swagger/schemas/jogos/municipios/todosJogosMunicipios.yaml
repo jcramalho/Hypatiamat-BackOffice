@@ -1,0 +1,10 @@
+type: array
+description: 'Opção todos os jogos selecionada.'
+items:
+  type: object
+  properties:
+    localidade:
+      type: string
+    number:
+      type: integer
+      description: 'Frequência do município em todos os jogos.'

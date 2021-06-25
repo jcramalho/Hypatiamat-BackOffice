@@ -1,0 +1,19 @@
+type: array
+description: 'Um jogo selecionado.'
+items:
+  type: object
+  properties:
+    localidade:
+      type: string
+    min:
+      type: integer
+      description: 'Pontuação mínima do município no jogo.'
+    max:
+      type: integer
+      description: 'Pontuação máxima do município no jogo.'
+    media:
+      type: integer
+      description: 'Pontuação média do município no jogo.'
+    number:
+      type: integer
+      description: 'Frequência do município no jogo.'

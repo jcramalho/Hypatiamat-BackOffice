@@ -1,0 +1,30 @@
+summary: Insere um novo aluno.
+description: |+
+  Insere um novo aluno confirmado com as informações pretendidas.
+  
+  Apenas o administrador e o professor do respetivo aluno a ser criado podem executar este pedido.
+tags:
+  - Alunos
+security:
+  - tokenQuery: []
+requestBody:
+  description: 'Informação do aluno a registar.'
+  required: true
+  content:
+    application/x-www-form-urlencoded:
+      schema:
+        $ref: '#/components/schemas/AlunoConfirmadoPOST'
+    application/json:
+      schema:
+        $ref: '#/components/schemas/AlunoConfirmadoPOST'
+responses:
+  200:
+    description: Aluno registado com sucesso.
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

@@ -1,8 +1,8 @@
-summary: Insere um novo aluno.
+summary: Insere um novo aluno não confirmado.
 description: |+
-  Insere um novo aluno com as informações pretendidas.
+  Insere um novo aluno não confirmado com as informações pretendidas.
   
-  Apenas o administrador pode executar este pedido.
+  Todos os utilizadores podem realizar este pedido, apenas é necessário o nível mais baixo de token, ou seja, o token de interface.
 tags:
   - Alunos
 security:
@@ -24,7 +24,5 @@ responses:
     $ref: '#/components/responses/InvalidParameters'
   401:
     $ref: '#/components/responses/UnauthorizedToken'
-  403:
-    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro.

@@ -1,0 +1,14 @@
+type: array
+description: 'Todos os jogos selecionados.'
+items:
+  type: object
+  properties:
+    codprofessor:
+      type: string
+      description: 'Código do professor.'
+    nome:
+      type: string
+      description: 'Nome do professor.'
+    number:
+      type: integer
+      description: 'Frequência do município em todos os jogos.'

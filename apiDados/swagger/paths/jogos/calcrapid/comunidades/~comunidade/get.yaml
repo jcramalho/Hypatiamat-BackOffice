@@ -1,0 +1,62 @@
+summary: Devolve as estatísticas gerais à cerca do jogo CalcRapid por cada município de uma comunidade.
+description: |+
+  Lista as estatísticas gerais à cerca do jogo CalcRapid por cada município de uma comunidade.
+  
+  Apenas o administrador pode executar este pedido.
+tags:
+  - Jogos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: comunidade
+    schema:
+      type: string
+    description: "Código da comunidade."
+    required: true
+  - in: query
+    name: dataInicio
+    schema: 
+      type: string
+      format: date
+    description: "Data Inicial do intervalo de tempo."
+    example: '2020-09-01'
+    required: true
+  - in: query
+    name: dataFim
+    schema: 
+      type: string
+      format: date
+    description: "Data Final do intervalo de tempo."
+    example: '2021-09-01'
+    required: true
+  - in: query
+    name: tipo
+    schema: 
+      type: array
+      items:
+        type: integer
+    description: |+ 
+      Tipos de operações (União de Operações). 
+      
+      Operações possíveis: 
+        - 1 (Adição);
+        - 2 (Subtração); 
+        - 3 (Multiplicação);
+        - 4 (Divisão).
+    required: false
+responses:
+  200:
+    description: Estatísticas gerais do jogo por cada município da comunidade.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/calcrapidMunicipios'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

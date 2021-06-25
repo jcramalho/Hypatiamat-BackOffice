@@ -80,12 +80,10 @@ var src = fs.readFileSync(yamlinc.basefile, 'utf8');
 
 var swaggerDocument = yaml.load(src, { schema: yamlinc.YAML_INCLUDE_SCHEMA, filename: yamlinc.basefile })
 
-/*
 var optionsSwagger = {
   explorer: true,
   customCss: '.swagger-ui .models { display: none }'
 };
-*/
 
 
 
@@ -102,7 +100,7 @@ app.use(express.static(path.join(__dirname, 'node_modules/swagger-ui-dist')));
 app.use(
   "/api-docs",
   swaggerUi.serve,
-  swaggerUi.setup(swaggerDocument)
+  swaggerUi.setup(swaggerDocument, optionsSwagger)
 );
 
 app.use('/aplicacoes/professores', professoresRouter);

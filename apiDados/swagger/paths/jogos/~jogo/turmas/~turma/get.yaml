@@ -1,0 +1,87 @@
+summary: Devolve as estatísticas gerais à cerca de um jogo por cada aluno de uma turma.
+description: |+
+  Lista as estatísticas gerais à cerca de um jogo (ou de todos os jogos) por cada aluno de uma turma.
+  
+  Utilizadores que podem executar este pedido:
+    - Administrador;
+    - Município ao qual o agrupamento pertence;
+    - Respetivo Agrupamento de Escolas;
+    - Professor da turma.
+tags:
+  - Jogos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: turma
+    schema:
+      type: string
+    description: "Código da turma."
+    required: true
+  - in: path
+    name: jogo
+    schema:
+      $ref: '#/components/schemas/jogosInfoGeral2'
+    description: |+
+      Jogo geral pretendido (todos à exceção do calcrapid ou calculus).
+    required: true
+  - in: query
+    name: escola
+    schema: 
+      type: string
+    description: "Código do Agrupamento de Escolas."
+    required: true
+  - in: query
+    name: jogoTipo
+    schema: 
+      type: integer
+      enum: [null, 1, 2, 3, 4, 5, 6, 7]
+    description: "Obrigatório quando seleciona um jogo. Tipo de jogo (p.e. Caminho 5 -> tipo = 5 ; Jogo Naturais -> tipo = 1; Jogo Inteiros -> tipo = 2)."
+    required: false
+  - in: query
+    name: dataInicio
+    schema: 
+      type: string
+      format: date
+    description: "Data Inicial do intervalo de tempo."
+    example: '2020-09-01'
+    required: true
+  - in: query
+    name: dataFim
+    schema: 
+      type: string
+      format: date
+    description: "Data Final do intervalo de tempo."
+    example: '2021-09-01'
+    required: true
+  - in: query
+    name: horaInicio
+    schema: 
+      type: string
+    description: "Hora Inicial do intervalo de tempo (HH:MM)."
+    example: '00:00'
+    required: true
+  - in: query
+    name: horaFim
+    schema: 
+      type: string
+    description: "Hora Final do intervalo de tempo (HH:MM)."
+    example: '23:59'
+    required: true
+responses:
+  200:
+    description: Estatísticas gerais do jogo por cada aluno de uma turma.
+    content:
+      application/json:
+        schema:
+          oneOf:
+          - $ref: '#/components/schemas/jogoGeralTurma'
+          - $ref: '#/components/schemas/todosJogosTurma'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

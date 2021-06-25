@@ -5,7 +5,7 @@
     <router-view v-if="this.$route.name=='Novidades' || this.$route.name=='Registar'" @login="login"> 
     </router-view>
 
-    <Auth v-else-if="loggedIn" @refreshLogout="refreshLogout" />
+    <Auth v-else-if="loggedIn" @refreshLogout="refreshLogout" :storage="storage" />
 
     <Login v-else-if="!mode"  @refreshLogout="refreshLogout" @registar="registar"  />
      
@@ -24,7 +24,7 @@ import Novidades from '@/views/Novidades/Novidades.vue'
 import axios from 'axios'
 import { ResponsiveDirective } from "vue-responsive-components"
 import jwt_decode from "jwt-decode";
-//var CrossStorageClient = require('cross-storage').CrossStorageClient;
+var CrossStorageClient = require('cross-storage').CrossStorageClient;
 var CrossStorageHub = require('cross-storage').CrossStorageHub;
 const host = require('@/config/hosts').host
 const h = require("@/config/hosts").hostAPI
@@ -73,11 +73,19 @@ export default {
       });
 
       CrossStorageHub.init([
-       //{origin: /localhost:8081$/, allow: ['get', 'set', 'del', 'getKeys', 'clear']},
+        {origin: /localhost:8081$/, allow: ['get', 'set', 'del', 'getKeys', 'clear']},
         {origin: /hypatiamat.com$/, allow: ['get', 'set', 'del', 'clear']},
       ]);
 
+      this.storage = new CrossStorageClient("http://localhost:8081", {
+        timeout: 5000,
+      });
+
+      await this.storage.onConnect();
+
+
       this.refreshLogout()
+
 
       var response = await axios.get(h + "login/interface")
       localStorage.setItem("tokenInterface", response.data.token)
@@ -98,7 +106,14 @@ export default {
           isLogged: function(){
             var token = localStorage.getItem("token")
             if (token == null) {
-              return false
+              var self = this
+              this.storage.get('token')
+                          .then(jwt => {
+                            if(jwt){
+                             localStorage.setItem("token", jwt)
+                             self.resfreshLogout()
+                            }
+                          })
             }
             else{ 
               var utilizador = localStorage.getItem("utilizador")
@@ -106,8 +121,12 @@ export default {
               else{ 
                 var decode_token = jwt_decode(token)
                 if(decode_token.user && decode_token.user.type){
+                  if(decode_token.user.type == 'professor') decode_token.user.type = 20
+                  else if(decode_token.user.type == 'aluno') decode_token.user.type = 10
+                  
                   localStorage.setItem('utilizador', JSON.stringify(decode_token.user))
-                  localStorage.setItem('type', decode_token.user.type)
+                  localStorage.setItem('type', type)
+
                   return true
                 }
                 else return false

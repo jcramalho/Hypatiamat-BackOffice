@@ -1,5 +1,5 @@
-//const host = "http://192.168.1.146:3050/"
-const host = "https://api.hypatiamat.com/"
+const host = "http://192.168.1.146:3050/"
+//const host = "https://api.hypatiamat.com/"
 module.exports.host = host
 module.exports.hostAPI = host + "aplicacoes/"
 module.exports.hostJogos = host + "jogos/"

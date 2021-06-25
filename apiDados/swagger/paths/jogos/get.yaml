@@ -1,0 +1,22 @@
+summary: Devolve a informação geral à cerca de todos os jogos disponíveis.
+description: |+
+  Devolve a informação geral à cerca de todos os jogos disponíveis.
+  
+  Todos os utilizadores autenticados podem executar este pedido.
+tags:
+  - Jogos
+security:
+  - tokenQuery: []
+responses:
+  200:
+    description: Lista de jogos.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/jogosInfoGET'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  500:
+    description: Erro.

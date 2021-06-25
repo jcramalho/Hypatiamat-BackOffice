@@ -84,13 +84,19 @@ router.get('/:user/jogosGlobal/:jogoTable', passport.authenticate('jwt', {sessio
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp(erro))
   }
+  else res.status(400).send('Faltam parâmetros..')
 });
 
 /* PUT altera a informação de um aluno. */
-router.put('/:id', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno(), function(req, res, next) {
-    Alunos.updateAluno(req.params.id, req.body)
-               .then(dados => res.jsonp(dados))
-               .catch(erro => res.status(500).jsonp(erro))
+router.put('/:id', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno(), async function(req, res, next) {
+    var aluno = await Alunos.getAluno(req.params.id)
+    //var alunosEmails = await Alunos.getAlunosCodigo()
+    if(aluno){
+      Alunos.updateAluno(req.params.id, req.body)
+                .then(dados => res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp(erro))
+    }
+    else res.status(400).send('Aluno inexistente.')
 });
 
 
@@ -187,7 +193,7 @@ router.post('/', passport.authenticate('jwt', {session: false}), async function(
       && aluno.codprofessor && aluno.turma && aluno.email && aluno.password && aluno.pais){
         var prof = await Professores.getProfessorByCodigo(aluno.codprofessor)
         if(prof) aluno.escola = prof.escola
-        else aluno.escola = "NNNN"
+        else aluno.escola = "NNNNONE"
         
         var verificacao = await verifyAluno(aluno)
         if(verificacao.response){

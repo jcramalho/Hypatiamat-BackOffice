@@ -1,0 +1,18 @@
+type: array
+items:
+  type: object
+  properties:
+    localidade:
+      type: string
+    numcertas:
+      type: integer
+      description: 'Número de operações certas realizadas pelo município.'
+    numerradas:
+      type: integer
+      description: 'Número de operações errada realizadas pelo município.'
+    pontos:
+      type: integer
+      description: 'Pontuação total do município.'
+    frequencia:
+      type: integer
+      description: 'Frequência do município.'

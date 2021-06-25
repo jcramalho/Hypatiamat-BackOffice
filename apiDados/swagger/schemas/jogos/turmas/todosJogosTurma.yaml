@@ -1,0 +1,17 @@
+type: array
+description: 'Todos os jogos selecionados.'
+items:
+  type: object
+  properties:
+    idaluno:
+      type: string
+      description: 'Código do aluno.'
+    numero:
+      type: string
+      description: 'Número do aluno.'
+    nome:
+      type: string
+      description: 'Nome do aluno.'
+    count:
+      type: integer
+      description: 'Frequência do município em todos os jogos.'

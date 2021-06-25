@@ -1,0 +1,74 @@
+type: object
+properties:
+  estatisticas:
+    type: object
+    properties:
+      porDia:
+        type: array
+        description: Array com a informação da frequência e nº. de alunos que jogaram por dia.
+        items:
+          type: object
+          properties:
+            data: 
+              type: string
+              format: date
+            freq:
+              type: integer
+              description: Frequência da turma.
+            nalunos:
+              type: integer
+              description: Nº. de alunos que jogaram.
+      total:
+        type: integer
+        description: Frequência total da turma.
+  intervalos:
+    type: array
+    items:
+      type: object
+      properties:
+        dataInicio:
+          type: string
+          format: date
+          description: Data inicial do intervalo.
+        dataFim:
+          type: string
+          format: date
+          description: Data final do intervalo.
+        freq: 
+          type: integer
+          description: Frequência da turma no intervalo.
+        label:
+          type: string
+          description: Nome do intervalo.
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              idaluno:
+                type: string
+                description: 'Código do aluno.'
+              numero:
+                type: string
+                description: 'Número do aluno.'
+              nome:
+                type: string
+                description: 'Nome do aluno.'
+              min:
+                type: integer
+                description: 'Pontuação mínima do município no jogo.'
+              max:
+                type: integer
+                description: 'Pontuação máxima do município no jogo.'
+              media:
+                type: integer
+                description: 'Pontuação média do município no jogo.'
+              count:
+                type: integer
+                description: 'Frequência do município no jogo.'
+              x:
+                type: integer
+                description: 'Abcissa do gráfico quando representado (número do aluno).'
+              y:
+                type: integer
+                description: 'Ordenada do gráfico quando representado (média do aluno).'

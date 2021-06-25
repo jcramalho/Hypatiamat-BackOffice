@@ -85,7 +85,7 @@ import Swal from 'sweetalert2'
 const host = require("@/config/hosts").host
 export default {
   props:[
-    'logged', 'mensagensLer'
+    'logged', 'mensagensLer', 'storage'
   ],
   data () {
     return {
@@ -109,7 +109,7 @@ export default {
       idUtilizador:"",
       nomeUtilizador:"",
       nome:"",
-      versao: "2.6"
+      versao: "2.7"
     }
   },
   watch: {
@@ -231,6 +231,7 @@ export default {
             localStorage.removeItem("type");
             localStorage.removeItem("token");
             //this.bifrostCors.deleteLocalStorage(["token", "type", "utilizador"])
+            this.storage.clear();
             this.$emit('refreshLogout')
             this.color = "#900001"
           }

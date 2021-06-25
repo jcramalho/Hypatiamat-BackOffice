@@ -1,0 +1,67 @@
+summary: Devolve as estatísticas gerais à cerca do jogo Calculus por cada município.
+description: |+
+  Lista as estatísticas gerais à cerca do jogo Calculus por cada município.
+  
+  Apenas o administrador pode executar este pedido.
+tags:
+  - Jogos
+security:
+  - tokenQuery: []
+parameters:
+  - in: query
+    name: dataInicio
+    schema: 
+      type: string
+      format: date
+    description: "Data Inicial do intervalo de tempo."
+    example: '2020-09-01'
+    required: true
+  - in: query
+    name: dataFim
+    schema: 
+      type: string
+      format: date
+    description: "Data Final do intervalo de tempo."
+    example: '2021-09-01'
+    required: true
+  - in: query
+    name: tipos
+    schema: 
+      type: array
+      items:
+        type: integer
+    description: |+ 
+      Tipos de operações (Interseção de Operações, todas em simultâneo). 
+      
+      Operações possíveis: 
+        - 1 (Adição);
+        - 2 (Subtração); 
+        - 3 (Multiplicação);
+        - 4 (Divisão).
+    required: false
+  - in: query
+    name: niveis
+    schema: 
+      type: array
+      items:
+        type: integer
+    description: |+ 
+      Níveis jogados (União de Níveis). 
+      
+      Níveis Possíveis: 1, 2, 3, 4 e 5.
+    required: false
+responses:
+  200:
+    description: Estatísticas gerais do jogo por cada município.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/calculusMunicipios'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

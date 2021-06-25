@@ -1,0 +1,61 @@
+summary: Devolve a performance global de um aluno num jogo geral.
+description: |+
+  Devolve as estatísticas globais à cerca de um aluno num jogo geral durante o intervalo de tempo pretendido.
+  
+  Utilizadores que podem executar esta rota:
+    - O próprio aluno;
+    - O professor do aluno;
+    - O administrador do sistema.
+tags:
+  - Alunos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: user
+    schema:
+      type: string
+    description: "Código do Aluno a ser consultado."
+    required: true
+  - in: path
+    name: jogoTable
+    schema:
+      $ref: '#/components/schemas/jogosInfoGeral'
+    description: "Jogo geral pretendido (todos à exceção do calcrapid ou calculus)."
+    required: true
+  - in: query
+    name: jogoTipo
+    schema: 
+      type: integer
+      enum: [1, 2, 3, 4, 5, 6, 7]
+    description: "Tipo de jogo (p.e. Caminho 5 -> tipo = 5 ; Jogo Naturais -> tipo = 1; Jogo Inteiros -> tipo = 2)."
+    required: true
+  - in: query
+    name: dataInicio
+    schema: 
+      type: string
+      format: date
+    description: "Data Inicial do intervalo de tempo."
+    example: '2020-09-01'
+    required: true
+  - in: query
+    name: dataFim
+    schema: 
+      type: string
+      format: date
+    description: "Data Final do intervalo de tempo."
+    example: '2021-09-01'
+    required: true
+responses:
+  200:
+    description: Estatísticas globais devolvidas.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/JogosAlunoGlobalGET'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

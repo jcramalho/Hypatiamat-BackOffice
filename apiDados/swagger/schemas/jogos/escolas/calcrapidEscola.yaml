@@ -1,0 +1,22 @@
+type: array
+items:
+  type: object
+  properties:
+    codprofessor:
+      type: string
+      description: 'Código do professor.'
+    nome:
+      type: string
+      description: 'Nome do professor.'
+    pontcerta:
+      type: integer
+      description: 'Pontuação total acertada pelo município.'
+    ponterrada:
+      type: integer
+      description: 'Pontuação total errada pelo município.'
+    oprealizadas:
+      type: integer
+      description: 'Operações realizadas pelo município.'
+    frequencia:
+      type: integer
+      description: 'Frequência do município.'

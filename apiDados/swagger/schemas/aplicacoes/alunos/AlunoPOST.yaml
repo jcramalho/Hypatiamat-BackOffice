@@ -12,10 +12,7 @@ properties:
   datanascimento:
     type: string
     format: date
-    description: Data de Nascimento do aluno (DD-MM-YYYY).
-  escola:
-    type: string
-    description: Código do Agrupamento a que pertence.
+    description: Data de Nascimento do aluno (DD/MM/YYYY).
   turma:
     type: string
     description: Código da turma a que pertence.
@@ -37,7 +34,6 @@ required:
   - numero
   - nome
   - datanascimento
-  - escola
   - turma
   - email
   - password
