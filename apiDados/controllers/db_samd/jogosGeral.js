@@ -196,7 +196,7 @@ JogosGerais.getEstatisticasGraficoTurma = async function(jogoTipo, tableJogo, tu
     for(var i = 0; i < freqs.porDia.length; i++){
         freqAux += freqs.porDia[i].freq
         var freqPretendida = intervalosFreqsIdeais[intervaloAtual]
-        if(freqAux >= freqPretendida){
+        if(freqAux >= freqPretendida && intervaloAtual < intervalosFreqsIdeais.length-1){
             freqConsumida += freqAux
             //console.log("Diferença com tudo (Periodo " + (intervaloAtual +1)  + " ): " + Math.abs(freqPretendida - freqAux))
             //console.log("Diferença 2 (Periodo " + (intervaloAtual +1)  + " ): " +Math.abs(freqPretendida - (freqAux - freqs.porDia[i].freq)))

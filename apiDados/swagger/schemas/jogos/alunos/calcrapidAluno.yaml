@@ -1,0 +1,17 @@
+type: object
+properties:
+  idaluno:
+    type: string
+    description: 'Código do aluno.'
+  pontcerta:
+    type: integer
+    description: 'Pontuação total acertada pelo aluno.'
+  ponterrada:
+    type: integer
+    description: 'Pontuação total errada pelo aluno.'
+  oprealizadas:
+    type: integer
+    description: 'Operações realizadas pelo aluno.'
+  frequencia:
+    type: integer
+    description: 'Frequência do aluno.'

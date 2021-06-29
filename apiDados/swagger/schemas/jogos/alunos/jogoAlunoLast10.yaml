@@ -1,27 +1,29 @@
-type: object
-properties:
-  min:
-    type: integer
-    description: 'Pontuação mínima do aluno no jogo.'
-  max:
-    type: integer
-    description: 'Pontuação máxima do aluno no jogo.'
-  media:
-    type: integer
-    description: 'Pontuação média do aluno no jogo.'
-  frequencia:
-    type: integer
-    description: 'Frequência do aluno no jogo.'
-  lastdate:
-    type: string
-    format: date
-    description: 'Último dia em que o aluno jogou o jogo.'
-  nome: 
-    type: string
-    description: 'Nome do jogo.'
-  jogotable:
-    type: string
-    description: 'Tabela do jogo.'
-  horario:
-    type: string
-    description: 'Hora da última vez que jogou o jogo.'
+type: array
+items:
+  type: object
+  properties:
+    min:
+      type: integer
+      description: 'Pontuação mínima do aluno no jogo.'
+    max:
+      type: integer
+      description: 'Pontuação máxima do aluno no jogo.'
+    media:
+      type: integer
+      description: 'Pontuação média do aluno no jogo.'
+    frequencia:
+      type: integer
+      description: 'Frequência do aluno no jogo.'
+    lastdate:
+      type: string
+      format: date
+      description: 'Último dia em que o aluno jogou o jogo.'
+    nome: 
+      type: string
+      description: 'Nome do jogo.'
+    jogotable:
+      type: string
+      description: 'Tabela do jogo.'
+    horario:
+      type: string
+      description: 'Hora da última vez que jogou o jogo.'

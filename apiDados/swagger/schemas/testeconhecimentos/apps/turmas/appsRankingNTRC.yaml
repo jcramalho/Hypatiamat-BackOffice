@@ -1,0 +1,28 @@
+type: array
+items:
+  type: object
+  properties:
+    numero:
+      type: integer
+      description: Número do aluno.
+    user:
+      type: string
+      description: Código do aluno.
+    nome:
+      type: string
+      description: Nome do aluno.
+    posTurma:
+      type: integer
+      description: Posição do aluno na turma.
+    posEscola:
+      type: integer
+      description: Posição do aluno no agrupamento de escolas.
+    posHypatia:
+      type: integer
+      description: Posição do aluno em todo o Hypatiamat.
+    total:
+      type: integer
+      description: Critério de ordenação (Nº. de tarefas resolvidas corretamente).
+    params:
+      type: integer
+      description: Critério de desempate de ordenação (Percentagem de acerto).

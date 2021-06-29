@@ -1,0 +1,69 @@
+summary: Devolve as classificações gerais dos alunos de uma turma à cerca de uma aplicação de conteúdo (Critério - acerto).
+description: |+
+  Lista as posições dos alunos de uma turma, relativamente a uma aplicação de conteúdo (ou de todas).
+  
+  Neste caso, o critério de ordenação dos rankings é a percentagem de acerto.
+
+  Utilizadores que podem executar este pedido:
+  - Administrador;
+  - Município do turma;
+  - O Agrupamento de Escolas da turma;
+  - O professor da turma.
+tags:
+  - Aplicações de Conteúdo
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: turma
+    schema: 
+      type: string
+    description: "Código da turma."
+    required: true
+  - in: query
+    name: codProf
+    schema: 
+      type: string
+    description: "Código do professor da turma."
+    required: true
+  - in: query
+    name: escola
+    schema: 
+      type: string
+    description: "Código do Agrupamento de Escolas."
+    required: true
+  - in: query
+    name: codtema
+    schema: 
+      type: integer
+    description: "Código do tema da aplicação. Caso deseje monitorizar todas as aplicações, não preencha este campo."
+    required: false
+  - in: query
+    name: codsubtema
+    schema: 
+      type: integer
+    description: "Código do subtema da aplicação, caso a aplicação seja um subtema."
+    required: false
+  - in: query
+    name: anoletivo
+    schema: 
+      type: string
+      format: date
+    description: "Ano letivo (YYYY/YYYY)."
+    example: '2020/2021'
+    required: true
+responses:
+  200:
+    description: Rankings dos alunos da turma.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/appsRankingAcerto'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

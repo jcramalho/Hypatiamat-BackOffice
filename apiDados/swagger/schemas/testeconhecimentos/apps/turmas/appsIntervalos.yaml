@@ -1,0 +1,80 @@
+type: object
+properties:
+  estatisticas:
+    type: object
+    properties:
+      porDia:
+        type: array
+        description: Array com a informação do nº. de tarefas resolvidas e nº. de alunos que jogaram por dia.
+        items:
+          type: object
+          properties:
+            data: 
+              type: string
+              format: date
+            freq:
+              type: integer
+              description: Nº. de tarefas resolvidas.
+            nalunos:
+              type: integer
+              description: Nº. de alunos que jogaram.
+      total:
+        type: integer
+        description: Nº. de tarefas resolvidas pela turma no total.
+  intervalos:
+    type: array
+    items:
+      type: object
+      properties:
+        dataInicio:
+          type: string
+          format: date
+          description: Data inicial do intervalo.
+        dataFim:
+          type: string
+          format: date
+          description: Data final do intervalo.
+        freq: 
+          type: integer
+          description: Frequência da turma no intervalo.
+        label:
+          type: string
+          description: Nome do intervalo.
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              numero:
+                type: integer
+                description: Número do aluno.
+              userid:
+                type: string
+                description: Código do aluno.
+              nome:
+                type: string
+                description: Nome do aluno.
+              ncertas:
+                type: integer
+                description: Número de tarefas resolvidas corretamente.
+              ntotal:
+                type: integer
+                description: Número de tarefas resolvidas.
+              acerto:
+                type: integer
+                description: Percentagem de acerto.
+              onpeak:
+                type: string
+                description: Nº. de vezes que a aplicação foi resolvida dentro do período escolar.
+              offpeak:
+                type: string
+                description: Nº. de vezes que a aplicação foi resolvida fora do período escolar.
+              frequencia:
+                type: string
+                description: Nº. de vezes que a aplicação foi resolvida.
+              x: 
+                type: integer
+                description: 'Abcissa do gráfico quando representado (número do aluno).'
+              y:
+                type: integer
+                description: 'Ordenada do gráfico quando representado (acerto do aluno).'

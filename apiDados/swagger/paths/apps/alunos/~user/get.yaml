@@ -1,0 +1,62 @@
+summary: Devolve as estatísticas gerais à cerca de uma aplicação de conteúdo de um aluno.
+description: |+
+  Retorna as estatísticas gerais à cerca de uma aplicação de conteúdo (ou de todas) de um aluno.
+  
+  Utilizadores que podem executar este pedido:
+  - Administrador;
+  - Professor do aluno;
+  - Respetivo aluno.
+tags:
+  - Aplicações de Conteúdo
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: user
+    schema: 
+      type: string
+    description: "Código do aluno."
+    required: true
+  - in: query
+    name: codtema
+    schema: 
+      type: integer
+    description: "Código do tema da aplicação. Caso deseje monitorizar todas as aplicações, não preencha este campo."
+    required: false
+  - in: query
+    name: codsubtema
+    schema: 
+      type: integer
+    description: "Código do subtema da aplicação, caso a aplicação seja um subtema."
+    required: false
+  - in: query
+    name: dataInicio
+    schema: 
+      type: string
+      format: date
+    description: "Data Inicial do intervalo de tempo."
+    example: '2020-09-01'
+    required: true
+  - in: query
+    name: dataFim
+    schema: 
+      type: string
+      format: date
+    description: "Data Final do intervalo de tempo."
+    example: '2021-09-01'
+    required: true
+responses:
+  200:
+    description: Estatísticas gerais do aluno.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/appsAluno'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

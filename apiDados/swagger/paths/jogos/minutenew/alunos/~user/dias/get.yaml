@@ -1,0 +1,36 @@
+summary: Devolve as estatísticas gerais por dia à cerca do jogo Calculus de um aluno.
+description: |+
+  Lista as estatísticas gerais por dia à cerca do jogo Calculus por cada professor de um aluno.
+  
+  Utilizadores que podem executar este pedido:
+    - Administrador;
+    - Município ao qual o agrupamento pertence;
+    - Respetivo Agrupamento de Escolas.
+    - Professor do aluno;
+    - Próprio aluno.
+tags:
+  - Jogos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: user
+    schema: 
+      type: string
+    description: "Código do aluno."
+    required: true
+responses:
+  200:
+    description: Estatísticas gerais por dia do aluno.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/calculusDiaAluno'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

@@ -1,0 +1,50 @@
+summary: Devolve as estatísticas gerais à cerca de um jogo por dia de um aluno.
+description: |+
+  Lista as estatísticas gerais à cerca de um jogo (ou de todos os jogos) por cada dia que um aluno jogou
+  
+  Utilizadores que podem executar este pedido:
+    - Administrador;
+    - Município ao qual o agrupamento pertence;
+    - Respetivo Agrupamento de Escolas;
+    - Professor do Aluno;
+    - Próprio Aluno.
+tags:
+  - Jogos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: user
+    schema:
+      type: string
+    description: "Código do Aluno."
+    required: true
+  - in: path
+    name: jogo
+    schema:
+      $ref: '#/components/schemas/jogosInfoGeral'
+    description: |+
+      Jogo geral pretendido (todos à exceção do calcrapid ou calculus).
+    required: true
+  - in: query
+    name: tipo
+    schema: 
+      type: integer
+      enum: [null, 1, 2, 3, 4, 5, 6, 7]
+    description: "Obrigatório quando seleciona um jogo. Tipo de jogo (p.e. Caminho 5 -> tipo = 5 ; Jogo Naturais -> tipo = 1; Jogo Inteiros -> tipo = 2)."
+    required: false
+responses:
+  200:
+    description: Estatísticas gerais do jogo por dia do aluno.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/jogoDiaAluno'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

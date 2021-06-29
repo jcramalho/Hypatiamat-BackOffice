@@ -1,0 +1,26 @@
+type: array
+items:
+  type: object
+  properties:
+    lastdate:
+      type: string
+      format: date
+      description: Data correspondente a um dia em que a aplicação foi realizada.
+    ncertas:
+      type: integer
+      description: Número de tarefas resolvidas corretamente.
+    ntotal:
+      type: integer
+      description: Número de tarefas resolvidas.
+    acerto:
+      type: integer
+      description: Percentagem de acerto.
+    onpeak:
+      type: string
+      description: Nº. de vezes que a aplicação foi resolvida dentro do período escolar.
+    offpeak:
+      type: string
+      description: Nº. de vezes que a aplicação foi resolvida fora do período escolar.
+    frequencia:
+      type: string
+      description: Nº. de vezes que a aplicação foi resolvida.

@@ -76,6 +76,20 @@ Escola.getEscolasByLocalidade = function (localidade) {
     })
 }
 
+Escola.getEscolasByLocalidade2 = function (localidade) {
+    return new Promise(function(resolve, reject) {
+        sql.query("Select cod from Escolas where localidade=?", localidade, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
 Escola.getEscolasByDistrito = function (distrito) {
     return new Promise(function(resolve, reject) {
         sql.query("Select * from Escolas where distrito=?", distrito, function(err, res){

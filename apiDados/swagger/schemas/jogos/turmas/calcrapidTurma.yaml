@@ -13,13 +13,13 @@ items:
       description: 'Nome do aluno.'
     pontcerta:
       type: integer
-      description: 'Pontuação total acertada pelo município.'
+      description: 'Pontuação total acertada pelo aluno.'
     ponterrada:
       type: integer
-      description: 'Pontuação total errada pelo município.'
+      description: 'Pontuação total errada pelo aluno.'
     oprealizadas:
       type: integer
-      description: 'Operações realizadas pelo município.'
+      description: 'Operações realizadas pelo aluno.'
     frequencia:
       type: integer
-      description: 'Frequência do município.'
+      description: 'Frequência do aluno.'

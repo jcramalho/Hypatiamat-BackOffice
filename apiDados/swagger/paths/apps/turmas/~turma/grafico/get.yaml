@@ -1,0 +1,55 @@
+summary: Devolve 3 intervalos de tempo (se possível) durante o tempo em que a turma realizou uma aplicação.
+description: |+
+  Lista 3 intervalos de tempo (se possível), cada intervalo com dados estatísticos de cada aluno da turma durante o período em que a turma realizou uma aplicação.
+
+  Os 3 intervalos devolvidos irão tentar otimizar a divisão do nº. de tarefas realizadas de cada intervalo, respetivamente, de 15% - 70% - 15% da amostra.
+  
+  Utilizadores que podem executar este pedido:
+  - Administrador;
+  - Município do turma;
+  - O Agrupamento de Escolas da turma;
+  - O professor da turma.
+tags:
+  - Aplicações de Conteúdo
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: turma
+    schema: 
+      type: string
+    description: "Código da turma."
+    required: true
+  - in: query
+    name: codProf
+    schema: 
+      type: string
+    description: "Código do professor da turma."
+    required: true
+  - in: query
+    name: codtema
+    schema: 
+      type: integer
+    description: "Código do tema da aplicação. Caso deseje monitorizar todas as aplicações, não preencha este campo."
+    required: false
+  - in: query
+    name: codsubtema
+    schema: 
+      type: integer
+    description: "Código do subtema da aplicação, caso a aplicação seja um subtema."
+    required: false
+responses:
+  200:
+    description: Objecto com os intervalos e estatísticas dos alunos.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/appsIntervalos'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

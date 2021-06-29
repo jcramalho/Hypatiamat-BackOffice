@@ -14,4 +14,4 @@ items:
       description: 'Nome do aluno.'
     count:
       type: integer
-      description: 'Frequência do município em todos os jogos.'
+      description: 'Frequência do aluno em todos os jogos.'

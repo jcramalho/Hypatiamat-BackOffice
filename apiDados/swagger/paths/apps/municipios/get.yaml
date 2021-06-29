@@ -1,0 +1,53 @@
+summary: Devolve as estatísticas gerais à cerca de uma aplicação de conteúdo por cada município.
+description: |+
+  Lista as estatísticas gerais à cerca de uma aplicação de conteúdo (ou de todas) por cada município.
+  
+  Apenas o administrador pode executar este pedido.
+tags:
+  - Aplicações de Conteúdo
+security:
+  - tokenQuery: []
+parameters:
+  - in: query
+    name: codtema
+    schema: 
+      type: integer
+    description: "Código do tema da aplicação. Caso deseje monitorizar todas as aplicações, não preencha este campo."
+    required: false
+  - in: query
+    name: codsubtema
+    schema: 
+      type: integer
+    description: "Código do subtema da aplicação, caso a aplicação seja um subtema."
+    required: false
+  - in: query
+    name: dataInicio
+    schema: 
+      type: string
+      format: date
+    description: "Data Inicial do intervalo de tempo."
+    example: '2020-09-01'
+    required: true
+  - in: query
+    name: dataFim
+    schema: 
+      type: string
+      format: date
+    description: "Data Final do intervalo de tempo."
+    example: '2021-09-01'
+    required: true
+responses:
+  200:
+    description: Estatísticas gerais da aplicação por cada município.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/appsMunicipios'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

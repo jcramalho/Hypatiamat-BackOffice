@@ -1,6 +1,9 @@
-const host = "http://192.168.1.146:3050/"
+const host = "http://localhost:3050/"
 //const host = "https://api.hypatiamat.com/"
+//const hostTPC = "https://tpc.hypatiamat.com"
+const hostTPC = "http://localhost:8081"
 module.exports.host = host
+module.exports.hostTPC = hostTPC
 module.exports.hostAPI = host + "aplicacoes/"
 module.exports.hostJogos = host + "jogos/"
 module.exports.hostApps = host + "apps/"

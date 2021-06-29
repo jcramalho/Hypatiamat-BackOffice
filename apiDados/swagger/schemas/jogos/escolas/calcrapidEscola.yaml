@@ -10,13 +10,13 @@ items:
       description: 'Nome do professor.'
     pontcerta:
       type: integer
-      description: 'Pontuação total acertada pelo município.'
+      description: 'Pontuação total acertada pelas turmas do professor.'
     ponterrada:
       type: integer
-      description: 'Pontuação total errada pelo município.'
+      description: 'Pontuação total errada pelas turmas do professor.'
     oprealizadas:
       type: integer
-      description: 'Operações realizadas pelo município.'
+      description: 'Operações realizadas pelas turmas do professor.'
     frequencia:
       type: integer
-      description: 'Frequência do município.'
+      description: 'Frequência das turmas do professor.'

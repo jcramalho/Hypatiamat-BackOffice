@@ -10,13 +10,13 @@ items:
       description: 'Nome do Agrupamento de Escolas.'
     numcertas:
       type: integer
-      description: 'Número de operações certas realizadas pelo município.'
+      description: 'Número de operações certas realizadas pelo Agrupamento de Escolas.'
     numerradas:
       type: integer
-      description: 'Número de operações errada realizadas pelo município.'
+      description: 'Número de operações errada realizadas pelo Agrupamento de Escolas.'
     pontos:
       type: integer
-      description: 'Pontuação total do município.'
+      description: 'Pontuação total do Agrupamento de Escolas.'
     frequencia:
       type: integer
-      description: 'Frequência do município.'
+      description: 'Frequência do Agrupamento de Escolas.'

@@ -83,6 +83,8 @@
 import VueJwtDecode from "vue-jwt-decode";
 import Swal from 'sweetalert2'
 const host = require("@/config/hosts").host
+const hostTPC = require("@/config/hosts").hostTPC
+
 export default {
   props:[
     'logged', 'mensagensLer', 'storage'
@@ -146,7 +148,7 @@ export default {
         { title: 'Ranking Apps', icon: 'mdi-trophy-award', href:"/classificacoes/apps/admin"},
         { title: 'Outras Estatísticas', icon: 'mdi-home-analytics', href:"/estatisticas/municipios"},
         { title: 'Campeonatos', icon: 'mdi-trophy', href:"/campeonatos/municipios"},
-        { title: 'TPC Hypatiamat', icon: 'mdi-web', ref:"https://tpc.hypatiamat.com/"},
+        { title: 'TPC Hypatiamat', icon: 'mdi-web', ref: hostTPC},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }
@@ -163,7 +165,7 @@ export default {
         { title: 'Ranking Jogos', icon: 'mdi-podium', href:"/classificacoes/jogos"},
         { title: 'Ranking Apps', icon: 'mdi-trophy-award', href:"/classificacoes/apps"},
         { title: 'Campeonatos', icon: 'mdi-trophy', href:"/campeonatos/professores/" + utilizador.codigo},
-        { title: 'TPC Hypatiamat', icon: 'mdi-web', ref:"https://tpc.hypatiamat.com/"}, 
+        { title: 'TPC Hypatiamat', icon: 'mdi-web', ref: hostTPC}, 
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }
@@ -176,7 +178,7 @@ export default {
         { title: 'Campeonatos', icon: 'mdi-podium', href:"/campeonatos/alunos/" + utilizador.user},
         { title: 'Mensagens', icon: 'mdi-message-reply-text-outline', href:"/alunos/mensagens"},
         { title: 'Caderneta de Cromos', icon: 'mdi-book-open-page-variant-outline', href:"/alunos/cromos"},
-        { title: 'TPC Hypatiamat', icon: 'mdi-web', ref:"https://tpc.hypatiamat.com/"},
+        { title: 'TPC Hypatiamat', icon: 'mdi-web', ref: hostTPC},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }
@@ -191,7 +193,7 @@ export default {
         { title: 'Ranking Apps', icon: 'mdi-trophy-award', href:"/classificacoes/apps/municipio"},
         { title: 'Outras estatísticas', icon:'mdi-home-analytics', href:"/estatisticas/municipios/" + utilizador.infoEscola.localidade},
         { title: 'Campeonatos', icon: 'mdi-trophy', href:"/campeonatos/municipios/" + utilizador.infoEscola.localidade},
-        { title: 'TPC Hypatiamat', icon: 'mdi-web', ref:"https://tpc.hypatiamat.com/"},
+        { title: 'TPC Hypatiamat', icon: 'mdi-web', ref: hostTPC},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }
@@ -206,7 +208,7 @@ export default {
         { title: 'Ranking Apps', icon: 'mdi-trophy-award', href:"/classificacoes/apps/escola"},
         { title: 'Outras estatísticas', icon:'mdi-home-analytics', href:"/estatisticas/escolas/" + utilizador.escola},
         { title: 'Campeonatos', icon: 'mdi-trophy', href:"/campeonatos/escolas/" + utilizador.escola},
-        { title: 'TPC Hypatiamat', icon: 'mdi-web', ref:"https://tpc.hypatiamat.com/"},
+        { title: 'TPC Hypatiamat', icon: 'mdi-web', ref: hostTPC},
         { title: 'Terminar Sessão', icon: 'mdi-logout'}
       ]
     }
@@ -248,7 +250,8 @@ export default {
 
     },
     goToTPC: function(){
-      window.open('https://tpc.hypatiamat.com')
+      //window.open(hostTPC)
+      window.location.href = hostTPC
     }
   }
 }

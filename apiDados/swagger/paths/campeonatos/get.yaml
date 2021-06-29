@@ -1,0 +1,29 @@
+summary: Devolve todos os campeonatos disputados na plataforma.
+description: |+
+  Lista todos os campeonatos disputados na plataforma.
+  
+  Todos os utilizadores autenticados podem realizar este pedido.
+tags:
+  - Campeonatos
+security:
+  - tokenQuery: []
+parameters:
+  - in: query
+    name: municipio
+    schema: 
+      type: string
+    description: "Nome do município para serem selecionados apenas os campeonatos de um município."
+    required: false
+responses:
+  200:
+    description: Lista de campeonatos.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/campeonatosInfo'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  500:
+    description: Erro.

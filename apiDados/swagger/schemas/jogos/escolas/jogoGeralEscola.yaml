@@ -11,13 +11,13 @@ items:
       description: 'Nome do professor.'
     min:
       type: integer
-      description: 'Pontuação mínima do município no jogo.'
+      description: 'Pontuação mínima das turmas do professor no jogo.'
     max:
       type: integer
-      description: 'Pontuação máxima do município no jogo.'
+      description: 'Pontuação máxima das turmas do professor no jogo.'
     media:
       type: integer
-      description: 'Pontuação média do município no jogo.'
+      description: 'Pontuação média das turmas do professor no jogo.'
     number:
       type: integer
-      description: 'Frequência do município no jogo.'
+      description: 'Frequência das turmas do professor no jogo.'

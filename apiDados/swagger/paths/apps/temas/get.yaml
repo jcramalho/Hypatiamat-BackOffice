@@ -1,0 +1,22 @@
+summary: Devolve a informação geral à cerca de todas as apps disponíveis.
+description: |+
+  Devolve a informação geral à cerca de todas as aplicações de conteúdo disponíveis.
+  
+  Todos os utilizadores autenticados podem executar este pedido.
+tags:
+  - Aplicações de Conteúdo
+security:
+  - tokenQuery: []
+responses:
+  200:
+    description: Lista de aplicações de conteúdo.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/appsTemasGET'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  500:
+    description: Erro.

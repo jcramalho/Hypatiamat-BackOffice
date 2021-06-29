@@ -618,7 +618,9 @@ router.get('/calcrapid/alunos/:user', passport.authenticate('jwt', {session: fal
 
   if(dataInicio && dataFim){
       if(tipos){
-        Calcrapid.getTiposCalcRapidAluno(dataInicio, dataFim, tipos.split(','), user)
+        var tipoParsed = tipos
+        if(!Array.isArray(tipos)) tipoParsed = tipos.split(',')
+        Calcrapid.getTiposCalcRapidAluno(dataInicio, dataFim, tipoParsed, user)
                  .then(dados => res.jsonp(dados))
                  .catch(error => { console.log(error); res.status(500).jsonp("Error")})
       }
@@ -638,26 +640,36 @@ router.get('/minutenew/alunos/:user', passport.authenticate('jwt', {session: fal
   var tipos = req.query.tipos
   var niveis = req.query.niveis
 
-  if(tipos && niveis){
-    Calculus.getTiposNiveisMinuteNewAluno(user, dataInicio, dataFim, niveis.split(","), tipos)
-              .then(dados => res.jsonp(dados))
-              .catch(erro => res.status(500).jsonp(erro))
+  if(dataInicio && dataFim){
+    if(tipos && Array.isArray(tipos)) {
+      var aux = ''
+      for(var i = 0; i < tipos.length; i++) aux += tipos[i]
+      tipos = aux
+    }
+    if(niveis && !Array.isArray(niveis)) niveis = niveis.split(",")
+
+    if(tipos && niveis){
+      Calculus.getTiposNiveisMinuteNewAluno(user, dataInicio, dataFim, niveis, tipos)
+                .then(dados => res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp(erro))
+    }
+    else if(tipos){
+      Calculus.getTiposMinuteNewAluno(user, dataInicio, dataFim, tipos)
+                .then(dados => res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp(erro)) 
+    }
+    else if(niveis){
+      Calculus.getNiveisMinuteNewAluno(user, dataInicio, dataFim, niveis)
+                .then(dados => res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp(erro)) 
+    }
+    else{
+      Calculus.getTodosMinuteNewAluno(user, dataInicio, dataFim)
+                .then(dados => res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp(erro))
+    }
   }
-  else if(tipos){
-    Calculus.getTiposMinuteNewAluno(user, dataInicio, dataFim, tipos)
-              .then(dados => res.jsonp(dados))
-              .catch(erro => res.status(500).jsonp(erro)) 
-  }
-  else if(niveis){
-    Calculus.getNiveisMinuteNewAluno(user, dataInicio, dataFim, niveis.split(","))
-              .then(dados => res.jsonp(dados))
-              .catch(erro => res.status(500).jsonp(erro)) 
-  }
-  else{
-    Calculus.getTodosMinuteNewAluno(user, dataInicio, dataFim)
-              .then(dados => res.jsonp(dados))
-              .catch(erro => res.status(500).jsonp(erro))
-  }
+  else res.status(400).jsonp("Faltam parâmetros.")
 });
 
 router.get('/minutenew/alunos/:user/dias', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2(), function(req, res, next) {

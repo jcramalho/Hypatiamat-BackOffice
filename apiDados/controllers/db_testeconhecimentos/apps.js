@@ -699,7 +699,6 @@ module.exports.getFrequenciaPorDiaTurmaAllApps = function(turma, codprofessor){
 
 module.exports.getEstatisticasGraficoTurmaAllApps = async function(turma, codprofessor){
     var freqs = await this.getFrequenciaPorDiaTurmaAllApps(turma, codprofessor)
-    console.log("Vou calcular intervalos..")
     var dataInicio = dataInicioAno
     if(freqs.porDia.length > 0 ) dataInicio = freqs.porDia[0].data
     var dataFim 
@@ -711,7 +710,7 @@ module.exports.getEstatisticasGraficoTurmaAllApps = async function(turma, codpro
     for(var i = 0; i < freqs.porDia.length; i++){
         freqAux += freqs.porDia[i].freq
         var freqPretendida = intervalosFreqsIdeais[intervaloAtual]
-        if(freqAux >= freqPretendida){
+        if(freqAux >= freqPretendida && intervaloAtual < intervalosFreqsIdeais.length-1){
             freqConsumida += freqAux
             //console.log("Diferença com tudo (Periodo " + (intervaloAtual +1)  + " ): " + Math.abs(freqPretendida - freqAux))
             //console.log("Diferença 2 (Periodo " + (intervaloAtual +1)  + " ): " +Math.abs(freqPretendida - (freqAux - freqs.porDia[i].freq)))
@@ -779,7 +778,7 @@ module.exports.getEstatisticasGraficoTurmaApp = async function(codtema, turma, c
     for(var i = 0; i < freqs.porDia.length; i++){
         freqAux += freqs.porDia[i].freq
         var freqPretendida = intervalosFreqsIdeais[intervaloAtual]
-        if(freqAux >= freqPretendida){
+        if(freqAux >= freqPretendida && intervaloAtual < intervalosFreqsIdeais.length-1){
             freqConsumida += freqAux
             //console.log("Diferença com tudo (Periodo " + (intervaloAtual +1)  + " ): " + Math.abs(freqPretendida - freqAux))
             //console.log("Diferença 2 (Periodo " + (intervaloAtual +1)  + " ): " +Math.abs(freqPretendida - (freqAux - freqs.porDia[i].freq)))
@@ -848,7 +847,7 @@ module.exports.getEstatisticasGraficoTurmaAppSubtema = async function(codtema, c
     for(var i = 0; i < freqs.porDia.length; i++){
         freqAux += freqs.porDia[i].freq
         var freqPretendida = intervalosFreqsIdeais[intervaloAtual]
-        if(freqAux >= freqPretendida){
+        if(freqAux >= freqPretendida && intervaloAtual < intervalosFreqsIdeais.length-1){
             freqConsumida += freqAux
             //console.log("Diferença com tudo (Periodo " + (intervaloAtual +1)  + " ): " + Math.abs(freqPretendida - freqAux))
             //console.log("Diferença 2 (Periodo " + (intervaloAtual +1)  + " ): " +Math.abs(freqPretendida - (freqAux - freqs.porDia[i].freq)))

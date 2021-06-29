@@ -11,4 +11,4 @@ items:
       description: 'Nome do Agrupamento de escolas.'
     number:
       type: integer
-      description: 'Frequência do município em todos os jogos.'
+      description: 'Frequência do Agrupamento de Escolas em todos os jogos.'

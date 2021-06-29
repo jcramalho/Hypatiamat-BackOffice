@@ -1,0 +1,57 @@
+summary: Devolve as aplicações de conteúdo realizadas por uma turma.
+description: |+
+  Lista as aplicações de conteúdo realizadas por uma turma.
+  
+  Utilizadores que podem executar este pedido:
+  - Administrador;
+  - Município do turma;
+  - O Agrupamento de Escolas da turma;
+  - O professor da turma.
+tags:
+  - Aplicações de Conteúdo
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: turma
+    schema: 
+      type: string
+    description: "Código da turma."
+    required: true
+  - in: query
+    name: codprofessor
+    schema: 
+      type: string
+    description: "Código do professor da turma."
+    required: true
+  - in: query
+    name: dataInicio
+    schema: 
+      type: string
+      format: date
+    description: "Data Inicial do intervalo de tempo."
+    example: '2020-09-01'
+    required: true
+  - in: query
+    name: dataFim
+    schema: 
+      type: string
+      format: date
+    description: "Data Final do intervalo de tempo."
+    example: '2021-09-01'
+    required: true
+responses:
+  200:
+    description: Lista das aplicações de conteúdo.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/appsTemasGET'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

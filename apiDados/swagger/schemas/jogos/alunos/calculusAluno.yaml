@@ -1,0 +1,14 @@
+type: object
+properties:
+  numcertas:
+    type: integer
+    description: 'Número de operações certas realizadas pelo aluno.'
+  numerradas:
+    type: integer
+    description: 'Número de operações erradas realizadas pelo aluno.'
+  niveis:
+    type: integer
+    description: 'Níveis jogados pelo aluno.'
+  ops:
+    type: integer
+    description: 'Número de operações realizadas pelo aluno.'

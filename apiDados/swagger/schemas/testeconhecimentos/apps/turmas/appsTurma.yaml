@@ -1,0 +1,31 @@
+type: array
+items:
+  type: object
+  properties:
+    numero:
+      type: integer
+      description: Número do aluno.
+    userid:
+      type: string
+      description: Código do aluno.
+    nome:
+      type: string
+      description: Nome do aluno.
+    ncertas:
+      type: integer
+      description: Número de tarefas resolvidas corretamente.
+    ntotal:
+      type: integer
+      description: Número de tarefas resolvidas.
+    acerto:
+      type: integer
+      description: Percentagem de acerto.
+    onpeak:
+      type: string
+      description: Nº. de vezes que a aplicação foi resolvida dentro do período escolar.
+    offpeak:
+      type: string
+      description: Nº. de vezes que a aplicação foi resolvida fora do período escolar.
+    frequencia:
+      type: string
+      description: Nº. de vezes que a aplicação foi resolvida.

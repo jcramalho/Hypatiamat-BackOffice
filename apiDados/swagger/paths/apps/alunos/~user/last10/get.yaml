@@ -1,0 +1,34 @@
+summary: Devolve as últimas 10 aplicações de conteúdo realizadas por um aluno.
+description: |+
+  Retorna as últimas 10 aplicações de conteúdo realizadas por um aluno.
+  
+  Utilizadores que podem executar este pedido:
+  - Administrador;
+  - O professor do aluno;
+  - O respetivo aluno.
+tags:
+  - Aplicações de Conteúdo
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: user
+    schema: 
+      type: string
+    description: "Código do aluno."
+    required: true
+responses:
+  200:
+    description: Lista das aplicações de conteúdo.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/appsLast10Aluno'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

@@ -1,0 +1,20 @@
+type: array
+items:
+  type: object
+  properties:
+    data:
+      type: string
+      format: date
+      description: 'Dia em que o aluno jogou.'
+    min:
+      type: integer
+      description: 'Pontuação mínima do aluno no dia.'
+    max:
+      type: integer
+      description: 'Pontuação máxima do aluno no dia.'
+    media:
+      type: integer
+      description: 'Pontuação média do aluno no dia.'
+    count:
+      type: integer
+      description: 'Frequência do aluno no dia.'

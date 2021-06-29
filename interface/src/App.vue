@@ -27,6 +27,7 @@ import jwt_decode from "jwt-decode";
 var CrossStorageClient = require('cross-storage').CrossStorageClient;
 var CrossStorageHub = require('cross-storage').CrossStorageHub;
 const host = require('@/config/hosts').host
+const hostTPC = require('@/config/hosts').hostTPC
 const h = require("@/config/hosts").hostAPI
 
 export default {
@@ -77,7 +78,7 @@ export default {
         {origin: /hypatiamat.com$/, allow: ['get', 'set', 'del', 'clear']},
       ]);
 
-      this.storage = new CrossStorageClient("http://localhost:8081", {
+      this.storage = new CrossStorageClient(hostTPC, {
         timeout: 5000,
       });
 
@@ -103,38 +104,61 @@ export default {
             console.log(this.$route.name)
             return true
           },
-          isLogged: function(){
+          isLogged: async function(){
             var token = localStorage.getItem("token")
             if (token == null) {
-              var self = this
-              this.storage.get('token')
-                          .then(jwt => {
-                            if(jwt){
-                             localStorage.setItem("token", jwt)
-                             self.resfreshLogout()
-                            }
-                          })
-            }
-            else{ 
-              var utilizador = localStorage.getItem("utilizador")
-              if(utilizador) return true
-              else{ 
-                var decode_token = jwt_decode(token)
+              var aux_token = await this.getTokenFromTPC()
+              if(aux_token){
+                var decode_token = jwt_decode(aux_token)
+                localStorage.setItem("token", aux_token)
                 if(decode_token.user && decode_token.user.type){
-                  if(decode_token.user.type == 'professor') decode_token.user.type = 20
-                  else if(decode_token.user.type == 'aluno') decode_token.user.type = 10
-                  
-                  localStorage.setItem('utilizador', JSON.stringify(decode_token.user))
-                  localStorage.setItem('type', type)
-
-                  return true
+                    await this.decodeUser(decode_token)
+                    return true
                 }
                 else return false
               }
+              else return false
+            }
+            else{ 
+              var utilizador = JSON.parse(localStorage.getItem("utilizador"))
+              var type = JSON.parse(localStorage.getItem("type"))
+              var decode_token = jwt_decode(token)
+              if(utilizador && type) {
+                if(utilizador.type == type && type == decode_token.user.type) return true
+                else {
+                  // caso alguém tente alterar o type no localStorage
+                  this.removeItems()
+                  return false
+                }
+              }
+              else{ 
+                if(decode_token.user && decode_token.user.type){
+                    await this.decodeUser(decode_token)
+                    return true
+                }
+                else {
+                  localStorage.removeItem("token")
+                  return false
+                }
+              }
             }
           },
-          refreshLogout: function(){
-            this.loggedIn = this.isLogged()
+          getTokenFromTPC: async function(){
+            return this.storage.get('token')
+                          .then(jwt => {return jwt})
+                          .catch(() => {return null})
+          },
+          decodeUser: async function(decode_token){
+            localStorage.setItem('utilizador', JSON.stringify(decode_token.user))
+            localStorage.setItem('type', decode_token.user.type)
+          },
+          removeItems: function(){
+            localStorage.removeItem("token")
+            localStorage.removeItem("utilizador")
+            localStorage.removeItem("type")
+          },
+          refreshLogout: async function(){
+            this.loggedIn = await this.isLogged()
             this.viewKey ++;
           },
           registar: function(){

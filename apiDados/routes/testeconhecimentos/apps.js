@@ -4,6 +4,7 @@ var passport = require('passport')
 
 var Apps = require('../../controllers/db_testeconhecimentos/apps');
 const Rankings = require('../../controllers/db_testeconhecimentos/rankings');
+const verifyToken = require('../../config/verifyToken')
 
 // Todas os temas das apps
 router.get('/temas', function(req, res, next) {
@@ -15,74 +16,80 @@ router.get('/temas', function(req, res, next) {
 });
 
 // Todas os resultados de uma app ou de todas as apps por munícipio
-router.get('/municipios', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/municipios', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
     var dataInicio = req.query.dataInicio;
     var dataFim = req.query.dataFim;
     var codtema = req.query.codtema
     var codsubtema = req.query.codsubtema
-
-    if(codtema){
-        // É um tema
-        if(codsubtema){
-            // Com subtema
-            Apps.getAppFromMuncipiosSubTema(codtema, codsubtema, dataInicio, dataFim) 
-                .then(dados =>{
-                    res.jsonp(dados)
-                })
-                .catch(erro => res.status(500).jsonp(erro)) 
+    
+    if(dataInicio && dataFim){
+        if(codtema){
+            // É um tema
+            if(codsubtema){
+                // Com subtema
+                Apps.getAppFromMuncipiosSubTema(codtema, codsubtema, dataInicio, dataFim) 
+                    .then(dados =>{
+                        res.jsonp(dados)
+                    })
+                    .catch(erro => res.status(500).jsonp(erro)) 
+            }
+            else{
+                // Sem subtema
+                Apps.getAppFromMuncipios(codtema, dataInicio, dataFim)
+                    .then(dados =>{
+                        res.jsonp(dados)
+                    })
+                    .catch(erro => res.status(500).jsonp(erro)) 
+            }
         }
         else{
-            // Sem subtema
-            Apps.getAppFromMuncipios(codtema, dataInicio, dataFim)
+            Apps.getAllAppsFromMunicipios(dataInicio, dataFim)
                 .then(dados =>{
                     res.jsonp(dados)
                 })
-                .catch(erro => res.status(500).jsonp(erro)) 
-        }
-    }
-    else{
-        Apps.getAllAppsFromMunicipios(dataInicio, dataFim)
-            .then(dados =>{
-                res.jsonp(dados)
-            })
-            .catch(erro => res.status(500).jsonp(erro))
-    }          
+                .catch(erro => res.status(500).jsonp(erro))
+        }   
+    }   
+    else res.status(400).send('Faltam parâmetros.')    
 });
 
 // Todas os resultados de uma app ou de todas as apps por escola de um municipio
-router.get('/municipios/:municipio', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/municipios/:municipio', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdminEMunicipio(), function(req, res, next) {
     var dataInicio = req.query.dataInicio;
     var dataFim = req.query.dataFim;
     var municipio = req.params.municipio
     var codtema = req.query.codtema
     var codsubtema = req.query.codsubtema
 
-    if(codtema){
-        // É um tema
-        if(codsubtema){
-            // com subtema
-            Apps.getAppFromMunicipioSubTema(codtema, codsubtema, municipio, dataInicio, dataFim)
+    if(dataInicio && dataFim){
+        if(codtema){
+            // É um tema
+            if(codsubtema){
+                // com subtema
+                Apps.getAppFromMunicipioSubTema(codtema, codsubtema, municipio, dataInicio, dataFim)
+                    .then(dados =>{
+                        res.jsonp(dados)
+                    })
+                    .catch(erro => res.status(500).jsonp(erro))
+            }
+            else{
+                // sem subtema
+                Apps.getAppFromMunicipio(codtema, municipio, dataInicio, dataFim)
+                    .then(dados =>{
+                        res.jsonp(dados)
+                    })
+                    .catch(erro => res.status(500).jsonp(erro))   
+            }
+        }
+        else{
+            Apps.getAllAppsFromMunicipio(municipio, dataInicio, dataFim)
                 .then(dados =>{
                     res.jsonp(dados)
                 })
                 .catch(erro => res.status(500).jsonp(erro))
-        }
-        else{
-            // sem subtema
-            Apps.getAppFromMunicipio(codtema, municipio, dataInicio, dataFim)
-                .then(dados =>{
-                    res.jsonp(dados)
-                })
-                .catch(erro => res.status(500).jsonp(erro))   
-        }
+        }  
     }
-    else{
-        Apps.getAllAppsFromMunicipio(municipio, dataInicio, dataFim)
-            .then(dados =>{
-                res.jsonp(dados)
-            })
-            .catch(erro => res.status(500).jsonp(erro))
-    }          
+    else res.status(400).send('Faltam parâmetros.')        
 });
 
 // Todas os resultados de uma app ou de todas as apps por municipio de uma comunidade
@@ -92,69 +99,75 @@ router.get('/comunidades/:comunidade', passport.authenticate('jwt', {session: fa
     var comunidade = req.params.comunidade
     var codtema = req.query.codtema
     var codsubtema = req.query.codsubtema
-
-    if(codtema){
-        // É um tema
-        if(codsubtema){
-            // com subtema
-            Apps.getAppFromComunidadeSubTema(codtema, codsubtema, comunidade, dataInicio, dataFim)
+    
+    if(dataInicio && dataFim){
+        if(codtema){
+            // É um tema
+            if(codsubtema){
+                // com subtema
+                Apps.getAppFromComunidadeSubTema(codtema, codsubtema, comunidade, dataInicio, dataFim)
+                    .then(dados =>{
+                        res.jsonp(dados)
+                    })
+                    .catch(erro => res.status(500).jsonp(erro))
+            }
+            else{
+                // sem subtema
+                Apps.getAppFromComunidade(codtema, comunidade, dataInicio, dataFim)
+                    .then(dados =>{
+                        res.jsonp(dados)
+                    })
+                    .catch(erro => res.status(500).jsonp(erro))   
+            }
+        }
+        else{
+            Apps.getAllAppsFromComunidade(comunidade, dataInicio, dataFim)
                 .then(dados =>{
                     res.jsonp(dados)
                 })
                 .catch(erro => res.status(500).jsonp(erro))
         }
-        else{
-            // sem subtema
-            Apps.getAppFromComunidade(codtema, comunidade, dataInicio, dataFim)
-                .then(dados =>{
-                    res.jsonp(dados)
-                })
-                .catch(erro => res.status(500).jsonp(erro))   
-        }
     }
-    else{
-        Apps.getAllAppsFromComunidade(comunidade, dataInicio, dataFim)
-            .then(dados =>{
-                res.jsonp(dados)
-            })
-            .catch(erro => res.status(500).jsonp(erro))
-    }          
+    else res.status(400).send('Faltam parâmetros.')            
 });
 
 // Todas os resultados de uma app ou de todas as apps por professor de uma escola
-router.get('/escolas/:escola', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/escolas/:codigo', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Municipio_Agrupamento(), function(req, res, next) {
     var dataInicio = req.query.dataInicio;
     var dataFim = req.query.dataFim;
-    var escola = req.params.escola
+    var escola = req.params.codigo
     var codtema = req.query.codtema
     var codsubtema = req.query.codsubtema
 
-    if(codtema){
-        // é um tema
-        if(codsubtema){
-            // com subtema
-            Apps.getAppFromEscolaSubTema(codtema, codsubtema, escola, dataInicio, dataFim)
-                .then(dados =>{
-                    res.jsonp(dados)
-                })
-                .catch(erro => res.status(500).jsonp(erro))
+    if(dataInicio && dataFim){
+        if(codtema){
+            // é um tema
+            if(codsubtema){
+                // com subtema
+                Apps.getAppFromEscolaSubTema(codtema, codsubtema, escola, dataInicio, dataFim)
+                    .then(dados =>{
+                        res.jsonp(dados)
+                    })
+                    .catch(erro => res.status(500).jsonp(erro))
+            }
+            else{
+                // sem subtema
+                Apps.getAppFromEscola(codtema, escola, dataInicio, dataFim)
+                    .then(dados =>{
+                        res.jsonp(dados)
+                    })
+                    .catch(erro => res.status(500).jsonp(erro))
+            }
         }
         else{
-            // sem subtema
-            Apps.getAppFromEscola(codtema, escola, dataInicio, dataFim)
+            Apps.getAllAppsFromEscola(escola, dataInicio, dataFim)
                 .then(dados =>{
                     res.jsonp(dados)
                 })
                 .catch(erro => res.status(500).jsonp(erro))
-        }
+        }   
     }
-    else{
-        Apps.getAllAppsFromEscola(escola, dataInicio, dataFim)
-            .then(dados =>{
-                res.jsonp(dados)
-            })
-            .catch(erro => res.status(500).jsonp(erro))
-    }          
+    else res.status(400).send('Faltam parâmetros.')         
 });
 
 // Todas os resultados de uma app ou de todas as apps de uma turma
@@ -165,10 +178,10 @@ router.get('/turmas/:turma', passport.authenticate('jwt', {session: false}), fun
     var codProf = req.query.codProf
     var codtema = req.query.codtema
     var codsubtema = req.query.codsubtema
-    var horaInicio = req.query.horaInicio
-    var horaFim = req.query.horaFim
+    var horaInicio = '00:00'
+    var horaFim = '23:59'
 
-    if(dataInicio && dataFim && codProf && horaInicio && horaFim){
+    if(dataInicio && dataFim && codProf){
         if(codtema){
             // é um tema
             if(codsubtema){
@@ -232,7 +245,6 @@ router.get('/turmas/:turma/grafico', passport.authenticate('jwt', {session: fals
             }
             else{
                 // sem subtema
-                console.log('oi')
                 Apps.getEstatisticasGraficoTurmaApp(codtema, turma, codProf)
                     .then(dados =>{
                         res.jsonp(dados)
@@ -259,26 +271,29 @@ router.get('/alunos/:user', passport.authenticate('jwt', {session: false}), func
     var user = req.params.user
     var codtema = req.query.codtema
     var codsubtema = req.query.codsubtema
-    if(codtema){
-        // é um tema
-        if(codsubtema){
-            // com subtema
-            Apps.getAppFromAlunoSubTema(codtema, codsubtema, user, dataInicio, dataFim)
-                .then(dados => res.jsonp(dados))
-                .catch(erro => res.status(500).jsonp(erro))
+    if(dataInicio && dataFim){
+        if(codtema){
+            // é um tema
+            if(codsubtema){
+                // com subtema
+                Apps.getAppFromAlunoSubTema(codtema, codsubtema, user, dataInicio, dataFim)
+                    .then(dados => res.jsonp(dados))
+                    .catch(erro => res.status(500).jsonp(erro))
+            }
+            else{
+                // sem subtema
+                Apps.getAppFromAluno(codtema, user, dataInicio, dataFim)
+                    .then(dados => res.jsonp(dados))
+                    .catch(erro => res.status(500).jsonp(erro))
+            }
         }
         else{
-            // sem subtema
-            Apps.getAppFromAluno(codtema, user, dataInicio, dataFim)
+            Apps.getAllAppsFromAluno(user, dataInicio, dataFim)
                 .then(dados => res.jsonp(dados))
                 .catch(erro => res.status(500).jsonp(erro))
-        }
+        } 
     }
-    else{
-        Apps.getAllAppsFromAluno(user, dataInicio, dataFim)
-            .then(dados => res.jsonp(dados))
-            .catch(erro => res.status(500).jsonp(erro))
-    } 
+    else res.status(400).jsonp('Faltam parâmetros')
 });
 
 // Todas as apps que um aluno jogou num intervalo de tempo

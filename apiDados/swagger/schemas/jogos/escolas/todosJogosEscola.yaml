@@ -11,4 +11,4 @@ items:
       description: 'Nome do professor.'
     number:
       type: integer
-      description: 'Frequência do município em todos os jogos.'
+      description: 'Frequência das turmas do professor em todos os jogos.'

@@ -42,7 +42,7 @@
       </v-card-text>
 
       <v-card-text class="white--text pt-0">
-        Hypatiamat
+        Hypatiamat - BackOffice
       </v-card-text>
 
       <v-divider></v-divider>
@@ -93,6 +93,7 @@
 </template>
 
 <script>
+const host = require("@/config/hosts").host
 
   export default {
     data: () => ({
@@ -101,7 +102,8 @@
         {icon:'mdi-web', href:"https://www.hypatiamat.com",  descricao:"Web Site do Hypatiamat"},
         {icon: 'mdi-facebook', href:"https://www.facebook.com/hypatiamat", descricao:"Facebook do Hypatiamat"},
         {icon: 'mdi-instagram', href:"https://www.instagram.com/hypatiamate/", descricao:"Instagram do Hypatiamat"},
-        {icon: 'mdi-youtube', href:"https://www.youtube.com/channel/UCk3CN9sYSXY60jtaIQreMzw", descricao:"Canal do Youtube do Hypatiamat"}
+        {icon: 'mdi-youtube', href:"https://www.youtube.com/channel/UCk3CN9sYSXY60jtaIQreMzw", descricao:"Canal do Youtube do Hypatiamat"},
+        {icon: 'mdi-api', href: host + "api-docs", descricao: "Documentação da API de dados do Hypatiamat"}
       ],
       creditosOpen: false
     }),

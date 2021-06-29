@@ -1,0 +1,14 @@
+type: object
+properties:
+  tema:
+    type: string
+    description: O tema da aplicação de conteúdo.
+  subtema:
+    type: string
+    description: O subtema da aplicação de conteúdo, caso seja um subtema.
+  codtema:
+    type: string
+    description: O código do tema da aplicação de conteúdo.
+  codsubtema:
+    type: string
+    description: O código do subtema da aplicação de conteúdo, caso seja um subtema.

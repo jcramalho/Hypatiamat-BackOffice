@@ -11,13 +11,13 @@ items:
       description: 'Nome do Agrupamento de escolas.'
     min:
       type: integer
-      description: 'Pontuação mínima do município no jogo.'
+      description: 'Pontuação mínima do Agrupamento de Escolas no jogo.'
     max:
       type: integer
-      description: 'Pontuação máxima do município no jogo.'
+      description: 'Pontuação máxima do Agrupamento de Escolas no jogo.'
     media:
       type: integer
-      description: 'Pontuação média do município no jogo.'
+      description: 'Pontuação média do Agrupamento de Escolas no jogo.'
     number:
       type: integer
-      description: 'Frequência do município no jogo.'
+      description: 'Frequência do Agrupamento de Escolas no jogo.'

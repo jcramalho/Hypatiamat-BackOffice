@@ -10,13 +10,13 @@ items:
       description: 'Nome do professor.'
     numcertas:
       type: integer
-      description: 'Número de operações certas realizadas pelo município.'
+      description: 'Número de operações certas realizadas pelas turmas do professor.'
     numerradas:
       type: integer
-      description: 'Número de operações errada realizadas pelo município.'
+      description: 'Número de operações errada realizadas pelas turmas do professor.'
     pontos:
       type: integer
-      description: 'Pontuação total do município.'
+      description: 'Pontuação total das turmas do professor.'
     frequencia:
       type: integer
-      description: 'Frequência do município.'
+      description: 'Frequência das turmas do professor.'

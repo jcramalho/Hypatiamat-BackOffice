@@ -56,16 +56,16 @@ properties:
                 description: 'Nome do aluno.'
               min:
                 type: integer
-                description: 'Pontuação mínima do município no jogo.'
+                description: 'Pontuação mínima do aluno no jogo.'
               max:
                 type: integer
-                description: 'Pontuação máxima do município no jogo.'
+                description: 'Pontuação máxima do aluno no jogo.'
               media:
                 type: integer
-                description: 'Pontuação média do município no jogo.'
+                description: 'Pontuação média do aluno no jogo.'
               count:
                 type: integer
-                description: 'Frequência do município no jogo.'
+                description: 'Frequência do aluno no jogo.'
               x:
                 type: integer
                 description: 'Abcissa do gráfico quando representado (número do aluno).'

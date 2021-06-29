@@ -10,13 +10,13 @@ items:
       description: 'Nome do Agrupamento de Escolas.'
     pontcerta:
       type: integer
-      description: 'Pontuação total acertada pelo município.'
+      description: 'Pontuação total acertada pelo Agrupamento de Escolas.'
     ponterrada:
       type: integer
-      description: 'Pontuação total errada pelo município.'
+      description: 'Pontuação total errada pelo Agrupamento de Escolas.'
     oprealizadas:
       type: integer
-      description: 'Operações realizadas pelo município.'
+      description: 'Operações realizadas pelo Agrupamento de Escolas.'
     frequencia:
       type: integer
-      description: 'Frequência do município.'
+      description: 'Frequência do Agrupamento de Escolas.'

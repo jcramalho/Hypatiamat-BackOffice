@@ -1,0 +1,32 @@
+type: array
+items:
+  type: object
+  properties:
+    grupo:
+      type: integer
+      description: Código do tema da aplicação.
+    appid:
+      type: integer
+      description: Código do subtema da aplicação.
+    ncertas:
+      type: integer
+      description: Número de tarefas resolvidas corretamente.
+    ntotal:
+      type: integer
+      description: Número de tarefas resolvidas.
+    acerto:
+      type: integer
+      description: Percentagem de acerto.
+    lastdate:
+      type: string
+      format: date
+      description: Data correspondente ao último dia em que a aplicação foi realizada.
+    frequencia:
+      type: string
+      description: Nº. de vezes que a aplicação foi resolvida.
+    horario:
+      type: string
+      description: Última hora a que foi realizada a aplicação.
+    nome:
+      type: string
+      description: Nome da aplicação de conteúdo.

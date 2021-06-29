@@ -1,0 +1,20 @@
+type: array
+items:
+  type: object
+  properties:
+    data:
+      type: string
+      format: date
+      description: 'Data do dia em que o aluno jogou.'
+    numcertas:
+      type: integer
+      description: 'Número de operações certas realizadas pelo aluno no dia.'
+    numerradas:
+      type: integer
+      description: 'Número de operações erradas realizadas pelo aluno no dia.'
+    niveis:
+      type: integer
+      description: 'Níveis jogados pelo aluno no dia.'
+    ops:
+      type: integer
+      description: 'Número de operações realizadas pelo aluno no dia.'

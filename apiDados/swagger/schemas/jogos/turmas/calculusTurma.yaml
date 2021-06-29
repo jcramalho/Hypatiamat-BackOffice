@@ -1,0 +1,25 @@
+type: array
+items:
+  type: object
+  properties:
+    user:
+      type: string
+      description: 'Código do aluno.'
+    numero:
+      type: string
+      description: 'Número do aluno.'
+    nome:
+      type: string
+      description: 'Nome do aluno.'
+    numcertas:
+      type: integer
+      description: 'Número de operações certas realizadas pelo aluno.'
+    numerradas:
+      type: integer
+      description: 'Número de operações erradas realizadas pelo aluno.'
+    pontos:
+      type: integer
+      description: 'Pontuação total do aluno.'
+    frequencia:
+      type: integer
+      description: 'Frequência do aluno.'

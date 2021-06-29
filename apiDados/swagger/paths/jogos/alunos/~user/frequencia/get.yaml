@@ -20,10 +20,6 @@ parameters:
 responses:
   200:
     description: Frequência total do aluno nos jogos.
-    content:
-      application/json:
-        schema:
-          $ref: '#/components/schemas/jogoAlunoLast10'
   400:
     $ref: '#/components/responses/InvalidParameters'
   401:
