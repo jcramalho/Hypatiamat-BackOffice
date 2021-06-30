@@ -1,0 +1,35 @@
+summary: Devolve o ranking geral de um jogo de um campeonato.
+description: |+
+  Dado um jogo e um campeonatos passados como parâmetros, é devolvido uma lista com o ranking do Hypatiamat dos alunos que participaram.
+  
+  Todos os utilizadores autenticados podem realizar este pedido.
+tags:
+  - Campeonatos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: cod
+    schema: 
+      type: string
+    description: "Código do campeonato."
+    required: true
+  - in: query
+    name: jogo
+    schema: 
+      type: integer
+    description: "Jogo do campeonato (0 a 9)."
+    required: true
+responses:
+  200:
+    description: Lista de jogos jogados.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/campeonatosRankingGeral'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  500:
+    description: Erro.

@@ -77,7 +77,7 @@ Cromos.getCromosDB2 = function(anoletivoSel){
 
 Cromos.getCromo = function(id){
     return new Promise(function(resolve, reject) {
-        sql.query(`SELECT * FROM cromosdb where id=? Order by numero;`, id, function(err, res){
+        sql.query(`SELECT * FROM cromosdb where id=?;`, id, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -354,7 +354,7 @@ Cromos.getCromosCampeonatosFromAluno = function(user){
             var campeonatosCromos = dados[0]
             var campeonatosParticipou = dados[1]
             var cromosCampeonatosCompletados = dados[2]
-            if(cromosCampeonatosCompletados.length == campeonatosCromos) return []
+            if(cromosCampeonatosCompletados.length == campeonatosCromos.length) return []
 
             for(var i = 0; i < campeonatosCromos.length; i++){
                 var cromo = campeonatosCromos[i]

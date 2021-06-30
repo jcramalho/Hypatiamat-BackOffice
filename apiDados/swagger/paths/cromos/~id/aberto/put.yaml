@@ -1,0 +1,29 @@
+summary: Coloca um cromo conquistado por parte de um aluno como aberto.
+description: |+
+  Edita um cromo conquistado de um aluno, colocando o cromo como aberto/virado.
+  
+  Utilizadores que podem executar este pedido:
+  - Administrador;
+  - Aluno que conquistou o cromo.
+tags:
+  - Cromos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: id
+    schema: 
+      type: string
+    description: "Identificador da conquista (cromo conquistado)."
+    required: true
+responses:
+  200:
+    description: Cromo aberto/virado com sucesso.
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

@@ -1,0 +1,38 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: Identificador do cromo.
+  numero:
+    type: integer
+    description: Número do cromo.
+  nome:
+    type: string
+    description: Nome do cromo.
+  descricao:
+    type: string
+    description: Descrição de como conquistar o cromo.
+  imagem:
+    type: string
+    description: Caminho relativo da imagem do cromo.
+  campeonatos:
+    type: integer
+    description: Quantos campeonatos necessita de participar no ano letivo do cromo para o conquistar.
+  apps:
+    type: integer
+    description: Nº. de tarefas resolvidas corretamente no total em diferentes aplicações ou quantas tarefas resolvidas corretamente por dia para conquistar.
+  jogos:
+    type: integer
+    description: Quantas vezes necessita de jogar jogos diferentes ou quantas vezes precisa de jogar por dia para conquistar o cromo.
+  dias:
+    type: integer
+    description: Quantos dias consecutivos a cumprir o objetivo para ganhar o cromo.
+  diferentes:
+    type: integer
+    description: Nº. de jogos ou aplicações diferentes que necessita jogar para conquistar o cromo.
+  estrelas:
+    type: boolean
+    description: Booleano que indica se o cromo possuí ou não estrelas
+  anoletivo:
+    type: string
+    description: Ano Letivo a que o cromo pertence.

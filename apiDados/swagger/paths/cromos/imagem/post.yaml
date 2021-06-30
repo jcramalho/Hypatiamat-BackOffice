@@ -1,0 +1,41 @@
+summary: Inserção de uma nova imagem de cromo.
+description: |+
+  Insere uma nova imagem de cromo no sistema. Caso exista uma imagem com o mesmo nome na mesma pasta, essa imagem é substituida.
+  
+  Utilizadores que podem utilizar a rota:
+  - Administrador do sistema.
+tags:
+  - Cromos
+security:
+  - tokenQuery: []
+consumes:
+  - multipart/form-data
+parameters:
+  - in: query
+    name: nome
+    schema: 
+      type: string
+    description: "Nome da imagem."
+    required: true
+requestBody:
+  description: 'Imagem do cromo a ser inserida.'
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          file:
+            type: string
+            format: binary
+responses:
+  200:
+    description: Indicará o número de alunos inseridos com sucesso, assim como os erros obtidos e respetivas linhas.
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

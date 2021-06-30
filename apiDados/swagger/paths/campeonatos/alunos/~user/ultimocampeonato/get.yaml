@@ -1,0 +1,31 @@
+summary: Devolve o último campeonato em que um aluno participou.
+description: |+
+  Dado um código de aluno, são devolvidas algumas informações à cerca do último campeonato em que participou, caso tenha participado em algum.
+  
+  Apenas o administrador, o professor do aluno e o próprio aluno podem executar este pedido.
+tags:
+  - Campeonatos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: user
+    schema: 
+      type: string
+    description: "Código do aluno."
+    required: true
+responses:
+  200:
+    description: Objeto com o último campeonato em que participou.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/campeonatosUltimoAlunos'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

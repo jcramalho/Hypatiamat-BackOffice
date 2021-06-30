@@ -1,43 +1,41 @@
-type: array
-items:
-  type: object
-  properties:
-    cod:
-      type: string
-      description: Código do campeonato.
-    datains:
-      type: string
-      format: date
-      description: Data de inserção do campeonato.
-    di:
-      type: string
-      format: date
-      description: Data e Hora de início do campeonato.
-    horai:
-      type: string
-      description: Hora de início do campeonato.
-    df:
-      type: string
-      format: date
-      description: Data e Hora de fim do campeonato.
-    horaf:
-      type: string
-      description: Hora de fim do campeonato.
-    frase1:
-      type: string
-      description: Descrição nº.1 do campeonato.
-    frase2:
-      type: string
-      description: Descrição nº.2 do campeonato.
-    municipio:
-      type: string
-      description: Código do município ao qual o campeonato pertence (null se não pertencer a nenhum).
-    comunidade:
-      type: string
-      description: Código da comunidade ao qual o campeonato pertence (null se não pertencer a nenhuma).
-    descricaoBackOffice:
-      type: string
-      description: Descrição do campeonato no BackOffice.
-    anoletivo:
-      type: string
-      description: Ano letivo referente ao campeonato.
+type: object
+properties:
+  cod:
+    type: string
+    description: Código do campeonato.
+  datains:
+    type: string
+    format: date
+    description: Data de inserção do campeonato.
+  di:
+    type: string
+    format: date
+    description: Data e Hora de início do campeonato.
+  horai:
+    type: string
+    description: Hora de início do campeonato.
+  df:
+    type: string
+    format: date
+    description: Data e Hora de fim do campeonato.
+  horaf:
+    type: string
+    description: Hora de fim do campeonato.
+  frase1:
+    type: string
+    description: Descrição nº.1 do campeonato.
+  frase2:
+    type: string
+    description: Descrição nº.2 do campeonato.
+  municipio:
+    type: string
+    description: Código do município ao qual o campeonato pertence (null se não pertencer a nenhum).
+  comunidade:
+    type: string
+    description: Código da comunidade ao qual o campeonato pertence (null se não pertencer a nenhuma).
+  descricaoBackOffice:
+    type: string
+    description: Descrição do campeonato no BackOffice.
+  anoletivo:
+    type: string
+    description: Ano letivo referente ao campeonato.

@@ -1,0 +1,18 @@
+type: object
+properties:
+  campeonatoID:
+    type: string
+    description: Código do campeonato.
+  jogo:
+    type: string
+    description: Jogo do campeonato em que o aluno participou.
+  di:
+    type: string
+    format: date
+    description: Data e Hora de início do campeonato.
+  turma:
+    type: string
+    description: Turma do aluno no campeonato.
+  codprofessor:
+    type: string
+    description: Código do professor responsável pelo aluno no campeonato.

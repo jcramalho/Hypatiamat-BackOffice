@@ -46,7 +46,9 @@ responses:
     content:
       application/json:
         schema:
-          $ref: '#/components/schemas/appsTemasGET'
+          type: array
+          items:
+            $ref: '#/components/schemas/appsTemasGET'
   400:
     $ref: '#/components/responses/InvalidParameters'
   401:

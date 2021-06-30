@@ -1,0 +1,33 @@
+summary: Simula a verificação de novos cromos conquistados por parte de um aluno.
+description: |+
+  Através de um código de aluno, simula e retorna os cromos acabados de conquistar por parte do aluno com este pedido.
+  
+  Apenas o administrador e o respetivo aluno podem realizar este pedido.
+tags:
+  - Cromos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: user
+    schema: 
+      type: string
+    description: "Código do aluno."
+    required: true
+responses:
+  200:
+    description: Lista dos novos cromos conquistados pelo aluno.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/cromosAlunosInfo'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

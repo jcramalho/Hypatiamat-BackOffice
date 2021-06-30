@@ -1,0 +1,29 @@
+summary: Devolve a informação geral de um campeonato da plataforma.
+description: |+
+  Retorna a informação geral acerca de um determinado campeoanto de cálculo mental.
+  
+  Todos os utilizadores autenticados podem realizar este pedido.
+tags:
+  - Campeonatos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: cod
+    schema: 
+      type: string
+    description: "Código do campeonato."
+    required: true
+responses:
+  200:
+    description: Objecto com a informação do campeonato.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/campeonatosInfo'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  500:
+    description: Erro.

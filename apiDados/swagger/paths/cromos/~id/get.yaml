@@ -1,0 +1,31 @@
+summary: Devolve a informação de um cromo.
+description: |+
+  Retorna a informação geral de um determinado cromo.
+  
+  Apenas o administrador pode realizar este pedido.
+tags:
+  - Cromos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: id
+    schema: 
+      type: integer
+    description: "Identificador único do cromo."
+    required: true
+responses:
+  200:
+    description: Informação do cromo.
+    content:
+      application/json:
+        schema:
+            $ref: '#/components/schemas/cromosdbInfo'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

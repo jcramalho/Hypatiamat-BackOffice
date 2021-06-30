@@ -1,28 +1,29 @@
-summary: Devolve todos os campeonatos disputados na plataforma.
+summary: Devolve todos os cromos disponíveis de um caderneta de um ano letivo.
 description: |+
-  Lista todos os campeonatos disputados na plataforma.
+  Lista todos os cromos disponíveis para conquista de um ano letivo.
   
   Todos os utilizadores autenticados podem realizar este pedido.
 tags:
-  - Campeonatos
+  - Cromos
 security:
   - tokenQuery: []
 parameters:
   - in: query
-    name: municipio
+    name: anoletivo
     schema: 
       type: string
-    description: "Nome do município para serem selecionados apenas os campeonatos de um município."
+    example: 20/21
+    description: "Ano letivo da caderneta de cromos (YY/YY)."
     required: false
 responses:
   200:
-    description: Lista de campeonatos.
+    description: Lista de cromos.
     content:
       application/json:
         schema:
           type: array
           items:
-            $ref: '#/components/schemas/campeonatosInfo'
+            $ref: '#/components/schemas/cromosdbInfo'
   400:
     $ref: '#/components/responses/InvalidParameters'
   401:

@@ -1,0 +1,37 @@
+summary: Edita a informação geral de um cromo.
+description: |+
+  Dado um identificador de um cromo, edita a informação geral desse cromo.
+  
+  Apenas o administrador pode executar este pedido.
+tags:
+  - Cromos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: id
+    schema: 
+      type: string
+    description: "Identificador do cromo a editar."
+    required: true
+requestBody:
+  description: 'Informação do cromo a alterar.'
+  required: true
+  content:
+    application/x-www-form-urlencoded:
+      schema:
+        $ref: '#/components/schemas/cromodbInfoPUT'
+    application/json:
+      schema:
+        $ref: '#/components/schemas/cromodbInfoPUT'
+responses:
+  200:
+    description: Cromo editado com sucesso.
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

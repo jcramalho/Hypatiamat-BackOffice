@@ -99,6 +99,22 @@ Cromos.getCromosFromUser= function(user){
     })
 }
 
+Cromos.getCromosFromUser2= function(user, anoletivoSel){
+    return new Promise(function(resolve, reject) {
+        sql.query(`SELECT * 
+                    FROM cromos_alunos
+                    where user = ? and anoletivo=?;`, [user, anoletivoSel], function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
 Cromos.updateCromoAberto = function(id){
     return new Promise(function(resolve, reject) {
         sql.query(`Update cromos_alunos SET virado = true, oldfrequencia = frequencia where id=?;`, [id], function(err, res){

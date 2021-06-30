@@ -1,0 +1,46 @@
+summary: Devolve o nome do ficheiro do certificado de participação de um aluno num campeonato.
+description: |+
+  Dado um jogo, um código de campeonato, a posição e o código de aluno que ficou nessa posição passados como parâmetros, 
+  é devolvido o nome do ficheiro certificado de participação do campeonato.
+  
+  Apenas o administrador, o professor do aluno e o próprio aluno podem executar este pedido.
+tags:
+  - Campeonatos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: cod
+    schema: 
+      type: string
+    description: "Código do campeonato."
+    required: true
+  - in: query
+    name: jogo
+    schema: 
+      type: integer
+    description: "Jogo do campeonato (0 a 9)."
+    required: true
+  - in: query
+    name: posicao
+    schema: 
+      type: integer
+    description: "Posição do aluno."
+    required: true
+  - in: query
+    name: user
+    schema: 
+      type: string
+    description: "Código do aluno."
+    required: true
+responses:
+  200:
+    description: Nome do ficheiro.
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

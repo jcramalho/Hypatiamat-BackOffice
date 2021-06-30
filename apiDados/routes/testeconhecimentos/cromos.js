@@ -53,9 +53,17 @@ router.get('/imagens/nome', passport.authenticate('jwt', {session: false}), veri
 });
 
 router.get('/alunos/:user', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2() ,function(req, res, next) {
-    CromosAlunos.getCromosFromUser(req.params.user)
-            .then(dados => res.jsonp(dados))
-            .catch(erro => res.status(500).jsonp('Erro'))
+    var anoletivo = req.query.anoletivo
+    if(anoletivo){
+        CromosAlunos.getCromosFromUser2(req.params.user, anoletivo)
+                .then(dados => res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp('Erro'))
+    }
+    else{
+        CromosAlunos.getCromosFromUser(req.params.user)
+                .then(dados => res.jsonp(dados))
+                .catch(erro => res.status(500).jsonp('Erro'))
+    }
 });
 
 router.get('/novos/alunos/:user', passport.authenticate('jwt', {session: false}), verifyToken.verifyAluno(), function(req, res, next) {

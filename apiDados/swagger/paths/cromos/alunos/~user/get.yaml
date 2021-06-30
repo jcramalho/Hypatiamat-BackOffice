@@ -1,0 +1,42 @@
+summary: Devolve os cromos conquistados por um aluno no ano letivo atual.
+description: |+
+  Retorna todos os cromos conquistados por um aluno no ano letivo atual ou num ano letivo pretendido.
+  
+  Utilizadores que podem executar este pedido:
+  - Administrador;
+  - Professor do aluno;
+  - Respetivo aluno.
+tags:
+  - Cromos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: user
+    schema: 
+      type: string
+    description: "Código do aluno."
+    required: true
+  - in: query
+    name: anoletivo
+    schema:
+      type: string
+    description: Ano letivo da conquista (YY/YY, p.e. 20/21).
+    required: false
+responses:
+  200:
+    description: Lista dos cromos conquistados do aluno.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/cromosAlunosInfo'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

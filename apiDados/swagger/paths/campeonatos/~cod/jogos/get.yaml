@@ -1,0 +1,29 @@
+summary: Devolve todos os jogos que foram jogados num campeonato da plataforma.
+description: |+
+  Retorna uma lista com os jogos que foram jogados num determinado campeoanto de cálculo mental.
+  
+  Todos os utilizadores autenticados podem realizar este pedido.
+tags:
+  - Campeonatos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: cod
+    schema: 
+      type: string
+    description: "Código do campeonato."
+    required: true
+responses:
+  200:
+    description: Lista de jogos jogados.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/campeonatosJogosInfo'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  500:
+    description: Erro.

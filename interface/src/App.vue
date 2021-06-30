@@ -29,6 +29,7 @@ var CrossStorageHub = require('cross-storage').CrossStorageHub;
 const host = require('@/config/hosts').host
 const hostTPC = require('@/config/hosts').hostTPC
 const h = require("@/config/hosts").hostAPI
+const storageHosts = require("@/config/hosts").storageHosts
 
 export default {
     components: {
@@ -54,6 +55,9 @@ export default {
     created: async function(){
       var aux = false
       var self = this
+
+      CrossStorageHub.init(storageHosts);
+
       axios.interceptors.response.use((response) => {
         return response
       }, function (error) {
@@ -73,23 +77,26 @@ export default {
         }
       });
 
-      CrossStorageHub.init([
-        {origin: /localhost:8081$/, allow: ['get', 'set', 'del', 'getKeys', 'clear']},
-        {origin: /hypatiamat.com$/, allow: ['get', 'set', 'del', 'clear']},
-      ]);
+      await this.refreshLogout()
 
-      this.storage = new CrossStorageClient(hostTPC, {
-        timeout: 5000,
-      });
+      
+      try { 
+        this.storage = new CrossStorageClient(hostTPC, {
+          timeout: 5000,
+        });
 
-      await this.storage.onConnect();
+        await this.storage.onConnect() 
+                          .then(() => {
+                            console.log("Connection com tpc feita...")
+                            self.storageConnected = true}
+                          );
 
-
-      this.refreshLogout()
-
-
-      var response = await axios.get(h + "login/interface")
-      localStorage.setItem("tokenInterface", response.data.token)
+        if(!this.loggedIn) this.refreshLogout()
+      }
+      catch(error){
+        self.storageConnected = false
+        console.log("connection com tpc falhou...")
+      }
 
 
     },
@@ -144,9 +151,12 @@ export default {
             }
           },
           getTokenFromTPC: async function(){
-            return this.storage.get('token')
-                          .then(jwt => {return jwt})
-                          .catch(() => {return null})
+            if(this.storageConnected){
+              return this.storage.get('token')
+                            .then(jwt => {return jwt})
+                            .catch(() => {return null})
+            }
+            else return null
           },
           decodeUser: async function(decode_token){
             localStorage.setItem('utilizador', JSON.stringify(decode_token.user))

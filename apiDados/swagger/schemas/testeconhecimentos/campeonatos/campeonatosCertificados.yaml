@@ -1,0 +1,13 @@
+type: array
+items:
+  type: object
+  properties:
+    user:
+      type: string 
+      description: Código do aluno.
+    posicao:
+      type: integer
+      description: Posição do aluno no ranking.
+    ficheiro:
+      type: string
+      description: Nome do ficheiro do certificado.

@@ -1,0 +1,22 @@
+type: array
+items:
+  type: object
+  properties:
+    nome:
+      type: string
+      description: Nome do aluno.
+    agrupamento:
+      type: string
+      description: Nome do Agrupamento de Escolas do aluno.
+    posicao:
+      type: integer
+      description: Posição do aluno no ranking.
+    user:
+      type: string 
+      description: Código do aluno.
+    pontuacao:
+      type: integer
+      description: Pontuação máxima obtida pelo aluno e critério de ordenação.
+    njogos:
+      type: integer
+      description: Número de jogos jogados pelo aluno no campeonato.

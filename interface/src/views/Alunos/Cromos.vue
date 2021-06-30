@@ -8,19 +8,34 @@
                 <br>
                 <span> Caderneta de cromos </span>
             </center>
-            <v-row>
-                <v-col cols="12">
+            <v-row class="justify-center">
+                <v-col cols="4">
+                  <v-combobox
+                      id="anos"
+                      v-model="anoletivoSel"
+                      label="Ano Letivo"
+                      color="green"
+                      :items="anosletivos"
+                      @change="getDataCromos()"
+                  ></v-combobox>
+                </v-col>
+                <v-col cols="12" v-if="totalCromos > 0">
                   <center>
                     <span> {{numeroCromosCompletados}} / {{totalCromos}} </span>
                     <br>
-                    <span> {{((numeroCromosCompletados/totalCromos)*100).toFixed(0)}}% </span>
+                    <span> {{percentagemCromos}}% </span>
                     <v-col cols="6">
                       <v-progress-linear
                         color="cyan darken-2"
                         rounded
-                        :value="((numeroCromosCompletados/totalCromos)*100).toFixed(0)"
+                        :value="percentagemCromos"
                       ></v-progress-linear>
                     </v-col>
+                  </center>
+                </v-col>
+                <v-col cols="12" v-else>
+                  <center>
+                    <span> Neste ano letivo, não existiram cromos para completar. </span>
                   </center>
                 </v-col>
                 <v-col cols="12" sm="6" md="4" lg="3" xl="2" v-for="cromo in cromos" v-bind:key="cromo.id">
@@ -159,6 +174,8 @@ import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
 const host = require("@/config/hosts").host
 const hostCromos = require("@/config/hosts").hostCromos
+const anosletivos2 = require('@/config/confs').anosletivos
+const anoletivo = require('@/config/confs').anoletivo
 
   export default {
     data(){
@@ -169,25 +186,37 @@ const hostCromos = require("@/config/hosts").hostCromos
         cromosCompletados: [],
         numeroCromosCompletados:0,
         totalCromos:0,
+        anosletivos: anosletivos2,
+        anoletivoSel: anoletivo,
         hostImages: host + 'cromos_imgs/',
       }
     },
     props:["idProp"],
+    computed:{
+      percentagemCromos(){
+        if(this.totalCromos > 0) return ((this.numeroCromosCompletados/this.totalCromos)*100).toFixed(0)
+        else{
+          return 0
+        }
+      }
+    },
     created: async function(){
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
-        
-        this.getCromos()
-        this.getCromosCompletados()
+        this.getDataCromos()
     },
     methods: {
+      getDataCromos: function(){
+        this.getCromos()
+        this.getCromosCompletados()
+      },
       getCromos: async function(){
-        var response = await axios.get(hostCromos + "?token=" + this.token)
+        var response = await axios.get(hostCromos + "?anoletivo=" + this.anoletivoSel + "&token=" + this.token)
         this.cromos = response.data
         this.totalCromos = this.cromos.length
       },
       getCromosCompletados: async function(){
-        var response = await axios.get(hostCromos + "alunos/" + this.utilizador.user + "?token=" + this.token)
+        var response = await axios.get(hostCromos + "alunos/" + this.utilizador.user + "?anoletivo=" + this.anoletivoSel + "&token=" + this.token)
         this.cromosCompletados = response.data
         this.countCromosCompletadosVirados()
       },

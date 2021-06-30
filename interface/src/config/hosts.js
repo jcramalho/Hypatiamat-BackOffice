@@ -10,3 +10,9 @@ module.exports.hostApps = host + "apps/"
 module.exports.hostTrofeus = host + "trofeus/"
 module.exports.hostCampeonatos = host + "campeonatos/"
 module.exports.hostCromos = host + "cromos/"
+
+module.exports.storageHosts = [
+    // em desenvolvimento local, retirar de comentário
+    //{origin: /localhost:8081$/, allow: ['get', 'set', 'del', 'getKeys', 'clear']},
+    {origin: /hypatiamat.com$/, allow: ['get', 'set', 'del', 'clear']}
+  ] 

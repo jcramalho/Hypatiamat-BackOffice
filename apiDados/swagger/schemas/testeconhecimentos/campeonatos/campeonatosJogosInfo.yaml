@@ -1,0 +1,10 @@
+type: array
+items:
+  type: object
+  properties:
+    jogo:
+      type: integer
+      description: Código do jogo.
+    texto:
+      type: string
+      description: Descrição do jogo no campeonato.

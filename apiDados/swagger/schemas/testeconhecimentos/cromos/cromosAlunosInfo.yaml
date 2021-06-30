@@ -1,0 +1,27 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: Identificador da conquista.
+  user:
+    type: string
+    description: Código do aluno que o conquistou.
+  idcromo:
+    type: integer
+    description: Identificador do cromo conquistado.
+  oldfrequencia:
+    type: integer
+    description: Número de vezes que tinha conquistado o cromo (número de estrelas antigo), caso o cromo possua estrelas e ainda não tenha sido aberto/virado.
+  frequencia:
+    type: integer
+    description: Número de vezes que conquistou o cromo (número de estrelas atual), caso o cromo possua estrelas.
+  lastdate:
+    type: string
+    format: date
+    description: Dia em que conquitou o cromo ou a(s) última(s) estrela(s) do cromo.
+  virado:
+    type: boolean
+    description: Se o cromo ou as estrelas já foram abertas.
+  anoletivo:
+    type: string
+    description: Ano Letivo relativo à conquista do cromo.

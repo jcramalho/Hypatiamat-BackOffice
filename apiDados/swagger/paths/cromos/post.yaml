@@ -1,0 +1,30 @@
+summary: Insere um novo cromo na BD.
+description: |+
+  Com o objeto da informação do novo cromo passado no body do pedido, é registado um novo cromo.
+  
+  Apenas o administrador pode executar este pedido.
+tags:
+  - Cromos
+security:
+  - tokenQuery: []
+requestBody:
+  description: 'Informação do cromo a inserir.'
+  required: true
+  content:
+    application/x-www-form-urlencoded:
+      schema:
+        $ref: '#/components/schemas/cromodbInfoPUT'
+    application/json:
+      schema:
+        $ref: '#/components/schemas/cromodbInfoPUT'
+responses:
+  200:
+    description: Cromo inserido com sucesso.
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

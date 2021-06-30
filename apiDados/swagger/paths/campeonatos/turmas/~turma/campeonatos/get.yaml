@@ -1,0 +1,39 @@
+summary: Devolve todos os campeonatos em que uma turma participou.
+description: |+
+  Dado um código de turma e um código de professor, são devolvidos todos os campeonatos em que essa turma participou, caso tenha participado em algum.
+  
+  Apenas o administrador e o professor da turma podem executar este pedido.
+tags:
+  - Campeonatos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: turma
+    schema: 
+      type: string
+    description: "Código da turma."
+    required: true
+  - in: query
+    name: codprofessor
+    schema: 
+      type: string
+    description: "Código do professor."
+    required: true
+responses:
+  200:
+    description: Lista dos campeonatos em que participou.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/campeonatosParticipouAluno'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

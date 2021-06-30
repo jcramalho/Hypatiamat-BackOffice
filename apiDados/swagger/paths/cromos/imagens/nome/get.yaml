@@ -1,0 +1,20 @@
+summary: Devolve todos os caminhos relativos de imagens de cromos existentes.
+description: |+
+  Retorna uma lista com todos os caminhos relativos das imagens de cromos disponíveis.
+  
+  Apenas o administrador pode realizar este pedido.
+tags:
+  - Cromos
+security:
+  - tokenQuery: []
+responses:
+  200:
+    description: Lista de string's das imagens.
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

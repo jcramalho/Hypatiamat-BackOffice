@@ -43,7 +43,7 @@ router.get('/:cod/jogos', passport.authenticate('jwt', {session: false}), functi
 
 router.get('/:cod/rankingGeral', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     var jogo = req.query.jogo
-    if(jogo!=undefined){
+    if(jogo!=undefined && jogo != null){
         Campeonatos.getRankingGeral(req.params.cod, jogo)
                     .then(dados => res.jsonp(dados))
                     .catch(erro => res.status(500).jsonp('Error'))
@@ -61,13 +61,13 @@ router.get('/:cod/certificados', passport.authenticate('jwt', {session: false}),
     else res.status(400).send('Falta o jogo em query string.')
 });
 
-
+// proteger
 router.get('/:cod/certificados/download', passport.authenticate('jwt', {session: false}), async function(req, res, next) {
     var jogo = req.query.jogo
     var campeonato = req.params.cod
     var user = req.query.user
     var posicao = req.query.posicao
-    if(campeonato && (jogo!=undefined) && posicao){
+    if(campeonato && (jogo!=undefined && jogo!=null) && posicao){
 
         if(posicao >= 11) var certificado = await Campeonatos_Certificados.getCertificado(campeonato, jogo, 11) 
         else if(user) var certificado = await Campeonatos_Certificados.getCertificadoUser(user, campeonato, jogo, posicao)
@@ -83,6 +83,7 @@ router.get('/:cod/certificados/download', passport.authenticate('jwt', {session:
     else res.status(400).send('Faltam Parâmetros.')
 })
 
+// proteger
 router.get('/:cod/certificados/nome', passport.authenticate('jwt', {session: false}), async function(req, res, next) {
     var jogo = req.query.jogo
     var campeonato = req.params.cod
