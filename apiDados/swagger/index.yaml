@@ -13,13 +13,13 @@ info:
     Cada tipo de utilizador tem autorização a executar determinadas rotas com determinados parâmetros especificados ao longo desta página.
     
     Além destes utilizadores, existem 2 utilizadores experimentais com o nível de autorização mais baixo para o aluno e professsor. 
-  version: 1.0.0
+  version: 1.4.0
   title: API de Dados do Hypatiamat
 servers:
-  - url : http://localhost:3050/
-    description : Servidor em desenvolvimento.
   - url: https://api.hypatiamat.com/
     description: Servidor da API. 
+  - url : http://localhost:3050/
+    description : Servidor em desenvolvimento.
 tags:
   - name: Login
     description: Responsável pela autenticação no sistema.

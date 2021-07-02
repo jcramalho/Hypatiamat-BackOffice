@@ -1,0 +1,36 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: Identificador único do aluno.
+  user:
+    type: string
+    description: Código do aluno.
+  numero:
+    type: integer
+    description: Número do aluno na turma.
+  nome:
+    type: string
+    description: Nome do aluno.
+  datanascimento:
+    type: string
+    format: date
+    description: Data de Nascimento do aluno.
+  escola:
+    type: string
+    description: Código do agrupamento de escolas do aluno.
+  agrupamento:
+    type: string
+    description: Nome do agrupamento de escolas do aluno.
+  turma:
+    type: string
+    description: Código de turma do aluno.
+  email:
+    type: string
+    description: Email do aluno.
+  confirmacao:
+    type: boolean
+    description: Confirmação do aluno na plataforma.
+  alunoOld:
+    type: boolean
+    description: Quando o aluno é um ex-aluno da turma.

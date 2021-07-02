@@ -79,3 +79,7 @@ module.exports.opcoesCampeonatosMunicipios = [
     {nome: "Totais Por Município", value: "totais"},
     {nome: "Totais Por Jogo", value: "jogo"}
 ]
+
+module.exports.anosescolaridade = [{ano:"1", texto: "1º ano"}, {ano:"2", texto: "2º ano"}, {ano:"3", texto: "3º ano"}, 
+                                    {ano:"4", texto: "4º ano"}, {ano:"5", texto: "5º ano"}, {ano:"6", texto: "6º ano"},
+                                    {ano:"7", texto: "7º ano"},{ano:"8", texto: "8º ano"},{ano:"9", texto: "9º ano"}]

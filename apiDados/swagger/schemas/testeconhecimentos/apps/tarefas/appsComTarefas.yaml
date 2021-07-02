@@ -1,0 +1,17 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: Identificador único da tabela.
+  nome:
+    type: string
+    description: O nome da aplicação de conteúdo.
+  tabela:
+    type: string
+    description: O nome da tabela com as tarefas da aplicação de conteúdo.
+  codtema:
+    type: string
+    description: O código do tema da aplicação de conteúdo.
+  codsubtema:
+    type: string
+    description: O código do subtema da aplicação de conteúdo, caso seja um subtema.

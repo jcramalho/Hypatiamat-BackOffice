@@ -1,0 +1,27 @@
+type: object
+properties:
+  idMensagem:
+    type: integer
+    description: Identificador único da mensagem.
+  mensagem:
+    type: string
+    description: Conteúdo da mensagem.
+  numberUsers:
+    type: integer
+    description: Número de alunos que receberam a mensagem.
+  vistos:
+    type: integer
+    description: Número de alunos que visualizaram a mensagem.
+  data:
+    type: string
+    format: date
+    description: Data e hora do envio da mensagem.
+  dias:
+    type: integer
+    description: Há quantos dias a mensagem foi enviada.
+  horas:
+    type: integer
+    description: Há quantas horas a mensagem foi enviada.
+  minutos:
+    type: integer
+    description: Há quantos minutos a mensagem foi enviada.

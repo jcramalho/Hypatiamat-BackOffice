@@ -4,6 +4,7 @@ const Turmas = require('../controllers/db_aplicacoes/turmas')
 const Professores = require('../controllers/db_aplicacoes/professor')
 const { updateTurma } = require('../controllers/db_aplicacoes/alunos')
 const CromosAlunos = require('../controllers/db_testeconhecimentos/cromos_alunos')
+const Mensagens = require('../controllers/db_aplicacoes/mensagens')
 
 module.exports.verifyAdmin = function(){
     
@@ -91,7 +92,7 @@ module.exports.verifyAdmin_Professor2 = function(){
         var u = req.user.user
         var codprofessor = req.body.idprofessor;
 
-        if(u.type == 50 || ((u.type == 5 || u.type == 20) && u.codigo.toUpperCase() === codprofessor.toUpperCase())) next()
+        if(u.type == 50 || (u.type == 20 && u.codigo.toUpperCase() === codprofessor.toUpperCase())) next()
         else res.status(403).jsonp("Não tem permissão.")
     }
 }
@@ -274,9 +275,10 @@ module.exports.verifyAluno3 = function(){
 }
 
 module.exports.verifyAluno4 = function(){
-    return function(req, res, next) {
+    return async function(req, res, next) {
         var u = req.user.user
-        if((u.type == 10 || u.type == 3)) next()
+        var mensagem = await Mensagens.getMensagemById(req.params.id)
+        if((u.type == 10 || u.type == 3) && mensagem.user == u.user) next()
         else res.status(403).jsonp("Não tem permissão.")
     }
 }
@@ -307,9 +309,9 @@ module.exports.verifyProfessor2 = function(){
 module.exports.verifyProfessor3 = function(){
     return async function(req, res, next) {
         var u = req.user.user
-
+        var mensagem = await Mensagens.getMensagemByIdMensagem(req.params.idMensagem)
         // professor
-        if ( (u.type == 5 || u.type == 20) ) next()
+        if ( mensagem.codprofessor == u.codigo && (u.type == 5 || u.type == 20) ) next()
         else res.status(403).jsonp("Não tem permissão.")
     }
 }

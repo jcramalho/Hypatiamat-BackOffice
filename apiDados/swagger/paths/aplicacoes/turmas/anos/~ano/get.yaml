@@ -1,0 +1,30 @@
+summary: Lista todas as turmas do Hypatiamat de um ano letivo.
+description: |+
+  Dado um ano letivo, devolve a informação geral acerca de todas as turmas desse ano.
+  
+  Apenas o administrador pode executar este pedido.
+tags:
+  - Turmas
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: ano
+    schema:
+      type: integer
+    example: 20
+    description: "Ano letivo das turmas (ex: 20/21 -> ano: 20)."
+    required: true
+responses:
+  200:
+    description: Lista de turmas do ano letivo.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/TurmasGET'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  500:
+    description: Erro.

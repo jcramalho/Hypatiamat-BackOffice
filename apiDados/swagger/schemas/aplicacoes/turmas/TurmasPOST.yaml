@@ -1,0 +1,15 @@
+type: object
+properties:
+  idprofessor:
+    type: string
+    description: Código do professor responsável pela turma.
+  turma:
+    type: string
+    description: Código da turma.
+  anoletivo:
+    type: string
+    description: Ano letivo da turma.
+required:
+  - idprofessor
+  - turma
+  - anoletivo

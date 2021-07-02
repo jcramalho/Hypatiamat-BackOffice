@@ -1,0 +1,27 @@
+summary: Insere uma nova mensagem.
+description: |+
+  Cria uma nova mensagem com as informações pretendidas.
+  
+  Apenas o professor da respetiva mensagem a ser criada pode executar este pedido.
+tags:
+  - Mensagens
+security:
+  - tokenQuery: []
+requestBody:
+  description: 'Informação da mensagem a inserir.'
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/MensagensPOST'
+responses:
+  200:
+    description: Mensagem registada com sucesso.
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

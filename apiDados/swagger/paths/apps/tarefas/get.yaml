@@ -1,0 +1,24 @@
+summary: Devolve as aplicações de conteúdo que possibilitam a monitorização de desempenho por tarefa.
+description: |+
+  Retorna as aplicações de conteúdo que possibilitam a monitorização de desempenho por tarefa.
+  
+  Todos os utilizadores autenticados podem realizar este pedido.
+tags:
+  - Tarefas de Aplicações de Conteúdo
+security:
+  - tokenQuery: []
+responses:
+  200:
+    description: Lista das aplicações de contéudo.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/appsComTarefas'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  500:
+    description: Erro.

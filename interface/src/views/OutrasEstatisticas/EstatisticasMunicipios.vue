@@ -20,7 +20,6 @@
                         v-model="ano"
                         color="#009263"
                         :items="anos"
-                        @change="getEstatisticas()" 
                       ></v-combobox>
                       <v-combobox
                         id="comunidade"
@@ -29,12 +28,23 @@
                         v-model="comunidade"
                         color="#009263"
                         :items="comunidades"
-                        @change="getEstatisticas()" 
+                      ></v-combobox>
+                      <v-combobox
+                        id="anosescolaridade"
+                        label="Anos de Escolaridade"
+                        prepend-icon="mdi-numeric-1-box-outline"
+                        v-model="anosEscolaridadeSel"
+                        color="#009263"
+                        :items="anosEscolaridade"
+                        item-text="texto"
+                        multiple
+                        chips
+                        @change="changeAnosEscolaridade" 
                       ></v-combobox>
                       <v-row class="justify-center align-center">
                           <v-btn class="white--text" color="#009263" @click="getEstatisticas()">
                               <v-icon>mdi-refresh</v-icon>
-                              Atualizar
+                              Aplicar
                           </v-btn>
                       </v-row>
                     </v-card>
@@ -79,6 +89,7 @@ import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 import TotalEstatisticasMunicipios from '@/components/Estatisticas/TotalEstatisticasMunicipios'
 const hypatiaImg = require("@/assets/hypatiamat.png")
+const anosescolaridade = require('@/config/confs').anosescolaridade
 
   export default {
   components: { TotalEstatisticasMunicipios },
@@ -93,6 +104,9 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         comunidadesId:[],
         estatisticas:[],
         anos: anosletivos,
+        anosEscolaridade: [{ano: "Todos", texto: "Todos"}].concat(anosescolaridade),
+        anosEscolaridadeSel: [{ano: "Todos", texto: "Todos"}],
+        anosEscolaridadeAnt: [{ano: "Todos", texto: "Todos"}],
         escolas: [],
         header_estatisticas: [
             {text: "Município", value: 'localidade', class: 'subtitle-1',},
@@ -130,12 +144,34 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         }
         this.comunidades = aux
       },
+      changeAnosEscolaridade: function(item){
+        var aux
+        if(this.anosEscolaridadeSel.length == this.anosEscolaridade.length - 1) this.anosEscolaridadeSel = [{ano: "Todos", texto: "Todos"}]
+        else if(this.anosEscolaridadeSel.length == 0) this.anosEscolaridadeSel = [{ano: "Todos", texto: "Todos"}]
+        else if((aux = this.anosEscolaridadeAnt.find(e => e.ano == "Todos") && this.anosEscolaridadeSel.find(e => e.ano == "Todos"))) {
+          var index = this.anosEscolaridadeSel.indexOf(aux)
+          this.anosEscolaridadeSel.splice(index, 1)
+        }
+        else if(this.anosEscolaridadeSel.find(e => e.ano == "Todos")) this.anosEscolaridadeSel = [{ano: "Todos", texto: "Todos"}]
+        this.anosEscolaridadeAnt = this.anosEscolaridadeSel
+        //this.getEstatisticas()
+      },
+      parseAnosEscolaridade : function(){
+        var result = []
+        if(this.anosEscolaridadeSel.find(e => e.ano == "Todos")) return result
+        for(var i = 0; i < this.anosEscolaridadeSel.length; i++)
+          result.push(this.anosEscolaridadeSel[i].ano)
+        return result
+      },
       getEstatisticas: async function(){
         this.loading = true
         if(this.anos.find(element=> element == this.ano)){
           var aux = this.ano.split("/")[0]
+          var anosParsed = await this.parseAnosEscolaridade()
           if(this.comunidade == "Nenhuma"){
-            var response = await axios.get(h + "escolas/localidades/estatisticas?ano=" + aux + "&token=" + this.token)
+            if(anosParsed.length == 0) var response = await axios.get(h + "escolas/localidades/estatisticas?ano=" + aux + "&token=" + this.token)
+            else var response = await axios.get(h + "escolas/localidades/estatisticas?ano=" + aux + "&anosescolaridade="+ anosParsed + "&token=" + this.token)
+            
             this.estatisticas = response.data
             await this.calculaTotais()
           }
@@ -162,7 +198,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
       },
       goToAgrupamentos: async function(item){
           var municipio = item.localidade
-          this.$router.push({name: "Estatisticas Agrupamentos", params: { municipio : municipio }, query: {ano: this.ano} })
+          this.$router.push({name: "Estatisticas Agrupamentos", params: { municipio : municipio }, query: {ano: this.ano, anosescolaridade: JSON.stringify(this.anosEscolaridadeSel)} })
       },
       parseEstatisticas: async function(){
         var listaRes = []
@@ -191,16 +227,25 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         var pdfName = "EstatisticasGerais-Municípios.pdf"
         doc.addImage(hypatiaImg, 'PNG', doc.internal.pageSize.getWidth() / 4, 4);
         doc.setFontSize(11)
-        doc.text("Ano Letivo: " + this.ano, 15, 50)
-        doc.text("Estatisticas Gerais - Municípios", doc.internal.pageSize.getWidth() / 2, 56, null, null, 'center')
-
+        doc.text("Estatisticas Gerais - Municípios", doc.internal.pageSize.getWidth() / 2, 50, null, null, 'center')
+        doc.text("Ano Letivo: " + this.ano, 15, 54)
+        var top = 63
+        if(!this.anosEscolaridadeSel.find(e => e.ano == "Todos")){
+          top = 67
+          doc.text("Anos de escolaridade selecionados: ", 15, 58)
+          for(var i = 0; i < this.anosEscolaridadeSel.length; i++){
+            doc.text("- " + this.anosEscolaridadeSel[i].texto, 15, 62 + i*4)
+            top += 4
+          }
+             
+        }
         var listaRes = await this.parseEstatisticas()
         
         doc.autoTable({
             head: [['Município', '#Turmas', '#TurmasMistas', '#Professores', '#Alunos']],
             body: listaRes,
             headStyles: { fillColor: [0, 146, 99] },
-            margin:{top: 65, bottom:25},
+            margin:{top: top, bottom:25},
             didDrawPage: function (data) {
                     // Reseting top margin. The change will be reflected only after print the first page.
                     data.settings.margin.top = 10;

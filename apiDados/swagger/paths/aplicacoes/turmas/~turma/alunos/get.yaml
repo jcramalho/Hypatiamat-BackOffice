@@ -1,0 +1,49 @@
+summary: Lista todos os alunos de uma determinada turma.
+description: |+
+  Dado o código da turma e o código do professor, devolve uma lista com os alunos que pertencem à turma.
+  
+  Utilizadores que podem executar esta rota:
+    - Administrador do sistema;
+    - Município da turma;
+    - Agrupamento de escolas da turma;
+    - Professor da turma.
+tags:
+  - Turmas
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: turma
+    schema:
+      type: string
+    description: "Código da turma."
+    required: true
+  - in: query
+    name: codprofessor
+    schema:
+      type: string
+    description: "Código do professor."
+    required: true
+  - in: query
+    name: alunosAtuais
+    schema:
+      type: boolean
+    description: "True, caso se prentenda apenas visualizar os alunos atuais. False ou não preenchido, caso se pretenda visualizar também alunos que já pertenceram à turma."
+    required: false
+responses:
+  200:
+    description: Lista de alunos.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/TurmasAlunoGET'
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

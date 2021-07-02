@@ -1,0 +1,11 @@
+type: object
+properties:
+  user:
+    type: string
+    description: Código do aluno que visualizou (ou não) a mensagem.
+  nome:
+    type: string
+    description: Nome do aluno.
+  visto:
+    type: boolean
+    description: True (1) se o aluno visualizou a mensagem, false (0) caso contrário.

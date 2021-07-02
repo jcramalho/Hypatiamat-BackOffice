@@ -1,0 +1,25 @@
+summary: Indica quantas mensagens não vistas pelo aluno existem.
+description: |+
+  Dado um código de aluno, devolve a quantidade de mensagens não vistas por esse aluno.
+  
+  Apenas o aluno que recebeu as mensagens pode realizar este pedido.
+tags:
+  - Mensagens
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: user
+    schema:
+      type: string
+    description: "Código do aluno."
+    required: true
+responses:
+  200:
+    description: Número de mensanges não vistas.
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

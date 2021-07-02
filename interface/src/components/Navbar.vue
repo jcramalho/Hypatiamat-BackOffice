@@ -111,7 +111,7 @@ export default {
       idUtilizador:"",
       nomeUtilizador:"",
       nome:"",
-      versao: "2.8"
+      versao: "2.9"
     }
   },
   watch: {

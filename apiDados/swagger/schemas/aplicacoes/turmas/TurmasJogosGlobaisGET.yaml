@@ -1,0 +1,50 @@
+type: object
+properties:
+  turma:
+    type: object
+    description: Estatísticas globais da turma.
+    properties:
+      min:
+        type: integer
+        description: 'Pontuação mínima da turma no jogo.'
+      max:
+        type: integer
+        description: 'Pontuação máxima da turma no jogo.'
+      media:
+        type: integer
+        description: 'Pontuação média da turma no jogo.'
+      number:
+        type: integer
+        description: 'Frequência da turma no jogo.'
+  escola:
+    type: object
+    description: Estatísticas globais do agrupamento de escolas.
+    properties:
+      min:
+        type: integer
+        description: 'Pontuação mínima do agrupamento no jogo.'
+      max:
+        type: integer
+        description: 'Pontuação máxima do agrupamento no jogo.'
+      media:
+        type: integer
+        description: 'Pontuação média do agrupamento no jogo.'
+      number:
+        type: integer
+        description: 'Frequência do agrupamento no jogo.'
+  hypatia:
+    type: object
+    description: Estatísticas globais de todo o Hypatiamat.
+    properties:
+      min:
+        type: integer
+        description: 'Pontuação mínima de todo o Hypatiamat.'
+      max:
+        type: integer
+        description: 'Pontuação máxima de todo o Hypatiamat.'
+      media:
+        type: integer
+        description: 'Pontuação média de todo o Hypatiamat.'
+      number:
+        type: integer
+        description: 'Frequência de todo o Hypatiamat no jogo.'

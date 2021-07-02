@@ -43,8 +43,8 @@ Mensagens.enviaMensagem = async function(mensagem){
 
 Mensagens.getMensagensFromAluno = function(user){
     return new Promise(function(resolve, reject) {
-        sql.query(`Select ms.codprofessor, ms.user, (select m.mensagem from mensagem m where m.id = ms.idMensagem) as mensagem, ms.data, ms.visto, datediff(now(), ms.data) as dias,
-                    Round(time_to_sec(timediff(now(), ms.data )) / 3600, 0) as hours
+        sql.query(`Select ms.id, ms.codprofessor, ms.user, (select m.mensagem from mensagem m where m.id = ms.idMensagem) as mensagem, ms.data, ms.visto, datediff(now(), ms.data) as dias,
+                    Round(time_to_sec(timediff(now(), ms.data )) / 3600, 0) as hours, Round(time_to_sec(timediff(now(), ms.data )) / 60, 0) as minutos
                     from mensagens ms where ms.user = ? Order by ms.data desc`, user, function(err, res){
             if(err){
                 console.log("erro: " + err)
@@ -172,4 +172,34 @@ Mensagens.getQuemViuMensagem = function(idMensagem){
     })
 }
 
+Mensagens.getMensagemByIdMensagem = function(idMensagem){
+    return new Promise(function(resolve, reject) {
+        sql.query(`Select distinct codprofessor 
+            from mensagens where idMensagem=?`, idMensagem, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if(res.length > 0) resolve(res[0])
+                else resolve(undefined)
+            }
+        })
+    })
+}
 
+Mensagens.getMensagemById = function(id){
+    return new Promise(function(resolve, reject) {
+        sql.query(`Select user 
+            from mensagens where id=?`, id, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                if(res.length > 0) resolve(res[0])
+                else resolve(undefined)
+            }
+        })
+    })
+}

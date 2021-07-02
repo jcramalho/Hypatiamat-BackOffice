@@ -96,20 +96,28 @@ router.get('/:turma/jogos/:tableJogo/estatisticasGlobais',passport.authenticate(
 
 //Insere uma nova turma
 router.post('/', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor2(), function(req, res){
-    Turmas.insertTurma(req.body)
-               .then(dados =>{
-                 res.jsonp(dados)
-               })
-               .catch(erro => res.status(500).jsonp(erro))
+  var turma = req.body
+  if(turma.idprofessor && turma.turma && turma.anoletivo){
+    Turmas.insertTurma(turma)
+                .then(dados =>{
+                  res.jsonp(dados)
+                })
+                .catch(erro => res.status(500).jsonp(erro))
+  }
+  else res.status(400).jsonp("Faltam parâmetros no body.")
 })
 
 //Altera uma turma
 router.put('/:id', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res){
-  Turmas.updateTurma(req.params.id, req.body)
-             .then(dados =>{
-               res.jsonp(dados)
-             })
-             .catch(erro => res.status(500).jsonp(erro))
+  var turma = req.body
+  if(turma.turma){
+    Turmas.updateTurma(req.params.id, turma)
+              .then(dados =>{
+                res.jsonp(dados)
+              })
+              .catch(erro => res.status(500).jsonp('Erro interno.'))
+  }
+  else res.status(400).jsonp("Faltam parâmetros.")
 })
 
 

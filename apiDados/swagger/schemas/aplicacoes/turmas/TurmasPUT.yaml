@@ -1,0 +1,7 @@
+type: object
+properties:
+  turma:
+    type: string
+    description: Código da turma.
+required:
+  - turma

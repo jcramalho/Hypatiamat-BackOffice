@@ -1,0 +1,27 @@
+summary: Coloca uma determinada mensagem como visualizada.
+description: |+
+  Dado o identificador único da mensagem, coloca essa mensagem visualizada por parte do aluno.
+  
+  Apenas o aluno que recebeu a mensagem pode executar este pedido.
+tags:
+  - Mensagens
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: id
+    schema:
+      type: integer
+    description: "Identificador único da mensagem."
+    required: true
+responses:
+  200:
+    description: Mensagem visualizada com sucesso.
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

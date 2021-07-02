@@ -82,10 +82,9 @@ var swaggerDocument = yaml.load(src, { schema: yamlinc.YAML_INCLUDE_SCHEMA, file
 
 var optionsSwagger = {
   explorer: true,
-  customCss: '.swagger-ui .models { display: none }'
+  customCss: '.swagger-ui .models { display: none }',
+  customSiteTitle: "Hypatiamat - API de Dados"
 };
-
-
 
 app.use(passport.initialize());
 
@@ -94,8 +93,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'node_modules/swagger-ui-dist')));
-
 
 app.use(
   "/api-docs",
@@ -121,7 +118,6 @@ app.use('/aplicacoes/comunidades', comunidadesRouter)
 app.use('/aplicacoes/novidades', novidadesRouter)
 app.use('/aplicacoes/mensagens', mensagensRouter)
 app.use('/aplicacoes/emails', emailsRouter)
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

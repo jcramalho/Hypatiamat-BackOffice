@@ -1,0 +1,31 @@
+summary: Lista todas as mensagens que foram recebidas por um aluno.
+description: |+
+  Dado um código de aluno, devolve a informação de todas as mensagens recebidas por esse aluno.
+  
+  Apenas o aluno que recebeu as mensagens pode realizar este pedido.
+tags:
+  - Mensagens
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: user
+    schema:
+      type: string
+    description: "Código do aluno."
+    required: true
+responses:
+  200:
+    description: Lista de mensagens recebidas.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/MensagensAluno'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

@@ -1,0 +1,27 @@
+summary: Apaga um determinado cromo.
+description: |+
+  Dado um identificador de um cromo, é eliminado o registo desse cromo, caso nenhum aluno o tenha conquistado ainda.
+  
+  Apenas o administrador pode executar este pedido.
+tags:
+  - Cromos
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: id
+    schema: 
+      type: string
+    description: "Identificador do cromo a editar."
+    required: true
+responses:
+  200:
+    description: Mensagem que indica se o cromo foi ou não apagado.
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

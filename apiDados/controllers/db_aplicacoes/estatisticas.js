@@ -26,6 +26,43 @@ Estatistica.getTurmasAnoMun = function(municipio, anoletivo){
     })
 }
 
+// com anos de escolaridade selecionados
+Estatistica.getTurmasAnoMunPorEscolaridade = function(municipio, anoletivo, anosescolaridade){
+    return new Promise(function(resolve, reject) {
+        var args = [anoletivo, municipio, anosescolaridade]
+        sql.query(`select distinct t.id, t.turma, t.idprofessor from (select * from turmas where anoletivo = ?) t, 
+            (select * from Escolas where localidade = ?) e, professores p
+            where t.idprofessor = p.codigo and e.cod = p.escola and left(t.turma, 1) in (?)
+            Group by t.id;`, args, function (err, res) {
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    })
+}
+
+// com anos de escolaridade selecionados
+Estatistica.getTurmasAnoProfPorEscolaridade = function(codprofessor, anoletivo, anosescolaridade){
+    return new Promise(function(resolve, reject) {
+        var args = [anoletivo, codprofessor, anosescolaridade]
+        sql.query(`select distinct t.id, t.turma
+                    from turmas t where t.anoletivo=? and t.idprofessor=? and left(t.turma, 1) in (?)`, args, function (err, res) {
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    })
+}
+
+
 Estatistica.getTurmasAnoProf = function(codprofessor, anoletivo){
     return new Promise(function(resolve, reject) {
         var args = [anoletivo, codprofessor]
@@ -48,6 +85,24 @@ Estatistica.getProfessoresAnoMun = function(municipio, anoletivo){
         sql.query(`select distinct p.codigo from (select * from turmas where anoletivo=?) t, 
         (select * from Escolas where localidade = ?) e, professores p
         where t.idprofessor = p.codigo and e.cod = p.escola
+        Group by p.codigo;`, args, function (err, res) {
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    })
+}
+
+Estatistica.getProfessoresAnoMunPorEscolaridade = function(municipio, anoletivo, anosescolaridade){
+    return new Promise(function(resolve, reject) {
+        var args = [anoletivo, municipio, anosescolaridade]
+        sql.query(`select distinct p.codigo from (select * from turmas where anoletivo=?) t, 
+        (select * from Escolas where localidade = ?) e, professores p
+        where t.idprofessor = p.codigo and e.cod = p.escola and left(t.turma, 1) in (?)
         Group by p.codigo;`, args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
@@ -249,9 +304,16 @@ Estatistica.quantosJogosTurmasAnoMun = async function(turmas, agrupamentos){
 
 }
 
-Estatistica.getEstatisticasMunicipioAno = async function(municipio, anoletivo){
-    var turmas = await Estatistica.getTurmasAnoMun(municipio, anoletivo)
-    var professores = await Estatistica.getProfessoresAnoMun(municipio, anoletivo)
+Estatistica.getEstatisticasMunicipioAno = async function(municipio, anoletivo, anosescolaridade){
+    var turmas, professores
+    if(anosescolaridade) {
+        turmas = await Estatistica.getTurmasAnoMunPorEscolaridade(municipio, anoletivo, anosescolaridade)
+        professores = await Estatistica.getProfessoresAnoMunPorEscolaridade(municipio, anoletivo, anosescolaridade)
+    }
+    else {
+        turmas = await Estatistica.getTurmasAnoMun(municipio, anoletivo)
+        professores = await Estatistica.getProfessoresAnoMun(municipio, anoletivo)
+    }
     var professoresAux = []
     var turmasAux = []
     var turmasMistas = 0;
@@ -305,12 +367,48 @@ Estatistica.getTurmasAnoAgru = function(escola, anoletivo){
     })
 }
 
+Estatistica.getTurmasAnoAgruPorEscolaridade = function(escola, anoletivo, anosescolaridade){
+    return new Promise(function(resolve, reject) {
+        var args = [anoletivo, escola, anosescolaridade]
+        sql.query(`select distinct t.id, t.turma, t.idprofessor
+                    from (select * from turmas where anoletivo=?) t, professores p
+                    where t.idprofessor = p.codigo and p.escola = ? and left(t.turma, 1) in (?)
+                    Group by t.id;`, args, function (err, res) {
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    })
+}
+
 Estatistica.getProfessoresAnoAgru = function(escola, anoletivo){
     return new Promise(function(resolve, reject) {
         var args = [anoletivo, escola]
         sql.query(`select p.codigo, p.nome
                     from (select * from turmas where anoletivo=?) t, professores p
                     where t.idprofessor = p.codigo and p.escola = ?
+                    Group by p.codigo;`, args, function (err, res) {
+                if(err) {
+                    console.log("error: ", err);
+                    reject(err);
+                }
+                else{
+                    resolve(res);
+                }
+            });   
+    })
+}
+
+Estatistica.getProfessoresAnoAgruPorEscolaridade = function(escola, anoletivo, anosescolaridade){
+    return new Promise(function(resolve, reject) {
+        var args = [anoletivo, escola, anosescolaridade]
+        sql.query(`select p.codigo, p.nome
+                    from (select * from turmas where anoletivo=?) t, professores p
+                    where t.idprofessor = p.codigo and p.escola = ? and left(t.turma, 1) in (?)
                     Group by p.codigo;`, args, function (err, res) {
                 if(err) {
                     console.log("error: ", err);
@@ -372,9 +470,16 @@ Estatistica.quantosJogosTurmasAnoAgru = async function(turmas, escola){
 
 }
 
-Estatistica.getEstatisticasAgrupamentoAno = async function(escola, anoletivo){
-    var turmas = await Estatistica.getTurmasAnoAgru(escola, anoletivo)
-    var professores = await Estatistica.getProfessoresAnoAgru(escola, anoletivo)
+Estatistica.getEstatisticasAgrupamentoAno = async function(escola, anoletivo, anosescolaridade){
+    var turmas, professores
+    if(anosescolaridade) {
+        turmas = await Estatistica.getTurmasAnoAgruPorEscolaridade(escola, anoletivo, anosescolaridade)
+        professores = await Estatistica.getProfessoresAnoAgruPorEscolaridade(escola, anoletivo, anosescolaridade)
+    }
+    else { 
+        turmas = await Estatistica.getTurmasAnoAgru(escola, anoletivo)
+        professores = await Estatistica.getProfessoresAnoAgru(escola, anoletivo)
+    }
     var professoresAux = []
     var turmasAux = []
     var turmasMistas = 0
@@ -414,13 +519,13 @@ Estatistica.getEstatisticasAgrupamentoAno = async function(escola, anoletivo){
 
 }
 
-Estatistica.getEstatisticaAgruMun = async function(municipio, anoletivo){
+Estatistica.getEstatisticaAgruMun = async function(municipio, anoletivo, anosescolaridade){
 
     var agrupamentos = await Estatistica.getAgrupamentosAnoMun(municipio, anoletivo)
     var resultado = []
     
     for(var i = 0; i < agrupamentos.length; i++){
-        var agrupamento = await Estatistica.getEstatisticasAgrupamentoAno(agrupamentos[i].cod, anoletivo)
+        var agrupamento = await Estatistica.getEstatisticasAgrupamentoAno(agrupamentos[i].cod, anoletivo, anosescolaridade)
         agrupamento.cod = agrupamentos[i].cod
         agrupamento.nome = agrupamentos[i].nome
         resultado.push(agrupamento)
@@ -459,14 +564,17 @@ Estatistica.getAlunosAnoProf = async function(escola, codProf, anoletivo){
     })
 }
 
-Estatistica.getEstatisticaAnoAgruProf = async function(escola, anoletivo){
-
-    var professores = await Estatistica.getProfessoresAnoAgru(escola, anoletivo)
+Estatistica.getEstatisticaAnoAgruProf = async function(escola, anoletivo, anosescolaridade){
+    var professores 
+    if(anosescolaridade) professores = await Estatistica.getProfessoresAnoAgruPorEscolaridade(escola, anoletivo, anosescolaridade) 
+    else professores = await Estatistica.getProfessoresAnoAgru(escola, anoletivo)
     var resultado = []
     for(var i = 0; i < professores.length; i++){
         var turmasMistas = 0;
         var codProf = professores[i].codigo
-        var turmas = await Estatistica.getTurmasAnoProf(codProf, anoletivo)
+        var turmas
+        if(anosescolaridade) turmas = await Estatistica.getTurmasAnoProfPorEscolaridade(codProf, anoletivo, anosescolaridade)
+        else turmas = await Estatistica.getTurmasAnoProf(codProf, anoletivo)
 
         if(turmas.length > 1) turmasMistas = 1;
         
@@ -520,11 +628,11 @@ Estatistica.getEstatisticasMunicipios = async function (anoletivo){
 }
 */
 
-Estatistica.getEstatisticasComunidade = async function(anoletivo, comunidade){
+Estatistica.getEstatisticasComunidade = async function(anoletivo, comunidade, anosescolaridade){
     var municipios = await Comunidades.getMunicipiosFromComunidade(comunidade)
     var resultado = []
     for(var i = 0; i < municipios.length; i++){
-        var municipio = await Estatistica.getEstatisticasMunicipioAno(municipios[i].municipio, anoletivo)
+        var municipio = await Estatistica.getEstatisticasMunicipioAno(municipios[i].municipio, anoletivo, anosescolaridade)
         municipio.localidade = municipios[i].municipio
         resultado.push(municipio)
     }
@@ -537,11 +645,11 @@ Estatistica.getEstatisticasComunidade = async function(anoletivo, comunidade){
 
 }
 
-Estatistica.getEstatisticasMunicipios = async function (anoletivo){
+Estatistica.getEstatisticasMunicipios = async function (anoletivo, anosescolaridade){
     var municipios = await Estatistica.getMunicipiosAno(anoletivo)
     var resultado = []
     for(var i = 0; i < municipios.length; i++){
-        var municipio = await Estatistica.getEstatisticasMunicipioAno(municipios[i].localidade, anoletivo)
+        var municipio = await Estatistica.getEstatisticasMunicipioAno(municipios[i].localidade, anoletivo, anosescolaridade)
         municipio.localidade = municipios[i].localidade
         resultado.push(municipio)
     }

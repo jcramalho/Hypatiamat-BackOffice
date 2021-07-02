@@ -1,0 +1,22 @@
+summary: Lista todas as turmas do Hypatiamat.
+description: |+
+  Devolve a informação geral acerca de todas as turmas do sistema.
+  
+  Apenas o administrador pode executar este pedido.
+tags:
+  - Turmas
+security:
+  - tokenQuery: []
+responses:
+  200:
+    description: Lista de todas as turmas da BD.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/TurmasGET'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  500:
+    description: Erro.

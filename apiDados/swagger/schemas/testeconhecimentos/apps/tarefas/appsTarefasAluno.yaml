@@ -1,0 +1,14 @@
+type: object
+properties:
+  frame:
+    type: string
+    description: Identificador da frame (tarefa).
+  ncertas:
+    type: integer
+    description: Número de tarefas resolvidas corretamente.
+  ntotal:
+    type: integer
+    description: Número de tarefas resolvidas.
+  acerto:
+    type: integer
+    description: Percentagem de acerto.

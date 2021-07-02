@@ -1,0 +1,53 @@
+summary: Lista todos os jogos que uma determinada turma jogou.
+description: |+
+  Dado o código da turma e o código do agrupamento, devolve uma lista com os jogos que a turma jogou.
+  
+  Utilizadores que podem executar esta rota:
+    - Administrador do sistema;
+    - Município da turma;
+    - Agrupamento de escolas da turma;
+    - Professor da turma.
+tags:
+  - Turmas
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: turma
+    schema:
+      type: string
+    description: "Código da turma."
+    required: true
+  - in: query
+    name: escola
+    schema:
+      type: string
+    description: "Código do agrupamento de escolas."
+    required: true
+  - in: query
+    name: dataInicio
+    schema: 
+      type: string
+      format: date
+    description: "Data Inicial do intervalo de tempo."
+    example: '2020-09-01'
+    required: true
+  - in: query
+    name: dataFim
+    schema: 
+      type: string
+      format: date
+    description: "Data Final do intervalo de tempo."
+    example: '2021-09-01'
+    required: true
+responses:
+  200:
+    description: Lista de todos os jogos que a turma jogou.
+  400:
+    $ref: '#/components/responses/InvalidParameters'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

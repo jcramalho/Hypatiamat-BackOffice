@@ -1,0 +1,31 @@
+summary: Lista as mensagens que foram enviadas por um professor.
+description: |+
+  Dado um código de professor, devolve a informação de todas as mensagens enviadas por esse professor.
+  
+  Apenas o professor que enviou as mensagens pode realizar este pedido.
+tags:
+  - Mensagens
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: codigo
+    schema:
+      type: string
+    description: "Código do professor."
+    required: true
+responses:
+  200:
+    description: Lista de mensagens enviadas.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/MensagensProfessor'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

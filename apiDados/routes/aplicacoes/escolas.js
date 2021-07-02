@@ -81,16 +81,19 @@ router.get('/localidades/estatisticas', passport.authenticate('jwt', {session: f
   var ano = req.query.ano
   var comunidade = req.query.comunidade
   
+  var anosescolaridade = req.query.anosescolaridade
+  if(anosescolaridade && !Array.isArray(anosescolaridade)) anosescolaridade = anosescolaridade.split(",")
+
   if(ano) var anoletivo = ano + "/" + ((parseInt(ano) + 1))
   else var anoletivo = anoletivoAtual
 
   if(comunidade){
-    Estatisticas.getEstatisticasComunidade(anoletivo, comunidade)
+    Estatisticas.getEstatisticasComunidade(anoletivo, comunidade, anosescolaridade)
                 .then(dados =>res.jsonp(dados))
                 .catch(erro => res.status(500).jsonp(erro))
   }
   else{
-    Estatisticas.getEstatisticasMunicipios(anoletivo)
+    Estatisticas.getEstatisticasMunicipios(anoletivo, anosescolaridade)
                 .then(dados =>res.jsonp(dados))
                 .catch(erro => res.status(500).jsonp(erro))
   }
@@ -101,9 +104,13 @@ router.get('/:codigo/estatisticas', passport.authenticate('jwt', {session: false
   var escola = req.params.codigo
   var ano = req.query.ano
 
+  var anosescolaridade = req.query.anosescolaridade
+  if(anosescolaridade && !Array.isArray(anosescolaridade)) anosescolaridade = anosescolaridade.split(",")
+
   if(ano) var anoletivo = ano + "/" + ((parseInt(ano) + 1))
   else var anoletivo = anoletivoAtual
-  Estatisticas.getEstatisticasAgrupamentoAno(escola, anoletivo)
+
+  Estatisticas.getEstatisticasAgrupamentoAno(escola, anoletivo, anosescolaridade)
              .then(estatisticas =>{
               res.jsonp(estatisticas)
              })
@@ -146,16 +153,19 @@ router.get('/localidades/:municipio/estatisticas',passport.authenticate('jwt', {
   if(ano) var anoletivo = ano + "/" + ((parseInt(ano) + 1))
   else var anoletivo = anoletivoAtual
 
+  var anosescolaridade = req.query.anosescolaridade
+  if(anosescolaridade && !Array.isArray(anosescolaridade)) anosescolaridade = anosescolaridade.split(",")
+
   var agrupamentos = req.query.agrupamentos
   if(!agrupamentos){
-    Estatisticas.getEstatisticasMunicipioAno(req.params.municipio, anoletivo)
+    Estatisticas.getEstatisticasMunicipioAno(req.params.municipio, anoletivo, anosescolaridade)
               .then(dados =>{
                 res.jsonp(dados)
               })
               .catch(erro => res.status(500).jsonp(erro))
   }
   else{
-    Estatisticas.getEstatisticaAgruMun(req.params.municipio, anoletivo)
+    Estatisticas.getEstatisticaAgruMun(req.params.municipio, anoletivo, anosescolaridade)
                 .then(dados =>{
                   res.jsonp(dados)
                 })
@@ -167,8 +177,12 @@ router.get('/:codigo/estatisticas/professores', passport.authenticate('jwt', {se
   var ano = req.query.ano
   if(ano) var anoletivo = ano + "/" + ((parseInt(ano) + 1))
   else var anoletivo = anoletivoAtual
+
+  var anosescolaridade = req.query.anosescolaridade
+  if(anosescolaridade && !Array.isArray(anosescolaridade)) anosescolaridade = anosescolaridade.split(",")
+
   var escola = req.params.codigo;
-  Estatisticas.getEstatisticaAnoAgruProf(escola, anoletivo)
+  Estatisticas.getEstatisticaAnoAgruProf(escola, anoletivo, anosescolaridade)
               .then(dados => res.jsonp(dados))
               .catch(erro => res.status(500).jsonp("Error"))
 

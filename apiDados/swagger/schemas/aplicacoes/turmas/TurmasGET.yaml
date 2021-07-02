@@ -1,0 +1,14 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: Identificador único da turma.
+  idprofessor:
+    type: string
+    description: Código do professor responsável pela turma.
+  turma:
+    type: string
+    description: Código da turma.
+  anoletivo:
+    type: string
+    description: Ano letivo da turma.

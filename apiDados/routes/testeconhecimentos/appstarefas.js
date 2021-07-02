@@ -3,6 +3,7 @@ var router = express.Router();
 var passport = require('passport')
 
 var AppsTarefas = require('../../controllers/db_testeconhecimentos/appstarefas');
+const verifyToken = require('../../config/verifyToken')
 
 router.get('/', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     AppsTarefas.getApps()
@@ -12,7 +13,7 @@ router.get('/', passport.authenticate('jwt', {session: false}), function(req, re
                .catch(erro => {console.log(erro); res.status(500).send('Erro')})
 });
 
-router.get('/alunos/:user', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/alunos/:user', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2(), function(req, res, next) {
     var dataInicio = req.query.dataInicio;
     var dataFim = req.query.dataFim;
     var table = req.query.table;

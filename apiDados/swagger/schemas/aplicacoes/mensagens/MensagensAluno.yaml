@@ -1,0 +1,30 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: Identificador único da mensagem.
+  codprofessor:
+    type: string
+    description: Código do professor que enviou a mensagem.
+  user:
+    type: string
+    description: Código do aluno que recebeu a mensagem.
+  mensagem:
+    type: string
+    description: Conteúdo da mensagem.
+  data:
+    type: string
+    format: date
+    description: Data e hora do envio da mensagem.
+  visto:
+    type: boolean
+    description: True se o aluno viu a mensagem, false caso contrário.
+  dias:
+    type: integer
+    description: Há quantos dias a mensagem foi enviada.
+  horas:
+    type: integer
+    description: Há quantas horas a mensagem foi enviada.
+  minutos:
+    type: integer
+    description: Há quantos minutos a mensagem foi enviada.

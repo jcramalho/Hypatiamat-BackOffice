@@ -1,0 +1,34 @@
+summary: Lista a informação geral de uma determinada turma.
+description: |+
+  Dado o identificador único da turma, devolve a informação geral acerca dessa turma.
+  
+  Utilizadores que podem executar esta rota:
+    - Administrador do sistema;
+    - Município da turma;
+    - Agrupamento de escolas da turma;
+    - Professor da turma.
+    
+tags:
+  - Turmas
+security:
+  - tokenQuery: []
+parameters:
+  - in: path
+    name: id
+    schema:
+      type: integer
+    description: "Identificador único da turma."
+    required: true
+responses:
+  200:
+    description: Informação da turma.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/TurmasGET'
+  401:
+    $ref: '#/components/responses/UnauthorizedToken'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro.

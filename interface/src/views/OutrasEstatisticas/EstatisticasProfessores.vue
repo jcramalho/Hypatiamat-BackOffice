@@ -20,12 +20,23 @@
                         v-model="ano"
                         color="#009263"
                         :items="anos"
-                        @change="getEstatisticas()" 
+                      ></v-combobox>
+                      <v-combobox
+                        id="anosescolaridade"
+                        label="Anos de Escolaridade"
+                        prepend-icon="mdi-numeric-1-box-outline"
+                        v-model="anosEscolaridadeSel"
+                        color="#009263"
+                        :items="anosEscolaridade"
+                        item-text="texto"
+                        multiple
+                        chips
+                        @change="changeAnosEscolaridade" 
                       ></v-combobox>
                       <v-row class="justify-center align-center">
                         <v-btn class="white--text" color="#009263" @click="getEstatisticas()">
                             <v-icon>mdi-refresh</v-icon>
-                            Atualizar
+                            Aplicar
                         </v-btn>
                       </v-row>
                     </v-card>
@@ -69,6 +80,7 @@ import Swal from 'sweetalert2'
 import jsPDF from 'jspdf' 
 import 'jspdf-autotable'
 const hypatiaImg = require("@/assets/hypatiamat.png")
+const anosescolaridade = require('@/config/confs').anosescolaridade
 import TotalEstatisticasMunicipios from '@/components/Estatisticas/TotalEstatisticasMunicipios'
 
   export default {
@@ -81,6 +93,9 @@ import TotalEstatisticasMunicipios from '@/components/Estatisticas/TotalEstatist
         estatisticas:[],
         anos: anosletivos,
         escolas: [],
+        anosEscolaridade: [{ano: "Todos", texto: "Todos"}].concat(anosescolaridade),
+        anosEscolaridadeSel: [{ano: "Todos", texto: "Todos"}],
+        anosEscolaridadeAnt: [{ano: "Todos", texto: "Todos"}],
         header_estatisticas: [
             {text: "Professor", value: 'nome', class: 'subtitle-1'},
             {text: "#Turmas", value: 'nturmas', class: 'subtitle-1'},
@@ -110,12 +125,26 @@ import TotalEstatisticasMunicipios from '@/components/Estatisticas/TotalEstatist
             var response = await axios.get(h + "escolas/" + this.escola + "?token=" + this.token)
             this.nomeEscola = response.data.nome
         }
-        if(this.$route.query.ano){
+        if(this.$route.query.ano && this.$route.query.anosescolaridade){
             this.ano = this.$route.query.ano
+            var aux = this.$route.query.anosescolaridade
+            console.log(aux)
+            if(this.isValidJSONString(aux)) {
+              this.anosEscolaridadeSel = JSON.parse(aux)
+              this.anosEscolaridadeAnt = this.anosEscolaridadeSel
+            }
         }
         this.getEstatisticas()
     },
     methods: {
+      isValidJSONString: function(str) {
+          try {
+              JSON.parse(str);
+          } catch (e) {
+              return false;
+          }
+          return true;
+      },
       calculaTotais: async function(){
         this.totalEstatisticas = {totalTurmas: 0, totalTurmasMistas: 0, totalAlunos:0}
         for(var i = 0; i < this.estatisticas.length; i++){
@@ -125,11 +154,33 @@ import TotalEstatisticasMunicipios from '@/components/Estatisticas/TotalEstatist
         }
         return true
       },
+      changeAnosEscolaridade: function(item){
+        var aux
+        if(this.anosEscolaridadeSel.length == this.anosEscolaridade.length - 1) this.anosEscolaridadeSel = [{ano: "Todos", texto: "Todos"}]
+        else if(this.anosEscolaridadeSel.length == 0) this.anosEscolaridadeSel = [{ano: "Todos", texto: "Todos"}]
+        else if((aux = this.anosEscolaridadeAnt.find(e => e.ano == "Todos") && this.anosEscolaridadeSel.find(e => e.ano == "Todos"))) {
+          var index = this.anosEscolaridadeSel.indexOf(aux)
+          this.anosEscolaridadeSel.splice(index, 1)
+        }
+        else if(this.anosEscolaridadeSel.find(e => e.ano == "Todos")) this.anosEscolaridadeSel = [{ano: "Todos", texto: "Todos"}]
+        this.anosEscolaridadeAnt = this.anosEscolaridadeSel
+      },
+      parseAnosEscolaridade : function(){
+        var result = []
+        if(this.anosEscolaridadeSel.find(e => e.ano == "Todos")) return result
+        for(var i = 0; i < this.anosEscolaridadeSel.length; i++)
+          result.push(this.anosEscolaridadeSel[i].ano)
+        return result
+      },
       getEstatisticas: async function(){
         this.loading = true
         if(this.anos.find(element=> element == this.ano)){
           var aux = this.ano.split("/")[0]
-          var response = await axios.get(h + "escolas/" + this.escola + "/estatisticas/professores/?ano=" +  
+          var response
+          var anosParsed = this.parseAnosEscolaridade()
+          if(anosParsed.length > 0) response = await axios.get(h + "escolas/" + this.escola + "/estatisticas/professores/?ano=" +  
+                                           aux + "&anosescolaridade=" + anosParsed + "&token=" + this.token)
+          else response = await axios.get(h + "escolas/" + this.escola + "/estatisticas/professores/?ano=" +  
                                            aux + "&token=" + this.token)
           this.estatisticas = response.data
           await this.calculaTotais()
@@ -162,16 +213,26 @@ import TotalEstatisticasMunicipios from '@/components/Estatisticas/TotalEstatist
         var pdfName = "EstatisticasGerais-" + this.escola + ".pdf"
         doc.addImage(hypatiaImg, 'PNG', doc.internal.pageSize.getWidth() / 4, 4);
         doc.setFontSize(11)
-        doc.text("Ano Letivo: " + this.ano, 15, 50)
-        doc.text("Estatisticas Gerais - " + this.nomeEscola, doc.internal.pageSize.getWidth() / 2, 56, null, null, 'center')
+        doc.text("Estatisticas Gerais - " + this.nomeEscola, doc.internal.pageSize.getWidth() / 2, 50, null, null, 'center')
+        doc.text("Ano Letivo: " + this.ano, 15, 54)
+
+        var top = 63
+        if(!this.anosEscolaridadeSel.find(e => e.ano == "Todos")){
+          top = 67
+          doc.text("Anos de escolaridade selecionados: ", 15, 58)
+          for(var i = 0; i < this.anosEscolaridadeSel.length; i++){
+            doc.text("- " + this.anosEscolaridadeSel[i].texto, 15, 62 + i*4)
+            top += 4
+          }    
+        }
 
         var listaRes = await this.parseEstatisticas()
-        
+
         doc.autoTable({
             head: [['Professor', '#Turmas', '#TurmasMistas', '#Alunos']],
             body: listaRes,
             headStyles: { fillColor: [0, 146, 99] },
-            margin:{top: 65, bottom:25},
+            margin:{top: top, bottom:25},
             didDrawPage: function (data) {
                     // Reseting top margin. The change will be reflected only after print the first page.
                     data.settings.margin.top = 10;

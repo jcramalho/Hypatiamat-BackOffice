@@ -131,6 +131,20 @@ router.post('/imagem', passport.authenticate('jwt', {session: false}), verifyTok
     else res.status(400).send('Faltam parâmetros.')
 })
 
+router.post('/lista', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), async function(req, res, next) {
+    var cromos = req.body.cromos
+    var result = []
+    for(var i = 0; i < cromos.length; i++){
+        var cromo = cromos[i]
+        if(cromo.numero && cromo.nome && cromo.descricao && cromo.imagem && cromo.anoletivo){
+            Cromos.insertCromo(cromo)
+        }
+        else result.push('Faltam parâmetros no cromo de index ' + i + " do array." )
+    }
+    if(result.length == 0) res.jsonp({message: "Todos os cromos foram inseridos com sucesso."})
+    else res.jsonp({errorsMessages: result})
+})
+
 router.delete('/:id', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), async function(req, res, next) {
     var id = req.params.id
     Cromos.apagarCromo(id)

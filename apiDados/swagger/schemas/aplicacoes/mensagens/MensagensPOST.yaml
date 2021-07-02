@@ -1,0 +1,20 @@
+type: object
+properties:
+  alunos:
+    type: array
+    items:
+      type: object
+      description: Array de alunos que receberão a mensagem.
+      properties:
+        user:
+          type: string
+  codprofessor:
+    type: string
+    description: Código do professor que envia a mensagem.
+  text:
+    type: string
+    description: Conteúdo da mensagem.
+required:
+  - codprofessor
+  - alunos
+  - text

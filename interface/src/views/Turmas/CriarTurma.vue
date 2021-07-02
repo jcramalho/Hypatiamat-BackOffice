@@ -67,7 +67,6 @@
   const anoLetivoAtual = require("@/config/confs").anoletivo
   import Swal from 'sweetalert2'
   import axios from "axios"
-  import TurmasVue from './Turmas.vue'
   export default {
     data(){
       return {
