@@ -93,7 +93,7 @@ router.get('/municipios/:municipio', passport.authenticate('jwt', {session: fals
 });
 
 // Todas os resultados de uma app ou de todas as apps por municipio de uma comunidade
-router.get('/comunidades/:comunidade', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/comunidades/:comunidade', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
     var dataInicio = req.query.dataInicio;
     var dataFim = req.query.dataFim;
     var comunidade = req.params.comunidade
@@ -171,7 +171,7 @@ router.get('/escolas/:codigo', passport.authenticate('jwt', {session: false}), v
 });
 
 // Todas os resultados de uma app ou de todas as apps de uma turma
-router.get('/turmas/:turma', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/turmas/:turma', passport.authenticate('jwt', {session: false}), verifyToken.verifyAppsTurmas1(), function(req, res, next) {
     var dataInicio = req.query.dataInicio;
     var dataFim = req.query.dataFim;
     var turma = req.params.turma
@@ -212,7 +212,7 @@ router.get('/turmas/:turma', passport.authenticate('jwt', {session: false}), fun
     else res.status(400).jsonp('Faltam parâmetros')
 });
 
-router.get('/turmas/:turma/jogou', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/turmas/:turma/jogou', passport.authenticate('jwt', {session: false}), verifyToken.verifyTurma2(), function(req, res, next) {
     var turma = req.params.turma
     var codprofessor = req.query.codprofessor
     var dataInicio = req.query.dataInicio
@@ -226,7 +226,7 @@ router.get('/turmas/:turma/jogou', passport.authenticate('jwt', {session: false}
 })
 
 // Todas os resultados de uma app ou de todas as apps de uma turma
-router.get('/turmas/:turma/grafico', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/turmas/:turma/grafico', passport.authenticate('jwt', {session: false}), verifyToken.verifyAppsTurmas1(), function(req, res, next) {
     var turma = req.params.turma
     var codProf = req.query.codProf
     var codtema = req.query.codtema
@@ -265,7 +265,7 @@ router.get('/turmas/:turma/grafico', passport.authenticate('jwt', {session: fals
 
 
 // Todas os resultados de uma app ou de todas as apps de uma turma
-router.get('/alunos/:user', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/alunos/:user', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2(), function(req, res, next) {
     var dataInicio = req.query.dataInicio;
     var dataFim = req.query.dataFim;
     var user = req.params.user
@@ -297,7 +297,7 @@ router.get('/alunos/:user', passport.authenticate('jwt', {session: false}), func
 });
 
 // Todas as apps que um aluno jogou num intervalo de tempo
-router.get('/alunos/:user/jogou', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/alunos/:user/jogou', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2(), function(req, res, next) {
     var dataInicio = req.query.dataInicio;
     var dataFim = req.query.dataFim;
     var user = req.params.user
@@ -311,7 +311,7 @@ router.get('/alunos/:user/jogou', passport.authenticate('jwt', {session: false})
 });
 
 // por dia de um aluno
-router.get('/alunos/:user/dias', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/alunos/:user/dias', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2(), function(req, res, next) {
     var user = req.params.user
     var codtema = req.query.codtema
     var codsubtema = req.query.codsubtema
@@ -331,7 +331,7 @@ router.get('/alunos/:user/dias', passport.authenticate('jwt', {session: false}),
     }
 });
 
-router.get('/alunos/:user/acerto', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/alunos/:user/acerto', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2(), function(req, res, next) {
     var user = req.params.user
 
     Apps.getAllAcertoFromAluno(user)
@@ -340,7 +340,7 @@ router.get('/alunos/:user/acerto', passport.authenticate('jwt', {session: false}
 });
 
 
-router.get('/alunos/:user/last10', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/alunos/:user/last10', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2(), function(req, res, next) {
     var user = req.params.user
     Apps.getLast10FromAluno(user)
         .then(dados => res.jsonp(dados))
@@ -349,7 +349,7 @@ router.get('/alunos/:user/last10', passport.authenticate('jwt', {session: false}
 
 
 // O ranking de uma app ou de todas as apps de uma turma (critério NTRC)
-router.get('/turmas/:turma/ranking/NTRC', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/turmas/:turma/ranking/NTRC', passport.authenticate('jwt', {session: false}), verifyToken.verifyAppsTurmas1(),function(req, res, next) {
     var anoletivo = req.query.anoletivo
     var turma = req.params.turma
     var codProf = req.query.codProf
@@ -396,7 +396,7 @@ router.get('/turmas/:turma/ranking/NTRC', passport.authenticate('jwt', {session:
 });
 
 // O ranking de uma app ou de todas as apps de uma turma (critério percentagem de acerto)
-router.get('/turmas/:turma/ranking/Acerto', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/turmas/:turma/ranking/Acerto', passport.authenticate('jwt', {session: false}), verifyToken.verifyAppsTurmas1(), function(req, res, next) {
     var anoletivo = req.query.anoletivo
     var turma = req.params.turma
     var codProf = req.query.codProf

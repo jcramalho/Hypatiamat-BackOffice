@@ -18,6 +18,12 @@
                         Inserir Nova Imagem
                     </v-btn>
                 </center>
+                <br>
+                <center>
+                    <v-btn class="white--text" color="#009263" @click="dialogCopiarCromos = true">
+                        Copiar Cromos
+                    </v-btn>
+                </center>
                     <v-combobox
                       id="anoletivo"
                       label="Ano Letivo"
@@ -115,7 +121,7 @@
                                             icon
                                             v-bind="attrs" 
                                             v-on="on"
-                                            @click="apagarCromo(row.item.id)"
+                                            @click="apagarCromo(row.index, row.item.id)"
                                             >
                                             <v-icon color="#009263">mdi-delete</v-icon>
                                             </v-btn>
@@ -188,6 +194,9 @@
                     <v-dialog v-model="dialogEditarCromo" width="80%">
                       <EditarCromo v-if="dialogEditarCromo" :cromoOriginal="cromoSel" :imagens="imagens" @editado="updateCromo()"/>
                     </v-dialog>
+                    <v-dialog v-model="dialogCopiarCromos" width="90%">
+                      <CopiarCromos v-if="dialogCopiarCromos" :anoletivoSel="ano" :cromosSel="cromos" @copiados="(value)=>cromosCopiados(value)"/>
+                    </v-dialog>
             </v-container>
         </v-card>
       </v-container>
@@ -209,13 +218,15 @@ import Swal from 'sweetalert2'
 const hypatiaImg = require("@/assets/hypatiamat.png")
 import CriarCromo from '@/components/Cromos/CriarCromo.vue'
 import EditarCromo from '@/components/Cromos/EditarCromo.vue'
+import CopiarCromos from '@/components/Cromos/CopiarCromos.vue'
 
 
   export default {
     name: 'GestaoCromos',
     components:{
         CriarCromo, 
-        EditarCromo
+        EditarCromo,
+        CopiarCromos
     },
     data(){
       return {
@@ -232,6 +243,7 @@ import EditarCromo from '@/components/Cromos/EditarCromo.vue'
         dialogCriarCromo: false,
         dialogEditarCromo: false,
         dialogCriarImagem: false,
+        dialogCopiarCromos: false,
         cromoSel: null,
         pathImage: '',
         pastaCromos: 'cromos_imgs/',
@@ -287,7 +299,7 @@ import EditarCromo from '@/components/Cromos/EditarCromo.vue'
           await this.getCromos()
           this.dialogCriarCromo = false
       },
-      apagarCromo: async function(id){
+      apagarCromo: async function(index, id){
           Swal.fire({
           title: "De certeza que deseja apagar este cromo?",
           showDenyButton: true,
@@ -299,7 +311,7 @@ import EditarCromo from '@/components/Cromos/EditarCromo.vue'
               var a = await axios.delete(hostCromos + id + "?token=" + this.token)
               var apagado = a.data
               if(apagado.removed){
-                this.getCromos()
+                this.cromos.splice(index, 1)
               }
               else{
                 Swal.fire({
@@ -403,6 +415,11 @@ import EditarCromo from '@/components/Cromos/EditarCromo.vue'
         var al = this.cromos.find(a => a.id == this.cromoSel.id) 
         var index = this.cromos.indexOf(al)
         this.cromos.splice(index, 1, response.data)
+      },
+      cromosCopiados: function(value){
+        this.ano = value
+        this.getCromos()
+        this.dialogCopiarCromos = false
       }
     }
   }

@@ -123,7 +123,7 @@ module.exports.login = async function(user, password){
               else if(utilizadorAux.premium == 2) {
                   utilizador.type = 30
                   utilizador.infoEscola = await Escolas.getEscola(utilizadorAux.escola)
-                  utilizador.escolas = await Escolas.getEscolasByLocalidade(utilizador.infoEscola.localidade)
+                  utilizador.escolas = await Escolas.getEscolasByLocalidade2(utilizador.infoEscola.localidade)
               }
               // agrupamento
               else if(utilizadorAux.premium == 3) {

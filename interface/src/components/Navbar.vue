@@ -233,7 +233,7 @@ export default {
             localStorage.removeItem("type");
             localStorage.removeItem("token");
             //this.bifrostCors.deleteLocalStorage(["token", "type", "utilizador"])
-            this.storage.clear();
+            if(this.storage) this.storage.clear();
             this.$emit('refreshLogout')
             this.color = "#900001"
           }

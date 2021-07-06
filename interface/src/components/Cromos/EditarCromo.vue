@@ -12,7 +12,7 @@
                 :items="anos"
                 @change="getCromos()" 
             ></v-combobox>
-            <v-text-field color="#009263" prepend-icon="mdi-card-account-details" v-model="cromo.numero" name="Número" label="Número" :rules="[existeNumero]" type="number" required></v-text-field>
+            <v-text-field color="#009263" prepend-icon="mdi-card-account-details" v-model="cromo.numero" name="Número" label="Número" type="number" required></v-text-field>
             <v-text-field color="#009263" prepend-icon="mdi-account" v-model="cromo.nome" name="Nome" label="Nome" :rules="[existeNome, string45]" :counter="45" required></v-text-field>
             <v-combobox
                 id="image"
@@ -106,7 +106,6 @@
         utilizador:[],
         cromos:[],
         token: "",
-        disabledNumero: false,
         disabledNome: false,
         string45: v  => {
           if(v.length <= 45) return true
@@ -115,18 +114,6 @@
         string100: v =>{
           if(v.length <= 100) return true
           else return "Apenas pode conter 100 caractéres."
-        },
-        existeNumero: v =>{
-          if(this.cromoOriginal.numero != v && this.cromos.find(e => e.numero == v)) {
-            this.disabledNumero = true
-            return 'Esse número de cromo já está a ser utilizado no ano selecionado. Escolha outro por favor.'
-          }
-          else if(v <= 0){
-              this.disabledNumero = true
-              return 'Tem que ser maior que um.'
-          }
-          this.disabledNumero = false
-          return true
         },
         existeNome: v =>{
           if(this.cromoOriginal.nome != v && this.cromos.find(e => e.nome == v) ) {
@@ -175,7 +162,7 @@
                     verifyTipo = (this.cromo.campeonatos && this.cromo.campeonatos > 0)
                 }
             }
-            if(this.disabledNumero || this.disabledNome || 
+            if(this.disabledNome || 
                 (this.cromo.nome.length > 45) || (this.cromo.descricao.length == 0 || this.cromo.descricao.length > 100)
                 || !this.cromo.imagem || !verifyTipo
                 ){

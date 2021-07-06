@@ -2,14 +2,28 @@
 
   <v-app id="app"  :key="viewKey">
     
-    <router-view v-if="this.$route.name=='Novidades' || this.$route.name=='Registar'" @login="login"> 
-    </router-view>
+    <v-container v-if="loading">
+      <center>
+        <v-img
+          class="align-center"
+          :src="require('@/assets/loading.gif')"
+          width="250px"
+          heigth="250px"
+        >
+        </v-img>
+      </center>
+    </v-container>
+    
+    <div v-else>
+      <router-view v-if="this.$route.name=='Novidades' || this.$route.name=='Registar'" @login="login"> 
+      </router-view>
 
-    <Auth v-else-if="loggedIn" @refreshLogout="refreshLogout" :storage="storage" />
+      <Auth v-else-if="loggedIn" @refreshLogout="refreshLogout" :storage="storage" />
 
-    <Login v-else-if="!mode"  @refreshLogout="refreshLogout" @registar="registar"  />
-     
-    <Registar v-else @login="login"/>
+      <Login v-else-if="!mode"  @refreshLogout="refreshLogout" @registar="registar"  />
+      
+      <Registar v-else @login="login"/>
+    </div>
 
   </v-app>
 </template>
@@ -50,6 +64,7 @@ export default {
           mode : false,
           storage: '',
           storageConnected: false,
+          loading: true
         }
     },
     created: async function(){
@@ -66,6 +81,7 @@ export default {
           localStorage.removeItem("token")
           localStorage.removeItem("type")
           localStorage.removeItem("utilizador")
+          if(self.storageConnected){ self.storage.clear()}
           //this.bifrostCors.deleteLocalStorage(["token", "type", "utilizador"])
           Swal.fire({
                   icon: 'info',
@@ -82,19 +98,23 @@ export default {
       
       try { 
         this.storage = new CrossStorageClient(hostTPC, {
-          timeout: 5000,
+          timeout: 2000,
         });
 
         await this.storage.onConnect() 
                           .then(() => {
                             console.log("Connection com tpc feita...")
-                            self.storageConnected = true}
+                            self.storageConnected = true;
+                            this.loading = false
+                            }
                           );
+        
 
         if(!this.loggedIn) this.refreshLogout()
       }
       catch(error){
         self.storageConnected = false
+        this.loading = false
         console.log("connection com tpc falhou...")
       }
 

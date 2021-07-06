@@ -62,7 +62,7 @@ router.get('/:cod/certificados', passport.authenticate('jwt', {session: false}),
 });
 
 // proteger
-router.get('/:cod/certificados/download', passport.authenticate('jwt', {session: false}), async function(req, res, next) {
+router.get('/:cod/certificados/download', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno3(), async function(req, res, next) {
     var jogo = req.query.jogo
     var campeonato = req.params.cod
     var user = req.query.user
@@ -84,7 +84,7 @@ router.get('/:cod/certificados/download', passport.authenticate('jwt', {session:
 })
 
 // proteger
-router.get('/:cod/certificados/nome', passport.authenticate('jwt', {session: false}), async function(req, res, next) {
+router.get('/:cod/certificados/nome', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno3(), async function(req, res, next) {
     var jogo = req.query.jogo
     var campeonato = req.params.cod
     var user = req.query.user
@@ -105,7 +105,7 @@ router.get('/:cod/certificados/nome', passport.authenticate('jwt', {session: fal
     else res.status(400).send('Faltam Parâmetros.')
 })
 
-router.get('/alunos/:user/ultimocampeonato', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/alunos/:user/ultimocampeonato', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2(), function(req, res, next) {
     var user = req.params.user
     if(user){
         CampeonatosCRUD.getUltimoCampeonato(user)
@@ -115,14 +115,14 @@ router.get('/alunos/:user/ultimocampeonato', passport.authenticate('jwt', {sessi
     else res.status(400).send("Faltam parâmetros.")
 });
 
-router.get('/alunos/:user/campeonatos', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/alunos/:user/campeonatos', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2(), function(req, res, next) {
     var user = req.params.user
     Campeonatos.getCampeonatoInfoAluno(user)
                 .then(dados =>res.jsonp(dados))
                 .catch(erro => res.status(500).jsonp(erro))
 });
 
-router.get('/turmas/:turma/campeonatos', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/turmas/:turma/campeonatos', passport.authenticate('jwt', {session: false}), verifyToken.verifyCampeonatoTurma(), function(req, res, next) {
     var turma = req.params.turma
     var codprofessor = req.query.codprofessor
     if(codprofessor){
@@ -186,7 +186,7 @@ router.get('/:campeonato/municipios/totais', passport.authenticate('jwt', {sessi
 });
 
 // Estatísticas totais por cada jogo
-router.get('/:campeonato/municipios/jogo', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/:campeonato/municipios/jogo', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
     var campeonato = req.params.campeonato;
     var comunidade = req.query.comunidade;
 
@@ -204,7 +204,7 @@ router.get('/:campeonato/municipios/jogo', passport.authenticate('jwt', {session
     }
 });
 
-// Estatísticas de um campeonato por todos os municipios ou um só município
+// Estatísticas de um campeonato por todos os municipios 
 router.get('/:campeonato/municipios/gerais', passport.authenticate('jwt', {session: false}), function(req, res, next) {
     var campeonato = req.params.campeonato;
     Campeonatos.getCampeonatoMunicipiosGerais(campeonato)
@@ -268,9 +268,9 @@ router.get('/:campeonato/municipios/:municipio/jogo', passport.authenticate('jwt
     }
 });
 
-router.get('/:campeonato/escolas/:escola', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/:campeonato/escolas/:codigo', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Municipio_Agrupamento(), function(req, res, next) {
     var campeonato = req.params.campeonato;
-    var escola = req.params.escola;
+    var escola = req.params.codigo;
     var professor = req.query.professor;
     var jogos = req.query.jogos
     if(professor){
@@ -298,7 +298,7 @@ router.get('/:campeonato/escolas/:escola/gerais', passport.authenticate('jwt', {
                .catch(erro => res.status(500).jsonp(erro))
 });
 
-router.get('/:campeonato/turmas/:turma', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/:campeonato/turmas/:turma', passport.authenticate('jwt', {session: false}), verifyToken.verifyCampeonatoTurma(), function(req, res, next) {
     var campeonato = req.params.campeonato;
     var turma = req.params.turma;
     var escola = req.query.escola;
@@ -312,7 +312,7 @@ router.get('/:campeonato/turmas/:turma', passport.authenticate('jwt', {session: 
     else res.status(400).send("Faltam parâmetros (turma ou codprofessor)")
 });
 
-router.get('/:campeonato/alunos/:user', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/:campeonato/alunos/:user', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor_Aluno2(), function(req, res, next) {
     var campeonato = req.params.campeonato;
     var user = req.params.user
     var turma = req.query.turma;
@@ -336,7 +336,7 @@ router.get('/:campeonato/municipios/:municipio/gerais', passport.authenticate('j
                    .catch(erro => res.status(500).jsonp(erro))
 });
 
-router.get('/:campeonato/comunidades/:comunidade/gerais', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+router.get('/:campeonato/comunidades/:comunidade/gerais', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
     var campeonato = req.params.campeonato;
     var comunidade = req.params.comunidade
     Campeonatos.getCampeonatoComunidadeGerais(campeonato, comunidade)

@@ -46,7 +46,7 @@ for(var i = 0; i < N; i++){
 module.exports.anosletivos = anosletivos
 
 for(var i = 1; i < N/2; i++){
-    var aux = (intAno-1-i) + "/" + (intAno-i)
+    var aux = (intAno-Math.round(N/2)+i-1) + "/" + (intAno-Math.round(N/2)+i)
     anosCromos.push(aux)
 }
 

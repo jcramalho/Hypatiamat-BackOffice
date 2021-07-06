@@ -361,34 +361,43 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
        
       },
       download: async function(posicao, user){
-         if(posicao > 11) var posFinal = 11
-         else var posFinal = posicao
-         var response1 = await axios.get(hostCampeonatos + this.campeonato.campeonatoID + "/certificados/nome?jogo=" + this.campeonato.jogo + 
-                        "&posicao=" + posFinal + "&user=" + user + "&token=" + this.token) 
-         if(response1.data){
-            var nome = response1.data.ficheiro
-            axios({
-                method: "get",
-                url: hostCampeonatos + this.campeonato.campeonatoID + "/certificados/download?jogo=" + this.campeonato.jogo + 
-                            "&posicao=" + posFinal + "&user=" + user + "&token=" + this.token,
-                responseType: 'arraybuffer'
+         if(!(this.utilizador.type == 20 || this.utilizador.type == 50)) {
+             Swal.fire({
+                icon: 'error',
+                text: 'Pedimos desculpa, mas o certificado apenas se encontra disponível para professores e aluno.',
+                confirmButtonColor: '#009263'
             })
-                .then(function (response) {
-                        var fileURL = window.URL.createObjectURL(new Blob([response.data]));
-                        var fileLink = document.createElement('a');
-                        fileLink.href = fileURL;
-                        console.log(response)
-                        fileLink.setAttribute('download', nome);
-                        document.body.appendChild(fileLink);
-                        fileLink.click();
-                    })
-                .catch(erro => {console.log("DEUUUU ERROOOOO "); console.log(erro.response)})
          }
-         else Swal.fire({
-            icon: 'error',
-            text: 'Pedimos desculpa, mas o certificado ainda não se encontra disponível.',
-            confirmButtonColor: '#009263'
-          })
+         else{ 
+            if(posicao > 11) var posFinal = 11
+            else var posFinal = posicao
+            var response1 = await axios.get(hostCampeonatos + this.campeonato.campeonatoID + "/certificados/nome?jogo=" + this.campeonato.jogo + 
+                            "&posicao=" + posFinal + "&user=" + user + "&token=" + this.token) 
+            if(response1.data){
+                var nome = response1.data.ficheiro
+                axios({
+                    method: "get",
+                    url: hostCampeonatos + this.campeonato.campeonatoID + "/certificados/download?jogo=" + this.campeonato.jogo + 
+                                "&posicao=" + posFinal + "&user=" + user + "&token=" + this.token,
+                    responseType: 'arraybuffer'
+                })
+                    .then(function (response) {
+                            var fileURL = window.URL.createObjectURL(new Blob([response.data]));
+                            var fileLink = document.createElement('a');
+                            fileLink.href = fileURL;
+                            console.log(response)
+                            fileLink.setAttribute('download', nome);
+                            document.body.appendChild(fileLink);
+                            fileLink.click();
+                        })
+                    .catch(erro => {console.log("DEUUUU ERROOOOO "); console.log(erro.response)})
+            }
+            else Swal.fire({
+                icon: 'error',
+                text: 'Pedimos desculpa, mas o certificado ainda não se encontra disponível.',
+                confirmButtonColor: '#009263'
+            })
+         }
       },
     }
   }

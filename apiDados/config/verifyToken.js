@@ -1,6 +1,7 @@
 const Escolas = require('../controllers/db_aplicacoes/escolas')
 const Alunos = require('../controllers/db_aplicacoes/alunos')
 const Turmas = require('../controllers/db_aplicacoes/turmas')
+const TurmasOld = require('../controllers/db_aplicacoes/turmasold')
 const Professores = require('../controllers/db_aplicacoes/professor')
 const { updateTurma } = require('../controllers/db_aplicacoes/alunos')
 const CromosAlunos = require('../controllers/db_testeconhecimentos/cromos_alunos')
@@ -76,6 +77,25 @@ module.exports.verifyAdmin_Professor_Aluno2 = function(){
         else res.status(403).jsonp("Não tem permissão.")
     }
 }
+
+module.exports.verifyAdmin_Professor_Aluno3 = function(){
+    return async function(req, res, next) {
+        var u = req.user.user
+        var user = req.query.user
+        // admin
+        if(u.type == 50) next()
+        // aluno
+        else if( (u.type == 10 || u.type == 3) && u.user == user) next()
+        // professor
+        else if((u.type == 5 || u.type == 20)){
+            var aluno = await Alunos.getAlunoByUser(user)
+            if(aluno && u.codigo.toUpperCase() === aluno.codprofessor.toUpperCase()) next()
+            else res.status(403).jsonp("Não tem permissão.")
+        }
+        else res.status(403).jsonp("Não tem permissão.")
+    }
+}
+
 
 module.exports.verifyAdmin_Professor = function(){
     return function(req, res, next) {
@@ -313,5 +333,67 @@ module.exports.verifyProfessor3 = function(){
         // professor
         if ( mensagem.codprofessor == u.codigo && (u.type == 5 || u.type == 20) ) next()
         else res.status(403).jsonp("Não tem permissão.")
+    }
+}
+
+module.exports.verifyAppsTurmas1 = function(){
+    return async function(req, res, next) {
+        var u = req.user.user
+        var codprofessor = req.query.codProf
+
+        if(!codprofessor) res.status(400).jsonp("É necessário indicar o professor pertencente à turma.")
+
+        if( u.type == 50 ) next()
+        // professor
+        else if( (u.type == 5 || u.type == 20) && u.codigo == codprofessor ) next()
+        else {
+            var professor = await Professores.getProfessorByCodigo(codprofessor)
+            // agrupamento
+            if(u.type == 40 && u.escola == professor.escola) next()
+            // municipio
+            else if (u.type == 30 && u.escolas.find(esc => esc.cod == professor.escola)) next()
+            else res.status(403).jsonp("Não tem permissão.")
+        } 
+        
+    }
+}
+
+module.exports.verifyCampeonatoTurma = function(){
+    return async function(req, res, next){
+        var u = req.user.user
+        var codprofessor = req.query.codprofessor
+        var turma = req.params.turma
+
+        // admin
+        if(u.type == 50) next()
+        else if(u.type == 20 && u.codigo == codprofessor) next()
+        else if(u.type == 10){
+            var alunosAtuais = await Alunos.getAlunosFromTurma(turma, codprofessor) 
+            var alunosOld = await TurmasOld.getAlunosFromTurma(turma, codprofessor)
+            if(alunosAtuais.find(e => e.user == u.user) || alunosOld.find(e => e.user == u.user)) next()
+            else res.status(403).jsonp("Não tem permissão.")
+        }
+        else{
+            var professor = await Professores.getProfessorByCodigo(codprofessor)
+            // agrupamento
+            if(u.type == 40 && u.escola == professor.escola) next()
+            // municipio
+            else if (u.type == 30 && u.escolas.find(esc => esc.cod == professor.escola)) next()
+            else res.status(403).jsonp("Não tem permissão.")
+        }
+    }
+}
+
+module.exports.verifyCampeonatoEscolaMunicipio = function(){
+    return async function(req, res, next){
+        var u = req.user.user
+        var escola = req.query.escola
+        var municipio = req.query.municipio
+        if(escola){
+
+        }
+        else{
+
+        }
     }
 }
