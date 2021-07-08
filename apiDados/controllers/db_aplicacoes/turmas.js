@@ -57,7 +57,47 @@ Turma.getTurmasFromAnoLetivo = function(anoletivo){
     })
 }
 
+Turma.getTurmasSemAlunos = function(){
+    return new Promise(function(resolve, reject) {
+        sql.query(`Select t.*, profs.nome from (
+            Select t.* from	(SELECT t.*
+                    FROM turmas t
+                    LEFT JOIN alunos a ON a.turma = t.turma
+                    WHERE a.turma IS NULL) t
+                LEFT JOIN turmasold told ON told.turma = t.turma
+                    where told.turma IS NULL) t, professores profs
+            where t.idprofessor = profs.codigo;`, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
 
+Turma.getTurmasSemAlunosFromAnoletivo = function(anoletivo){
+    return new Promise(function(resolve, reject) {
+        sql.query(`Select t.*, profs.nome from (
+            Select t.* from	(SELECT t.*
+                    FROM turmas t
+                    LEFT JOIN alunos a ON a.turma = t.turma
+                    WHERE a.turma IS NULL) t
+                LEFT JOIN turmasold told ON told.turma = t.turma
+                    where told.turma IS NULL) t, professores profs
+            where t.idprofessor = profs.codigo and t.anoletivo = ?;`, anoletivo, function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
 
 Turma.getTurmaById = function (id) {
     return new Promise(function(resolve, reject) {

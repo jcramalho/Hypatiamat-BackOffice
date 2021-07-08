@@ -8,13 +8,14 @@ var Escolas = require('../controllers/db_aplicacoes/escolas')
 const jwtKey = "tese-hypatiamat2020"
 
 
+/*
 const profExperimental = 'hprof2'
 const alunoExperimental = 'aluno1'
+*/
 
-/*
 const profExperimental = 'hypatiat'
 const alunoExperimental = 'h21082f109'
-*/
+
 
 const jwtExpirySecondsExperimental = 30 * 60
 const jwtExpirySeconds = 90 * 60

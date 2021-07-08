@@ -1,5 +1,6 @@
 const Email = module.exports
 const authEmail = require('../../config/authEmail').auth
+const emailSolicitacao = require('../../config/authEmail').emailSolicitacao
 var nodemailer = require('nodemailer');
 
 var transporter = nodemailer.createTransport({
@@ -39,6 +40,22 @@ Email.sendEmailRegisto = async function(assunto, texto){
     subject: assunto,
     text: texto
   };
+  let info = await transporter.sendMail(email)
+                              .catch(error => console.log(error))
+  console.log(info.response)
+  return 'Email enviado.'
+}
+
+Email.sendEmailSolicitacaoCodigo = async function(agrupamento, nomeProf, emailProf){
+  var email = {
+    from: fromHypatia,
+    to: emailSolicitacao,
+    subject: 'Pedido de Código de Confirmação',
+    text: 'O seguinte professor está a solicitar um código de confirmação para se registar na plataforma:\n' +
+        '   Agrupamento de Escolas: ' + agrupamento + '\n   Nome do professor: ' + nomeProf + "\n   Email do professor: " +
+        emailProf
+  }
+
   let info = await transporter.sendMail(email)
                               .catch(error => console.log(error))
   console.log(info.response)

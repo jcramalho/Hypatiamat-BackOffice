@@ -31,4 +31,17 @@ router.post('/registo', function(req, res, next) {
     else res.status(400).send('Faltam parâmetros.')
 })
 
+router.post('/solicitacaocodigo', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+    var agrupamento = req.body.agrupamento
+    var nome = req.body.nome
+    var email = req.body.email
+    if(agrupamento && nome && email){
+        Email.sendEmailSolicitacaoCodigo(agrupamento, nome, email)
+             .then(dados => res.jsonp(dados))
+             .catch(erro => res.status(500).send('Erro'))
+    }
+    else res.status(400).send('Faltam parâmetros.')
+});
+
+
 module.exports = router

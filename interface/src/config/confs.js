@@ -32,9 +32,12 @@ module.exports.dataFim1 = (parseInt(ano)) + "-09-01"
 
 // nº dos últimos anos letivos a serem selecionados possivelmente 
 var N = 7
-
+var Nmaior = 10
 // ultimos N anos letivos (ex: ["20/21", "19/20", ...])
 var anosletivos = []
+// ultimos Nmaior anos letivos (ex: ["20/21", "19/20", ...])
+var anosletivosMaior = []
+
 var anosCromos = []
 var anosCromos2 = []
 
@@ -43,7 +46,13 @@ for(var i = 0; i < N; i++){
     anosletivos.push(aux)
 }
 
+for(var i = 0; i < Nmaior; i++){
+    var aux = (intAno-1-i) + "/" + (intAno-i)
+    anosletivosMaior.push(aux)
+}
+
 module.exports.anosletivos = anosletivos
+module.exports.anosletivosMaior = anosletivosMaior
 
 for(var i = 1; i < N/2; i++){
     var aux = (intAno-Math.round(N/2)+i-1) + "/" + (intAno-Math.round(N/2)+i)

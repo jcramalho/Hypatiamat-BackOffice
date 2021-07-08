@@ -14,7 +14,27 @@ router.get('/', passport.authenticate('jwt', {session: false}), verifyToken.veri
                  res.jsonp(dados)
                })
                .catch(erro => res.status(500).jsonp(erro))
-  });
+});
+
+router.get('/semalunos', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
+  var anoletivo = req.query.anoletivo
+  if(anoletivo){
+    Turmas.getTurmasSemAlunosFromAnoletivo(anoletivo)
+             .then(dados =>{
+               res.jsonp(dados)
+             })
+             .catch(erro => res.status(500).jsonp(erro))
+  }
+  else{
+    Turmas.getTurmasSemAlunos()
+          .then(dados =>{
+            res.jsonp(dados)
+          })
+          .catch(erro => res.status(500).jsonp(erro))
+  }
+  
+});
+
 
 
 // Todas as turmas de um determinado ano letivo (ano = 20) => (anoletivo = 20/21)

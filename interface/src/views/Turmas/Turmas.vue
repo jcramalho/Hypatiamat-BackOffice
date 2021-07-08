@@ -7,7 +7,16 @@
                 <v-card-title primary-title class="justify-center green--text">
                     Lista de Turmas
                 </v-card-title>
-                <center><v-btn class="white--text" style="background-color: #009263;" @click="criarTurma()"> <v-icon> mdi-book-plus </v-icon> Criar Turma </v-btn></center>
+                <center>
+                  <v-btn class="white--text" style="background-color: #009263;" @click="criarTurma()"> 
+                    <v-icon> mdi-book-plus </v-icon> Criar Turma
+                  </v-btn>
+                  <br>
+                  <br>
+                  <v-btn class="white--text" style="background-color: #009263;" @click="dialogTurmasSemAlunos = true">
+                    <v-icon> mdi-eye </v-icon> Turmas sem alunos
+                  </v-btn>
+                </center>
                 <v-combobox
                     id="escola"
                     label="Agrupamento de Escolas"
@@ -80,6 +89,9 @@
                     </template>
                     </v-data-table>
             </v-container>
+            <v-dialog v-model="dialogTurmasSemAlunos" width="80%">
+              <TurmasSemAlunos/>
+            </v-dialog>
         </v-card>
       </v-container>
     </v-main>
@@ -93,6 +105,7 @@ import axios from "axios"
 import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
 import {Passaport} from '@/config/passport'
+import TurmasSemAlunos from '@/components/Turmas/TurmasSemAlunos.vue'
 
   export default {
     data(){
@@ -100,6 +113,7 @@ import {Passaport} from '@/config/passport'
         token: "",
         anosletivos:["Todos", "20/21", "19/20", "18/19", "17/18", "16/17", "15/16", "14/15", "13/14"],
         anoletivo:"Todos",
+        dialogTurmasSemAlunos: false, 
         turmas: [],
          header_turmas: [
             {text: "Username do Professor", sortable: true, value: 'idprofessor', class: 'subtitle-1'},
@@ -118,6 +132,9 @@ import {Passaport} from '@/config/passport'
         escola: "",
         escolasIds : [],
       }
+    },
+    components:{
+      TurmasSemAlunos
     },
     created: async function(){
         this.token = localStorage.getItem("token")

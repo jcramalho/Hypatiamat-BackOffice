@@ -71,6 +71,8 @@ export default {
       var aux = false
       var self = this
 
+      this.getTokenInterface()
+
       CrossStorageHub.init(storageHosts);
 
       axios.interceptors.response.use((response) => {
@@ -126,6 +128,10 @@ export default {
       }
     },
     methods: {
+          getTokenInterface: async function(){
+            var response = await axios.get(h + "login/interface")
+            localStorage.setItem("tokenInterface", response.data.token)
+          },  
           teste(){
             console.log(this.$route)
             console.log(this.$route.name)

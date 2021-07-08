@@ -35,6 +35,9 @@
             <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
               <v-text-field prepend-icon="mdi-barcode" v-model="codigoHypatia" color="#009263" name="Código Hypatiamat" label="Código Hypatiamat" required></v-text-field>
             </v-col>
+            <v-col cols="12">
+              <span class="pl-8 caption" style="display: inline-block; cursor: pointer" @click="dialogEmailCodigo = true"> Não possuí um código hypatiamat? </span>
+            </v-col>
             <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
             <v-text-field prepend-icon="mdi-card-account-details" v-model="codigo" color="#009263" name="Username (Código)" label="Username (Código)" :rules="[string15, codigoProfExistente]" required></v-text-field>
             </v-col>
@@ -119,6 +122,28 @@
         </v-container>
         </v-col>
     </v-row>
+    <v-dialog v-model="dialogEmailCodigo" width="70%">
+      <v-card class="pa-4">
+        <v-card-title class="green--text justify-center"> Pedido de Código Hypatiamat </v-card-title>
+        <v-combobox
+            id="escola2"
+            prepend-icon="mdi-school"
+            label="Agrupamento de Escolas"
+            v-model="escola"
+            color="#009263"
+            :items="escolas"
+        ></v-combobox>
+        <v-text-field prepend-icon="mdi-email" v-model="email" color="#009263" name="Email" label="Email" required></v-text-field>
+        <v-text-field prepend-icon="mdi-account" v-model="nome" color="#009263" name="Nome" label="Nome" required></v-text-field>
+        <v-btn 
+          class="justifiy-center white--text" 
+          block color="#009263"
+          :disabled="!((escola && escola != '') && (nome && nome != '') && (email && email != ''))"
+          @click="enviarSolicitacao"
+        > Enviar Solicitação 
+        </v-btn>
+      </v-card>
+    </v-dialog>
   </v-container>
   <Footer/>
 </div>
@@ -135,6 +160,7 @@
     data(){
       return {
         token: "",
+        dialogEmailCodigo: false,
         isProfessor: true,
         nome : "",
         codigoHypatia: "",
@@ -335,10 +361,38 @@
         }
         else{
           Swal.fire({
-                    icon: 'error',
-                    text: 'Ainda possuí campos por preencher!',
+            icon: 'error',
+            text: 'Ainda possuí campos por preencher!',
+            confirmButtonColor: '#009263'
+          })
+        }
+      },
+      enviarSolicitacao: function(){
+        if((this.escola && this.escola != '') && (this.nome && this.nome != '') && (this.email && this.email != '')){
+           var body = {
+             agrupamento: this.escola,
+             nome: this.nome,
+             email: this.email
+           }
+           axios.post(h + 'emails/solicitacaocodigo?token=' + this.token, body)
+                .then(() => {
+                  Swal.fire({
+                    icon: 'success',
+                    text: 'A sua solicitação foi enviada.\nAguarde por uma resposta.\nObrigado.',
                     confirmButtonColor: '#009263'
                   })
+                  this.nome = this.email = this.escola = ""
+                  this.dialogEmailCodigo = false
+                })
+                .catch(() =>{
+                  Swal.fire({
+                    icon: 'error',
+                    text: 'Pedimos desculpa, mas de momento não é possível enviar uma solicitação.',
+                    confirmButtonColor: '#009263'
+                  })
+                  this.nome = this.email = this.escola = ""
+                  this.dialogEmailCodigo = false
+                })
         }
       }
     },
