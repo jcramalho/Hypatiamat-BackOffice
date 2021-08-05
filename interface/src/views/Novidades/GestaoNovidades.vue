@@ -31,9 +31,9 @@
                         <td>{{row.item.subnovidades}}</td>
                         <td>
                         <!--<v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>-->
-                            <v-icon v-if="row.item.link" @click="goToLink(row.item.link)">mdi-link-variant</v-icon>
-                            <v-icon @click="editarNovidade(row.item.id, row.index)"> mdi-pencil </v-icon>
-                            <v-icon @click="apagarNovidade(row.index, row.item.id)"> mdi-delete </v-icon>
+                            <v-icon v-if="row.item.link" @click="goToLink(row.item.link)" color="#009263">mdi-link-variant</v-icon>
+                            <v-icon @click="editarNovidade(row.item.id, row.index)" color="#009263"> mdi-pencil </v-icon>
+                            <v-icon @click="apagarNovidade(row.index, row.item.id)" color="#009263"> mdi-delete </v-icon>
                         </td>
                     </tr>
                     </template>
@@ -86,7 +86,7 @@
                                                         <td>{{row.item.subnovidade}}</td>
                                                         <td>
                                                         <!--<v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>-->
-                                                        <v-icon @click="apagarSubNovidadeCriada(row)"> mdi-delete </v-icon>
+                                                        <v-icon @click="apagarSubNovidadeCriada(row)" color="#009263"> mdi-delete </v-icon>
                                                         </td>
                                                     </tr>
                                                 </template>

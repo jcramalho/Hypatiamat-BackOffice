@@ -24,7 +24,7 @@
                     </v-col>
                     <v-col cols="9">
                         <v-card class="mx-auto" color="grey lighten-4">
-                            <center> <h3 class="green--text"> Legenda da Tabela: </h3> </center>
+                            <center> <h3 class="green--text"> Legenda da Tabela </h3> </center>
                             <ul> 
                                 <li> <span> <b>N.º</b> - Número do aluno; </span> </li>
                                 <li> <span> <b>Posição (Turma)</b> - Posição do aluno na turma; </span> </li>

@@ -55,16 +55,15 @@
                         <td>{{row.item.turma}}</td>
                         <td>
                         <!--<v-icon @click="verAluno(row.item.id)"> mdi-eye </v-icon>-->
-                        <v-icon @click="editarAluno(row.item.id)"> mdi-pencil </v-icon>
-                        <v-icon @click="apagarAluno(row.item.user)"> mdi-delete </v-icon>
+                        <v-icon @click="editarAluno(row.item.id)" color="#009263"> mdi-pencil </v-icon>
+                        <v-icon @click="apagarAluno(row.item.user)" color="#009263"> mdi-delete </v-icon>
                         </td>
                     </tr>
                     </template>
                     </v-data-table>
                 </v-container>
                 <v-container v-else>
-                <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
-                
+                  <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
                 </v-container>
                 <v-dialog v-model="dialogEditar" width="85%">
                   <v-card>

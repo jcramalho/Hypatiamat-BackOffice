@@ -19,11 +19,11 @@
                           <span> 1. Se desejar visualizar as suas turmas antigas, pode fazê-lo através da seleção de um ano letivo diferente ou de todos (<v-icon>mdi-counter</v-icon>). </span>
                           </v-col>
                           <v-col cols="12">
-                          <span> 2. Caso deseje visualizar os alunos pertencentes a uma turma e eventualmente editar as informações dos mesmos, clique em  <v-icon> mdi-eye </v-icon>
+                          <span> 2. Caso deseje visualizar os alunos pertencentes a uma turma e eventualmente editar as informações sobre os mesmos, clique em  <v-icon> mdi-eye </v-icon>
                           da respetiva turma. </span>
                           </v-col>
                           <v-col cols="12">
-                          <span> 3. Caso deseje efetuar transferências de alunos no qual envolvam uma determinada turma, clique em 
+                          <span> 3. Caso deseje efetuar transferências de alunos envolvendo uma determinada turma, clique em 
                             <v-icon> mdi-cog-transfer-outline </v-icon> da respetiva turma. </span> 
                           </v-col>
                         </v-row>

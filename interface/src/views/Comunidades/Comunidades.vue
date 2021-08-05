@@ -31,8 +31,8 @@
                         <td>{{row.item.municipios}}</td>
                         <td>
                         <!--<v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>-->
-                        <v-icon @click="editarComunidade(row.item.codigo, row.item.nome)"> mdi-pencil </v-icon>
-                        <v-icon @click="apagarComunidade(row.item.codigo)"> mdi-delete </v-icon>
+                        <v-icon @click="editarComunidade(row.item.codigo, row.item.nome)" color="#009263"> mdi-pencil </v-icon>
+                        <v-icon @click="apagarComunidade(row.item.codigo)" color="#009263"> mdi-delete </v-icon>
                         </td>
                     </tr>
                     </template>

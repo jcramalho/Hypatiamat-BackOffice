@@ -30,7 +30,7 @@
                         <td>{{row.item.codigo}}</td>
                         <td>
                         <!--<v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>-->
-                        <v-icon @click="apagarCodigo(row.item.id)"> mdi-delete </v-icon>
+                        <v-icon @click="apagarCodigo(row.item.id)" color="#009263"> mdi-delete </v-icon>
                         </td>
                     </tr>
                     </template>

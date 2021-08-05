@@ -16,22 +16,22 @@
                         <v-card v-show="showAjuda" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
                             <v-row class="justify-center">
                                 <v-col cols="12">
-                                    <span> 1. Pode escolher o ano letivo e/ou o intervalo de tempo que pretende visualizar os seus resultados. </span>
+                                    <span> 1. Podes escolher o ano letivo ou o intervalo de tempo para o qual pretendes visualizar o teu desempenho. </span>
                                 </v-col>
                                 <v-col cols="12">
-                                    <span> 2. Pode escolher qual o a aplicação de conteúdo que pretende visualizar estatísticas. 
-                                        Apenas estarão disponíveis as aplicações que fez no intervalo de tempo definido.
+                                    <span> 2. Podes escolher a aplicação de conteúdos para a qual pretendes visualizar as estatísticas de desempenho. 
+                                        Apenas estarão disponíveis as aplicações onde realizaste tarefas no intervalo de tempo que escolheste.
                                     </span>
                                 </v-col>
                                 <v-col cols="12">
-                                    <span> 3. À exceção da seleção de todas as aplicações, pode visualizar os resultados por dia daquele intervalo de tempo ao clicar em  
+                                    <span> 3. Exceto no caso de selecionares todas as aplicações, podes visualizar todos os dados por dia, nesse intervalo de tempo, ao clicar em  
                                         <v-btn v-if="!xs" small class="white--text" color="#009263">Ver todos estes resultados</v-btn>
                                         <v-btn v-else x-small class="white--text" color="#009263" >Ver todos</v-btn>
                                     </span>
                                 </v-col>
                                 <v-col cols="9">
                                     <v-card class="mx-auto" color="grey lighten-4">
-                                        <center> <h3 class="green--text"> Legendas: </h3> </center>
+                                        <center> <h3 class="green--text"> Legendas </h3> </center>
                                         <ul> 
                                             <li> <span> <b>NTRC</b> - Número de tarefas resolvidas corretamente; </span> </li>
                                             <li> <span> <b>NTR</b> - Número de tarefas resolvidas; </span> </li>
@@ -74,7 +74,12 @@
                                 <v-container v-if="resultadosGlobais == undefined">
                                     <center><v-icon large color="#009263"> mdi-home-analytics </v-icon></center>
                                     <br>
-                                <center> <span :style="styleP"> Ainda não preencheu os campos necessários para ver resultados ou nunca fez esta aplicação.</span> </center>
+                                <center> 
+                                    <span :style="styleP"> 
+                                        Ainda não preencheste os campos necessários para veres resultados ou nunca fez 
+                                        realizaste tarefas nesta aplicação.
+                                    </span> 
+                                </center>
                                 </v-container>
                                 <v-container v-else>
                                     <center><v-icon large color="#009263"> mdi-home-analytics </v-icon></center>
@@ -131,6 +136,11 @@
                                         </v-col>
                                         <v-col v-if="app!='Todas'" cols="12"  xs="12" sm="12" md="12" lg="12" xl="12">
                                             <center>
+                                                <v-btn v-if="appTarefa" class="white--text" color="#009263" @click="getTarefas">
+                                                    <v-icon color="white">mdi-eye</v-icon> por tarefa
+                                                </v-btn>
+                                                <br v-if="appTarefa">
+                                                <br>
                                                 <v-btn v-if="!xs" class="white--text" color="#009263" @click="verTodos()">Ver todos estes resultados</v-btn>
                                                 <v-btn v-else class="white--text" color="#009263" @click="verTodos()">Ver todos</v-btn>
                                             </center>
@@ -138,6 +148,9 @@
                                     </v-row>                                    
                                 </v-container>
                             </v-card>
+                            <v-dialog v-model="dialogTarefas">
+                                <TarefasApps v-if="dialogTarefas" :propsTarefas="propsTarefas"/>
+                            </v-dialog>
                             <v-dialog v-model="dialogDia">
                                 <AppDiaAluno v-if="dialogDia" :resultados="appPorDia" :app="app" />
                             </v-dialog>
@@ -157,13 +170,19 @@ const hostApps = require("@/config/hosts").hostApps
 const anosletivos2 = require("@/config/confs").anosletivos2
 const anoletivoAtual = require("@/config/confs").anoletivo2
 import AppDiaAluno from "@/components/Apps/AppDiaAluno.vue"
+import TarefasApps from "@/components/Apps/TarefasRealizadasAluno.vue"
+
 
   export default {
     data(){
       return {
         showAjuda: false,
         dialogDia: false,
+        dialogTarefas: false,
         appPorDia: [],
+        appsComTarefas: [],
+        appTarefa: undefined,
+        propsTarefas: undefined,
         token: "",
         app:"",
         dataInicio: "2019-09-01",
@@ -191,11 +210,14 @@ import AppDiaAluno from "@/components/Apps/AppDiaAluno.vue"
       }
     },
     components:{
-        AppDiaAluno
+        AppDiaAluno,
+        TarefasApps
     },
     created: async function(){
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
+        var responseT = await axios.get(hostApps + "tarefas/?token=" + this.token)
+        this.appsComTarefas = responseT.data
         await this.onAnoChange()
         this.resize()
     },
@@ -283,26 +305,50 @@ import AppDiaAluno from "@/components/Apps/AppDiaAluno.vue"
                         
         this.resultadosGlobais = response.data
       },
+      appComTarefas: function(){
+        var appInfo = this.appsInfo.find(element => element.tema == this.app)
+        if(appInfo) this.appTarefa = this.appsComTarefas.find(e => e.codtema == appInfo.codtema)
+        else{
+            appInfo = this.appsInfo.find(element => element.subtema == this.app)
+            if(appInfo) this.appTarefa = this.appsComTarefas.find(e => e.codtema == appInfo.codtema && e.codsubtema == appInfo.codsubtema)
+            else this.appTarefa = undefined
+        }
+        console.log(this.appTarefa)
+      },
+      getTarefas: function(utilizador){
+        this.propsTarefas = {
+            app: this.app,
+            table: this.appTarefa.tabela,
+            codtema: this.appTarefa.codtema,
+            codsubtema: this.appTarefa.codsubtema,
+            userid: this.utilizador.user,
+            dataInicio: this.dataInicio,
+            dataFim: this.dataFim,
+        }
+        this.dialogTarefas = true
+      },
       atualizaConteudo: async function(){
           if(this.app != "" && this.dataFim != "" && this.dataInicio != "" ){
             if(this.app == "Todas"){
-                    this.resultadosGlobais = undefined
-                    var response = await axios.get(hostApps + "alunos/" + this.utilizador.user
-                                            + "/?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
-                                            + "&token=" + this.token)
-            
-                    this.resultadosGlobais = response.data
-                }
+                this.appTarefa = undefined
+                this.resultadosGlobais = undefined
+                var response = await axios.get(hostApps + "alunos/" + this.utilizador.user
+                                        + "/?dataInicio=" + this.dataInicio + "&dataFim=" + this.dataFim
+                                        + "&token=" + this.token)
+        
+                this.resultadosGlobais = response.data
+            }
+            else{
+                this.appComTarefas()
+                var appInfo = this.appsInfo.find(element => element.tema == this.app)
+                // é um dos temas
+                if(appInfo) this.atualizaConteudoTema(appInfo)
                 else{
-                    var appInfo = this.appsInfo.find(element => element.tema == this.app)
-                    // é um dos temas
-                    if(appInfo) this.atualizaConteudoTema(appInfo)
-                    else{
-                        // é um subtema
-                        appInfo = this.appsInfo.find(element => element.subtema == this.app)
-                        if(appInfo) this.atualizaConteudoSubtema(appInfo)
-                    }
+                    // é um subtema
+                    appInfo = this.appsInfo.find(element => element.subtema == this.app)
+                    if(appInfo) this.atualizaConteudoSubtema(appInfo)
                 }
+            }
           } 
       },
       verTodos: async function(){

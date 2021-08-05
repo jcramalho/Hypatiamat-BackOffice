@@ -575,7 +575,8 @@ router.get('/:jogo/turmas/:turma/intervalos', passport.authenticate('jwt', {sess
   var escola = req.query.escola
   var jogo = req.params.jogo 
   var jogoTipo = req.query.jogoTipo
-  if(turma && escola && jogo && jogoTipo){
+  var codprofessor = req.query.codprofessor
+  if(turma && escola && jogo && jogoTipo && codprofessor){
       JogosGerais.getEstatisticasGraficoTurma(jogoTipo, jogo, turma, escola)
                  .then(dados => res.jsonp(dados))
                  .catch(error => { console.log(error); res.status(500).jsonp("Error")})

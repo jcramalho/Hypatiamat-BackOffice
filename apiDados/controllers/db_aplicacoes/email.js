@@ -51,7 +51,7 @@ Email.sendEmailSolicitacaoCodigo = async function(agrupamento, nomeProf, emailPr
     from: fromHypatia,
     to: emailSolicitacao,
     subject: 'Pedido de Código de Confirmação',
-    text: 'O seguinte professor está a solicitar um código de confirmação para se registar na plataforma:\n' +
+    text: 'O seguinte professor está a solicitar um Hypatiamat Code para se registar na plataforma:\n' +
         '   Agrupamento de Escolas: ' + agrupamento + '\n   Nome do professor: ' + nomeProf + "\n   Email do professor: " +
         emailProf
   }

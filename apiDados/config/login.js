@@ -9,7 +9,7 @@ const jwtKey = "tese-hypatiamat2020"
 
 
 /*
-const profExperimental = 'hprof2'
+const profExperimental = 'jnrs2019'
 const alunoExperimental = 'aluno1'
 */
 

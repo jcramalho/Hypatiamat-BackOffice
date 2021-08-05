@@ -36,8 +36,8 @@
                         <td v-else> <v-icon color="red">mdi-close-thick</v-icon> </td>
                         <td>
                         <!--<v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>-->
-                        <v-icon @click="editarProfessor(row.item.id)"> mdi-pencil </v-icon>
-                        <v-icon @click="apagarProfessor(row.item.codigo)"> mdi-delete </v-icon>
+                        <v-icon @click="editarProfessor(row.item.id)" color="#009263"> mdi-pencil </v-icon>
+                        <v-icon @click="apagarProfessor(row.item.codigo)" color="#009263"> mdi-delete </v-icon>
                         </td>
                     </tr>
                     </template>

@@ -16,14 +16,15 @@
                         <v-card v-show="showAjuda" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
                             <v-row class="justify-center">
                                 <v-col cols="12">
-                                    <span> 1. Pode escolher o ano letivo e/ou o intervalo de tempo que pretende visualizar os seus resultados. </span>
+                                    <span> 1. Podes escolher o ano letivo ou o intervalo de tempo para o qual pretendes visualizar o teu desempenho. </span>
                                 </v-col>
                                 <v-col cols="12">
-                                    <span> 2. Pode escolher qual o jogo que pretende visualizar estatísticas. Apenas estarão disponíveis os que jogou no intervalo de tempo definido.
+                                    <span> 2. Podes escolher o jogo para o qual pretendes visualizar as estatísticas de desempenho. Apenas estarão 
+                                        disponíveis os que jogaste no intervalo de tempo que escolheste.
                                     </span>
                                 </v-col>
                                 <v-col cols="12">
-                                    <span> 3. À exceção do jogo CalcRapid, pode visualizar todos os resultados daquele intervalo de tempo ao clicar em  
+                                    <span> 3. À exceção do jogo CalcRapid, podes visualizar todos os dados relativos àquele intervalo de tempo ao clicar em  
                                         <v-btn v-if="!xs" small class="white--text" color="#009263">Ver todos estes resultados</v-btn>
                                         <v-btn v-else x-small class="white--text" color="#009263" >Ver todos</v-btn>
                                     </span>
@@ -95,7 +96,7 @@
                                 <v-container v-if="resultadosGlobais == undefined">
                                     <center><v-icon large color="#009263"> mdi-home-analytics </v-icon></center>
                                     <br>
-                                <center> Ainda não preencheu os campos necessários para ver resultados ou nunca jogou este jogo. </center>
+                                <center> Ainda não preencheste os campos necessários para veres resultados ou nunca jogaste este jogo. </center>
                                 </v-container>
                                 <v-container v-else-if="this.jogo.jogo=='Calcrapid'">
                                     <CalcRapidAluno v-if="resultadosGlobais != undefined || resultadosGlobais.idaluno == undefined" 

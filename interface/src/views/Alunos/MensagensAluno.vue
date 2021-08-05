@@ -23,11 +23,11 @@
                     <v-col cols="12">
                         <v-card v-if="naovistas && mensagens.length == 0" class="elevation-6 pa-3" 
                             style="border: 2px solid green !important;" color="grey lighten-3" width="100%">   
-                            <span> Não recebeu nenhuma mensagem na semana atual. </span>
+                            <span> Não recebeste nenhuma mensagem nesta semana. </span>
                         </v-card>
                         <v-card v-if="!naovistas && mensagens.length == 0" class="elevation-6 pa-3" 
                             style="border: 2px solid green !important;" color="grey lighten-3" width="100%">   
-                            <span> Não recebeu nenhuma mensagem nas semanas anteriores. </span>
+                            <span> Não recebeste nenhuma mensagem nas semanas anteriores. </span>
                         </v-card>
                     <v-list-item
                         v-for="mensagem in mensagensShow"

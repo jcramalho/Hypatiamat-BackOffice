@@ -65,6 +65,7 @@
                                 v-bind="attrs" 
                                 v-on="on"
                                 :ripple="false"
+                                
                             ></v-simple-checkbox>
                             </template>
                             <span>Se selecionar esta opção, a palavra-passe dos alunos do passaporte irá ser preenchida com a palavra-passe gerada pelo Hypatiamat.</span>
@@ -76,14 +77,14 @@
                               v-bind="attrs" 
                               v-on="on"
                             >
-                            <v-icon @click="getPassaporte(row.item.turma, row.item.idprofessor, row.item.passportPassword)"> mdi-passport </v-icon>
+                            <v-icon @click="getPassaporte(row.item.turma, row.item.idprofessor, row.item.passportPassword)" color="#009263"> mdi-passport </v-icon>
                             </v-btn>
                           </template>
                           <span>Gerar um passaporte (PDF) à cerca dos alunos da turma.</span>
                         </v-tooltip>
-                        <v-icon @click="verTurma(row.item.id)"> mdi-eye </v-icon>
-                        <v-icon @click="editarTurma(row.item.id, row.item.idprofessor)"> mdi-pencil </v-icon>
-                        <v-icon @click="apagarTurma(row.item.turma, row.item.idprofessor)"> mdi-delete </v-icon>
+                        <v-icon @click="verTurma(row.item.id)" color="#009263"> mdi-eye </v-icon>
+                        <v-icon @click="editarTurma(row.item.id, row.item.idprofessor)" color="#009263"> mdi-pencil </v-icon>
+                        <v-icon @click="apagarTurma(row.item.turma, row.item.idprofessor)" color="#009263"> mdi-delete </v-icon>
                         </td>
                     </tr>
                     </template>

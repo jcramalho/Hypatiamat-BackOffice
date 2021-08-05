@@ -109,7 +109,7 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
         var response = await axios.get(hostJogos + this.jogo + "/turmas/" + this.turma + "/intervalos?escola=" 
-                        + this.escola + "&jogoTipo=" + this.jogoTipo + "&token=" + this.token)
+                        + this.escola + "&codprofessor=" + this.idprofessor + "&jogoTipo=" + this.jogoTipo + "&token=" + this.token)
         this.intervalos = response.data
         await this.atualizaChartData()
         this.showChart = true

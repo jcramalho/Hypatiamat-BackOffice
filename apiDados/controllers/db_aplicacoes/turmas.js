@@ -59,14 +59,14 @@ Turma.getTurmasFromAnoLetivo = function(anoletivo){
 
 Turma.getTurmasSemAlunos = function(){
     return new Promise(function(resolve, reject) {
-        sql.query(`Select t.*, profs.nome from (
+        sql.query(`Select t.*, profs.nome, escola.nome as agrupamento from (
             Select t.* from	(SELECT t.*
                     FROM turmas t
-                    LEFT JOIN alunos a ON a.turma = t.turma
+                    LEFT JOIN alunos a ON a.turma = t.turma and a.codprofessor = t.idprofessor
                     WHERE a.turma IS NULL) t
-                LEFT JOIN turmasold told ON told.turma = t.turma
-                    where told.turma IS NULL) t, professores profs
-            where t.idprofessor = profs.codigo;`, function(err, res){
+                LEFT JOIN turmasold told ON told.turma = t.turma and t.idprofessor = told.codprofessor
+                    where told.turma IS NULL) t, professores profs, Escolas escola
+            where t.idprofessor = profs.codigo and profs.escola = escola.cod;`, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -80,14 +80,14 @@ Turma.getTurmasSemAlunos = function(){
 
 Turma.getTurmasSemAlunosFromAnoletivo = function(anoletivo){
     return new Promise(function(resolve, reject) {
-        sql.query(`Select t.*, profs.nome from (
+        sql.query(`Select t.*, profs.nome, escola.nome as agrupamento from (
             Select t.* from	(SELECT t.*
                     FROM turmas t
-                    LEFT JOIN alunos a ON a.turma = t.turma
+                    LEFT JOIN alunos a ON a.turma = t.turma and a.codprofessor = t.idprofessor
                     WHERE a.turma IS NULL) t
-                LEFT JOIN turmasold told ON told.turma = t.turma
-                    where told.turma IS NULL) t, professores profs
-            where t.idprofessor = profs.codigo and t.anoletivo = ?;`, anoletivo, function(err, res){
+                LEFT JOIN turmasold told ON told.turma = t.turma and t.idprofessor = told.codprofessor
+                    where told.turma IS NULL) t, professores profs, Escolas escola
+            where t.idprofessor = profs.codigo and profs.escola = escola.cod and t.anoletivo = ?;`, anoletivo, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)

@@ -5,7 +5,7 @@ var dataFimAno = require('../../config/confs').dataFim1
 
 getTemas2 = function(){
     return new Promise(function(resolve, reject) {
-        sql.query(`SELECT tema, codtema FROM subtemas WHERE codtema!=100 GROUP BY codtema;`, function(err, res){
+        sql.query(`SELECT tema, codtema, subtema, codsubtema FROM subtemas GROUP BY codsubtema;`, function(err, res){
             if(err){
                 console.log("erro: " + err)
                 reject(err)
@@ -47,14 +47,15 @@ module.exports.getTemasLast10 = async function(){
 
 module.exports.getTemas = async function(){
     var temas = await getTemas2()
-    var subtemas = await getSubTemasFrom100()
+    //var subtemas = await getSubTemasFrom100()
     var result = ["Todas"]
     for(var i = 0; i < temas.length; i++){
         result.push(temas[i])
     }
+    /*
     for(var i = 0; i < subtemas.length; i++){
         result.push(subtemas[i])
-    }
+    }*/
     
     // ordenação das apps
     await result.sort(function(a,b){

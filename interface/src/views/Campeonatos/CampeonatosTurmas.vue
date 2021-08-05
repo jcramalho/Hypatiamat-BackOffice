@@ -15,10 +15,10 @@
                         <v-card v-show="show" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
                             <v-row class="justify-center">
                                 <v-col cols="12">
-                                <span> 1. Selecione a turma sobre a qual quer ver o desempenho.</span>
+                                <span> 1. Selecione a turma a cujo desempenho quer aceder.</span>
                                 </v-col>
                                 <v-col cols="12">
-                                    <span> 2. Selecione o campeonato do qual pretende averiguar o desempenho dos seus alunos através do campo "Campeonato". 
+                                    <span> 2. Selecione o campeonato para o qual pretende consultar o desempenho dos seus alunos através do campo "Campeonato". 
                                         Apenas serão disponibilizados os campeonatos em que a sua turma participou.
                                     </span>
                                 </v-col>
@@ -26,20 +26,20 @@
                                     <span> 3. Estando os dois primeiros passos realizados, poderá visualizar os dados de cada aluno da turma inscrito no campeonato. </span> 
                                 </v-col>
                                 <v-col cols="12">
-                                    <span> 4. Caso os certificados se encontrem disponíveis, pode obter o certificado através do clique no botão 
+                                    <span> 4. Caso os certificados se encontrem disponíveis, pode obter o certificado, clicando no botão 
                                         <v-btn class="text-none white--text" rounded small color="#009263">
                                             <v-icon color="white"> mdi-download </v-icon> Certificado
                                         </v-btn>. </span> 
                                 </v-col>
                                 <v-col cols="9">
                                     <v-card class="mx-auto" color="grey lighten-4">
-                                        <center> <h3 class="green--text"> Legenda da Tabela: </h3> </center>
+                                        <center> <h3 class="green--text"> Legenda da Tabela </h3> </center>
                                         <ul> 
                                             <li> <span> <b>Posição (Turma)</b> - Posição do aluno na turma. </span> </li>
                                             <li> <span> <b>Posição (Agr. Escolas)</b> - Posição do aluno no Agrupamento de Escolas. </span> </li>
-                                            <li> <span> <b>Posição (Hypatia)</b> - Posição do aluno em todo o campeonato Hypatiamat. </span> </li>
-                                            <li> <span> <b>Pontuação</b> - Melhor pontuação obtida pelo aluno no campeonato. </span> </li>
-                                            <li> <span> <b>#Jogos</b> - Nº de vezes que o aluno jogou no campeonato. </span> </li>
+                                            <li> <span> <b>Posição (Hypatia)</b> - Posição do aluno em todo o Campeonato Hypatiamat. </span> </li>
+                                            <li> <span> <b>Pontuação</b> - Melhor pontuação obtida pelo aluno no Campeonato Hypatiamat. </span> </li>
+                                            <li> <span> <b>#Jogos</b> - Nº de vezes que o aluno jogou no Campeonato Hypatiamat. </span> </li>
                                         </ul>
                                     </v-card>
                                 </v-col>

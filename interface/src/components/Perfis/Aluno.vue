@@ -18,39 +18,40 @@
                   <v-card v-show="showAjuda" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
                     <v-row class="justify-center">
                       <v-col cols="12">
-                        <span> 1. Pode visualizar os seus dados pessoais, como o seu <b>Nome</b>, o seu <b>Agrupamento de Escolas</b>, o seu <b>email</b>,
-                        a sua <b>data de nascimento</b>, a sua <b>turma atual</b> e também o seu <b>professor</b>. </span>
+                        <span> 1. Podes visualizar os teus dados pessoais, como o teu <b>Nome</b>, o teu <b>Agrupamento de Escolas</b>, o teu <b>email</b>,
+                        a tua <b>data de nascimento</b>, a tua <b>turma atual</b> e também o teu <b>professor</b>. </span>
                       </v-col>
                       <v-col cols="12">
-                        <span> 2. Caso deseje alterar alguns dos seus dados pessoais, pode fazê-lo através do clique no botão 
+                        <span> 2. Caso desejes alterar algum ou alguns dos teus dados pessoais, podes fazê-lo depois de clicares no botão 
                         <v-btn small text class="white--text" style="background-color: #009263;" rounded> <span>Editar dados pessoais</span> </v-btn>. </span>
                       </v-col>
                       <v-col cols="12">
-                        <span> 3. Caso deseje alterar a sua password, clique em 
+                        <span> 3. Caso desejes alterar a tua password, fá-lo depois de clicares em 
                         <v-btn small class="white--text" style="background-color: #009263;" rounded> Alterar password </v-btn>.
                         </span>
                       </v-col>
                       <v-col cols="12">
-                        <span> 4. De seguida, encontram-se disponíveis a quantidade de troféus que já conquistou. Além disso, pode visualizar 
-                          a sua percentagem de acerto nas aplicações de conteúdo e quantas vezes já realizou jogos do Hypatiamat no ano letivo atual.
+                        <span> 4. A seguir, estão disponíveis o número de cada um dos diferentes tipos de troféus que já conquistaste, 
+                          a tua percentagem de acerto nas tarefas que realizaste nas aplicações de conteúdos e o número de jogos Hypatiamat 
+                          que já realizaste, durante o presente ano letivo.
                         </span>
                       </v-col>
                       <v-col cols="12">
-                        <span> 5. Também é possível visualizar a sua prestação no <b>último</b> campeonato em que participou.
+                        <span> 5. Também é possível acederes à tua prestação no <b>último</b> Campeonato de Cálculo Mental Hypatiamat em que participaste.
                         </span>
                       </v-col>
                       <v-col cols="12">
-                        <span> 6. As últimas 10 aplicações de conteúdo que realizou encontram-se também disponíveis, assim como as estatísticas 
-                          gerais de cada aplicação. Além disso, pode clicar numa das aplicações (respetiva linha) e visualizar o seu desempenho
-                          por dia.
+                        <span> 6. As designações das últimas 10 aplicações de conteúdos em que realizaste tarefas encontram-se também disponíveis, assim como 
+                          as estatísticas gerais do teu desempenho em cada uma delas. Além disso, podes clicar em cada uma dessas aplicações (na respetiva linha) 
+                          e visualizar o teu desempenho por dia.
                         </span>
                       </v-col>
                       <v-col cols="9">
                         <v-card class="mx-auto" color="grey lighten-4">
-                            <center> <h3 class="green--text"> Legenda da Tabela Útilmas 10 Apps: </h3> </center>
+                            <center> <h3 class="green--text"> Legenda da Tabela Últimas 10 Apps </h3> </center>
                             <ul> 
-                                <li> <span> <b>NTRC</b> - Número de tarefas resolvidas corretamente; </span> </li>
-                                <li> <span> <b>NTR</b> - Número de tarefas resolvidas; </span> </li>
+                                <li> <span> <b>NTRC</b> - Número de tarefas realizadas corretamente; </span> </li>
+                                <li> <span> <b>NTR</b> - Número total de tarefas realizadas; </span> </li>
                                 <li> <span> <b>Acerto (%)</b> - Percentagem de acerto (NTRC/NTR); </span> </li>
                                 <li> <span> <b>#</b> - Frequência. </span> </li>
                                 <li> <div class="d-flex align-center"><hr color="#f26755" width="20px" heigth="15px" > <span> Acerto menor que 50%; </span> </div></li>
@@ -59,17 +60,17 @@
                         </v-card>
                       </v-col>
                       <v-col cols="12">
-                        <span> 7. Também pode visualizar os últimos 10 jogos que jogou, assim como as estatísticas 
-                          gerais de cada jogo. Além disso, pode clicar num dos jogos (respetiva linha) e visualizar o seu desempenho no jogo
-                          por dia. Apenas para o jogo CalcRapid não é possível.
+                        <span> 7. Também podes aceder às designações dos últimos 10 jogos Hypatiamat que jogaste, assim como às estatísticas 
+                          gerais para cada jogo. Além disso, podes clicar em cada um dos jogos (na respetiva linha) e visualizar o teu desempenho 
+                          por dia nesse jogo. Só não é possível para o jogo CalcRapid.
                         </span>
                       </v-col>
                       <v-col cols="9">
                         <v-card class="mx-auto" color="grey lighten-4">
-                            <center> <h3 class="green--text"> Legenda da Tabela Útilmos 10 Jogos: </h3> </center>
+                            <center> <h3 class="green--text"> Legenda da Tabela Últimos 10 Jogos </h3> </center>
                             <ul> 
-                                <li> <span> <b>Min</b> - Mínimo de pontuação obtida no jogo; </span> </li>
-                                <li> <span> <b>Max</b> - Máximo de pontuação obtida no jogo; </span> </li>
+                                <li> <span> <b>Min</b> - Mínimo da pontuação obtida no jogo; </span> </li>
+                                <li> <span> <b>Max</b> - Máximo da pontuação obtida no jogo; </span> </li>
                                 <li> <span> <b>Média</b> - Pontuação média obtida no jogo; </span> </li>
                                 <li> <span> <b>#</b> - Frequência. </span> </li>
                             </ul>

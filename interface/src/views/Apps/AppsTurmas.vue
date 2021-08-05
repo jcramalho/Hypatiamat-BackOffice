@@ -20,27 +20,30 @@
                           <span> 1. Pode escolher uma das suas turmas através da seleção no campo "Turma". </span>
                           </v-col>
                           <v-col cols="12">
-                            <span> 2. Escolher a aplicação de conteúdo sobre o qual deseja visualizar dados estatísticos de cada um dos seus alunos que a fez. As aplicações disponíveis
-                            para a monitorização são aquelas que a turma selecionada fez no intervalo de tempo definido. </span>
+                            <span> 2. Escolha a aplicação de conteúdos relativamente à qual deseja visualizar dados estatísticos 
+                                de cada um dos seus alunos que a fez ali realizou tarefa(s). As aplicações disponíveis para a 
+                                monitorização são aquelas que onde alunos da turma selecionada realizaram  tarefas, 
+                                no intervalo de tempo definido. 
+                            </span>
                           </v-col>
                           <v-col cols="12">
-                            <span> 3. Pode alterar o intervalo de tempo pretendido, selecionando uma data inicial diferente e/ou uma data final diferente. </span> 
+                            <span> 3. Pode alterar o intervalo de tempo pretendido, selecionando uma data inicial diferente ou uma data final diferente. </span> 
                           </v-col>
                           <v-col cols="12">
-                            <span> 4. Caso pretenda uma monitorização sobre um ano letivo específico, pode selecionar o ano letivo pretendido. </span> 
+                            <span> 4. Caso pretenda uma monitorização sobre um ano letivo específico, pode selecionar esse ano letivo. </span> 
                           </v-col>
                           <v-col cols="12">
-                            <span> 5. Tendo os campos referidos escolhidos e tendo os dados apresentados, poderá exportar para pdf através do botão 
+                            <span> 5. Tendo os campos referidos escolhidos e os dados apresentados, poderá exportar para pdf através do botão 
                                 <v-btn small class="white--text" style="background-color: #009263;"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn>. 
                             </span> 
                           </v-col>
                           <v-col cols="9">
                               <v-card class="mx-auto" color="grey lighten-4">
-                                  <center> <h3 class="green--text"> Legenda da Tabela: </h3> </center>
+                                  <center> <h3 class="green--text"> Legenda da Tabela </h3> </center>
                                   <ul> 
                                       <li> <span> <b>N.º</b> - Número do aluno; </span> </li>
                                       <li> <span> <b>NTRC</b> - Número de tarefas resolvidas corretamente; </span> </li>
-                                      <li> <span> <b>NTR</b> - Número de tarefas resolvidas; </span> </li>
+                                      <li> <span> <b>NTR</b> - Número total de tarefas resolvidas; </span> </li>
                                       <li> <span> <b>Acerto(%)</b> - Percentagem de acerto (NTRC/NTR); </span> </li>
                                       <li> <span> <b>DP</b> - Dentro do período escolar; </span> </li>
                                       <li> <span> <b>FP</b> - Fora do período escolar; </span> </li>

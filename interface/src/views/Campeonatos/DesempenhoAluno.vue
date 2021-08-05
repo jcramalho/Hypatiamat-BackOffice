@@ -6,7 +6,7 @@
                 <v-container>
                     <center><v-icon large color="#009263">mdi-podium</v-icon></center>
                     <v-card-title primary-title class="justify-center green--text">
-                        Campeonatos
+                        Campeonatos de Cálculo Mental Hypatiamat
                     </v-card-title>
                     <center>
                         <v-btn v-if="!showAjuda" text @click="showAjuda=!showAjuda"><span>Mostrar Ajuda</span><v-icon color="#009263"> mdi-help-circle </v-icon> </v-btn>
@@ -16,11 +16,11 @@
                         <v-card v-show="showAjuda" class="elevation-6 pa-3" style="border: 2px solid green !important;" color="grey lighten-3">
                             <v-row class="justify-center">
                                 <v-col cols="12">
-                                    <span> 1. Pode visualizar a sua prestação no último campeonato em que participou. </span>
+                                    <span> 1. Podes visualizar a tua prestação no último campeonato em que participaste. </span>
                                 </v-col>
                                 <v-col cols="12">
-                                    <span> 2. Pode visualizar o ranking dos seus colegas de turma através da escolha de um campeonato que participou. A verde é 
-                                      onde se encontra na tabela.
+                                    <span> 2. Podes visualizar o ranking da tua turma através da escolha de um campeonato 
+                                        em que participaste. Está assinalada a verde, na tabela, a posição que ocupas .
                                     </span>
                                 </v-col>
                                 <v-col cols="12">
@@ -31,13 +31,13 @@
                                 </v-col>
                                  <v-col cols="9">
                                     <v-card class="mx-auto" color="grey lighten-4">
-                                        <center> <h3 class="green--text"> Legenda da Tabela: </h3> </center>
+                                        <center> <h3 class="green--text"> Legenda da Tabela </h3> </center>
                                         <ul> 
                                             <li> <span> <b>Posição (Turma)</b> - Posição do aluno na turma. </span> </li>
                                             <li> <span> <b>Posição (Agr. Escolas)</b> - Posição do aluno no Agrupamento de Escolas. </span> </li>
-                                            <li> <span> <b>Posição (Hypatia)</b> - Posição do aluno em todo o campeonato Hypatiamat. </span> </li>
-                                            <li> <span> <b>Pontuação</b> - Melhor pontuação obtida pelo aluno no campeonato. </span> </li>
-                                            <li> <span> <b>#Jogos</b> - Nº de vezes que o aluno jogou no campeonato. </span> </li>
+                                            <li> <span> <b>Posição (Hypatia)</b> - Posição do aluno em todo o Campeonato Hypatiamat. </span> </li>
+                                            <li> <span> <b>Pontuação</b> - Melhor pontuação obtida pelo aluno no Campeonato Hypatiamat. </span> </li>
+                                            <li> <span> <b>#Jogos</b> - Nº de vezes que o aluno jogou no Campeonato Hypatiamat. </span> </li>
                                         </ul>
                                     </v-card>
                                 </v-col>

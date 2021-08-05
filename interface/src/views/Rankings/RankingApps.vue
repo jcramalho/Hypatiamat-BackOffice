@@ -4,7 +4,7 @@
     <v-container>
         <v-card class="pa-5">
             <v-card-title primary-title class="justify-center green--text">
-                Ranking dos Alunos das suas turmas (Aplicações de Conteúdo)
+                Ranking dos Alunos das suas turmas (Aplicações de Conteúdos)
             </v-card-title>
             <center>
                 <v-btn v-if="!show" text @click="show=!show"><span>Mostrar Ajuda</span><v-icon color="#009263"> mdi-help-circle </v-icon> </v-btn>
@@ -20,8 +20,8 @@
                     <span> 2. Pode selecionar a turma desejada através da seleção do campo "Turma". </span>
                     </v-col>
                     <v-col cols="12">
-                    <span> 3. Pode escolher a aplicação de conteúdo pretendida através da seleção do campo "Aplicação". De referir que este campo apenas contém
-                      as aplicações de conteúdo que a turma selecionada realizou. </span>
+                    <span> 3. Pode escolher a aplicação de conteúdos pretendida através da seleção do campo "Aplicação". De referir que este campo apenas contém
+                      as aplicações de conteúdo onde a turma selecionada realizou. </span>
                     </v-col>
                     <v-col cols="12">
                     <span> 4. Pode escolher o ano letivo desejado através do campo "Ano Letivo". </span>
@@ -31,7 +31,7 @@
                     </v-col>
                     <v-col cols="9">
                         <v-card class="mx-auto" color="grey lighten-4">
-                            <center> <h3 class="green--text"> Legenda da Tabela: </h3> </center>
+                            <center> <h3 class="green--text"> Legenda da Tabela </h3> </center>
                             <ul> 
                                 <li> <span> <b>N.º</b> - Número do aluno; </span> </li>
                                 <li> <span> <b>Posição (Turma)</b> - Posição do aluno na turma; </span> </li>
@@ -39,7 +39,7 @@
                                 <li> <span> <b>Posição (Hypatia)</b> - Posição do aluno em todo o Hypatiamat; </span> </li>
                                 <li> <span> <b>NTRC</b> - Número de tarefas resolvidas corretamente. Caso o nome da coluna esteja a verde, significa que 
                                 é o critério de ordenação selecionado; </span> </li>
-                                <li> <span> <b>Acerto(%)</b> - Percentagem de acerto, ou seja, a divisão do NTRC pelo número de tarefas resolvidas. 
+                                <li> <span> <b>Acerto(%)</b> - Percentagem de acerto, ou seja, a razão entre o NTRC e o número de tarefas resolvidas. 
                                 Caso o nome da coluna esteja a verde, significa que é o critério de ordenação selecionado. </span> </li>
                             </ul>
                         </v-card>

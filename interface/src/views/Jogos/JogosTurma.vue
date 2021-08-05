@@ -5,7 +5,7 @@
             <v-card class="ma-auto">
                 <v-container>
                     <v-card-title primary-title class="justify-center green--text">
-                        Monitorização de Jogos do professor ({{this.idprofessor}})
+                        Monitorização de Jogos dos alunos do professor ({{this.idprofessor}})
                     </v-card-title>
                     <center>
                         <v-btn v-if="!show" text @click="show=!show"><span>Mostrar Ajuda</span><v-icon color="#009263"> mdi-help-circle </v-icon> </v-btn>
@@ -18,17 +18,19 @@
                           <span> 1. Pode escolher uma das suas turmas através da seleção no campo "Turma". </span>
                           </v-col>
                           <v-col cols="12">
-                            <span> 2. Escolher o jogo sobre o qual deseja visualizar dados estatísticos de cada um dos seus alunos que jogou. Os jogos disponibilizados serão 
-                              jogos que foram jogados pela turma selecionada no intervalo de tempo escolhido. </span>
+                            <span> 2. Escolha o jogo para o qual deseja visualizar dados estatísticos de cada um dos seus alunos 
+                                que o tenham jogado. Os dados disponibilizados referem-se a jogos que foram realizados pela turma 
+                                selecionada, no intervalo de tempo escolhido.
+                            </span>
                           </v-col>
                           <v-col cols="12">
-                            <span> 3. Pode alterar o intervalo de tempo pretendido, selecionando uma data inicial diferente e/ou uma data final diferente. </span> 
+                            <span> 3. Pode alterar o intervalo de tempo escolhido, selecionando uma data inicial diferente ou uma data final diferente. </span> 
                           </v-col>
                           <v-col cols="12">
-                            <span> 4. Caso pretenda uma monitorização sobre um ano letivo específico, pode selecionar o ano letivo pretendido. </span> 
+                            <span> 4. Caso pretenda uma monitorização sobre um ano letivo específico, pode selecionar esse ano letivo. </span> 
                           </v-col>
                           <v-col cols="12">
-                            <span> 5. Tendo os campos referidos escolhidos e tendo os dados apresentados, poderá exportar para pdf através do botão 
+                            <span> 5. Tendo os campos referidos escolhidos e os dados apresentados, poderá exportar para pdf através do botão 
                                 <v-btn small class="white--text" style="background-color: #009263;"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn>. Além disso,
                                 poderá visualizar as estatísticas gerais e fazer comparações com o seu agrupamento e todo o Hypatiamat 
                                 (<v-btn small text class="white--text" style="background-color: #009263;"> <v-icon> mdi-home-analytics </v-icon> <span>Estatísticas Globais</span> </v-btn>). 
@@ -36,7 +38,7 @@
                           </v-col>
                           <v-col cols="9">
                               <v-card class="mx-auto" color="grey lighten-4">
-                                  <center> <h3 class="green--text"> Legenda da Tabela: </h3> </center>
+                                  <center> <h3 class="green--text"> Legenda da Tabela </h3> </center>
                                   <ul> 
                                       <li> <span> <b>N.º</b> - Número do aluno ; </span> </li>
                                       <li> <span> <b>Max</b> - Máximo de pontuação obtida pelo aluno. </span> </li>

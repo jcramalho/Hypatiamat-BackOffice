@@ -13,6 +13,10 @@
                 :items="anosletivos"
                 @change="getTurmas()"
             ></v-combobox>
+            <v-container v-if="laoding">
+              <center><v-img :src="require('@/assets/loading.gif')" width="150px" heigth="150px"> </v-img></center>
+            </v-container>
+            <div v-else>
             <v-text-field
                 v-model="filtrar"
                 label="Filtrar"
@@ -31,6 +35,7 @@
                 <tr>
                     <td>{{row.item.idprofessor}}
                     <td>{{row.item.nome}}</td>
+                    <td>{{row.item.agrupamento}}</td>
                     <td>{{row.item.turma}}</td>
                     <td>{{row.item.anoletivo}}</td>
                     <td>
@@ -41,7 +46,7 @@
                           v-bind="attrs" 
                           v-on="on"
                         >
-                        <v-icon @click="apagarTurma(row.index, row.item.turma, row.item.idprofessor)"> mdi-delete </v-icon>
+                        <v-icon @click="apagarTurma(row.index, row.item.turma, row.item.idprofessor)" color="#009263"> mdi-delete </v-icon>
                         </v-btn>
                       </template>
                       <span>Apagar esta turma.</span>
@@ -50,6 +55,7 @@
                 </tr>
                 </template>
                 </v-data-table>
+            </div>
         </v-container>
     </v-card>
 </template>
@@ -73,16 +79,18 @@ import Swal from 'sweetalert2'
          header_turmas: [
             {text: "Username do Professor", value: 'idprofessor', class: 'subtitle-1'},
             {text: "Nome do Professor", value: 'nome', class: 'subtitle-1'},
+            {text: "Agrupamento de Escolas", value: 'agrupamento', class: 'subtitle-1'},
             {text: "Turma", value: 'turma', class: 'subtitle-1'},
             {text: "Ano Letivo", value: 'anoletivo', class: 'subtitle-1'},
             {text: "Operações", sortable:false, class: 'subtitle-1'},
         ],
         footer_props: {
             "items-per-page-text": "Mostrar",
-            "items-per-page-options": [5, 10, 20, -1],
+            "items-per-page-options": [50, 100, 200, -1],
             "items-per-page-all-text": "Todos"
         },
         filtrar : "",
+        loading: false
       }
     },
     created: async function(){
@@ -95,10 +103,12 @@ import Swal from 'sweetalert2'
     },
     methods: {
       getTurmas: async function(){
+        this.loading = true
         var response
         if(this.anoletivo != "Todos") response = await axios.get(h + "turmas/semalunos?token=" + this.token + "&anoletivo=" + this.anoletivo)
         else response = await axios.get(h + "turmas/semalunos?token=" + this.token)
         this.turmas = response.data
+        this.loading = false
       },
       apagarTurma: async function(index, turma, codprofessor){
           Swal.fire({

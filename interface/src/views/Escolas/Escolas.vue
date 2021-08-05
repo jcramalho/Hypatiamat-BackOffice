@@ -46,8 +46,8 @@
                         <td>{{row.item.nome}}</td>
                         <td>{{row.item.localidade}}</td>
                         <td>
-                        <v-icon @click="editarEscola(row.item.cod)"> mdi-pencil </v-icon>
-                        <v-icon @click="apagarEscola(row.item.cod)"> mdi-delete </v-icon>
+                        <v-icon @click="editarEscola(row.item.cod)" color="#009263"> mdi-pencil </v-icon>
+                        <v-icon @click="apagarEscola(row.item.cod)" color="#009263"> mdi-delete </v-icon>
                         </td>
                     </tr>
                     </template>

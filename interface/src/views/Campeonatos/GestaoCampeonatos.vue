@@ -35,9 +35,9 @@
                         <td v-else>------</td>
                         <td>
                         <!--<v-icon @click="verProfessor(row.item.id)"> mdi-eye </v-icon>-->
-                            <v-icon v-if="row.item.link" @click="goToLink(row.item.link)">mdi-link-variant</v-icon>
-                            <v-icon @click="editarCampeonato(row.item.cod, row.index)"> mdi-pencil </v-icon>
-                            <v-icon @click="apagarCampeonato(row.index, row.item.cod)"> mdi-delete </v-icon>
+                            <v-icon v-if="row.item.link" @click="goToLink(row.item.link)" color="#009263">mdi-link-variant</v-icon>
+                            <v-icon @click="editarCampeonato(row.item.cod, row.index)" color="#009263"> mdi-pencil </v-icon>
+                            <v-icon @click="apagarCampeonato(row.index, row.item.cod)" color="#009263"> mdi-delete </v-icon>
                         </td>
                     </tr>
                     </template>
