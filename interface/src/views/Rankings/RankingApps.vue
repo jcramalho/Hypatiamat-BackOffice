@@ -21,7 +21,7 @@
                     </v-col>
                     <v-col cols="12">
                     <span> 3. Pode escolher a aplicação de conteúdos pretendida através da seleção do campo "Aplicação". De referir que este campo apenas contém
-                      as aplicações de conteúdo onde a turma selecionada realizou. </span>
+                      as aplicações de conteúdos onde a turma selecionada realizou. </span>
                     </v-col>
                     <v-col cols="12">
                     <span> 4. Pode escolher o ano letivo desejado através do campo "Ano Letivo". </span>

@@ -21,7 +21,7 @@
                 <v-combobox
                     id="professor"
                     v-if="escolher"
-                    prepend-icon="mdi-teach"
+                    prepend-icon="mdi-human-male-board"
                     label="Professor"
                     v-model="codigo"
                     :items="professores"

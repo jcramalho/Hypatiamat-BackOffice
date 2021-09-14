@@ -32,7 +32,7 @@
                           <v-col cols="12">
                             <span> 5. Tendo os campos referidos escolhidos e os dados apresentados, poderá exportar para pdf através do botão 
                                 <v-btn small class="white--text" style="background-color: #009263;"> <v-icon> mdi-pdf-box </v-icon> Exportar </v-btn>. Além disso,
-                                poderá visualizar as estatísticas gerais e fazer comparações com o seu agrupamento e todo o Hypatiamat 
+                                poderá visualizar as estatísticas gerais e fazer comparações com o seu agrupamento e com todo o Hypatiamat 
                                 (<v-btn small text class="white--text" style="background-color: #009263;"> <v-icon> mdi-home-analytics </v-icon> <span>Estatísticas Globais</span> </v-btn>). 
                             </span> 
                           </v-col>
@@ -41,9 +41,9 @@
                                   <center> <h3 class="green--text"> Legenda da Tabela </h3> </center>
                                   <ul> 
                                       <li> <span> <b>N.º</b> - Número do aluno ; </span> </li>
-                                      <li> <span> <b>Max</b> - Máximo de pontuação obtida pelo aluno. </span> </li>
-                                      <li> <span> <b>Min</b> - Mínimo de pontuação obtida pelo aluno. </span> </li>
-                                      <li> <span> <b>Média</b> - Média de pontuação obtida pelo aluno. </span> </li>
+                                      <li> <span> <b>Max</b> - Máximo da pontuação obtida pelo aluno. </span> </li>
+                                      <li> <span> <b>Min</b> - Mínimo da pontuação obtida pelo aluno. </span> </li>
+                                      <li> <span> <b>Média</b> - Média da pontuação obtida pelo aluno. </span> </li>
                                       <li> <span> <b>#</b> - Nº de vezes que o aluno jogou. </span> </li>
                                   </ul>
                               </v-card>

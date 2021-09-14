@@ -20,10 +20,10 @@
                           <span> 1. Pode escolher uma das suas turmas através da seleção no campo "Turma". </span>
                           </v-col>
                           <v-col cols="12">
-                            <span> 2. Escolha a aplicação de conteúdos relativamente à qual deseja visualizar dados estatísticos 
-                                de cada um dos seus alunos que a fez ali realizou tarefa(s). As aplicações disponíveis para a 
-                                monitorização são aquelas que onde alunos da turma selecionada realizaram  tarefas, 
-                                no intervalo de tempo definido. 
+                            <span> 2. Escolha a aplicação de conteúdos relativamente à qual deseja visualizar 
+                                dados estatísticos de cada um dos seus alunos que ali realizou tarefa(s). 
+                                As aplicações disponíveis para a monitorização são aquelas onde alunos da turma 
+                                selecionada realizaram tarefas, no intervalo de tempo definido.
                             </span>
                           </v-col>
                           <v-col cols="12">

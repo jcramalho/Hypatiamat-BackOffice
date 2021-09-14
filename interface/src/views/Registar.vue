@@ -87,7 +87,7 @@
                   <v-text-field prepend-icon="mdi-email" v-model="email" name="Email" color="#009263" label="Email" :rules="[emailValido, emailAlunoExistente]" required></v-text-field>
                 </v-col>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
-                  <v-text-field @change="onProfessorChange" prepend-icon='mdi-teach' v-model="codprofessor" color="#009263" name="Código do Professor" label="Código do seu Professor" :rules="[codigoProfessorAluno]" required></v-text-field>
+                  <v-text-field @change="onProfessorChange" prepend-icon='mdi-human-male-board' v-model="codprofessor" color="#009263" name="Código do Professor" label="Código do seu Professor" :rules="[codigoProfessorAluno]" required></v-text-field>
                 </v-col>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
                   <v-combobox

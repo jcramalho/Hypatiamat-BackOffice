@@ -111,7 +111,7 @@ export default {
       idUtilizador:"",
       nomeUtilizador:"",
       nome:"",
-      versao: "3.3"
+      versao: "3.4"
     }
   },
   watch: {
@@ -133,7 +133,7 @@ export default {
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
         { title: 'Quarentena', icon: 'mdi-account-clock',href:"/pendentes" },
         { title: 'Professores Pendentes', icon: 'mdi-account-clock', href:"/profspendentes" },
-        { title: 'Professores Ativos', icon: 'mdi-teach', href:"/professores" },
+        { title: 'Professores Ativos', icon: 'mdi-human-male-board', href:"/professores" },
         { title: 'Códigos Professores', icon: 'mdi-barcode', href:"/codigosprof" },
         { title: 'Alunos', icon: 'mdi-account-group', href:"/alunos" },
         { title: 'Agrupamentos', icon: 'mdi-school', href:"/escolas" },
@@ -201,7 +201,7 @@ export default {
       // Agrupamento
       this.items =[
         { title: 'Conta', icon: 'mdi-view-dashboard',href:"/" },
-        { title: 'Meus Professores', icon: 'mdi-teach', href:"/escolas/" + utilizador.escola +  "/professores" },
+        { title: 'Meus Professores', icon: 'mdi-human-male-board', href:"/escolas/" + utilizador.escola +  "/professores" },
         { title: 'Monitorização de Jogos', icon: 'mdi-gamepad-variant', href:"/escolas/"+ utilizador.escola + "/jogos" },        
         { title: 'Monitorização de Apps', icon: 'mdi-apps', href:"/escolas/"+ utilizador.escola + "/apps" },
         { title: 'Ranking Jogos', icon: 'mdi-podium', href:"/classificacoes/jogos/escola"},

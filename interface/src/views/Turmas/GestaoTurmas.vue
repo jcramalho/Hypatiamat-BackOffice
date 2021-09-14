@@ -35,12 +35,13 @@
                           <span> 2. Se desejar visualizar as suas turmas antigas, pode fazê-lo através da seleção de um ano letivo diferente ou de todos (<v-icon>mdi-counter</v-icon>). </span>
                           </v-col>
                           <v-col cols="12">
-                          <span> 3. Caso queira o passaporte de uma turma, basta clicar em <v-icon> mdi-passport </v-icon> da respetiva turma. 
-                          Além disso, caso sejam credenciais de alunos fornecidas pelo Hypatiamat, poderá selecionar a opção do passaporte ter a password de cada aluno. </span>
+                          <span> 3. Caso queira gerar os passaportes de uma turma, basta clicar em <v-icon> mdi-passport </v-icon> da respetiva turma. 
+                          Além disso, caso sejam credenciais de alunos fornecidas pelo Hypatiamat (passwords hypatiamat) 
+                          poderá selecionar a opção de incluir as passwords dos alunos nos passaportes. </span>
                           </v-col>
                           <v-col cols="12">
-                          <span> 4. Caso deseje eliminar uma turma e esta não possua alunos ou jogos que foram jogados por antigos alunos da turma, 
-                            também o poderá fazer, clicando em <v-icon> mdi-delete </v-icon> da respetiva turma. </span> 
+                          <span> 4. Caso deseje eliminar uma turma e não existam registos de alunos dessa turma (ou de antigos alunos dessa turma) nos jogos ou nas apps, 
+                            basta clicar em <v-icon> mdi-delete </v-icon> da respetiva turma.</span> 
                           </v-col>
                         </v-row>
                       </v-card>

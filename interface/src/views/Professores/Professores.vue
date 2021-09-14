@@ -143,7 +143,9 @@ const h = require("@/config/hosts").hostAPI
         var response = await axios.get(h + "professores/" + this.idEditar + "/?token=" + this.token)
         var al = this.professores.find(a => a.id == this.idEditar) 
         var index = this.professores.indexOf(al)
-        this.professores.splice(index, 1, response.data)
+        if(response.data.valido) this.professores.splice(index, 1, response.data)
+        else this.professores.splice(index, 1);
+        
       }
     }
   }

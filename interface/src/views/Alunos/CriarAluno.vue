@@ -34,7 +34,7 @@
                 v-if="utilizador.type == 50"
                 color="#009263"
                 id="professor"
-                prepend-icon="mdi-teach"
+                prepend-icon="mdi-human-male-board"
                 label="Professor"
                 v-model="codprofessor"
                 :items="professores"
@@ -44,7 +44,7 @@
                 v-else
                 color="#009263"
                 id="professor"
-                prepend-icon="mdi-teach"
+                prepend-icon="mdi-human-male-board"
                 label="Professor"
                 v-model="codprofessor"
                 disabled

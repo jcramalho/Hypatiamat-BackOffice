@@ -13,7 +13,7 @@
               <v-row >
                 <v-col cols="12">
                   <span> 1. Pode visualizar os seus dados pessoais, como o seu <b>Nome</b>, o seu <b>Agrupamento de Escolas</b>, o seu <b>Tipo de Utilizador</b>,
-                  o seu Email e também até quando a sua conta é válida (<b> Validade </b>). </span>
+                  o seu Email e a data de validade da sua conta ( Validade ). </span>
                 </v-col>
                 <v-col cols="12">
                   <span> 2. Caso deseje alterar alguns dos seus dados pessoais, pode fazê-lo através do clique no botão 
@@ -38,7 +38,7 @@
           <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
             <center>
            <v-list-item-avatar class="elevation-6" color="#009263" size="120">
-                <v-icon size="80" color="white">mdi-teach</v-icon>             
+                <v-icon size="80" color="white">mdi-human-male-board</v-icon>             
            </v-list-item-avatar>
             </center>
           </v-col>

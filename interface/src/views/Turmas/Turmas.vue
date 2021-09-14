@@ -107,12 +107,14 @@ import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
 import {Passaport} from '@/config/passport'
 import TurmasSemAlunos from '@/components/Turmas/TurmasSemAlunos.vue'
+const anosletivos2 = require("@/config/confs").anosletivos
+const anoletivoAtual = require("@/config/confs").anoletivo2
 
   export default {
     data(){
       return {
         token: "",
-        anosletivos:["Todos", "20/21", "19/20", "18/19", "17/18", "16/17", "15/16", "14/15", "13/14"],
+        anosletivos: anosletivos2,
         anoletivo:"Todos",
         dialogTurmasSemAlunos: false, 
         turmas: [],
