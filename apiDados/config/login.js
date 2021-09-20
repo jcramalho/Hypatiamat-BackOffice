@@ -104,10 +104,12 @@ module.exports.login = async function(user, password){
   }
   else{
       var professor = await Professores.getPassword(user)
-      if (professor == undefined) return {authentication:false}
+      if (professor == undefined) return {authentication:false, valido: true}
       else {
           if(md5Password == professor.password){
+              var utilizadorAux2 = await Professores.getProfessorByCodigo2(user)
               var utilizadorAux = await Professores.getProfessorByCodigo(user)
+              if(!utilizadorAux2) return {authentication: false, valido: false}
               var time = jwtExpirySeconds
               var utilizador = {
                 id : utilizadorAux.id,
@@ -144,7 +146,7 @@ module.exports.login = async function(user, password){
                   token : generateToken(utilizador, time)
               }
           }
-          else return {authentication:false}
+          else return {authentication:false, valido: true}
       }
   }
 }

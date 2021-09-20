@@ -110,10 +110,12 @@ import Footer from '../components/Footer.vue';
           let response = await axios.post(h + "login", {user: this.user, password: this.password});
           if(!response.data.authentication){
             this.password = ""
+            let message = 'Credenciais erradas'
+            if(!response.data.valido) message = 'As suas credenciais não são válidas.\nContacte o Hypatiamat para voltar a ativar a conta: hypatiamate@gmail.com'
             Swal.fire({
               icon: 'error',
               confirmButtonColor: '#009263',
-              title: 'Credenciais erradas',
+              title: message,
               width:450,
             })
             return;
