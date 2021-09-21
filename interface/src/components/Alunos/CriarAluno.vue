@@ -118,7 +118,7 @@
 
         },
         existeCodigo: v =>{
-          if(this.codigos.find(e => e.user == v) || this.codigosprof.find(e => e.codigo == v)) {
+          if(this.codigos.find(e => e.user.toUpperCase() == v.toUpperCase()) || this.codigosprof.find(e => e.codigo.toUpperCase() == v.toUpperCase())) {
             this.disabledCodigo = true
             return 'Esse username já existe. Escolha outro por favor.'
           }
@@ -217,8 +217,8 @@
         /* var args = [aluno.user, aluno.numero, aluno.nome, aluno.datanascimento, 
                 aluno.escola, aluno.turma, aluno.email, md5(aluno.password), 
                 aluno.codprofessor, aluno.pais] */
-        
-        if (this.nome != "" && this.email != "" && this.codigo != "" && this.escola != "" && this.password != "" 
+        this.existeCodigo(this.codigo)
+        if (!this.disabledCodigo && !this.disabledEmail && this.nome != "" && this.email != "" && this.codigo != "" && this.escola != "" && this.password != "" 
             && this.password2 && this.pais != "" && this.codprofessor != "" && this.numero != "" && this.datanasc != ""
             && this.turma != ""){ 
           if(this.password == this.password2){

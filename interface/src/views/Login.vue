@@ -111,7 +111,7 @@ import Footer from '../components/Footer.vue';
           if(!response.data.authentication){
             this.password = ""
             let message = 'Credenciais erradas'
-            if(!response.data.valido) message = 'As suas credenciais não são válidas.\nContacte o Hypatiamat para voltar a ativar a conta: hypatiamate@gmail.com'
+            if(!response.data.valido) message = 'As suas credenciais não são válidas.\nPor favor contacte: associacaohypatiamat@gmail.com'
             Swal.fire({
               icon: 'error',
               confirmButtonColor: '#009263',

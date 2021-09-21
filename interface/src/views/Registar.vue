@@ -212,7 +212,7 @@
           else {this.disabledEmail = false; return true}
         },
         codigoProfessorAluno: v=>{
-          if(this.codigosprofs.find(e => e.codigo == v)) {this.disabledCodProfAluno = false; return true;}
+          if(this.codigosprofs.find(e => e.codigo.toUpperCase() == v.toUpperCase())) {this.disabledCodProfAluno = false; return true;}
           else {this.disabledCodProfAluno = true; return 'Não existe nenhum professor com esse código.';}
         }
       }

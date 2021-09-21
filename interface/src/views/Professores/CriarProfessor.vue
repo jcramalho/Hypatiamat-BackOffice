@@ -76,7 +76,7 @@
           else return "Apenas pode conter 15 caractéres"
         },
         existeCodigo: v =>{
-            if(this.codigos.find(element => element.codigo == this.codigo) || this.codigosalunos.find(e => e.user == this.codigo)){
+            if(this.codigos.find(element => element.codigo.toUpperCase() == this.codigo.toUpperCase()) || this.codigosalunos.find(e => e.user.toUpperCase() == this.codigo.toUpperCase())){
                 this.disabledCodigo = true
                 return 'Esse código já existe. Tente outro por favor.'
             }
@@ -116,8 +116,8 @@
         return moment(value).format('YYYY-MM-DD')
       },
       registarProfessor: function () {
-        
-        if (this.nome != "" && this.email != "" && this.codigo != "" && this.escola != "" && this.password != "" && this.password2 != "" && this.premium != ""){ 
+        this.existeCodigo(this.codigo)
+        if (!this.disabledCodigo && !this.disabledEmail && this.nome != "" && this.email != "" && this.codigo != "" && this.escola != "" && this.password != "" && this.password2 != "" && this.premium != ""){ 
           if(this.password == this.password2 ){
             var aux = this.escola.split(" - ")
             var auxPremium = this.premium.split(" - ")
