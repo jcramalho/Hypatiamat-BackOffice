@@ -8,6 +8,8 @@ const Rankings = require('../../controllers/db_samd/rankings');
 const Calcrapid = require('../../controllers/db_samd/calcrapid');
 const Calculus = require('../../controllers/db_samd/calculus');
 const JogosGerais = require('../../controllers/db_samd/jogosGeral');
+var dataInicioAno = require('../../config/confs').dataInicio1
+var dataFimAno = require('../../config/confs').dataFim1
 
 // Todos os jogos
 router.get('/', passport.authenticate('jwt', {session: false}), function(req, res, next) {
@@ -576,8 +578,15 @@ router.get('/:jogo/turmas/:turma/intervalos', passport.authenticate('jwt', {sess
   var jogo = req.params.jogo 
   var jogoTipo = req.query.jogoTipo
   var codprofessor = req.query.codprofessor
+  var anoLetivo = req.query.anoLetivo
+  var dataInicio = dataInicioAno
+  var dataFim = dataFimAno
   if(turma && escola && jogo && jogoTipo && codprofessor){
-      JogosGerais.getEstatisticasGraficoTurma(jogoTipo, jogo, turma, escola)
+      if(anoLetivo) {
+        dataInicio = anoLetivo.split("/")[0] + "-09-01"
+        dataFim = anoLetivo.split("/")[1] + "-09-01"
+      }
+      JogosGerais.getEstatisticasGraficoTurma(jogoTipo, jogo, turma, escola, dataInicio, dataFim)
                  .then(dados => res.jsonp(dados))
                  .catch(error => { console.log(error); res.status(500).jsonp("Error")})
   }

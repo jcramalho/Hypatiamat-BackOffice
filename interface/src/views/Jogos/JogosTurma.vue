@@ -392,7 +392,7 @@
                     >
                         <GraficoTurma v-if="dialogGrafico" :jogo="jogo.jogotable" :jogoTipo="jogo.tipo" :turma="turmaSel" 
                                 :escola="escola" :dataInicio="dataInicio" :dataFim="dataFim" :numerosTurma="numerosTurma"
-                                :idprofessor="idprofessor" :estatisticas="estatisticas" :nomeProf="nomeProf" 
+                                :idprofessor="idprofessor" :estatisticas="estatisticas" :nomeProf="nomeProf" :anoLetivo="anoLetivo"
                                 :nomeJogo="jogo.jogo"/>
                     </v-dialog>
                 </v-container>
@@ -520,6 +520,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
     created: async function(){
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
+        this.onAnoChange(null)
         this.idprofessor = this.$route.params.idprofessor
         if(this.$route.query.escola) this.escolaOriginal = this.escola = this.$route.query.escola
         else{ 

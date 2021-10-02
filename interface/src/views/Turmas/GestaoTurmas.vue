@@ -98,7 +98,7 @@
                             <v-icon @click="getPassaporte(row.item.turma, row.item.passportPassword)"> mdi-passport </v-icon>
                             </v-btn>
                           </template>
-                          <span>Gerar um passaporte (PDF) à cerca dos alunos da turma.</span>
+                          <span>Gerar um passaporte (PDF) com os alunos da turma.</span>
                         </v-tooltip>
                         </td>
                         <td>

@@ -64,7 +64,7 @@
             <v-flex xs1>
               <v-container v-if="turmaSel.length != 0">
                 <center>
-                  <v-tooltip v-if="this.selected.length>0 && this.anoLetivoTurma1 <= this.anoLetivoTurma2" top>
+                  <v-tooltip v-if="this.selected.length>0 && this.anoLetivoTurma1 <= this.anoLetivoTurma2 && turmas.find(e => e == this.turma2)" top>
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
                         icon
@@ -81,7 +81,7 @@
                   </center>
                 <br>
                 <center>
-                  <v-tooltip v-if="this.selected2.length>0 && this.anoLetivoTurma2 <= this.anoLetivoTurma1" bottom>
+                  <v-tooltip v-if="this.selected2.length>0 && this.anoLetivoTurma2 <= this.anoLetivoTurma1 && turmas.find(e => e == this.turma2)" bottom>
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
                         icon
@@ -105,7 +105,7 @@
                       id="turma"
                       v-model="turmaSel"
                       :items="turmas"
-                      @change="onTurmaChange"
+                      @input="onTurmaChange"
                   ></v-combobox>
                   </v-card-title>
                   <v-text-field
@@ -194,12 +194,14 @@ const anoLetivoAtual = require("@/config/hosts").anoAtual
     },
     methods: {
       onTurmaChange: async function(item){
-        if(item != null){
+        console.log("change")
+        if(item != null && this.turmas.find(e => e == item)){
          this.turma2 = item
          this.anoLetivoTurma2 = parseInt(this.turma2.split("-")[1])
          let response = await axios.get(h + "turmas/" + this.turma2 + "/alunos?codprofessor="+ this.utilizador.codigo + "&alunosAtuais=true" + "&token=" + this.token)
          this.alunosOutraTurma = response.data
         }
+        else this.turma2 = undefined
       }, 
       alteraTurma: async function(){
           Swal.fire({

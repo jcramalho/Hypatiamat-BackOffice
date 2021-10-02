@@ -51,7 +51,7 @@
           <v-flex xs1>
             <v-container v-if="turma2.length != 0">
               <center>
-                <v-tooltip v-if="this.selected.length>0 && this.anoLetivoTurma1 <= this.anoLetivoTurma2" top>
+                <v-tooltip v-if="this.selected.length>0 && this.anoLetivoTurma1 <= this.anoLetivoTurma2 && this.turmas.find(e => e == this.turma2)" top>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
                       icon
@@ -66,7 +66,7 @@
               </center>
               <br>
               <center>
-                <v-tooltip v-if="this.selected2.length>0 && this.anoLetivoTurma2 <= this.anoLetivoTurma1" bottom>
+                <v-tooltip v-if="this.selected2.length>0 && this.anoLetivoTurma2 <= this.anoLetivoTurma1 && this.turmas.find(e => e == this.turma2)" bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
                       icon

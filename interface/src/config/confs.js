@@ -15,6 +15,7 @@ else{
     ano = (anoTotal+1).toString() 
 }
 var anoAtual = ano.charAt(2) + ano.charAt(3)
+anoTotal = "20" + anoAtual
 
 // ano atual (ex: 21)
 module.exports.anoAtual = anoAtual

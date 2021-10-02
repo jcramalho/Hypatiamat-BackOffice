@@ -128,7 +128,8 @@ const anosescolaridade = require('@/config/confs').anosescolaridade
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
         this.loading = true
-        var response = await axios.get(h + "escolas/localidades/estatisticas/?ano=20&token=" + this.token)
+        var aux = this.ano.split("/")[0]
+        var response = await axios.get(h + "escolas/localidades/estatisticas/?ano=" + aux + "&token=" + this.token)
         this.estatisticas = response.data
         this.calculaTotais()
         this.loading = false

@@ -103,14 +103,16 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
       }
     },
     props:["jogoTipo", "dataInicio", "dataFim", "jogo", "escola", "turma", 
-    "numerosTurma", "idprofessor", "estatisticas", "nomeProf", "nomeJogo"],
+    "numerosTurma", "idprofessor", "estatisticas", "nomeProf", "nomeJogo", "anoLetivo"],
     created: async function(){
         this.resize()
         this.token = localStorage.getItem("token")
         this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
         var response = await axios.get(hostJogos + this.jogo + "/turmas/" + this.turma + "/intervalos?escola=" 
-                        + this.escola + "&codprofessor=" + this.idprofessor + "&jogoTipo=" + this.jogoTipo + "&token=" + this.token)
+                        + this.escola + "&codprofessor=" + this.idprofessor + "&jogoTipo=" 
+                        + this.jogoTipo + "&anoLetivo=" + this.anoLetivo + "&token=" + this.token)
         this.intervalos = response.data
+        console.log(response.data)
         await this.atualizaChartData()
         this.showChart = true
     },

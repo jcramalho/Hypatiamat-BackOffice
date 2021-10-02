@@ -80,7 +80,7 @@
                             <v-icon @click="getPassaporte(row.item.turma, row.item.idprofessor, row.item.passportPassword)" color="#009263"> mdi-passport </v-icon>
                             </v-btn>
                           </template>
-                          <span>Gerar um passaporte (PDF) à cerca dos alunos da turma.</span>
+                          <span>Gerar um passaporte (PDF) com os alunos da turma.</span>
                         </v-tooltip>
                         <v-icon @click="verTurma(row.item.id)" color="#009263"> mdi-eye </v-icon>
                         <v-icon @click="editarTurma(row.item.id, row.item.idprofessor)" color="#009263"> mdi-pencil </v-icon>

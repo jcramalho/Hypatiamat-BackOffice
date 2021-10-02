@@ -25,7 +25,8 @@
                     <tr>
                         <td>{{row.item.codigo}}</td>
                         <td>{{row.item.nome}}</td>
-                        <td>{{row.item.validade}}</td>
+                        <td v-if="row.item.valido" style="color:green">{{row.item.validade}}</td>
+                        <td v-else style="color:red">{{row.item.validade}}</td>
                         <td v-if="row.item.confirmacao"> <v-icon color="green">mdi-check-bold</v-icon> </td>
                         <td v-else> <v-icon color="red">mdi-close-thick</v-icon> </td>
                         <td v-if="row.item.premium > 0"> <v-icon color="green">mdi-check-bold</v-icon> </td>

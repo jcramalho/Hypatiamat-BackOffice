@@ -160,8 +160,8 @@ JogosGerais.getJogoFromTurma  = function (dataInicio, dataFim, jogoTipo, tableJo
     })   
 }
 
-JogosGerais.getFrequenciaPorDiaTurma = function(jogoTipo, tableJogo, turma, escola){
-    var args = [jogoTipo, turma, escola, dataInicioAno, dataFimAno]
+JogosGerais.getFrequenciaPorDiaTurma = function(jogoTipo, tableJogo, turma, escola, dataInicio, dataFim){
+    var args = [jogoTipo, turma, escola, dataInicio, dataFim]
     return new Promise(function(resolve, reject) {
         sql.query(`select data, count(pontuacao) as freq, count(distinct idaluno) as nalunos
 			from ${bdSAMD}.${tableJogo} 
@@ -183,9 +183,8 @@ JogosGerais.getFrequenciaPorDiaTurma = function(jogoTipo, tableJogo, turma, esco
     
 }
 
-JogosGerais.getEstatisticasGraficoTurma = async function(jogoTipo, tableJogo, turma, escola){
-    var freqs = await JogosGerais.getFrequenciaPorDiaTurma(jogoTipo, tableJogo, turma, escola)
-    var dataInicio = dataInicioAno
+JogosGerais.getEstatisticasGraficoTurma = async function(jogoTipo, tableJogo, turma, escola, dataInicio, dataFinal){
+    var freqs = await JogosGerais.getFrequenciaPorDiaTurma(jogoTipo, tableJogo, turma, escola, dataInicio, dataFinal)
     if(freqs.porDia.length > 0 ) dataInicio = freqs.porDia[0].data
     var dataFim 
     var arrayIntervals = []

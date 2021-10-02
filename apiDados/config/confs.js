@@ -12,14 +12,16 @@ else{
     ano = (anoTotal+1).toString() 
 }
 var anoAtual = ano.charAt(2) + ano.charAt(3)
-
+anoTotal = "20" + anoAtual
 // ano atual (ex: 21)
 module.exports.anoAtual = anoAtual
+
 
 var intAno = parseInt(anoAtual)
 
 // ano letivo atual (ex: 20/21)
 module.exports.anoletivo = (intAno-1) + "/" + intAno
+
 
 // ano letivo 2 (ex: 2020/2021)
 module.exports.anoletivo2 = (parseInt(ano) -1) + "/" + parseInt(ano)
@@ -40,13 +42,16 @@ for(var i = 0; i < N; i++){
 
 module.exports.anosletivos = anosletivos
 
+
 // ultimos N anos letivos 2 (ex: ["2020/2021", "2019/2020", ...])
 var anosletivos2 = []
+
 
 for(var i = 0; i < N; i++){
     var aux = (anoTotal-1-i) + "/" + (anoTotal-i)
     anosletivos2.push(aux)
 }
+
 
 module.exports.anosletivos2 = anosletivos2
 

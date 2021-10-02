@@ -128,7 +128,7 @@
               <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4">
                 <center>
                   <v-container class="d-flex align-center justify-center">
-                    <div class="pr-3"><v-img :src="require('@/assets/star.png')" width="50px" heigth="50px"> </v-img></div>
+                    <div class="pr-3"><v-img :src="require('@/assets/diamante.png')" width="50px" heigth="50px"> </v-img></div>
                     <div><span>{{trofeus.trophy3}}</span></div>
                   </v-container>
                 </center>
@@ -136,7 +136,7 @@
               <v-col cols="12" xs="12" sm="12" md="4" lg="4" xl="4">
                 <center>
                   <v-container class="d-flex align-center justify-center">
-                    <div class="pr-3"><v-img :src="require('@/assets/diamante.png')" width="50px" heigth="50px"> </v-img></div>
+                    <div class="pr-3"><v-img :src="require('@/assets/star.png')" width="50px" heigth="50px"> </v-img></div>
                     <div><span>{{trofeus.trophy5}}</span></div>
                   </v-container>
                 </center>
