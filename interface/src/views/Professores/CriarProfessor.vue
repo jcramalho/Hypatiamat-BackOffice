@@ -7,8 +7,8 @@
             <v-card class="pa-5">
               
               <v-form>
-              <v-text-field prepend-icon="mdi-card-account-details" v-model="codigo" color="#009263" name="Username (Código)" label="Username (Código)" :rules="[string15, existeCodigo]" required></v-text-field>
-              <v-text-field prepend-icon="mdi-account" v-model="nome" color="#009263" name="Nome" label="Nome" required></v-text-field>
+              <v-text-field prepend-icon="mdi-card-account-details" v-model="codigo" color="#009263" name="Username (Código)" label="Username (Código)" :rules="[existeCodigo]" required></v-text-field>
+              <v-text-field prepend-icon="mdi-account" v-model="nome" color="#009263" name="Nome Completo" label="Nome Completo" required></v-text-field>
               <v-text-field prepend-icon="mdi-email" v-model="email" color="#009263" name="Email" label="Email" :rules="[existeEmail]" required></v-text-field>
               <v-combobox
                   id="escola"
@@ -30,7 +30,7 @@
               <v-text-field prepend-icon="mdi-key" color="#009263" v-model="password" name="Password" label="Password" type="password" required></v-text-field>
               <v-text-field prepend-icon="mdi-key" color="#009263" v-model="password2" name="Confirmação Password" label="Confirmação Password" type="password" required></v-text-field>
               <v-card-actions>
-                <v-btn class="white--text" :disabled="disabledCodigo || disabledEmail" primary large block style="background-color: #009263;" @click="registarProfessor">Confirmar</v-btn>
+                <v-btn class="white--text" :disabled="disabledCodigo || disabledEmail || disabledOutrosCamposProf" primary large block style="background-color: #009263;" @click="registarProfessor">Confirmar</v-btn>
               </v-card-actions>
               </v-form>
             </v-card>
@@ -68,30 +68,55 @@
         password2 : "",
         codigos:[],
         codigosalunos:[],
-        disabledCodigo: false,
-        disabledEmail: false,
+        disabledCodigo: true,
+        disabledEmail: true,
         token: "",
+        reg2: /\s/,
+        reg3: /[ `!@#$%^&*()+=\[\]{};':"\\|,<>\/?~!\/:[`{~ºç´`]/,
         string15: v  => {
-          if(v.length <= 15) return true
-          else return "Apenas pode conter 15 caractéres"
+          
         },
         existeCodigo: v =>{
-            if(this.codigos.find(element => element.codigo.toUpperCase() == this.codigo.toUpperCase()) || this.codigosalunos.find(e => e.user.toUpperCase() == this.codigo.toUpperCase())){
+            if(v.length <= 15 && !this.reg2.test(v) && !this.reg3.test(v)) {
+              if(this.codigos.find(element => element.codigo.toUpperCase() == this.codigo.toUpperCase()) || this.codigosalunos.find(e => e.user.toUpperCase() == this.codigo.toUpperCase())){
                 this.disabledCodigo = true
                 return 'Esse código já existe. Tente outro por favor.'
+              }
+              this.disabledCodigo = false
+              return true
             }
-            this.disabledCodigo = false
-            return true
+            else {this.disabledCodigo = true; return  "Apenas pode conter 15 caractéres e não pode conter caractéres especiais, nem espaços."}
+            
         },
         existeEmail: v =>{
           if(this.codigos.find(e => e.email == v) || this.codigosalunos.find(e => e.email == v)){
-                this.disabledEmail = true
-                return 'Esse email já existe. Tente outro por favor.'
-            }
-           this.disabledEmail = false
-           return true
+            this.disabledEmail = true
+            return 'Esse email já existe. Tente outro por favor.'
+          }
+          else if(this.reg2.test(v) && this.reg3.test(v)){
+            this.disabledEmail = true
+            return 'Esse email é inválido. Não pode conter caracteres especiais, nem espaços.';
+          }
+          else{
+            this.disabledEmail = false
+            return true
+          }
         }
       }
+    },
+    computed:{
+      disabledOutrosCamposProf(){
+        console.log(this.nome)
+        if(this.nome != "" && this.nome != undefined && this.nome != null
+            && this.escola != "" && this.escola != undefined && this.escola != null
+            && this.password != "" && this.password != undefined && this.password != null
+            && this.password2 != "" && this.password2 != undefined && this.password2 != null
+            && this.socionum != "" && this.socionum != undefined && this.socionum != null
+            && this.premium != "" && this.premium != undefined && this.premium != null){
+              return false
+            }
+        else return true
+      },
     },
     created : async function() {
         try {

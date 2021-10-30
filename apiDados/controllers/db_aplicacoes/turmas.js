@@ -43,6 +43,34 @@ Turma.getTurmas = function(){
     })
 }
 
+Turma.getCodigosTurmas = function(){
+    return new Promise(function(resolve, reject) {
+        sql.query("Select turma from turmas", function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
+Turma.getTurmas = function(){
+    return new Promise(function(resolve, reject) {
+        sql.query("Select distinct turma from turmas", function(err, res){
+            if(err){
+                console.log("erro: " + err)
+                reject(err)
+            }
+            else{
+                resolve(res)
+            }
+        })
+    })
+}
+
 Turma.getTurmasFromAnoLetivo = function(anoletivo){
     return new Promise(function(resolve, reject) {
         sql.query("Select * from turmas where anoletivo=?", anoletivo, function(err, res){

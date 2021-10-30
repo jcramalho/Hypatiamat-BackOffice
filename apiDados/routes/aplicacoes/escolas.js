@@ -93,6 +93,7 @@ router.get('/localidades/estatisticas', passport.authenticate('jwt', {session: f
                 .catch(erro => res.status(500).jsonp(erro))
   }
   else{
+    console.log(anoletivo)
     Estatisticas.getEstatisticasMunicipios(anoletivo, anosescolaridade)
                 .then(dados =>res.jsonp(dados))
                 .catch(erro => res.status(500).jsonp(erro))

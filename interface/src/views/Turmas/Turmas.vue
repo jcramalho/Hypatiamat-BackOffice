@@ -93,6 +93,12 @@
             <v-dialog v-model="dialogTurmasSemAlunos" width="80%">
               <TurmasSemAlunos/>
             </v-dialog>
+            <v-dialog v-model="dialogEditarTurma" width="84%">
+              <EditarTurma v-if="dialogEditarTurma" :turma="turmaEditar"/>
+            </v-dialog>
+            <v-dialog v-model="dialogVerTurma" width="84%">
+              <AlunosTurma v-if="dialogVerTurma" :idProp="idVerTurma"/>
+            </v-dialog>
         </v-card>
       </v-container>
     </v-main>
@@ -107,6 +113,8 @@ import Swal from 'sweetalert2'
 const h = require("@/config/hosts").hostAPI
 import {Passaport} from '@/config/passport'
 import TurmasSemAlunos from '@/components/Turmas/TurmasSemAlunos.vue'
+import EditarTurma from '@/components/Turmas/EditarTurma.vue'
+import AlunosTurma from '@/components/Turmas/AlunosTurma.vue'
 const anosletivos2 = require("@/config/confs").anosletivos
 const anoletivoAtual = require("@/config/confs").anoletivo2
 
@@ -134,10 +142,14 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         escolas: [],
         escola: "",
         escolasIds : [],
+        turmaEditar: {},
+        dialogEditarTurma: false,
+        idVerTurma: undefined,
+        dialogVerTurma: false
       }
     },
     components:{
-      TurmasSemAlunos
+      TurmasSemAlunos, EditarTurma, AlunosTurma
     },
     created: async function(){
         this.token = localStorage.getItem("token")
@@ -156,7 +168,9 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
           this.$router.push({name: "Criar Turma",  params:{isAdmin:true} })
       },
       verTurma: function(id){
-        this.$router.push({name:"Ver Turma", params:{ id : id }})
+        //this.$router.push({name:"Ver Turma", params:{ id : id }})
+        this.idVerTurma = id
+        this.dialogVerTurma = true
       },
       getTurmas : async function(){
         if(this.escola!="" && this.escola){
@@ -175,7 +189,9 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         }
       },
       editarTurma : function(idTurma, idprofessor){
-          this.$router.push({name: "Editar Turma", params: { turma : idTurma, idprofessor: idprofessor } })
+          //this.$router.push({name: "Editar Turma", params: { turma : idTurma, idprofessor: idprofessor } })
+          this.turmaEditar = {turma: idTurma, idprofessor: idprofessor}
+          this.dialogEditarTurma = true
       },
       apagarTurma: async function(turma, codprofessor){
           Swal.fire({

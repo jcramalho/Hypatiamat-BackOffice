@@ -3,9 +3,9 @@
     <v-layout row class="text-xs-center">
         <v-container  class="text-xs-center">
             <v-form>
-            <v-text-field color="#009263" prepend-icon="mdi-card-account-details" v-model="codigo" name="Username (Código)" label="Username (Código)" :rules="[string15, existeCodigo]" required></v-text-field>
-            <v-text-field color="#009263" prepend-icon="mdi-account" v-model="nome" name="Nome" label="Nome" required></v-text-field>
-            <v-text-field color="#009263" prepend-icon="mdi-email" v-model="email" name="Email" label="Email" :rules="[emailValido, existeEmail]" required></v-text-field>
+            <v-text-field color="#009263" prepend-icon="mdi-card-account-details" v-model="codigo" name="Username (Código)" label="Username (Código)" :rules="[existeCodigo]" required></v-text-field>
+            <v-text-field color="#009263" prepend-icon="mdi-account" v-model="nome" name="Nome Completo" label="Nome Completo" required></v-text-field>
+            <v-text-field color="#009263" prepend-icon="mdi-email" v-model="email" name="Email" label="Email" :rules="[existeEmail]" required></v-text-field>
             <v-text-field color="#009263" prepend-icon="mdi-calendar" v-model="datanasc" name="Data de Nascimento" label="Data de Nascimento" type="date" required></v-text-field>
             <v-text-field color="#009263" prepend-icon="mdi-bank" v-model="pais" name="País" label="País" required></v-text-field>
             <v-combobox
@@ -66,7 +66,7 @@
             <v-text-field color="#009263" prepend-icon="mdi-key" v-model="password" name="Password" label="Password" type="password" required></v-text-field>
             <v-text-field color="#009263" prepend-icon="mdi-key" v-model="password2" name="Confirmação Password" label="Confirmação Password" type="password" required></v-text-field>
             <v-card-actions>
-              <v-btn class="white--text" :disabled="disabledCodigo || disabledEmail || (this.alunosTurma && this.alunosTurma.length >= this.limiteAlunos) || utilizador.type == 5" primary large block style="background-color: #009263;" @click="registarAluno">Confirmar</v-btn>
+              <v-btn class="white--text" :disabled="disabledOutrosCamposAluno || disabledCodigo || disabledEmail || (this.alunosTurma && this.alunosTurma.length >= this.limiteAlunos) || utilizador.type == 5" primary large block style="background-color: #009263;" @click="registarAluno">Confirmar</v-btn>
             </v-card-actions>
             </v-form>
         </v-container>
@@ -107,31 +107,43 @@
         password2 : "",
         token: "",
         codigosprof:[],
-        disabledCodigo: false,
-        disabledEmail: false,
+        disabledCodigo: true,
+        disabledEmail: true,
         reg: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/,
+        reg2: /\s/,
+        reg3: /[ `!@#$%^&*()+=\[\]{};':"\\|,<>\/?~!\/:[`{~ºç´`]/,
         string15: v  => {
-          if(v.length <= 15) return true
-          else return "Apenas pode conter 15 caractéres"
+          
         },
         isNumber: v =>{
 
         },
         existeCodigo: v =>{
-          if(this.codigos.find(e => e.user.toUpperCase() == v.toUpperCase()) || this.codigosprof.find(e => e.codigo.toUpperCase() == v.toUpperCase())) {
+          if(v.length <= 15 && !this.reg2.test(v) && !this.reg3.test(v)){
+            if(this.codigos.find(e => e.user.toUpperCase() == v.toUpperCase()) || this.codigosprof.find(e => e.codigo.toUpperCase() == v.toUpperCase())) {
             this.disabledCodigo = true
             return 'Esse username já existe. Escolha outro por favor.'
+            } 
+            this.disabledCodigo = false
+            return true
           }
-          this.disabledCodigo = false
-          return true
+          else {this.disabledCodigo = true; return "Apenas pode conter 15 caractéres e não pode conter caractéres especiais, nem espaços."}
+         
         },
         existeEmail: v =>{
           if(this.codigos.find(e => e.email == v) || this.codigosprof.find(e => e.email == v)) {
             this.disabledEmail = true
             return 'Esse email já existe. Escolha outro por favor.'
           }
-          this.disabledEmail = false
-          return true
+          else if(v == "" || !this.reg.test(v)) {this.disabledEmail = true; return false}
+          else if(this.reg2.test(v) && this.reg3.test(v)){
+            this.disabledEmail = true
+            return 'Esse email é inválido. Não pode conter caracteres especiais, nem espaços.';
+          }
+          else{
+            this.disabledEmail = false
+            return true
+          }
         },
         emailValido: v =>{
           if(v != "" && this.reg.test(v)) {this.disabledEmail = false; return true}
@@ -140,6 +152,21 @@
         turmaValida: v =>{
           
         }
+      }
+    },
+    computed:{
+      disabledOutrosCamposAluno(){
+        if(this.nome != "" && this.nome != undefined && this.nome != null
+            && this.password != "" && this.password != undefined && this.password != null
+            && this.password2 != "" && this.password2 != undefined && this.password2 != null
+            && this.datanasc != "" && this.datanasc != undefined && this.datanasc != null
+            && this.codprofessor != "" && this.codprofessor != undefined && this.codprofessor != null
+            && this.turma != "" && this.turma != undefined && this.turma != null
+            && this.numero != "" && this.numero != undefined && this.numero != null && this.numero > 0
+            && this.pais != "" && this.pais != undefined && this.pais != null){
+              return false
+            }
+        else return true
       }
     },
     created : async function() {

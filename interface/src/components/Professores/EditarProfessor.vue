@@ -6,7 +6,7 @@
                 Editar Professor ({{professor.codigo}})
             </v-card-title>
                      
-          <v-text-field prepend-icon="mdi-account" label="Nome" placeholder="Nome" v-model="professor.nome" color="#009263" required/>
+          <v-text-field prepend-icon="mdi-account" label="Nome Completo" placeholder="Nome Completo" v-model="professor.nome" color="#009263" required/>
           <v-combobox
                 id="escola"
                 prepend-icon="mdi-school"

@@ -7,7 +7,7 @@
             </v-card-title>
                      
           <v-text-field prepend-icon="mdi-numeric-1-box-multiple-outline" label="Número" placeholder="Número" v-model="aluno.numero" color="#009263" type="number" :rules="[number]" required/>           
-          <v-text-field prepend-icon="mdi-account" label="Nome" placeholder="Nome" v-model="aluno.nome" color="#009263" required/>
+          <v-text-field prepend-icon="mdi-account" label="Nome Completo" placeholder="Nome Completo" v-model="aluno.nome" color="#009263" required/>
           <v-text-field prepend-icon="mdi-calendar" label="Data de Nascimento" placeholder="Data de Nascimento" v-model="aluno.datanascimento" type="date" color="#009263" required/>
           <v-text-field prepend-icon="mdi-email" label="Email" placeholder="Email" v-model="aluno.email" color="#009263" :rules="[existeEmail]" required/>
           <v-text-field v-if="utilizador.type!=10" prepend-icon="mdi-account-check" label="Confirmação (0 ou 1)" placeholder="Confirmação (0 ou 1) " v-model="aluno.confirmacao" :rules="[number0or1]" color="#009263" required/>

@@ -19,7 +19,7 @@ const alunoExperimental = 'h21082f109'
 
 const jwtExpirySecondsExperimental = 30 * 60
 const jwtExpirySeconds = 90 * 60
-const jwtExpirySecondsAdmin = 90 * 60
+const jwtExpirySecondsAdmin = 4 * 60 * 60
 const jwtExpirySecondsInterface = 180 * 60
 
 generateToken = function(user, time){

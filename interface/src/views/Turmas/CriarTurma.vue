@@ -34,16 +34,17 @@
                   prepend-icon="mdi-numeric-1-box-outline"
                   v-model="ano_escolaridade"
                   :items="anosEscolaridade"
+                  :rules="[checkAno]"
                   @change="onAnoChange"
                 >
                 </v-combobox>
                 <v-combobox
-                  id="letra"
                   label="Letra da Turma"
                   prepend-icon="mdi-alpha-a-box-outline"
                   v-model="letra_turma"
-                  :items="['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']"
-                  @change="onLetraChange"
+                  :items="letras"
+                  :rules="[checkLetra]"
+                  @input="onLetraChange"
                 >
                 </v-combobox>
                 <v-text-field v-if="!escolher" prepend-icon="mdi-book-account" v-model="turma" 
@@ -51,7 +52,8 @@
                 <v-text-field v-else prepend-icon="mdi-book-account" v-model="turma" 
                         name="Nome da Turma" label="Nome da Turma" :rules="[formatoTurma]" required></v-text-field>
                 <v-card-actions>
-                  <v-btn class="white--text" primary large block style="background-color: #009263;" @click="criarTurma" :disabled="utilizador.type == 5">Confirmar</v-btn>
+                  <v-btn class="white--text" primary large block style="background-color: #009263;" 
+                      @click="criarTurma" :disabled="utilizador.type == 5 || (!checkCampos || disabledAno || disabledLetra)">Confirmar</v-btn>
                 </v-card-actions>
                 </v-form>
             </v-container>
@@ -77,7 +79,7 @@
         ano_escolaridade: "",
         letra_turma: "",
         ano_escolaridade_number: 0,
-        anosEscolaridade: ["1ºano", "2ºano", "3ºano", "4ºano", "5ºano", "6ºano", "7ºano", "8ºano", "9ºano"],
+        anosEscolaridade: ["1.ºano", "2.ºano", "3.ºano", "4.ºano", "5.ºano", "6.ºano", "7.ºano", "8.ºano", "9.ºano"],
         escolasIds:[],
         escolas:[],
         escola: "",
@@ -85,6 +87,9 @@
         professores:[],
         anoAtual:AnoAtual,
         codigo: "",
+        disabledLetra: false,
+        disabledAno: false,
+        letras: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
         formatoTurma: v =>{
           var aux = v.split("-")
           if(aux.length != 3) return 'Formato Incorreto (Exemplo: 7A-14-1)'
@@ -98,12 +103,34 @@
               }
             }
           }
+        },
+        checkLetra: v => {
+          if(this.letras.find(e => e == v)){
+            this.disabledLetra = false
+            return true
+          }
+          else{
+            this.disabledLetra = true
+            return 'Tem que ser uma das letras disponibilizadas.'
+          }
+        },
+        checkAno: v => {
+          if(this.anosEscolaridade.find(e => e == v)){
+            this.disabledAno = false
+            return true
+          }
+          else{
+            this.disabledAno = true
+            return 'Tem que ser um dos anos disponibilizados.'
+          }
         }
       }
     },
     created : async function() {
       this.token = localStorage.getItem("token")
       this.utilizador = JSON.parse(localStorage.getItem("utilizador"))
+      var responseAllTurmas = await axios.get(h + "turmas/codigos?token=" + this.token)
+      this.turmas = responseAllTurmas.data
       if(this.utilizador.type == 50){
         this.escolher = true
         var response = await axios.get(h + "escolas")
@@ -116,20 +143,21 @@
       }
       else{
         this.escola = this.utilizador.escola
-        var response = await axios.get(h + "escolas/" + this.escola + "/turmas/?token=" + this.token)
-        this.turmas = response.data
       }
 
     },
      methods: {
+      checkCampos: function(){
+        return (this.letras.find(e => e == this.letra_turma) && this.anosEscolaridade.find(element => element == this.ano_escolaridade))
+      },
       onEscolaChange: async function(){
         var aux = this.escola.split(" - ")
         var escolaEscolhida = this.escolasIds.find(element => element.nome == aux[1]).cod
-        var response = await axios.get(h + "escolas/" + escolaEscolhida + "/turmas/?token=" + this.token + "&ano=" + (parseInt(this.anoAtual)-1))
-        this.turmas = response.data
+        //var response = await axios.get(h + "escolas/" + escolaEscolhida + "/turmas/?token=" + this.token + "&ano=" + (parseInt(this.anoAtual)-1))
+        //this.turmas = response.data
         this.professores = []
         this.codigo = ""
-        console.log("Turmas: " + this.turmas)
+        //console.log("Turmas: " + this.turmas)
         var responseP = await axios.get(h + "escolas/" + escolaEscolhida + "/professores/?token=" + this.token)
         responseP.data.forEach(element =>{
           this.professores.push(element.codigo)
@@ -200,19 +228,26 @@
           this.ano_escolaridade_number = this.ano_escolaridade.charAt(0)
           this.changeNomeTurma()
         }
-      },
-      onLetraChange: async function(){
-        if(this.letra_turma != ""){
-          this.changeNomeTurma()
+        else {this.ano_escolaridade = ''; this.turma = ''}
+      }, 
+      onLetraChange: function(value){
+        console.log(this.letras.find(e => e == this.letra_turma))
+        //this.letra_turma = this.letras.find(e => e == this.letra_turma)
+        if(!this.letras.find(e => e == this.letra_turma)){
+          this.$set(this, 'letra_turma', null)
         }
+        else this.changeNomeTurma()
+      },
+      checkTurmaValida: function(){
+         return (this.letras.find(e => e == this.letra_turma) && this.anosEscolaridade.find(element => element == this.ano_escolaridade))
       },
       changeNomeTurma: async function(){
-        if(this.letra_turma != "" && this.anosEscolaridade.find(e => e == this.ano_escolaridade)){
+        if(this.letra_turma != "" && this.letra_turma && this.ano_escolaridade && this.anosEscolaridade.find(e => e == this.ano_escolaridade)){
           console.log(this.anoAtual)
           var nome = this.ano_escolaridade_number + this.letra_turma
           nome += "-" + this.anoAtual + "-"
           var i = 1 
-          for(i = 1; i < 99; i++){
+          for(i = 1; i < 9999; i++){
             var aux = nome + i
             var turma = this.turmas.find(element => element.turma == aux)
             if(turma == undefined) break;
@@ -220,6 +255,7 @@
           nome += i
           this.turma = nome
         }
+        else this.turma = ''
       }
     }
   }

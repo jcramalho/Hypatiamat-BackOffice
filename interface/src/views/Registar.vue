@@ -39,10 +39,10 @@
               <span class="pl-8 caption" style="display: inline-block; cursor: pointer" @click="dialogEmailCodigo = true"> Não possuí um código hypatiamat? </span>
             </v-col>
             <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
-            <v-text-field prepend-icon="mdi-card-account-details" v-model="codigo" color="#009263" name="Username (Código)" label="Username (Código)" :rules="[string15, codigoProfExistente]" required></v-text-field>
+            <v-text-field prepend-icon="mdi-card-account-details" v-model="codigo" color="#009263" name="Username (Código)" label="Username (Código)" :rules="[codigoExistente]" required></v-text-field>
             </v-col>
             <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
-            <v-text-field prepend-icon="mdi-account" v-model="nome" color="#009263" name="Nome" label="Nome" required></v-text-field>
+            <v-text-field prepend-icon="mdi-account" v-model="nome" color="#009263" name="Nome Completo" label="Nome Completo" required></v-text-field>
             </v-col>
             <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
             <v-text-field prepend-icon="mdi-email" v-model="email" color="#009263" name="Email" label="Email" :rules="[emailValido, emailProfExistente]" required></v-text-field>
@@ -66,16 +66,16 @@
             </v-col>
             </v-row>
             <v-card-actions>
-              <v-btn :disabled="disabledCodigo || disabledEmail" class="white--text" primary large block style="background-color: #009263;" @click="registarProfessor">Confirmar</v-btn>
+              <v-btn :disabled="disabledCodigo || disabledEmail || disabledOutrosCamposProf" class="white--text" primary large block style="background-color: #009263;" @click="registarProfessor">Confirmar</v-btn>
             </v-card-actions>
             </v-form>
             <v-form v-else>
               <v-row no-gutters>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
-                  <v-text-field prepend-icon="mdi-card-account-details" v-model="user" color="#009263" name="Username (Código)" label="Username (Código)" :rules="[string15, codigoAlunoExistente]" required></v-text-field>
+                  <v-text-field prepend-icon="mdi-card-account-details" v-model="user" color="#009263" name="Username (Código)" label="Username (Código)" :rules="[codigoExistente]" required></v-text-field>
                 </v-col>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">  
-                  <v-text-field prepend-icon="mdi-account" v-model="nome" name="Nome" color="#009263" label="Nome" required></v-text-field>
+                  <v-text-field prepend-icon="mdi-account" v-model="nome" name="Nome Completo" color="#009263" label="Nome Completo" required></v-text-field>
                 </v-col>
                 <v-col cols="12" xs="12" sm="12" md="12" lg="12"  xl="12">
                   <v-text-field prepend-icon="mdi-bank" v-model="pais" name="País" color="#009263" label="País" required></v-text-field>
@@ -112,7 +112,7 @@
                 </v-col>
               </v-row>
             <v-card-actions>
-              <v-btn :disabled="disabledCodigo || disabledEmail || disabledCodProfAluno" class="white--text" primary large block style="background-color: #009263;" @click="registarAluno">Confirmar</v-btn>
+              <v-btn :disabled="disabledOutrosCamposAluno || disabledCodProfAluno || disabledEmail || disabledCodigo" class="white--text" primary large block style="background-color: #009263;" @click="registarAluno">Confirmar</v-btn>
             </v-card-actions>
             </v-form>
             <v-card-actions class="justify-center">
@@ -166,9 +166,9 @@
         codigoHypatia: "",
         codigosprofs:[],
         codigosalunos:[],
-        disabledEmail: false,
-        disabledCodigo: false,
-        disabledCodProfAluno: false,
+        disabledEmail: true,
+        disabledCodigo: true,
+        disabledCodProfAluno: true,
         escola : "",
         escolas: [],
         escolasIds : [],
@@ -183,23 +183,30 @@
         numero:"",
         password : "",
         password2 : "",
-        reg: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/
+        reg: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/,
+        reg2: /\s/,
+        reg3: /[ `!@#$%^&*()+=\[\]{};':"\\|,<>\/?~!\/:[`{~ºç´`]/
         ,
         emailValido: v =>{
-          if(v != "" && this.reg.test(v)) {this.disabledEmail = false; return true}
+          console.log(this.reg2.test(v))
+          if(v != "" && !this.reg2.test(v)) {this.disabledEmail = false; return true}
           else {this.disabledEmail = true; return false}
         },
         string15: v  => {
-          if(v.length <= 15) {this.disabledCodigo = false; return true}
-          else {this.disabledCodigo = true; return "Apenas pode conter 15 caractéres"}
         },
-        codigoProfExistente: v => {
-          if(this.codigosprofs.find(e => e.codigo.toUpperCase() == v.toUpperCase()) || this.codigosalunos.find(e => e.user.toUpperCase() == v.toUpperCase())) 
+        codigoExistente: v => {
+          if(v.length <= 15 && !this.reg2.test(v) && !this.reg3.test(v)) {
+            if( (this.codigosprofs.find(e => e.codigo.toUpperCase() == v.toUpperCase()) 
+                || this.codigosalunos.find(e => e.user.toUpperCase() == v.toUpperCase()))) 
                       {this.disabledCodigo = true ; return 'Código já utilizado. Escolha outro por favor.'}
-          else {this.disabledCodigo = false; return true}
+                else {this.disabledCodigo = false; return true}
+          }
+          else {this.disabledCodigo = true; return "Apenas pode conter 15 caractéres e não pode conter caractéres especiais, nem espaços."}
+          
         },
         codigoAlunoExistente: v =>{
-          if(this.codigosalunos.find(e => e.user.toUpperCase() == v.toUpperCase()) || this.codigosprofs.find(e => e.codigo.toUpperCase() == v.toUpperCase())) 
+          if((this.codigosalunos.find(e => e.user.toUpperCase() == v.toUpperCase()) 
+                || this.codigosprofs.find(e => e.codigo.toUpperCase() == v.toUpperCase()))) 
                       {this.disabledCodigo = true ; return 'Código já utilizado. Escolha outro por favor.'}
           else {this.disabledCodigo = false; return true}
         },
@@ -221,6 +228,30 @@
       mobile() {
         if (this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm) return true
         return false
+      },
+      disabledOutrosCamposProf(){
+        if(this.codigoHypatia != "" && this.codigoHypatia != undefined && this.codigoHypatia != null
+            && this.nome != "" && this.nome != undefined && this.nome != null
+            && this.escola != "" && this.escola != undefined && this.escola != null
+            && this.password != "" && this.password != undefined && this.password != null
+            && this.password2 != "" && this.password2 != undefined && this.password2 != null
+            ){
+              return false
+            }
+        else return true
+      },
+      disabledOutrosCamposAluno(){
+        if(this.nome != "" && this.nome != undefined && this.nome != null
+            && this.password != "" && this.password != undefined && this.password != null
+            && this.password2 != "" && this.password2 != undefined && this.password2 != null
+            && this.datanascimento != "" && this.datanascimento != undefined && this.datanascimento != null
+            && this.codprofessor != "" && this.codprofessor != undefined && this.codprofessor != null
+            && this.turma != "" && this.turma != undefined && this.turma != null
+            && this.numero != "" && this.numero != undefined && this.numero != null && this.numero > 0
+            && this.pais != "" && this.pais != undefined && this.pais != null){
+              return false
+            }
+        else return true
       }
     },
     created : async function() {
@@ -246,6 +277,9 @@
      methods: {
       format(value, event) {
         return moment(value).format('YYYY-MM-DD')
+      },
+      hasWhiteSpace: function(s) {
+        return /\s/g.test(s);
       },
        login: function(){
          this.$emit("login");

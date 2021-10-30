@@ -50,7 +50,7 @@
                         <td>{{row.item.user}}</td>
                         <td>{{row.item.email}}</td>
                         <td>{{row.item.agrupamento}}</td>
-                        <td v-if="utilizador.type==20">
+                        <td v-if="utilizador.type==20 || utilizador.type == 50">
                           <v-tooltip top>
                           <template v-slot:activator="{ on, attrs }">
                             <v-btn
@@ -68,7 +68,7 @@
                     </template>
                     </v-data-table>
                       
-                      <v-dialog v-if="utilizador.type==20" class="mydialog" v-model="dialogEditar" width="85%" >
+                      <v-dialog v-if="utilizador.type==20 || utilizador.type == 50" class="mydialog" v-model="dialogEditar" width="85%" >
                         <v-card id="inspire">
                           <EditarAluno v-if="dialogEditar" @alteracao="atualizaAlunos()" :idProp="this.idEditarAluno"/>
                         </v-card>

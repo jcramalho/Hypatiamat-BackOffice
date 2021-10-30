@@ -16,6 +16,17 @@ router.get('/', passport.authenticate('jwt', {session: false}), verifyToken.veri
                .catch(erro => res.status(500).jsonp(erro))
 });
 
+// Todos os códigos de turmas
+router.get('/codigos', passport.authenticate('jwt', {session: false}), function(req, res, next) {
+  Turmas.getCodigosTurmas()
+             .then(dados =>{
+               res.jsonp(dados)
+             })
+             .catch(erro => res.status(500).jsonp(erro))
+});
+
+
+
 router.get('/semalunos', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin(), function(req, res, next) {
   var anoletivo = req.query.anoletivo
   if(anoletivo){
@@ -115,16 +126,17 @@ router.get('/:turma/jogos/:tableJogo/estatisticasGlobais',passport.authenticate(
 })
 
 //Insere uma nova turma
-router.post('/', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor2(), function(req, res){
+router.post('/', passport.authenticate('jwt', {session: false}), verifyToken.verifyAdmin_Professor2(), async function(req, res){
   var turma = req.body
-  if(turma.idprofessor && turma.turma && turma.anoletivo){
+  var turmas = await Turmas.getCodigosTurmas();
+  if(turma.idprofessor && turma.turma && turma.anoletivo && !turmas.find(e => e.turma == turma.turma)){
     Turmas.insertTurma(turma)
                 .then(dados =>{
                   res.jsonp(dados)
                 })
                 .catch(erro => res.status(500).jsonp(erro))
   }
-  else res.status(400).jsonp("Faltam parâmetros no body.")
+  else res.status(400).jsonp("Faltam parâmetros no body ou a turma já existe.")
 })
 
 //Altera uma turma

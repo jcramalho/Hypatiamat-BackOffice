@@ -2,6 +2,7 @@ var sql = require('../../models/db_aplicacoes');
 var Comunidades = require('./comunidades')
 var Jogos = require('../db_samd/jogos')
 let mysql = require('mysql');
+const anoletivoAtual = require('../../config/confs').anoletivo
 const { bdTesteConhecimentos, bdAplicacoes, bdSAMD } = require('../../models/conf');
 
 const Estatistica = function(estatistica){
@@ -322,20 +323,18 @@ Estatistica.getEstatisticasMunicipioAno = async function(municipio, anoletivo, a
         var turma = turmas[i].turma
         if(!turmasAux.find(e => e == turma )) turmasAux.push(turma)
     }
-
     for(var i = 0; i < professores.length; i++){
         var codProf = professores[i].codigo
         if(!professoresAux.find(e => e == codProf)) professoresAux.push(codProf)
         if(turmas.filter(t => t.idprofessor == codProf).length > 1){
             turmasMistas++;
         }
-
     }
+
     if(turmasAux.length > 0 && professoresAux.length > 0){
         var nalunos = await Estatistica.getNumAlunos(professoresAux, turmasAux)
         var nalunosTurmasOld = {numalunos: 0}
-        
-        if(anoletivo != "20/21"){
+        if(anoletivo != anoletivoAtual){
             nalunosTurmasOld = await Estatistica.getNumAlunosOld(professoresAux, turmasAux)
         }
     }
@@ -500,7 +499,7 @@ Estatistica.getEstatisticasAgrupamentoAno = async function(escola, anoletivo, an
         var nalunos = await Estatistica.getNumAlunos(professoresAux, turmasAux)
         var nalunosTurmasOld = {numalunos: 0}        
 
-        if(anoletivo != "20/21"){
+        if(anoletivo != anoletivoAtual){
             nalunosTurmasOld = await Estatistica.getNumAlunosOld(professoresAux, turmasAux)
         }
 
@@ -586,7 +585,7 @@ Estatistica.getEstatisticaAnoAgruProf = async function(escola, anoletivo, anoses
         var nalunos = await Estatistica.getNumAlunos2(codProf, turmasAux)
         var nalunosTurmasOld = {numalunos: 0}        
 
-        if(anoletivo != "20/21"){
+        if(anoletivo != anoletivoAtual){
             nalunosTurmasOld = await Estatistica.getNumAlunosOld2(codProf, turmasAux)
         }
         
