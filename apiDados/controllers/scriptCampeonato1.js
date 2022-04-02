@@ -96,4 +96,3 @@ run = async function(){
 }
 
 run();
-return;

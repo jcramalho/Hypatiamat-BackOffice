@@ -441,7 +441,7 @@ const anoletivoAtual = require("@/config/confs").anoletivo2
         
         doc.text("Professor: " + this.nomeProf, 15, 50)
         doc.text("Turma: " + this.turmaSel, 130, 50)
-        doc.text("Período: " + "Período: " + this.dataInicio + " (" + this.horaInicio + "h) até " + this.dataFim  + " (" + this.horaFim + "h)", 15, 56)
+        doc.text("Período: " + this.dataInicio + " (" + this.horaInicio + "h) até " + this.dataFim  + " (" + this.horaFim + "h)", 15, 56)
         doc.text("App de Conteúdos: " + this.app, 15, 62)
         var listaRes = []
         var total =["Todos", "Todos", 0, 0, 0, 0, 0, 0]

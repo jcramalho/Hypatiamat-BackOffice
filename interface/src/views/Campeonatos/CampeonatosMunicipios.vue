@@ -309,32 +309,39 @@ const opcoesCampeonatosMunicipios = require('@/config/confs').opcoesCampeonatosM
           this.atualizaConteudo()
       },
       atualizaEstatisticasGeraisComunidade: async function(){
+          this.estastisticasMunicipio = undefined
           if(this.campeonatoId){
             if(this.comunidade != "Nenhuma"){
                 var com = this.comunidadesId.find(e => e.nome == this.comunidade)
                 var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/comunidades/"+ com.codigo + "/gerais?token=" + this.token)
                 this.estastisticasMunicipio = response.data
             }   
-            else this.estastisticasMunicipio = undefined
           }
       },
       atualizaEstatisticasGeraisMunicipio: async function(){
+          this.estastisticasMunicipio = undefined
           if(this.campeonatoId){
             if(this.municipio != "Todos"){
                 var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/municipios/"+ this.municipio + "/gerais?token=" + this.token)
                 this.estastisticasMunicipio = response.data
             }
-            else this.estastisticasMunicipio = undefined
           }
       },
       atualizaEstatisticasGerais: async function(){
+          this.estatisticasGerais = undefined;
           var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/municipios/gerais?token=" + this.token)
           this.estatisticasGerais = response.data
       },
       atualizaConteudo: async function(){
           if(this.campeonatoId && this.municipio){
-               if(this.comunidade != "Nenhuma") {this.atualizaConteudoComunidade(); return}
                this.loading = true
+               this.atualizaEstatisticasGerais();
+               if(this.comunidade != "Nenhuma") {
+                   this.atualizaEstatisticasGeraisComunidade();
+                   this.atualizaConteudoComunidade(); 
+                   return;
+                }
+               
                if(this.municipio == "Todos"){
                    if(this.opcaoCampeonato.value==''){
                         this.headers = this.headers_jogo
@@ -353,6 +360,7 @@ const opcoesCampeonatosMunicipios = require('@/config/confs').opcoesCampeonatosM
                    }
                }
                else{
+                   this.atualizaEstatisticasGeraisMunicipio();
                    if(this.opcaoCampeonato.value == '') this.headers = this.headers_jogo
                    else if(this.opcaoCampeonato.value == 'jogo') this.headers = this.headers_totais_jogo
                    if(this.opcaoCampeonato.value != 'totais'){

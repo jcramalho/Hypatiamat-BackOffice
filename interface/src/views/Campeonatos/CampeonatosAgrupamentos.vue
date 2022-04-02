@@ -289,31 +289,39 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
           }
       },
       atualizaEstatisticas: async function(){
+          this.estatisticasGerais = undefined;
+          this.estastisticasMunicipio = undefined;
+          this.estatisticasAgrupamento = undefined;
           this.estatisticasGerais = await this.atualizaEstatisticasGerais()
           this.estastisticasMunicipio = await this.atualizaEstatisticasGeraisMunicipio()
           this.estatisticasAgrupamento = await this.atualizaEstatisticasGeraisAgrupamento()
       },
       atualizaEstatisticasGeraisMunicipio: async function(){
-        if(this.campeonatoId){
-            var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/municipios/" + this.municipio +"/gerais?token=" + this.token)
+        let response = { data: undefined };
+        if(this.campeonatoId && this.municipio){
+            response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/municipios/" + this.municipio +"/gerais?token=" + this.token)
         }
         return response.data
       },
       atualizaEstatisticasGerais: async function(){
-          var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/municipios/gerais?token=" + this.token)
+          let response = { data: undefined };
+          if(this.campeonatoId){
+              response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/municipios/gerais?token=" + this.token)
+          }
           return response.data
       },
       atualizaEstatisticasGeraisAgrupamento: async function(){
+        let response = { data: undefined };
         if(this.campeonatoId && this.escola && this.escola != "Todos"){
-            var esc = this.escolasId.find(e => e.nome == this.escola)
-            var response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/escolas/" + esc.cod +"/gerais?token=" + this.token)
-            return response.data
+            const esc = this.escolasId.find(e => e.nome == this.escola)
+            response = await axios.get(hostCampeonatos + this.campeonatoId.cod + "/escolas/" + esc.cod +"/gerais?token=" + this.token)
         }
-        else return undefined
+        return response.data
       },
       atualizaConteudo: async function(){
           if(this.campeonatoId && this.escola){
                this.loading = true
+               this.atualizaEstatisticas();
                if(this.escola == "Todos"){
                    if(this.opcaoCampeonato.value == ''){
                        this.headers = this.headers_jogo

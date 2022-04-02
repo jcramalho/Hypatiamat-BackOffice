@@ -268,31 +268,38 @@ const hypatiaImg = require("@/assets/hypatiamat.png")
           }
       },
       atualizaEstatisticas: async function(){
+          this.estatisticasGerais = undefined;
+          this.estastisticasMunicipio = undefined;
+          this.estatisticasAgrupamento = undefined;
           this.estatisticasGerais = await this.atualizaEstatisticasGerais()
           this.estastisticasMunicipio = await this.atualizaEstatisticasGeraisMunicipio()
           this.estatisticasAgrupamento = await this.atualizaEstatisticasGeraisAgrupamento()
       },
       atualizaEstatisticasGeraisMunicipio: async function(){
-        if(this.campeonato){
-            var response = await axios.get(hostCampeonatos + this.campeonato.campeonatoID + "/municipios/" + this.municipio +"/gerais?token=" + this.token)
+        let response = { data: undefined };
+        if(this.campeonato && this.municipio){
+            response = await axios.get(hostCampeonatos + this.campeonato.campeonatoID + "/municipios/" + this.municipio +"/gerais?token=" + this.token)
         }
         return response.data
       },
       atualizaEstatisticasGeraisAgrupamento: async function(){
-        if(this.campeonato){
-            var response = await axios.get(hostCampeonatos + this.campeonato.campeonatoID + "/escolas/" + this.escola +"/gerais?token=" + this.token)
-            return response.data
+        let response = { data: undefined };
+        if(this.campeonato && this.escola){
+            response = await axios.get(hostCampeonatos + this.campeonato.campeonatoID + "/escolas/" + this.escola +"/gerais?token=" + this.token)
         }
-      },
+        return response.data
+    },
       atualizaEstatisticasGerais: async function(){
+          let response = { data: undefined };
           if(this.campeonato){
-            var response = await axios.get(hostCampeonatos + this.campeonato.campeonatoID + "/municipios/gerais?token=" + this.token)
-            return response.data
+            response = await axios.get(hostCampeonatos + this.campeonato.campeonatoID + "/municipios/gerais?token=" + this.token)
           }
+          return response.data
       },
       atualizaConteudo: async function(){
           if(this.campeonato && this.escola && this.turmaSel && this.codprofessor){
                this.loading = true
+               this.atualizaEstatisticas();
                var response = await axios.get(hostCampeonatos + this.campeonato.campeonatoID + "/turmas/" + this.turmaSel 
                                                 + "?codprofessor=" + this.codprofessor + "&escola=" + this.escola 
                                                 + "&jogo=" + this.campeonato.jogo + "&token=" + this.token)
