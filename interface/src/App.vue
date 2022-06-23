@@ -30,6 +30,7 @@
 
 <script>
 
+import Vue from 'vue'
 import Swal from 'sweetalert2'
 import Auth from '@/views/AuthApp.vue'
 import Login from '@/views/Login.vue'
@@ -71,6 +72,15 @@ export default {
       var aux = false
       var self = this
 
+      if (Vue.$cookies.isKey("token") && !localStorage.getItem('token')) {
+        let tokenTemp = Vue.$cookies.get("token")
+        localStorage.setItem("token", tokenTemp)
+        axios.defaults.headers.common['Authorization'] = 'Bearer '+ localStorage.getItem('token');
+      }
+      else {
+        console.log("no token?")
+      }
+
       this.getTokenInterface()
 
       CrossStorageHub.init(storageHosts);
@@ -83,6 +93,7 @@ export default {
           localStorage.removeItem("token")
           localStorage.removeItem("type")
           localStorage.removeItem("utilizador")
+          Vue.$cookies.remove("token")
           if(self.storageConnected){ self.storage.clear()}
           //this.bifrostCors.deleteLocalStorage(["token", "type", "utilizador"])
           Swal.fire({
@@ -91,7 +102,7 @@ export default {
                   confirmButtonColor: '#009263'
                 }) 
           self.refreshLogout()
-          window.location.href = './';
+          window.location.href = 'http://localhost:12090';
         }
       });
 
@@ -171,6 +182,8 @@ export default {
                 }
                 else {
                   localStorage.removeItem("token")
+                  Vue.$cookies.remove("token")
+                  window.location.href = 'http://localhost:12090'
                   return false
                 }
               }
@@ -192,6 +205,8 @@ export default {
             localStorage.removeItem("token")
             localStorage.removeItem("utilizador")
             localStorage.removeItem("type")
+            Vue.$cookies.remove("token")
+            window.location.href = 'http://localhost:12090'
           },
           refreshLogout: async function(){
             this.loggedIn = await this.isLogged()

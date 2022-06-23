@@ -1,0 +1,48 @@
+_format_version: "2.1"
+
+services:
+  - name: backoffice-api
+    url: http://host.docker.internal:3050
+    routes:
+      - name: backoffice-api-route
+        paths:
+          - /backoffice-api
+
+plugins:
+  - name: jwt
+    service: backoffice-api
+    enabled: true
+    config:
+      secret_is_base64: false
+      run_on_preflight: true
+      key_claim_name: kid
+      claims_to_verify:
+        - exp
+  - name: cors
+    config: 
+      origins:
+        - "*"
+      methods:
+        - GET
+        - POST
+      headers:
+        - Accept
+        - Accept-Version
+        - Content-Length
+        - Content-MD5
+        - Content-Type
+        - Date
+        - X-Auth-Token
+        - Authorization
+      exposed_headers:
+        - X-Auth-Token
+      credentials: true
+      max_age: 3600
+      preflight_continue: false
+
+consumers:
+  - username: user123
+
+jwt_secrets:
+  - consumer: user123
+    secret: "tese-hypatiamat2020"

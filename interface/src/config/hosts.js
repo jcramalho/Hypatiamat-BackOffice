@@ -1,4 +1,5 @@
-const host = "http://localhost:3050/"
+//const host = "http://localhost:3050/"
+const host = "http://localhost:8000/backoffice-api/"
 //const host = "https://api.hypatiamat.com/"
 //const hostTPC = "https://tpc.hypatiamat.com"
 const hostTPC = "http://localhost:8081"

@@ -1,7 +1,7 @@
 var mysql = require('mysql')
 var database = 'hypati67_aplicacoes'
 var connection = mysql.createConnection({
-    host: 'localhost',
+    host: "host.docker.internal",
     user: 'root',
     password: "admin",
     database: database

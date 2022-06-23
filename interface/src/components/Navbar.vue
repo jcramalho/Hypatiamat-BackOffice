@@ -80,6 +80,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import VueJwtDecode from "vue-jwt-decode";
 import Swal from 'sweetalert2'
 const host = require("@/config/hosts").host
@@ -232,9 +233,11 @@ export default {
             localStorage.removeItem("utilizador");
             localStorage.removeItem("type");
             localStorage.removeItem("token");
+            Vue.$cookies.remove("token")
             //this.bifrostCors.deleteLocalStorage(["token", "type", "utilizador"])
             if(this.storage) this.storage.clear();
-            this.$emit('refreshLogout')
+            //this.$emit('refreshLogout')
+            window.location.href = 'http://localhost:12090'
             this.color = "#900001"
           }
         })

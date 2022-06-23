@@ -1,7 +1,8 @@
-var mysql = require('mysql') 
+var mysql = require('mysql')
+var configs = require('./conf')
 var db_config = {
   //host: "host.docker.internal",  
-  host: "localhost",
+  host: configs.host,
   user: 'root',
   password: 'PEI2020',
   database: 'hypat_contadores',
